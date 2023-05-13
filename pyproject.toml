@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+[project]
+name = "jutility"
+version = "0.0.1"
+authors = [
+  { name="Jake Levi", email="jakelevi@hotmail.co.uk" },
+]
+description = "Collection of Python utilities intended to be useful for machine learning research and experiments"
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/jakelevi1996/jutility"
+"Bug Tracker" = "https://github.com/jakelevi1996/jutility/issues"

@@ -15,6 +15,10 @@ python -m pip install -U jutility
 
 *Coming soon*
 
+(in the meantime, see [unit tests](tests/) for [`util`](tests/test_util.py), [`plotting`](tests/test_plotting.py), and [`sweep`](tests/test_sweep.py))
+
+TODO: add unit tests from [`reinforcement_learning`](https://github.com/jakelevi1996/reinforcement_learning) repository
+
 ## Updating package on PyPI
 
 This package was uploaded to PyPI following [the Packaging Python Projects tutorial in the official Python documentation](https://packaging.python.org/en/latest/tutorials/packaging-projects/).

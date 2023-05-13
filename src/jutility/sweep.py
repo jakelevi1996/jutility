@@ -23,8 +23,7 @@ SOFTWARE.
 """
 
 import numpy as np
-import util
-import plotting
+from jutility import util, plotting
 
 def get_range(val_lo, val_hi, val_num=10, log_space=False):
     if log_space:

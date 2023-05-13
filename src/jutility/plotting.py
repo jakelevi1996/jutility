@@ -30,7 +30,7 @@ import matplotlib.lines
 import matplotlib.patches
 import numpy as np
 import PIL
-import util
+from jutility import util
 
 class Line:
     def __init__(self, x=None, y=None, **kwargs):

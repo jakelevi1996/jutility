@@ -2,6 +2,15 @@
 
 Collection of Python utilities intended to be useful for machine learning research and experiments.
 
+## Install with `pip`
+
+Install with `pip` using the following commands:
+
+```
+python -m pip install -U pip
+python -m pip install -U jutility
+```
+
 ## Usage examples
 
 *Coming soon*

@@ -1,7 +1,9 @@
+.*
 *.txt
 *.json
 *.png
 *.gif
+*.pkl
 *.pyc
 *.egg-info
 

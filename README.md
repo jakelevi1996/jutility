@@ -50,7 +50,7 @@ python -m pip install --force-reinstall --no-deps dist/$WHEEL_NAME
 
 This package was uploaded to PyPI following [the Packaging Python Projects tutorial in the official Python documentation](https://packaging.python.org/en/latest/tutorials/packaging-projects/).
 
-To update PyPI with a newer version, update the `version` tag in [pyproject.toml](pyproject.toml), and then use the following commands:
+To update PyPI with a newer version, update the `version` tag in [setup.cfg](setup.cfg), and then use the following commands:
 
 ```
 rm -rf dist/*

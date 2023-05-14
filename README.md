@@ -31,7 +31,7 @@ python -m pip install -U jutility
 
 ## Unit tests
 
-To run unit all unit tests, install [`pytest`](https://pypi.org/project/pytest/), and run the following command (at the time of writing, this takes about 17 seconds to run 42 unit tests, because several unit tests involve saving images or GIFs to disk, using `pytest` version 5.4.1):
+To run unit all unit tests, install [`pytest`](https://pypi.org/project/pytest/) (these tests have previously been run with `pytest` version 5.4.1), and run the following command (at the time of writing, this takes about 17 seconds to run 42 unit tests, because several unit tests involve saving images or GIFs to disk):
 
 ```
 pytest

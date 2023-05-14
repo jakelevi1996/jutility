@@ -37,7 +37,7 @@ pytest
 
 ## Build package locally
 
-`jutility` can be built and installed locally using the following commands, replacing `$WHEEL_NAME` with the name of the wheel built by the `python -m build` command (for example, `dist/jutility-0.0.2-py3-none-any.whl`):
+`jutility` can be built and installed locally using the following commands, replacing `$WHEEL_NAME` with the name of the wheel built by the `python -m build` command (for example, `jutility-0.0.3-py3-none-any.whl`):
 
 ```
 python -m build

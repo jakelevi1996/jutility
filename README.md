@@ -4,7 +4,7 @@ Collection of Python utilities intended to be useful for machine learning resear
 
 ## Install with `pip`
 
-Install with `pip` using the following commands:
+The `jutility` package is available as [a Python package on PyPI](https://pypi.org/project/jutility/), and can be installed with `pip` using the following commands:
 
 ```
 python -m pip install -U pip

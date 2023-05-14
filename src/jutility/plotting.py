@@ -251,6 +251,7 @@ class AxisProperties:
         log_yscale=False,
         rotate_xticklabels=False,
         axis_equal=False,
+        axis_off=False,
         grid=True,
         title=None,
     ):
@@ -262,6 +263,7 @@ class AxisProperties:
         self._log_yscale = log_yscale
         self._rotate_xticklabels = rotate_xticklabels
         self._axis_equal = axis_equal
+        self._axis_off = axis_off
         self._grid = grid
         self._title = title
 
@@ -277,6 +279,8 @@ class AxisProperties:
             axis.set_xlim(self._xlim)
         if self._axis_equal:
             axis.axis("equal")
+        if self._axis_off:
+            axis.axis("off")
         if self._ylim is not None:
             axis.set_ylim(self._ylim)
         if self._log_xscale:

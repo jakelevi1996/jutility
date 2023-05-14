@@ -41,7 +41,7 @@ pytest
 
 ```
 python -m build
-python -m pip install --force-reinstall $WHEEL_NAME
+python -m pip install --force-reinstall dist/$WHEEL_NAME
 ```
 
 ## Updating package on PyPI

@@ -247,7 +247,7 @@ def test_exception_context():
             suppress_exceptions=False,
             printer=printer,
         ):
-            raise ValueError
+            raise ValueError()
 
 def test_printer():
     printer = util.Printer(

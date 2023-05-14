@@ -2,6 +2,8 @@
 
 Collection of Python utilities intended to be useful for machine learning research and experiments.
 
+![](images/logo.png)
+
 ## Contents
 
 - [jutility](#jutility)
@@ -25,7 +27,7 @@ python -m pip install -U jutility
 
 *Coming soon*
 
-(in the meantime, see [unit tests](tests/) for [`util`](tests/test_util.py), [`plotting`](tests/test_plotting.py), and [`sweep`](tests/test_sweep.py))
+(in the meantime, see [`scripts/make_logo.py`](scripts/make_logo.py) which made the logo above, and [unit tests](tests/) for [`util`](tests/test_util.py), [`plotting`](tests/test_plotting.py), and [`sweep`](tests/test_sweep.py))
 
 ## Unit tests
 
@@ -37,7 +39,7 @@ pytest
 
 ## Build package locally
 
-`jutility` can be built and installed locally using the following commands, replacing `$WHEEL_NAME` with the name of the wheel built by the `python -m build` command (for example, `jutility-0.0.3-py3-none-any.whl`):
+`jutility` can be built and installed locally using the following commands, replacing `$WHEEL_NAME` with the name of the wheel built by the `python -m build` command (for example, `jutility-0.0.5-py3-none-any.whl`):
 
 ```
 python -m build

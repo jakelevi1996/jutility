@@ -2,6 +2,16 @@
 
 Collection of Python utilities intended to be useful for machine learning research and experiments.
 
+## Contents
+
+- [jutility](#jutility)
+  - [Contents](#contents)
+  - [Install with `pip`](#install-with-pip)
+  - [Usage examples](#usage-examples)
+  - [Unit tests](#unit-tests)
+  - [Build package locally](#build-package-locally)
+  - [Updating package on PyPI](#updating-package-on-pypi)
+
 ## Install with `pip`
 
 The `jutility` package is available as [a Python package on PyPI](https://pypi.org/project/jutility/), and can be installed with `pip` using the following commands:
@@ -16,6 +26,14 @@ python -m pip install -U jutility
 *Coming soon*
 
 (in the meantime, see [unit tests](tests/) for [`util`](tests/test_util.py), [`plotting`](tests/test_plotting.py), and [`sweep`](tests/test_sweep.py))
+
+## Unit tests
+
+To run unit all unit tests, run the following command (at the time of writing, this takes about 17 seconds to run 42 unit tests, because several unit tests involving saving images or GIFs to disk):
+
+```
+pytest
+```
 
 ## Build package locally
 

@@ -17,8 +17,6 @@ python -m pip install -U jutility
 
 (in the meantime, see [unit tests](tests/) for [`util`](tests/test_util.py), [`plotting`](tests/test_plotting.py), and [`sweep`](tests/test_sweep.py))
 
-TODO: add unit tests from [`reinforcement_learning`](https://github.com/jakelevi1996/reinforcement_learning) repository
-
 ## Build package locally
 
 `jutility` can be built and installed locally using the following commands, replacing `$WHEEL_NAME` with the name of the wheel built by the `python -m build` command (for example, `dist/jutility-0.0.2-py3-none-any.whl`):

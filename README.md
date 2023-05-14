@@ -19,6 +19,15 @@ python -m pip install -U jutility
 
 TODO: add unit tests from [`reinforcement_learning`](https://github.com/jakelevi1996/reinforcement_learning) repository
 
+## Build package locally
+
+`jutility` can be built and installed locally using the following commands, replacing `$WHEEL_NAME` with the name of the wheel built by the `python -m build` command (for example, `dist/jutility-0.0.2-py3-none-any.whl`):
+
+```
+python -m build
+python -m pip install --force-reinstall $WHEEL_NAME
+```
+
 ## Updating package on PyPI
 
 This package was uploaded to PyPI following [the Packaging Python Projects tutorial in the official Python documentation](https://packaging.python.org/en/latest/tutorials/packaging-projects/).
@@ -26,6 +35,7 @@ This package was uploaded to PyPI following [the Packaging Python Projects tutor
 To update PyPI with a newer version, update the `version` tag in [pyproject.toml](pyproject.toml), and then use the following commands:
 
 ```
+rm -rf dist/*
 python -m build
 python -m twine upload dist/*
 ```

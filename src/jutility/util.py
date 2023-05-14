@@ -34,10 +34,10 @@ CURRENT_DIR = os.path.abspath(os.getcwd())
 RESULTS_DIR = os.path.join(CURRENT_DIR, "Results")
 
 class Result:
-    def __init__(self, data, filename, dir_name=None):
-        self._data = data
+    def __init__(self, filename, dir_name=None, data=None):
         self._filename = filename
         self._dir_name = dir_name
+        self._data = data
 
     def get_data(self):
         return self._data

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "jutility"
-version = "0.0.4"
+version = "0.0.5"
 license = {text = "MIT License"}
 authors = [
     {name = "Jake Levi", email = "jakelevi@hotmail.co.uk"},

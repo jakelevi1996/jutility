@@ -2,7 +2,7 @@
 
 Collection of Python utilities intended to be useful for machine learning research and experiments.
 
-![](images/logo.png)
+![](https://raw.githubusercontent.com/jakelevi1996/jutility/main/images/logo.png)
 
 ## Contents
 

@@ -10,7 +10,6 @@ line_list = [
         x=x,
         y=((1 + (i/10)) * np.sin(x + (i / num_colours))),
         c=cp(i),
-        label="Line %i" % i,
     )
     for i in range(num_colours)
 ]
@@ -24,6 +23,6 @@ mp = plotting.MultiPlot(
         title="  ".join("jutility"),
         title_font_size=40,
         top_space=0.2,
-    )
+    ),
 )
 mp.save("logo", dir_name=os.path.join(os.getcwd(), "images"))

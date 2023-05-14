@@ -30,7 +30,7 @@ import datetime
 import time
 import numpy as np
 
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+CURRENT_DIR = os.path.abspath(os.getcwd())
 RESULTS_DIR = os.path.join(CURRENT_DIR, "Results")
 
 class Result:

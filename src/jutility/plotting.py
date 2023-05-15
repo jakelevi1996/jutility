@@ -254,6 +254,7 @@ class AxisProperties:
         axis_off=False,
         grid=True,
         title=None,
+        colour=None,
     ):
         self._xlabel = xlabel
         self._ylabel = ylabel
@@ -266,6 +267,7 @@ class AxisProperties:
         self._axis_off = axis_off
         self._grid = grid
         self._title = title
+        self._colour = colour
 
     def set_title(self, title):
         self._title = title
@@ -294,6 +296,8 @@ class AxisProperties:
                 xtl.set(rotation=-45, ha="left")
         if self._title is not None:
             axis.set_title(wrap(self._title))
+        if self._colour is not None:
+            axis.set_facecolor(self._colour)
 
 class FigureProperties:
     def __init__(
@@ -306,8 +310,10 @@ class FigureProperties:
         width_ratios=None,
         height_ratios=None,
         tight_layout=True,
+        colour=None,
         title=None,
         title_font_size=25,
+        title_colour=None,
         top_space=None,
     ):
         self._num_rows = num_rows
@@ -318,8 +324,10 @@ class FigureProperties:
         self._width_ratios = width_ratios
         self._height_ratios = height_ratios
         self._tight_layout = tight_layout
+        self._colour = colour
         self._title = title
         self._title_font_size = title_font_size
+        self._title_colour = title_colour
         self._top_space = top_space
 
     def get_figure_and_axes(self, num_subplots):
@@ -351,8 +359,14 @@ class FigureProperties:
     def apply(self, figure):
         if self._tight_layout:
             figure.tight_layout()
+        if self._colour is not None:
+            figure.patch.set_facecolor(self._colour)
         if self._title is not None:
-            figure.suptitle(wrap(self._title), fontsize=self._title_font_size)
+            figure.suptitle(
+                wrap(self._title),
+                fontsize=self._title_font_size,
+                color=self._title_colour,
+            )
         if self._top_space is not None:
             figure.subplots_adjust(top=(1 - self._top_space))
 

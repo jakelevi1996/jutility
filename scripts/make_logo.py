@@ -1,5 +1,6 @@
 import os
 import numpy as np
+import __init__
 from jutility import plotting
 
 num_colours = 7

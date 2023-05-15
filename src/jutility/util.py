@@ -383,39 +383,43 @@ def get_full_path(filename, dir_name=None, for_saving=False, file_ext=None):
     full_path = os.path.join(dir_name, filename)
     return full_path
 
-def save_pickle(data, filename, dir_name=None):
+def save_pickle(data, filename, dir_name=None, verbose=True):
     full_path = get_full_path(
         filename,
         dir_name,
         for_saving=True,
         file_ext="pkl",
     )
-    print("Saving pickle in \"%s\"" % full_path)
+    if verbose:
+        print("Saving pickle in \"%s\"" % full_path)
     with open(full_path, "wb") as f:
         pickle.dump(data, f)
 
-def load_pickle(filename, dir_name=None):
+def load_pickle(filename, dir_name=None, verbose=False):
     full_path = get_full_path(filename, dir_name)
-    print("Loading pickle from \"%s\"" % full_path)
+    if verbose:
+        print("Loading pickle from \"%s\"" % full_path)
     with open(full_path, "rb") as f:
         data = pickle.load(f)
 
     return data
 
-def save_json(data, filename, dir_name=None):
+def save_json(data, filename, dir_name=None, verbose=True):
     full_path = get_full_path(
         filename,
         dir_name,
         for_saving=True,
         file_ext="json",
     )
-    print("Saving JSON in \"%s\"" % full_path)
+    if verbose:
+        print("Saving JSON in \"%s\"" % full_path)
     with open(full_path, "w") as f:
         json.dump(data, f)
 
-def load_json(filename, dir_name=None):
+def load_json(filename, dir_name=None, verbose=False):
     full_path = get_full_path(filename, dir_name)
-    print("Loading JSON from \"%s\"" % full_path)
+    if verbose:
+        print("Loading JSON from \"%s\"" % full_path)
     with open(full_path, "r") as f:
         data = json.load(f)
 

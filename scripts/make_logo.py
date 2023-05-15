@@ -21,9 +21,11 @@ mp = plotting.MultiPlot(
     ),
     figure_properties=plotting.FigureProperties(
         figsize=[10, 4],
+        colour="k",
         title="  ".join("jutility"),
+        title_colour="w",
         title_font_size=40,
         top_space=0.2,
     ),
 )
-mp.save("logo", dir_name=os.path.join(os.getcwd(), "images"))
+mp.save("logo_black", dir_name=os.path.join(os.getcwd(), "images"))

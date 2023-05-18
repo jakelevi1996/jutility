@@ -153,6 +153,16 @@ class ColourMesh(FillBetween):
     def plot(self, axis):
         axis.pcolormesh(self._x, self._y, self._c, **self._kwargs)
 
+class ContourFilled(FillBetween):
+    def __init__(self, x, y, c, **kwargs):
+        self._x = x
+        self._y = y
+        self._c = c
+        self._kwargs = kwargs
+
+    def plot(self, axis):
+        axis.contourf(self._x, self._y, self._c, **self._kwargs)
+
 class ImShow(FillBetween):
     def __init__(self, c, **kwargs):
         self._c = c

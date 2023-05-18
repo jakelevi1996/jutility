@@ -28,6 +28,8 @@ import math
 import matplotlib.pyplot as plt
 import matplotlib.lines
 import matplotlib.patches
+import matplotlib.colors
+import matplotlib.cm
 import numpy as np
 import PIL
 from jutility import util
@@ -401,6 +403,23 @@ class Legend(Subplot):
         ]
         axis.legend(handles=handles, loc="center")
         axis.axis("off")
+
+class ColourBar(Subplot):
+    def __init__(self, vmin, vmax):
+        self._vmin = vmin
+        self._vmax = vmax
+        self._axes = []
+        self._colourbar = None
+
+    def plot(self, axis):
+        if self._colourbar is not None:
+            self._colourbar.remove()
+
+        axis.axis("off")
+        self._axes.append(axis)
+        norm = matplotlib.colors.Normalize(self._vmin, self._vmax)
+        sm = matplotlib.cm.ScalarMappable(norm)
+        self._colourbar = plt.colorbar(sm, ax=self._axes, fraction=1)
 
 class Empty(Subplot):
     def plot(self, axis):

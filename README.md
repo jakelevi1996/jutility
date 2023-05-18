@@ -10,6 +10,10 @@ Collection of Python utilities intended to be useful for machine learning resear
   - [Contents](#contents)
   - [Install with `pip`](#install-with-pip)
   - [Usage examples](#usage-examples)
+    - [`plotting`](#plotting)
+      - [Shared colour bar](#shared-colour-bar)
+    - [`util`](#util)
+    - [`sweep`](#sweep)
   - [Unit tests](#unit-tests)
   - [Build package locally](#build-package-locally)
   - [Updating package on PyPI](#updating-package-on-pypi)
@@ -24,6 +28,50 @@ python -m pip install -U jutility
 ```
 
 ## Usage examples
+
+### `plotting`
+
+*More simple examples coming soon*
+
+#### Shared colour bar
+
+```python
+import numpy as np
+from jutility import plotting
+
+rng = np.random.default_rng(0)
+z1 = rng.random((100, 200)) + 5
+z2 = rng.random((100, 200)) + 2
+v_min = min(z1.min(), z2.min())
+v_max = max(z1.max(), z2.max())
+
+colour_bar = plotting.ColourBar(v_min, v_max)
+
+mp = plotting.MultiPlot(
+    plotting.ImShow(c=z1, vmin=v_min, vmax=v_max),
+    colour_bar,
+    plotting.ImShow(c=z2, vmin=v_min, vmax=v_max),
+    colour_bar,
+    figure_properties=plotting.FigureProperties(
+        num_rows=2,
+        num_cols=2,
+        width_ratios=[1, 0.2],
+        tight_layout=False,
+        title="Shared colour bar",
+    ),
+)
+mp.save("Shared colour bar", dir_name="images")
+```
+
+![](images/Shared_colour_bar.png)
+
+*More complex examples coming soon*
+
+### `util`
+
+*Coming soon*
+
+### `sweep`
 
 *Coming soon*
 

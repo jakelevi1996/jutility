@@ -141,7 +141,7 @@ class HVSpan(FillBetween):
         if self._ylims is not None:
             axis.axhspan(*self._ylims, **self._kwargs)
 
-class PColorMesh(FillBetween):
+class ColourMesh(FillBetween):
     def __init__(self, x, y, c, **kwargs):
         self._x = x
         self._y = y
@@ -150,6 +150,14 @@ class PColorMesh(FillBetween):
 
     def plot(self, axis):
         axis.pcolormesh(self._x, self._y, self._c, **self._kwargs)
+
+class ImShow(FillBetween):
+    def __init__(self, c, **kwargs):
+        self._c = c
+        self._kwargs = kwargs
+
+    def plot(self, axis):
+        axis.imshow(self._c, **self._kwargs)
 
 class NoisyData:
     def __init__(self):

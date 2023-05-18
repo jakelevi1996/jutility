@@ -271,3 +271,28 @@ def test_noisy_data(result_alpha):
         legend=True,
     )
     assert os.path.isfile(mp.filename)
+
+def test_colourbar():
+    rng = util.Seeder().get_rng("test_colourbar")
+    z1 = rng.random((100, 200)) + 5
+    z2 = rng.random((100, 200)) + 2
+    v_min = min(z1.min(), z2.min())
+    v_max = max(z1.max(), z2.max())
+
+    colour_bar = plotting.ColourBar(v_min, v_max)
+
+    mp = plotting.MultiPlot(
+        plotting.ImShow(c=z1, vmin=v_min, vmax=v_max),
+        colour_bar,
+        plotting.ImShow(c=z2, vmin=v_min, vmax=v_max),
+        colour_bar,
+        figure_properties=plotting.FigureProperties(
+            num_rows=2,
+            num_cols=2,
+            width_ratios=[1, 0.2],
+            tight_layout=False,
+            title="Shared colour bar",
+        ),
+    )
+    mp.save("test_colourbar", OUTPUT_DIR)
+    assert os.path.isfile(mp.filename)

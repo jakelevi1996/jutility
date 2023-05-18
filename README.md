@@ -11,6 +11,7 @@ Collection of Python utilities intended to be useful for machine learning resear
   - [Install with `pip`](#install-with-pip)
   - [Usage examples](#usage-examples)
     - [`plotting`](#plotting)
+      - [Making a simple plot](#making-a-simple-plot)
       - [Shared colour bar](#shared-colour-bar)
     - [`util`](#util)
     - [`sweep`](#sweep)
@@ -30,6 +31,28 @@ python -m pip install -U jutility
 ## Usage examples
 
 ### `plotting`
+
+#### Making a simple plot
+
+```python
+import numpy as np
+from jutility import plotting
+
+rng = np.random.default_rng(0)
+x = np.linspace(0, 2)
+f = lambda x: x + 0.1 * rng.normal(size=x.shape)
+
+plotting.plot(
+    plotting.Line(x, f(x), c="b", marker="o", label="Blue data"),
+    plotting.Line(x, np.exp(-f(x)), c="r", marker="o", label="Red data"),
+    axis_properties=plotting.AxisProperties("x label", "y label"),
+    legend=True,
+    plot_name="Simple plot",
+    dir_name="images",
+)
+```
+
+![](images/Simple_plot.png)
 
 *More simple examples coming soon*
 

@@ -331,6 +331,7 @@ class FigureProperties:
         tight_layout=True,
         colour=None,
         title=None,
+        wrap=True,
         title_font_size=25,
         title_colour=None,
         top_space=None,
@@ -346,6 +347,7 @@ class FigureProperties:
         self._tight_layout = tight_layout
         self._colour = colour
         self._title = title
+        self._wrap = wrap
         self._title_font_size = title_font_size
         self._title_colour = title_colour
         self._top_space = top_space
@@ -384,8 +386,10 @@ class FigureProperties:
         if self._colour is not None:
             figure.patch.set_facecolor(self._colour)
         if self._title is not None:
+            if self._wrap:
+                self._title = wrap(self._title),
             figure.suptitle(
-                wrap(self._title),
+                self._title,
                 fontsize=self._title_font_size,
                 color=self._title_colour,
             )

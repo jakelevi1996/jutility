@@ -334,6 +334,7 @@ class FigureProperties:
         title_font_size=25,
         title_colour=None,
         top_space=None,
+        layout=None,
     ):
         self._num_rows = num_rows
         self._num_cols = num_cols
@@ -348,6 +349,7 @@ class FigureProperties:
         self._title_font_size = title_font_size
         self._title_colour = title_colour
         self._top_space = top_space
+        self._layout = layout
 
     def get_figure_and_axes(self, num_subplots):
         if self._num_rows is None:
@@ -372,6 +374,7 @@ class FigureProperties:
             sharey=self._sharey,
             gridspec_kw=gridspec_kw,
             squeeze=False,
+            layout=self._layout,
         )
         return figure, axes.flat
 

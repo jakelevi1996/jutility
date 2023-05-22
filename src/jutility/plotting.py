@@ -48,7 +48,7 @@ class Line:
 
     def plot(self, axis):
         if (self._x is not None) and (self._y is not None):
-        axis.plot(self._x, self._y, **self._kwargs)
+            axis.plot(self._x, self._y, **self._kwargs)
 
     def has_label(self):
         return ("label" in self._kwargs)
@@ -418,8 +418,8 @@ class Legend(Subplot):
 
 class ColourBar(Subplot):
     def __init__(self, vmin, vmax):
-        self._vmin = vmin
-        self._vmax = vmax
+        norm = matplotlib.colors.Normalize(vmin, vmax)
+        self._sm = matplotlib.cm.ScalarMappable(norm)
         self._axes = []
         self._colourbar = None
 
@@ -429,9 +429,12 @@ class ColourBar(Subplot):
 
         axis.axis("off")
         self._axes.append(axis)
-        norm = matplotlib.colors.Normalize(self._vmin, self._vmax)
-        sm = matplotlib.cm.ScalarMappable(norm)
-        self._colourbar = plt.colorbar(sm, ax=self._axes, fraction=1)
+        self._colourbar = plt.colorbar(
+            mappable=self._sm,
+            ax=self._axes,
+            fraction=1,
+            location="left",
+        )
 
 class Empty(Subplot):
     def plot(self, axis):

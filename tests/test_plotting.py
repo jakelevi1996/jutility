@@ -21,6 +21,36 @@ def test_plot_lines():
     )
     assert os.path.isfile(mp.filename)
 
+def test_line_shapes_defaults():
+    nx = 150
+    nf = 3
+
+    x = np.linspace(0, 5, nx).reshape(1, nx)
+    f = np.linspace(1, 2, nf).reshape(nf, 1)
+    y = np.sin(x * f)
+
+    x = x.reshape(nx)
+    y = y.T
+
+    assert list(x.shape) == [nx]
+    assert list(y.shape) == [nx, nf]
+
+    plotting.plot(
+        plotting.Line(x, y, c="b"),
+        plot_name="test_line_shapes_defaults with x and y",
+        dir_name=OUTPUT_DIR,
+    )
+    plotting.plot(
+        plotting.Line(y, c="b"),
+        plot_name="test_line_shapes_defaults, x = None",
+        dir_name=OUTPUT_DIR,
+    )
+    plotting.plot(
+        plotting.Line(c="b"),
+        plot_name="test_line_shapes_defaults, x = y = None",
+        dir_name=OUTPUT_DIR,
+    )
+
 def test_plot_fill():
     mp = plotting.plot(
         plotting.FillBetween(

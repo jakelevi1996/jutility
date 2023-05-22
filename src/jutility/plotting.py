@@ -36,19 +36,18 @@ from jutility import util
 
 class Line:
     def __init__(self, x=None, y=None, **kwargs):
-        if y is None:
-            if x is None:
-                raise ValueError("Must specify x and/or y")
+        if (y is None) and (x is not None):
             y = x
             x = None
-        if x is None:
-            x = np.arange(np.array(y).size)
+        if (x is None) and (y is not None):
+            x = np.arange(np.array(y).shape[0])
 
         self._x = x
         self._y = y
         self._kwargs = kwargs
 
     def plot(self, axis):
+        if (self._x is not None) and (self._y is not None):
         axis.plot(self._x, self._y, **self._kwargs)
 
     def has_label(self):

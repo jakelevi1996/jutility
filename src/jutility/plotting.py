@@ -23,7 +23,6 @@ SOFTWARE.
 """
 
 import os
-import textwrap
 import math
 import matplotlib.pyplot as plt
 import matplotlib.lines
@@ -254,11 +253,6 @@ class ColourPicker:
     def __call__(self, colour_ind):
         return self._colours[colour_ind]
 
-def wrap(s, max_len=80, wrap_len=60):
-    if len(s) > max_len:
-        s = textwrap.fill(s, width=wrap_len, break_long_words=False)
-    return s
-
 class AxisProperties:
     def __init__(
         self,
@@ -273,6 +267,7 @@ class AxisProperties:
         axis_off=False,
         grid=True,
         title=None,
+        wrap_title=True,
         colour=None,
     ):
         self._xlabel = xlabel
@@ -286,6 +281,7 @@ class AxisProperties:
         self._axis_off = axis_off
         self._grid = grid
         self._title = title
+        self._wrap_title = wrap_title
         self._colour = colour
 
     def set_title(self, title):
@@ -314,7 +310,9 @@ class AxisProperties:
             for xtl in axis.get_xticklabels():
                 xtl.set(rotation=-45, ha="left")
         if self._title is not None:
-            axis.set_title(wrap(self._title))
+            if self._wrap_title:
+                self._title = util.wrap_string(self._title)
+            axis.set_title(self._title)
         if self._colour is not None:
             axis.set_facecolor(self._colour)
 
@@ -331,9 +329,9 @@ class FigureProperties:
         tight_layout=True,
         colour=None,
         title=None,
-        wrap=True,
         title_font_size=25,
         title_colour=None,
+        wrap_title=True,
         top_space=None,
         layout=None,
     ):
@@ -347,9 +345,9 @@ class FigureProperties:
         self._tight_layout = tight_layout
         self._colour = colour
         self._title = title
-        self._wrap = wrap
         self._title_font_size = title_font_size
         self._title_colour = title_colour
+        self._wrap_title = wrap_title
         self._top_space = top_space
         self._layout = layout
 
@@ -386,8 +384,8 @@ class FigureProperties:
         if self._colour is not None:
             figure.patch.set_facecolor(self._colour)
         if self._title is not None:
-            if self._wrap:
-                self._title = wrap(self._title),
+            if self._wrap_title:
+                self._title = util.wrap_string(self._title)
             figure.suptitle(
                 self._title,
                 fontsize=self._title_font_size,

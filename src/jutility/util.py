@@ -25,6 +25,7 @@ SOFTWARE.
 import os
 import pickle
 import json
+import textwrap
 import traceback
 import datetime
 import time
@@ -364,6 +365,11 @@ def trim_string(s, max_len, suffix="(...)"):
         trim_len = max(max_len - len(suffix), 0)
         s = s[:trim_len] + suffix
 
+    return s
+
+def wrap_string(s, max_len=80, wrap_len=60):
+    if len(s) > max_len:
+        s = textwrap.fill(s, width=wrap_len, break_long_words=False)
     return s
 
 def get_full_path(filename, dir_name=None, for_saving=False, file_ext=None):

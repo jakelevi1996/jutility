@@ -335,3 +335,16 @@ def test_result():
 
     loaded_data = util.Result("result_data.pkl", dir_name=OUTPUT_DIR).load()
     assert loaded_data == [1, 2, 12]
+
+def test_time_format():
+    printer = util.Printer("test_time_format.txt", dir_name=OUTPUT_DIR)
+    rng = util.Seeder().get_rng("test_time_format")
+    for num_hours in [0, 5, 15]:
+        for num_mins in [0, 5, 15]:
+            for num_secs in [0, 5, 15]:
+                t = num_secs + 60 * (num_mins + 60 * num_hours)
+                printer(
+                    util.time_format(t).rjust(11),
+                    util.time_format(t + rng.normal()).rjust(11),
+                    sep=" | ",
+                )

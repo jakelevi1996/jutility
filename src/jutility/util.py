@@ -145,16 +145,13 @@ class Timer:
 
     def print_time_taken(self):
         t = self.time_taken()
+        t_str = time_format(t)
         if self._name is None:
             prefix = "Time taken"
         else:
             prefix = "Time taken for %s" % self._name
 
-        if t > 60:
-            m, s = divmod(t, 60)
-            self._print("%s = %i minutes %.1f seconds" % (prefix, m, s))
-        else:
-            self._print("%s = %.3f s" % (prefix, t))
+        self._print("%s = %s" % (prefix, t_str))
 
     def __enter__(self):
         return
@@ -222,16 +219,7 @@ class TimeColumn(Column):
 
     def get_last(self):
         t = self._data_list[-1]
-        if t < 60:
-            t_str = "%7.4fs" % t
-        else:
-            m, s = divmod(t, 60)
-            if m < 60:
-                t_str = "%2im %5.2fs" % (m, s)
-            else:
-                h, m = divmod(m, 60)
-                t_str = "%2ih %2im %2is" % (h, m, s)
-
+        t_str = time_format(t)
         return t_str.rjust(self._width)
 
 class Table:
@@ -371,6 +359,19 @@ def wrap_string(s, max_len=80, wrap_len=60):
     if len(s) > max_len:
         s = textwrap.fill(s, width=wrap_len, break_long_words=False)
     return s
+
+def time_format(t):
+    if t < 60:
+        t_str = "%7.4fs" % t
+    else:
+        m, s = divmod(t, 60)
+        if m < 60:
+            t_str = "%2im %5.2fs" % (m, s)
+        else:
+            h, m = divmod(m, 60)
+            t_str = "%2ih %2im %2is" % (h, m, s)
+
+    return t_str
 
 def get_full_path(filename, dir_name=None, for_saving=False, file_ext=None):
     if dir_name is None:

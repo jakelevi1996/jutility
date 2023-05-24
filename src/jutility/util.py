@@ -219,7 +219,7 @@ class TimeColumn(Column):
 
     def get_last(self):
         t = self._data_list[-1]
-        t_str = time_format(t)
+        t_str = time_format(t, concise=True)
         return t_str.rjust(self._width)
 
 class Table:
@@ -360,16 +360,24 @@ def wrap_string(s, max_len=80, wrap_len=60):
         s = textwrap.fill(s, width=wrap_len, break_long_words=False)
     return s
 
-def time_format(t):
+def time_format(t, concise=False):
+    if concise:
+        h_str = "h"
+        m_str = "m"
+        s_str = "s"
+    else:
+        h_str = " hours"
+        m_str = " minutes"
+        s_str = " seconds"
     if t < 60:
-        t_str = "%7.4fs" % t
+        t_str = "%7.4f%s" % (t, s_str)
     else:
         m, s = divmod(t, 60)
         if m < 60:
-            t_str = "%2im %5.2fs" % (m, s)
+            t_str = "%2i%s %5.2f%s" % (m, m_str, s, s_str)
         else:
             h, m = divmod(m, 60)
-            t_str = "%2ih %2im %2is" % (h, m, s)
+            t_str = "%2i%s %2i%s %2i%s" % (h, h_str, m, m_str, s, s_str)
 
     return t_str
 

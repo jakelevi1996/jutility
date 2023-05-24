@@ -339,12 +339,13 @@ def test_result():
 def test_time_format():
     printer = util.Printer("test_time_format.txt", dir_name=OUTPUT_DIR)
     rng = util.Seeder().get_rng("test_time_format")
-    for num_hours in [0, 5, 15]:
-        for num_mins in [0, 5, 15]:
-            for num_secs in [0, 5, 15]:
-                t = num_secs + 60 * (num_mins + 60 * num_hours)
-                printer(
-                    util.time_format(t).rjust(11),
-                    util.time_format(t + rng.normal()).rjust(11),
-                    sep=" | ",
-                )
+    for concise in [True, False]:
+        for num_hours in [0, 5, 15]:
+            for num_mins in [0, 5, 15]:
+                for num_secs in [0, 5, 15]:
+                    t = num_secs + 60 * (num_mins + 60 * num_hours)
+                    printer(
+                        util.time_format(t, concise).rjust(30),
+                        util.time_format(t + rng.normal(), concise).rjust(30),
+                        sep=" | ",
+                    )

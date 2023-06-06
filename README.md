@@ -42,8 +42,9 @@ x = np.linspace(-10, 10, 100, dtype=np.float32)
 plotting.plot(
     plotting.Line(x, np.log(1 + np.exp(x)), label="Softplus", c="b"),
     plotting.Line(x, np.maximum(x, 0),      label="ReLU",     c="r", ls="--"),
-    plot_name="Softplus vs ReLU",
     legend=True,
+    plot_name="Softplus vs ReLU",
+    dir_name="images",
 )
 ```
 

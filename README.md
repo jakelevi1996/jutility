@@ -38,6 +38,21 @@ python -m pip install -U jutility
 import numpy as np
 from jutility import plotting
 
+x = np.linspace(-10, 10, 100, dtype=np.float32)
+plotting.plot(
+    plotting.Line(x, np.log(1 + np.exp(x)), label="Softplus", c="b"),
+    plotting.Line(x, np.maximum(x, 0),      label="ReLU",     c="r", ls="--"),
+    plot_name="Softplus vs ReLU",
+    legend=True,
+)
+```
+
+![](Results/Softplus_vs_ReLU.png)
+
+```python
+import numpy as np
+from jutility import plotting
+
 rng = np.random.default_rng(0)
 x = np.linspace(0, 2)
 f = lambda x: x + 0.1 * rng.normal(size=x.shape)

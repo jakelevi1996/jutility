@@ -203,8 +203,8 @@ class NoisyData:
         results_list_list = [self._results_list_dict[x] for x in x_list]
         mean_array = np.array([np.mean(y) for y in results_list_list])
         std_array  = np.array([np.std( y) for y in results_list_list])
-        ucb = mean_array + (n_sigma * std_array),
-        lcb = mean_array - (n_sigma * std_array),
+        ucb = mean_array + (n_sigma * std_array)
+        lcb = mean_array - (n_sigma * std_array)
 
         if results_line_kwargs is None:
             results_line_kwargs = {

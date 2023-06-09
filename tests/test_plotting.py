@@ -271,9 +271,9 @@ def test_gif_add_image_file_frame():
     gif.save(output_name, OUTPUT_DIR, frame_duration_ms=500)
     assert os.path.isfile(gif.filename)
 
-@pytest.mark.parametrize("result_alpha", [0, 0.3])
-def test_noisy_data(result_alpha):
-    rng = util.Seeder().get_rng("test_noisy_data", result_alpha)
+@pytest.mark.parametrize("plot_all_data", [True, False])
+def test_noisy_data(plot_all_data):
+    rng = util.Seeder().get_rng("test_noisy_data", plot_all_data)
     noisy_data_blue = plotting.NoisyData()
     noisy_data_red  = plotting.NoisyData()
     x_list = np.linspace(0, 1)
@@ -288,14 +288,14 @@ def test_noisy_data(result_alpha):
         *noisy_data_blue.get_lines(
             colour="b",
             name="Blue data",
-            result_alpha=result_alpha,
+            plot_all_data=plot_all_data,
         ),
         *noisy_data_red.get_lines(
             colour="r",
             name="Red data",
-            result_alpha=result_alpha,
+            plot_all_data=plot_all_data,
         ),
-        plot_name="test_noisy_data, result_alpha = %s" % result_alpha,
+        plot_name="test_noisy_data, plot_all_data = %s" % plot_all_data,
         dir_name=OUTPUT_DIR,
         axis_properties=plotting.AxisProperties("x", "y", ylim=[-0.2, 1.2]),
         legend=True,

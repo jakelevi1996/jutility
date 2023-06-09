@@ -188,13 +188,25 @@ class NoisyData:
         results_line_kwargs=None,
         mean_line_kwargs=None,
         std_line_kwargs=None,
+        plot_all_data=True,
     ):
-        all_results_pairs = [
-            [x, y]
-            for x, result_list in self._results_list_dict.items()
-            for y in result_list
-        ]
-        all_x, all_y = zip(*all_results_pairs)
+        line_list = []
+        if plot_all_data:
+            all_results_pairs = [
+                [x, y]
+                for x, result_list in self._results_list_dict.items()
+                for y in result_list
+            ]
+            all_x, all_y = zip(*all_results_pairs)
+            if results_line_kwargs is None:
+                results_line_kwargs = {
+                    "color":    colour,
+                    "label":    name,
+                    "alpha":    result_alpha,
+                    "zorder":   20,
+                }
+            results_line = Scatter(all_x, all_y, **results_line_kwargs)
+            line_list.append(results_line)
 
         x_list = [
             x for x in self._results_list_dict.keys()
@@ -206,13 +218,6 @@ class NoisyData:
         ucb = mean_array + (n_sigma * std_array)
         lcb = mean_array - (n_sigma * std_array)
 
-        if results_line_kwargs is None:
-            results_line_kwargs = {
-                "color":    colour,
-                "label":    name,
-                "alpha":    result_alpha,
-                "zorder":   20,
-            }
         if mean_line_kwargs is None:
             mean_line_kwargs = {
                 "color":    colour,
@@ -226,10 +231,11 @@ class NoisyData:
                 "alpha":    0.3,
                 "zorder":   10,
             }
-        results_line = Scatter(all_x, all_y, **results_line_kwargs)
         mean_line = Line(x_list, mean_array, **mean_line_kwargs)
         std_line = FillBetween(x_list, ucb, lcb, **std_line_kwargs)
-        return results_line, mean_line, std_line
+        line_list.append(mean_line)
+        line_list.append(std_line)
+        return line_list
 
 class ColourPicker:
     def __init__(self, num_colours, cyclic=True, cmap_name=None):

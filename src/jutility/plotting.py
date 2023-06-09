@@ -203,6 +203,8 @@ class NoisyData:
         results_list_list = [self._results_list_dict[x] for x in x_list]
         mean_array = np.array([np.mean(y) for y in results_list_list])
         std_array  = np.array([np.std( y) for y in results_list_list])
+        ucb = mean_array + (n_sigma * std_array),
+        lcb = mean_array - (n_sigma * std_array),
 
         if results_line_kwargs is None:
             results_line_kwargs = {
@@ -226,12 +228,7 @@ class NoisyData:
             }
         results_line = Scatter(all_x, all_y, **results_line_kwargs)
         mean_line = Line(x_list, mean_array, **mean_line_kwargs)
-        std_line = FillBetween(
-            x_list,
-            mean_array + (n_sigma * std_array),
-            mean_array - (n_sigma * std_array),
-            **std_line_kwargs,
-        )
+        std_line = FillBetween(x_list, ucb, lcb, **std_line_kwargs)
         return results_line, mean_line, std_line
 
 class ColourPicker:

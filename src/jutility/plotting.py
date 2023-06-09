@@ -206,14 +206,14 @@ class NoisyData:
 
         if results_line_kwargs is None:
             results_line_kwargs = {
-                "c":        colour,
+                "color":    colour,
                 "label":    name,
                 "alpha":    result_alpha,
                 "zorder":   20,
             }
         if mean_line_kwargs is None:
             mean_line_kwargs = {
-                "c":        colour,
+                "color":    colour,
                 "label":    "Mean",
                 "zorder":   30,
             }

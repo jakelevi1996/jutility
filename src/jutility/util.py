@@ -348,7 +348,7 @@ def clean_string(s, allowed_non_alnum_chars="-_.,", replacement="_"):
     s_clean = remove_duplicate_substring(s_clean, replacement)
     return s_clean
 
-def trim_string(s, max_len, suffix="(...)"):
+def trim_string(s, max_len, suffix="_..._"):
     if len(s) > max_len:
         trim_len = max(max_len - len(suffix), 0)
         s = s[:trim_len] + suffix

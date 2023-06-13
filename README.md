@@ -48,7 +48,7 @@ plotting.plot(
 )
 ```
 
-![](Results/Softplus_vs_ReLU.png)
+![](images/Softplus_vs_ReLU.png)
 
 ```python
 import numpy as np

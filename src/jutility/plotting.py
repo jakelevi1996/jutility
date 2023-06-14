@@ -181,7 +181,7 @@ class NoisyData:
 
     def get_lines(
         self,
-        n_sigma=2,
+        n_sigma=1,
         colour="b",
         name="Result",
         result_alpha=0.3,

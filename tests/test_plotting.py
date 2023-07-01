@@ -326,3 +326,23 @@ def test_colourbar():
     )
     mp.save("test_colourbar", OUTPUT_DIR)
     assert os.path.isfile(mp.filename)
+
+def test_quiver():
+    n = 25
+    x = np.linspace(-2, 2, n).reshape(1, n)
+    y = np.linspace(-2, 2, n).reshape(n, 1)
+    dx = y - x
+    dy = x + y
+    mp = plotting.MultiPlot(
+        plotting.Subplot(
+            plotting.Quiver(x, y, dx, dy, zorder=10, normalise=False),
+            axis_properties=plotting.AxisProperties(title="normalise=False")
+        ),
+        plotting.Subplot(
+            plotting.Quiver(x, y, dx, dy, zorder=10, normalise=True),
+            axis_properties=plotting.AxisProperties(title="normalise=True")
+        ),
+        figure_properties=plotting.FigureProperties(figsize=[10, 4])
+    )
+    mp.save(plot_name="test_quiver", dir_name=OUTPUT_DIR)
+    assert os.path.isfile(mp.filename)

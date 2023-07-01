@@ -81,11 +81,19 @@ class HVLine(Line):
             axis.axvline(self._v, **self._kwargs)
 
 class Quiver(Line):
-    def __init__(self, x, y, u, v, **kwargs):
+    def __init__(self, x, y, u, v, normalise=False, tol=1e-5, **kwargs):
         self._x = x
         self._y = y
-        self._u = u
-        self._v = v
+
+        if normalise:
+            dr = np.sqrt(np.square(u) + np.square(v))
+            dr_safe = np.maximum(dr, tol)
+            self._u = u / dr_safe
+            self._v = v / dr_safe
+        else:
+            self._u = u
+            self._v = v
+
         self._kwargs = kwargs
 
     def plot(self, axis):

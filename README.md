@@ -12,6 +12,7 @@ Collection of Python utilities intended to be useful for machine learning resear
   - [Usage examples](#usage-examples)
     - [`plotting`](#plotting)
       - [Making a simple plot](#making-a-simple-plot)
+      - [Vector fields (with optional normalisation)](#vector-fields-with-optional-normalisation)
       - [Shared colour bar](#shared-colour-bar)
     - [`util`](#util)
     - [`sweep`](#sweep)
@@ -71,6 +72,33 @@ plotting.plot(
 ![](images/Simple_plot.png)
 
 *More simple examples coming soon*
+
+#### Vector fields (with optional normalisation)
+
+```python
+import numpy as np
+from jutility import plotting, util
+
+n = 25
+x = np.linspace(-2, 2, n).reshape(1, n)
+y = np.linspace(-2, 2, n).reshape(n, 1)
+dx = y - x
+dy = x + y
+mp = plotting.MultiPlot(
+    plotting.Subplot(
+        plotting.Quiver(x, y, dx, dy, zorder=10, normalise=False),
+        axis_properties=plotting.AxisProperties(title="normalise=False")
+    ),
+    plotting.Subplot(
+        plotting.Quiver(x, y, dx, dy, zorder=10, normalise=True),
+        axis_properties=plotting.AxisProperties(title="normalise=True")
+    ),
+    figure_properties=plotting.FigureProperties(figsize=[10, 4])
+)
+mp.save(plot_name="Vector field", dir_name="images")
+```
+
+![](images/Vector_field.png)
 
 #### Shared colour bar
 

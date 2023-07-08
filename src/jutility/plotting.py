@@ -177,6 +177,13 @@ class ImShow(FillBetween):
     def plot(self, axis):
         axis.imshow(self._c, **self._kwargs)
 
+def confidence_bounds(data_list, n_sigma=1):
+    mean = np.array([np.mean(x) for x in data_list])
+    std  = np.array([np.std( x) for x in data_list])
+    ucb = mean + (n_sigma * std)
+    lcb = mean - (n_sigma * std)
+    return mean, ucb, lcb
+
 class NoisyData:
     def __init__(self):
         self._results_list_dict = dict()
@@ -221,10 +228,7 @@ class NoisyData:
             if len(self._results_list_dict[x]) > 0
         ]
         results_list_list = [self._results_list_dict[x] for x in x_list]
-        mean_array = np.array([np.mean(y) for y in results_list_list])
-        std_array  = np.array([np.std( y) for y in results_list_list])
-        ucb = mean_array + (n_sigma * std_array)
-        lcb = mean_array - (n_sigma * std_array)
+        mean_array, ucb, lcb = confidence_bounds(results_list_list, n_sigma)
 
         if mean_line_kwargs is None:
             mean_line_kwargs = {

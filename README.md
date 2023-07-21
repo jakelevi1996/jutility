@@ -12,6 +12,7 @@ Collection of Python utilities intended to be useful for machine learning resear
   - [Usage examples](#usage-examples)
     - [`plotting`](#plotting)
       - [Making a simple plot](#making-a-simple-plot)
+      - [Multiple lines in a single Line](#multiple-lines-in-a-single-line)
       - [Vector fields (with optional normalisation)](#vector-fields-with-optional-normalisation)
       - [Shared colour bar](#shared-colour-bar)
     - [`util`](#util)
@@ -71,7 +72,29 @@ plotting.plot(
 
 ![](images/Simple_plot.png)
 
-*More simple examples coming soon*
+#### Multiple lines in a single Line
+
+```python
+import numpy as np
+from jutility import plotting, util
+
+n = 100
+batch_size = 20
+rng = np.random.default_rng(0)
+noise = rng.normal(size=[n, batch_size])
+
+x = np.linspace(-1, 4, n).reshape(n, 1)
+y = np.exp(-x) + 0.1 * noise
+
+plotting.plot(
+    plotting.Line(x, y, alpha=0.2,       c="b", zorder=10),
+    plotting.Line(x, np.mean(y, axis=1), c="r", zorder=20),
+    plot_name="Multiple lines in a single Line",
+    dir_name="images",
+)
+```
+
+![](images/Multiple_lines_in_a_single_Line.png)
 
 #### Vector fields (with optional normalisation)
 

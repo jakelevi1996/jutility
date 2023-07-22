@@ -343,13 +343,13 @@ class FigureProperties:
         width_ratios=None,
         height_ratios=None,
         tight_layout=True,
+        constrained_layout=False,
         colour=None,
         title=None,
         title_font_size=25,
         title_colour=None,
         wrap_title=True,
         top_space=None,
-        layout=None,
     ):
         self._num_rows = num_rows
         self._num_cols = num_cols
@@ -358,6 +358,13 @@ class FigureProperties:
         self._sharey = sharey
         self._width_ratios = width_ratios
         self._height_ratios = height_ratios
+
+        if constrained_layout:
+            tight_layout = False
+            self._layout = "constrained"
+        else:
+            self._layout = None
+
         self._tight_layout = tight_layout
         self._colour = colour
         self._title = title
@@ -365,7 +372,6 @@ class FigureProperties:
         self._title_colour = title_colour
         self._wrap_title = wrap_title
         self._top_space = top_space
-        self._layout = layout
 
     def get_figure_and_axes(self, num_subplots):
         if self._num_rows is None:

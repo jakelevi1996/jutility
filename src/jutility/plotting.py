@@ -299,8 +299,9 @@ class AxisProperties:
         self._wrap_title = wrap_title
         self._colour = colour
 
-    def set_title(self, title):
-        self._title = title
+    def set_default_title(self, title):
+        if self._title is None:
+            self._title = title
 
     def apply(self, axis):
         if self._xlabel is not None:
@@ -468,7 +469,7 @@ def plot(
     if axis_properties is None:
         axis_properties = AxisProperties()
     if plot_name is not None:
-        axis_properties.set_title(plot_name)
+        axis_properties.set_default_title(plot_name)
 
     if legend:
         figsize = [10, 6]

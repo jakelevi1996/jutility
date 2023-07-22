@@ -302,7 +302,8 @@ def test_noisy_data(plot_all_data):
     )
     assert os.path.isfile(mp.filename)
 
-def test_colourbar():
+@pytest.mark.parametrize("constrained_layout", [True, False])
+def test_colourbar(constrained_layout):
     rng = util.Seeder().get_rng("test_colourbar")
     z1 = rng.random((100, 200)) + 5
     z2 = rng.random((100, 200)) + 2
@@ -311,6 +312,7 @@ def test_colourbar():
 
     colour_bar = plotting.ColourBar(v_min, v_max)
 
+    plot_name = "test_colourbar, constrained_layout=%s" % constrained_layout
     mp = plotting.MultiPlot(
         plotting.ImShow(c=z1, vmin=v_min, vmax=v_max),
         colour_bar,
@@ -321,10 +323,11 @@ def test_colourbar():
             num_cols=2,
             width_ratios=[1, 0.2],
             tight_layout=False,
-            title="Shared colour bar",
+            constrained_layout=constrained_layout,
+            title=plot_name,
         ),
     )
-    mp.save("test_colourbar", OUTPUT_DIR)
+    mp.save(plot_name, OUTPUT_DIR)
     assert os.path.isfile(mp.filename)
 
 def test_quiver():

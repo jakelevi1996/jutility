@@ -258,15 +258,20 @@ class Column:
 
     def update(self, data, level):
         if (self._callback is not None) and (level >= self._callback_level):
-            data = self._callback()
+            if self._callback_interval.ready():
+                data = self._callback()
+                self._callback_interval.reset()
         self._data_list.append(data)
 
     def get_data(self):
         return self._data_list
 
-    def set_callback(self, callback, level=0):
+    def set_callback(self, callback, level=0, interval=None):
         self._callback = callback
         self._callback_level = level
+        if interval is None:
+            interval = Always()
+        self._callback_interval = interval
         return self
 
 class SilentColumn(Column):

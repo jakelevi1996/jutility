@@ -403,3 +403,31 @@ def test_intervals():
     assert num_ready("c") == int(num_updates / count_interval)
     assert num_ready("t") >= int(t_total / time_interval)
     assert num_ready("t") <= int(t_total / time_interval) + 1
+
+def test_callback_interval():
+    printer = util.Printer("test_callback_interval", dir_name=OUTPUT_DIR)
+    rng = util.Seeder().get_rng("test_callback_interval")
+
+    table = util.Table(
+        util.CountColumn("c"),
+        util.TimeColumn("t"),
+        util.Column("x1", ".3f", width=10).set_callback(
+            lambda: rng.normal(loc=10),
+        ),
+        util.Column("x2", ".3f", width=10).set_callback(
+            lambda: rng.normal(loc=20),
+            interval=util.CountInterval(5),
+        ),
+        util.Column("x3", ".3f", width=10).set_callback(
+            lambda: rng.normal(loc=30),
+            interval=util.CountInterval(10),
+        ),
+        printer=printer,
+    )
+
+    for _ in range(100):
+        table.update()
+
+    assert len(table.get_data("x1")) == 100
+    assert len(table.get_data("x2")) == 20
+    assert len(table.get_data("x3")) == 10

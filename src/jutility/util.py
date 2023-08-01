@@ -219,15 +219,18 @@ class CountInterval(_Interval):
 class TimeInterval(_Interval):
     def __init__(self, num_seconds):
         self._total_count = 0
-        self._num_seconds = num_seconds
+        self._num_seconds_interval = num_seconds
+        self._num_seconds_limit = 0
         self._timer = Timer()
 
     def ready(self):
         self._total_count += 1
-        return self._timer.time_taken() >= self._num_seconds
+        return self._timer.time_taken() >= self._num_seconds_limit
 
     def reset(self):
-        self._timer.reset()
+        t = self._timer.time_taken()
+        while self._num_seconds_limit < t:
+            self._num_seconds_limit += self._num_seconds_interval
 
 class Column:
     def __init__(self, name, value_format=None, title=None, width=None):

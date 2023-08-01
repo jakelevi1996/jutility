@@ -164,8 +164,9 @@ def test_table_json():
 
     table.save_json("test_table_json", OUTPUT_DIR, ["x", "y", "t"])
 
+    full_path = util.get_full_path("test_table_json", OUTPUT_DIR, "json")
     loaded_table = util.Table(printer=printer)
-    loaded_table.load_json("test_table_json.json", OUTPUT_DIR)
+    loaded_table.load_json(full_path)
 
     assert len(loaded_table.get_data("x")) == len(loaded_table.get_data("t"))
     assert len(loaded_table.get_data("x")) > len(loaded_table.get_data("y"))
@@ -333,7 +334,8 @@ def test_result():
         data[2] *= 4
         raise ValueError()
 
-    loaded_data = util.Result("result_data.pkl", dir_name=OUTPUT_DIR).load()
+    full_path = util.get_full_path("result_data", OUTPUT_DIR, "pkl")
+    loaded_data = util.Result().load(full_path)
     assert loaded_data == [1, 2, 12]
 
 def test_time_format():

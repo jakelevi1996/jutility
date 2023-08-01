@@ -20,7 +20,7 @@ def test_table():
         util.Column("train_loss", ".5f"),
         util.Column("test_loss", ".5f"),
         util.TimeColumn("t"),
-        print_every=100,
+        print_interval=util.CountInterval(100),
         printer=printer,
     )
     num_updates = 2000
@@ -100,11 +100,11 @@ def test_get_data():
     assert len(a) == len(table)
     assert len(c) == len(table)
 
-@pytest.mark.parametrize("print_every_level", [0, 1, 2])
-def test_table_callback_level(print_every_level):
+@pytest.mark.parametrize("print_level", [0, 1, 2])
+def test_table_callback_level(print_level):
     timer = util.Timer()
     printer = util.Printer(
-        "test_table_callback_level, print level %i" % print_every_level,
+        "test_table_callback_level, print level %i" % print_level,
         OUTPUT_DIR,
     )
     table = util.Table(
@@ -122,7 +122,7 @@ def test_table_callback_level(print_every_level):
             level=2,
         ),
         printer=printer,
-        print_every_level=print_every_level,
+        print_level=print_level,
     )
     count = 0
     for i in range(5):

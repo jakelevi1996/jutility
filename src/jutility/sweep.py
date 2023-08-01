@@ -76,8 +76,8 @@ class ParamSweeper:
         n_repeats=5,
         n_sigma=1,
         higher_is_better=True,
-        print_every=1,
-        print_every_level=0,
+        print_interval=None,
+        print_level=0,
         printer=None,
     ):
         self._experiment = experiment
@@ -104,8 +104,8 @@ class ParamSweeper:
             util.Column("mean_result",      ".3f", width=10),
             util.Column("new_best_score",   ".3f", width=10),
             *parameter_columns,
-            print_every=print_every,
-            print_every_level=print_every_level,
+            print_interval=print_interval,
+            print_level=print_level,
             printer=printer,
         )
 

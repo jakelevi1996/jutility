@@ -33,7 +33,7 @@ def test_sweep(higher_is_better):
         n_repeats=100,
         n_sigma=2.5,
         higher_is_better=higher_is_better,
-        print_every_level=1,
+        print_level=1,
         printer=printer,
     )
     optimal_param_dict = sweeper.find_best_parameters()
@@ -69,7 +69,6 @@ def test_sweep_errors():
         n_repeats=num_repeats,
         n_sigma=2.5,
         higher_is_better=True,
-        print_every=1,
         printer=printer,
     )
     sweeper.find_best_parameters()
@@ -138,7 +137,7 @@ def test_sweep_categorical_and_log_range_parameters():
         n_repeats=100,
         n_sigma=2.5,
         higher_is_better=True,
-        print_every_level=1,
+        print_level=1,
         printer=printer,
     )
     optimal_param_dict = sweeper.find_best_parameters()
@@ -190,7 +189,7 @@ def test_multiple_sweeps():
         sweep.Parameter("x", 0, list(range(11))),
         sweep.Parameter("y", 0, list(range(11))),
         sweep.Parameter("z", 0, list(range(11))),
-        print_every_level=1,
+        print_level=1,
         printer=printer
     )
     optimal_param_dict = sweeper.find_best_parameters()
@@ -244,7 +243,7 @@ def test_default_optimum_not_in_range():
         n_repeats=100,
         n_sigma=2.5,
         higher_is_better=False,
-        print_every_level=1,
+        print_level=1,
         printer=printer,
     )
     optimal_param_dict = sweeper.find_best_parameters()

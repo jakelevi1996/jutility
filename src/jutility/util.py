@@ -35,7 +35,7 @@ CURRENT_DIR = os.path.abspath(os.getcwd())
 RESULTS_DIR = os.path.join(CURRENT_DIR, "Results")
 
 class Result:
-    def __init__(self, filename, dir_name=None, data=None):
+    def __init__(self, filename=None, dir_name=None, data=None):
         self._filename = filename
         self._dir_name = dir_name
         self._data = data
@@ -49,8 +49,8 @@ class Result:
     def save(self):
         save_pickle(self._data, self._filename, self._dir_name)
 
-    def load(self):
-        self._data = load_pickle(self._filename, self._dir_name)
+    def load(self, full_path):
+        self._data = load_pickle(full_path)
         return self._data
 
 class ResultSavingContext:
@@ -91,10 +91,17 @@ class Printer:
         self,
         filename=None,
         dir_name=None,
+        file_ext="txt",
+        display_path=True,
         print_to_console=True,
     ):
         if filename is not None:
-            full_path = get_full_path(filename, dir_name, for_saving=True)
+            full_path = get_full_path(
+                filename,
+                dir_name,
+                file_ext,
+                display_path,
+            )
             self._file = open(full_path, "w")
         else:
             self._file = None
@@ -297,12 +304,6 @@ class Table:
         return data_table
 
     def save_json(self, filename, dir_name=None, name_list=None):
-        full_path = get_full_path(
-            filename,
-            dir_name,
-            for_saving=True,
-            file_ext="json",
-        )
         if name_list is None:
             name_list = [column.name for column in self._column_list]
         data_dict = {
@@ -315,8 +316,8 @@ class Table:
         ]
         save_json(data_list, filename, dir_name)
 
-    def load_json(self, filename, dir_name=None):
-        data_list = load_json(filename, dir_name)
+    def load_json(self, full_path):
+        data_list = load_json(full_path)
         name_list = set(name for row in data_list for name in row.keys())
         for name in name_list:
             self.add_column(Column(name))
@@ -381,60 +382,53 @@ def time_format(t, concise=False):
 
     return t_str
 
-def get_full_path(filename, dir_name=None, for_saving=False, file_ext=None):
+def get_full_path(
+    filename,
+    dir_name=None,
+    file_ext=None,
+    verbose=True,
+    for_saving=True,
+):
     if dir_name is None:
         dir_name = RESULTS_DIR
+    if not os.path.isdir(dir_name):
+        os.makedirs(dir_name)
 
-    if for_saving:
-        if not os.path.isdir(dir_name):
-            os.makedirs(dir_name)
-
-        filename = clean_string(filename)
-        filename = trim_string(filename, 240 - len(os.path.abspath(dir_name)))
+    filename = clean_string(filename)
+    filename = trim_string(filename, 240 - len(os.path.abspath(dir_name)))
 
     if file_ext is not None:
         filename = "%s.%s" % (filename, file_ext)
 
     full_path = os.path.join(dir_name, filename)
+
+    if verbose:
+        action_str = "Saving in" if for_saving else "Loading from"
+        print("%s \"%s\"" % (action_str, full_path))
+
     return full_path
 
 def save_pickle(data, filename, dir_name=None, verbose=True):
-    full_path = get_full_path(
-        filename,
-        dir_name,
-        for_saving=True,
-        file_ext="pkl",
-    )
-    if verbose:
-        print("Saving pickle in \"%s\"" % full_path)
+    full_path = get_full_path(filename, dir_name, "pkl", verbose)
     with open(full_path, "wb") as f:
         pickle.dump(data, f)
 
-def load_pickle(filename, dir_name=None, verbose=False):
-    full_path = get_full_path(filename, dir_name)
-    if verbose:
-        print("Loading pickle from \"%s\"" % full_path)
+    return full_path
+
+def load_pickle(full_path):
     with open(full_path, "rb") as f:
         data = pickle.load(f)
 
     return data
 
 def save_json(data, filename, dir_name=None, verbose=True):
-    full_path = get_full_path(
-        filename,
-        dir_name,
-        for_saving=True,
-        file_ext="json",
-    )
-    if verbose:
-        print("Saving JSON in \"%s\"" % full_path)
+    full_path = get_full_path(filename, dir_name, "json", verbose)
     with open(full_path, "w") as f:
         json.dump(data, f)
 
-def load_json(filename, dir_name=None, verbose=False):
-    full_path = get_full_path(filename, dir_name)
-    if verbose:
-        print("Loading JSON from \"%s\"" % full_path)
+    return full_path
+
+def load_json(full_path):
     with open(full_path, "r") as f:
         data = json.load(f)
 

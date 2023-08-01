@@ -530,12 +530,9 @@ class MultiPlot:
         self.filename = util.get_full_path(
             plot_name,
             dir_name,
-            for_saving=True,
             file_ext=file_ext,
+            verbose=verbose,
         )
-
-        if verbose:
-            print("Saving image in \"%s\"" % self.filename)
 
         self._fig.savefig(self.filename)
 
@@ -599,15 +596,12 @@ class Gif:
         self.filename = util.get_full_path(
             output_name,
             dir_name,
-            for_saving=True,
             file_ext="gif",
+            verbose=verbose,
         )
 
         if loop_forever:
             n_loops = 0
-
-        if verbose:
-            print("Saving GIF in \"%s\"" % self.filename)
 
         self._frame_list[0].save(
             self.filename,

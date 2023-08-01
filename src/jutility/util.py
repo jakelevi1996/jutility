@@ -153,21 +153,18 @@ class Timer:
         t1 = time.perf_counter()
         return t1 - self._t0
 
-    def print_time_taken(self):
-        t = self.time_taken()
-        t_str = time_format(t)
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        self.time_measured = self.time_taken()
+        t_str = time_format(self.time_measured)
         if self._name is None:
             prefix = "Time taken"
         else:
             prefix = "Time taken for %s" % self._name
 
         self._print("%s = %s" % (prefix, t_str))
-
-    def __enter__(self):
-        return
-
-    def __exit__(self, *args):
-        self.print_time_taken()
 
 class Counter:
     def __init__(self, init_count=0):

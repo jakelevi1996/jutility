@@ -13,7 +13,7 @@ def test_sweep(higher_is_better):
     else:
         output_dir = os.path.join(OUTPUT_DIR, "lower_is_better")
 
-    printer = util.Printer("Console_output.txt", output_dir)
+    printer = util.Printer("Console_output", output_dir)
     target = [2, 5, 7]
     rng = util.Seeder().get_rng("test_sweep", higher_is_better)
 
@@ -45,7 +45,7 @@ def test_sweep(higher_is_better):
 
 def test_sweep_errors():
     output_dir = os.path.join(OUTPUT_DIR, "test_sweep_errors")
-    printer = util.Printer("Console_output.txt", output_dir)
+    printer = util.Printer("Console_output", output_dir)
     rng = util.Seeder().get_rng("test_sweep_errors")
     target = [2, 5, 7]
     num_repeats = 20
@@ -114,7 +114,7 @@ def test_sweep_categorical_and_log_range_parameters():
         OUTPUT_DIR,
         "test_sweep_categorical_and_log_range_parameters",
     )
-    printer = util.Printer("Console_output.txt", output_dir)
+    printer = util.Printer("Console_output", output_dir)
     rng = util.Seeder().get_rng(output_dir)
     categories = ["apple", "orange", "pear"]
 
@@ -153,7 +153,7 @@ def test_sweep_categorical_and_log_range_parameters():
 
 def test_multiple_sweeps():
     output_dir = os.path.join(OUTPUT_DIR, "test_multiple_sweeps")
-    printer = util.Printer("Console_output.txt", output_dir)
+    printer = util.Printer("Console_output", output_dir)
 
     class MultiSweep(sweep.Experiment):
         def __init__(self, target_list, printer):
@@ -227,7 +227,7 @@ def test_multiple_sweeps():
 def test_default_optimum_not_in_range():
     output_dir = os.path.join(OUTPUT_DIR, "test_default_optimum_not_in_range")
 
-    printer = util.Printer("Console_output.txt", output_dir)
+    printer = util.Printer("Console_output", output_dir)
     target = 0
     rng = util.Seeder().get_rng("test_default_optimum_not_in_range")
 

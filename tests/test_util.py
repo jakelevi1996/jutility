@@ -13,7 +13,7 @@ def test_counter():
     assert count_list == list(range(num_counts))
 
 def test_table():
-    printer = util.Printer("test_table.txt", OUTPUT_DIR)
+    printer = util.Printer("test_table", OUTPUT_DIR)
     table = util.Table(
         util.Column("epoch", width=8),
         util.Column("train_loss", ".5f"),
@@ -41,7 +41,7 @@ def test_table():
     assert len(set(table.get_data("t"))) == num_updates
 
 def test_column_width():
-    printer = util.Printer("test_column_width.txt", OUTPUT_DIR)
+    printer = util.Printer("test_column_width", OUTPUT_DIR)
     table = util.Table(
         util.Column("title_longer_than_width", width=3),
         util.Column("width_longer_than_title", width=30),
@@ -50,7 +50,7 @@ def test_column_width():
     table.update(title_longer_than_width=100, width_longer_than_title=200)
 
 def test_get_data():
-    printer = util.Printer("test_get_data.txt", OUTPUT_DIR)
+    printer = util.Printer("test_get_data", OUTPUT_DIR)
     table = util.Table(
         util.Column("a", width=5),
         util.Column("b", width=5),
@@ -103,7 +103,7 @@ def test_get_data():
 def test_table_callback_level(print_every_level):
     timer = util.Timer()
     printer = util.Printer(
-        "test_table_callback_level, print level %i.txt" % print_every_level,
+        "test_table_callback_level, print level %i" % print_every_level,
         OUTPUT_DIR,
     )
     table = util.Table(
@@ -141,7 +141,7 @@ def test_table_callback_level(print_every_level):
     assert np.all(c2_epoch_array == 25 * np.arange(5))
 
 def test_table_json():
-    printer = util.Printer("test_table_json.txt", OUTPUT_DIR)
+    printer = util.Printer("test_table_json", OUTPUT_DIR)
     rng = util.Seeder().get_rng("test_table_json")
     table = util.Table(
         util.Column("x", "i",   width=8),
@@ -180,7 +180,7 @@ def test_table_json():
     printer(loaded_table.get_data("x", "y", "t"))
 
 def test_silent_column():
-    printer = util.Printer("test_silent_column.txt", OUTPUT_DIR)
+    printer = util.Printer("test_silent_column", OUTPUT_DIR)
     w = np.linspace(2, 3, 10)
     table = util.Table(
         util.Column("epoch", width=8),
@@ -220,7 +220,7 @@ def test_silent_column():
         assert len(set(tuple_list)) == len(tuple_list)
 
 def test_trim_string():
-    printer = util.Printer("test_trim_string.txt", OUTPUT_DIR)
+    printer = util.Printer("test_trim_string", OUTPUT_DIR)
     printer(util.trim_string("12345678", max_len=10))
     printer(util.trim_string("12345678", max_len=8))
     printer(util.trim_string("12345678", max_len=7))
@@ -233,7 +233,7 @@ def test_trim_string():
 
 def test_exception_context():
     printer = util.Printer(
-        filename="test_exception_context.txt",
+        filename="test_exception_context",
         dir_name=OUTPUT_DIR,
     )
     printer("About to enter ExceptionContext...")
@@ -252,7 +252,7 @@ def test_exception_context():
 
 def test_printer():
     printer = util.Printer(
-        filename="test_printer.txt",
+        filename="test_printer",
         dir_name=OUTPUT_DIR,
         print_to_console=False,
     )
@@ -289,7 +289,7 @@ def test_seeder():
     num_unique_seeds = len(set(seed_list))
     assert num_unique_seeds == num_seeds
 
-    printer = util.Printer("test_seeder.txt", OUTPUT_DIR)
+    printer = util.Printer("test_seeder", OUTPUT_DIR)
     printer("seed_list = %s" % seed_list)
 
     x1 = util.Seeder().get_rng("test_seeder").normal(size=10)
@@ -339,7 +339,7 @@ def test_result():
     assert loaded_data == [1, 2, 12]
 
 def test_time_format():
-    printer = util.Printer("test_time_format.txt", dir_name=OUTPUT_DIR)
+    printer = util.Printer("test_time_format", dir_name=OUTPUT_DIR)
     rng = util.Seeder().get_rng("test_time_format")
     for concise in [True, False]:
         for num_hours in [0, 5, 15]:

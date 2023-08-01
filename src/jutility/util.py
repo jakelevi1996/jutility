@@ -309,21 +309,22 @@ class Table:
     def __init__(
         self,
         *columns,
-        print_every=1,
-        print_every_level=0,
+        print_interval=None,
+        print_level=0,
         printer=None,
     ):
         self._column_list = []
         self._column_dict = dict()
         for column in columns:
             self.add_column(column)
-        self._print_every = print_every
-        self._print_every_level = print_every_level
+        if print_interval is None:
+            print_interval = Always()
+        self._print_interval = print_interval
+        self._print_level = print_level
         if printer is None:
             printer = Printer()
         self._print = printer
         self._num_updates = 0
-        self._print_counter = print_every
         if len(columns) > 0:
             self.print_headings()
 
@@ -340,15 +341,14 @@ class Table:
         for name, column in self._column_dict.items():
             column.update(kwargs.get(name), level)
 
-        if level > self._print_every_level:
+        if level > self._print_level:
             self.print_last()
-            self._print_counter = self._print_every
+            self._print_interval.init()
 
-        if level == self._print_every_level:
-            if self._print_counter >= self._print_every:
+        if level == self._print_level:
+            if self._print_interval.ready():
                 self.print_last()
-                self._print_counter = 0
-            self._print_counter += 1
+                self._print_interval.reset()
 
         self._num_updates += 1
 
@@ -393,15 +393,16 @@ class Table:
         save_json(data_list, filename, dir_name)
 
     def load_json(self, full_path):
+        old_print_interval = self._print_interval
+        self._print_interval = Never()
         data_list = load_json(full_path)
         name_list = set(name for row in data_list for name in row.keys())
         for name in name_list:
             self.add_column(Column(name))
         for row in data_list:
-            self._print_counter = 0
             self.update(**row)
 
-        self._print_counter = self._print_every
+        self._print_interval = old_print_interval
         return self
 
     def __len__(self):

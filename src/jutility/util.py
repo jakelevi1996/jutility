@@ -186,6 +186,9 @@ class _Interval:
     def reset(self):
         return
 
+    def init(self):
+        return
+
     def get_total_count(self):
         return self._total_count
 
@@ -203,7 +206,7 @@ class CountInterval(_Interval):
     def __init__(self, max_count):
         self._total_count = 0
         self._max_count = max_count
-        self._count = max_count
+        self.init()
 
     def ready(self):
         self._total_count += 1
@@ -212,6 +215,9 @@ class CountInterval(_Interval):
 
     def reset(self):
         self._count = 0
+
+    def init(self):
+        self._count = self._max_count
 
 class TimeInterval(_Interval):
     def __init__(self, num_seconds):

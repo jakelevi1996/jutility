@@ -144,6 +144,9 @@ class Timer:
         if printer is None:
             printer = Printer()
         self._print = printer
+        self.reset()
+
+    def reset(self):
         self._t0 = time.perf_counter()
 
     def time_taken(self):
@@ -174,6 +177,57 @@ class Counter:
         count = self._count
         self._count += 1
         return count
+
+class _Interval:
+    def __init__(self):
+        self._total_count = 0
+
+    def ready(self):
+        self._total_count += 1
+        raise NotImplementedError()
+
+    def reset(self):
+        return
+
+    def get_total_count(self):
+        return self._total_count
+
+class Always(_Interval):
+    def ready(self):
+        self._total_count += 1
+        return True
+
+class Never(_Interval):
+    def ready(self):
+        self._total_count += 1
+        return False
+
+class CountInterval(_Interval):
+    def __init__(self, max_count):
+        self._total_count = 0
+        self._max_count = max_count
+        self._count = max_count
+
+    def ready(self):
+        self._total_count += 1
+        self._count += 1
+        return self._count >= self._max_count
+
+    def reset(self):
+        self._count = 0
+
+class TimeInterval(_Interval):
+    def __init__(self, num_seconds):
+        self._total_count = 0
+        self._num_seconds = num_seconds
+        self._timer = Timer()
+
+    def ready(self):
+        self._total_count += 1
+        return self._timer.time_taken() >= self._num_seconds
+
+    def reset(self):
+        self._timer.reset()
 
 class Column:
     def __init__(self, name, value_format=None, title=None, width=None):

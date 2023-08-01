@@ -286,6 +286,22 @@ class TimeColumn(Column):
         t_str = time_format(t, concise=True)
         return t_str.rjust(self._width)
 
+class CountColumn(Column):
+    def __init__(self, name, width=5):
+        self.name = name
+        self.title = "Count".ljust(width)
+        self._width = width
+        self._data_list = []
+        self._count = 0
+
+    def update(self, data, level):
+        self._data_list.append(self._count)
+        self._count += 1
+
+    def get_last(self):
+        count = self._data_list[-1]
+        return str(count).rjust(self._width)
+
 class Table:
     def __init__(
         self,

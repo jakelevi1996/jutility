@@ -361,3 +361,45 @@ def test_timer_context():
         time.sleep(sleep_interval)
 
     assert t.time_measured >= sleep_interval
+
+def test_intervals():
+    printer = util.Printer("test_intervals", dir_name=OUTPUT_DIR)
+
+    num_updates = 50
+    count_interval = 5
+    time_interval = 0.1
+    sleep_interval = 0.01
+
+    a = util.Always()
+    n = util.Never()
+    c = util.CountInterval(count_interval)
+    t = util.TimeInterval(time_interval)
+
+    table = util.Table(
+        util.CountColumn("i"),
+        util.TimeColumn("tc"),
+        util.Column("c", width=5),
+        util.Column("t", width=5),
+        util.Column("a", width=5),
+        util.Column("n", width=5),
+        printer=printer,
+    )
+    for i in range(num_updates):
+        c_ready = c.ready()
+        t_ready = t.ready()
+        table.update(a=a.ready(), n=n.ready(), c=c_ready, t=t_ready)
+        if c_ready:
+            c.reset()
+        if t_ready:
+            t.reset()
+        time.sleep(sleep_interval)
+
+    t_data = table.get_data("tc")
+    t_total = t_data[-1] - t_data[0]
+    num_ready = lambda s: table.get_data(s).count(True)
+
+    assert num_ready("a") == num_updates
+    assert num_ready("n") == 0
+    assert num_ready("c") == int(num_updates / count_interval)
+    assert num_ready("t") >= int(t_total / time_interval)
+    assert num_ready("t") <= int(t_total / time_interval) + 1

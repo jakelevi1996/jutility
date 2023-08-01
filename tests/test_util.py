@@ -1,4 +1,5 @@
 import os
+import time
 import numpy as np
 import pytest
 from jutility import util
@@ -351,3 +352,12 @@ def test_time_format():
                         util.time_format(t + rng.normal(), concise).rjust(30),
                         sep=" | ",
                     )
+
+def test_timer_context():
+    printer = util.Printer("test_timer", dir_name=OUTPUT_DIR)
+    sleep_interval = 0.1
+
+    with util.Timer("sleep", printer) as t:
+        time.sleep(sleep_interval)
+
+    assert t.time_measured >= sleep_interval

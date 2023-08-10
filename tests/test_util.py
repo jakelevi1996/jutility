@@ -431,3 +431,30 @@ def test_callback_interval():
     assert len(table.get_data("x1")) == 100
     assert len(table.get_data("x2")) == 20
     assert len(table.get_data("x3")) == 10
+
+def test_check_type():
+    printer = util.Printer("test_check_type", dir_name=OUTPUT_DIR)
+
+    i = 7
+    f = 1.3
+    s = "Hello, world"
+
+    util.check_type(i, int)
+    util.check_type(f, float)
+    util.check_type(s, str)
+
+    for instance, t, name in [
+        [i, float,  "i"],
+        [i, str,    "i"],
+        [f, int,    "f"],
+        [f, str,    "f"],
+        [s, int,    "s"],
+        [s, float,  "s"],
+    ]:
+        with pytest.raises(TypeError):
+            with util.ExceptionContext(False, printer):
+                util.check_type(instance, t)
+
+        with pytest.raises(TypeError):
+            with util.ExceptionContext(False, printer):
+                util.check_type(instance, t, name)

@@ -531,3 +531,12 @@ def numpy_set_print_options(
         suppress=suppress,
         threshold=threshold,
     )
+
+def check_type(instance, expected_type, name=None):
+    if not isinstance(instance, expected_type):
+        prefix = "Received" if (name is None) else ("\"%s\" has" % name)
+        error_msg = (
+            "%s type \"%s\", expected instance of \"%s\""
+            % (prefix, type(instance).__name__, expected_type.__name__)
+        )
+        raise TypeError(error_msg)

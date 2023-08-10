@@ -442,6 +442,9 @@ def test_check_type():
     util.check_type(i, int)
     util.check_type(f, float)
     util.check_type(s, str)
+    util.check_type(i, int,     "i")
+    util.check_type(f, float,   "f")
+    util.check_type(s, str,     "s")
 
     for instance, t, name in [
         [i, float,  "i"],

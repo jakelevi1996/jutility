@@ -519,10 +519,15 @@ def load_json(full_path):
 def is_numeric(x):
     return any(isinstance(x, t) for t in [int, float, np.number])
 
-def numpy_set_print_options():
+def numpy_set_print_options(
+    precision=3,
+    linewidth=10000,
+    suppress=True,
+    threshold=10000,
+):
     np.set_printoptions(
-        precision=3,
-        linewidth=10000,
-        suppress=True,
-        threshold=10000,
+        precision=precision,
+        linewidth=linewidth,
+        suppress=suppress,
+        threshold=threshold,
     )

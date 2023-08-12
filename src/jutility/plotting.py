@@ -268,6 +268,17 @@ class ColourPicker:
     def __call__(self, colour_ind):
         return self._colours[colour_ind]
 
+    def colour_name(self, colour_ind):
+        return "c%i" % colour_ind
+
+    def define_colours(self):
+        definition_list = [
+            "\\definecolor{%s}{rgb}{%f,%f,%f}"
+            % (self.colour_name(i), c[0], c[1], c[2])
+            for i, c in enumerate(self._colours)
+        ]
+        return definition_list
+
 class AxisProperties:
     def __init__(
         self,

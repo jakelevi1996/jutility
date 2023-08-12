@@ -34,37 +34,29 @@ import numpy as np
 CURRENT_DIR = os.path.abspath(os.getcwd())
 RESULTS_DIR = os.path.join(CURRENT_DIR, "Results")
 
-class Result:
-    def __init__(self, filename=None, dir_name=None, data=None):
-        self._filename = filename
-        self._dir_name = dir_name
-        self._data = data
-
-    def get_data(self):
-        return self._data
-
-    def get_context(self, save=True, suppress_exceptions=False):
-        return ResultSavingContext(self, save, suppress_exceptions)
-
-    def save(self):
-        save_pickle(self._data, self._filename, self._dir_name)
-
-    def load(self, full_path):
-        self._data = load_pickle(full_path)
-        return self._data
-
-class ResultSavingContext:
-    def __init__(self, result, save, suppress_exceptions):
-        self._result = result
-        self._save = save
-        self._suppress_exceptions = suppress_exceptions
+class CallbackContext:
+    def __init__(
+        self,
+        enter_callback=None,
+        exit_callback=None,
+        enter_return=None,
+        suppress_exceptions=False,
+    ):
+        self._enter_callback        = enter_callback
+        self._exit_callback         = exit_callback
+        self._enter_return          = enter_return
+        self._suppress_exceptions   = suppress_exceptions
 
     def __enter__(self):
-        return self._result
+        if self._enter_callback is not None:
+            self._enter_callback()
+
+        return self._enter_return
 
     def __exit__(self, *args):
-        if self._save:
-            self._result.save()
+        if self._exit_callback is not None:
+            self._exit_callback()
+
         if self._suppress_exceptions:
             return True
 

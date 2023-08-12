@@ -328,16 +328,24 @@ def test_is_numeric():
     assert not util.is_numeric(util)
     assert not util.is_numeric(util.is_numeric)
 
-def test_result():
+@pytest.mark.parametrize("raise_error", [True, False])
+def test_callbackcontext(raise_error):
     data = [1, 2, 3]
-    result = util.Result("result_data", dir_name=OUTPUT_DIR, data=data)
-    with result.get_context(save=True, suppress_exceptions=True):
+    exit_callback = lambda: util.save_pickle(data, "result_data", OUTPUT_DIR)
+
+    with util.CallbackContext(
+        exit_callback=exit_callback,
+        suppress_exceptions=True,
+    ):
         data[2] *= 4
-        raise ValueError()
+        if raise_error:
+            raise ValueError()
 
     full_path = util.get_full_path("result_data", OUTPUT_DIR, "pkl")
-    loaded_data = util.Result().load(full_path)
+    loaded_data = util.load_pickle(full_path)
     assert loaded_data == [1, 2, 12]
+
+    os.remove(full_path)
 
 def test_time_format():
     printer = util.Printer("test_time_format", dir_name=OUTPUT_DIR)

@@ -101,9 +101,6 @@ class Printer:
         self._print_to_console = print_to_console
 
     def __call__(self, *args, **kwargs):
-        self.print(*args, **kwargs)
-
-    def print(self, *args, **kwargs):
         if self._print_to_console:
             print(*args, **kwargs)
         if self._file is not None:

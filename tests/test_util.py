@@ -257,7 +257,6 @@ def test_printer():
         dir_name=OUTPUT_DIR,
         print_to_console=False,
     )
-    printer.print("Testing print method")
     printer("Testing __call__ method")
     printer("Testing close method")
     printer.close()

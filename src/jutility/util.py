@@ -444,17 +444,18 @@ def time_format(t, concise=False):
         h_str = " hours"
         m_str = " minutes"
         s_str = " seconds"
-    if t < 60:
-        t_str = "%7.4f%s" % (t, s_str)
-    else:
-        m, s = divmod(t, 60)
-        if m < 60:
-            t_str = "%2i%s %5.2f%s" % (m, m_str, s, s_str)
-        else:
-            h, m = divmod(m, 60)
-            t_str = "%2i%s %2i%s %2i%s" % (h, h_str, m, m_str, s, s_str)
 
-    return t_str
+    if t < 60:
+        return "%7.4f%s" % (t, s_str)
+
+    m, s = divmod(t, 60)
+
+    if m < 60:
+        return "%2i%s %5.2f%s" % (m, m_str, s, s_str)
+
+    h, m = divmod(m, 60)
+
+    return "%2i%s %2i%s %2i%s" % (h, h_str, m, m_str, s, s_str)
 
 def get_full_path(
     filename,

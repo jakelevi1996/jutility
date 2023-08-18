@@ -528,9 +528,20 @@ def log_range(x_lo, x_hi, num_x=50):
 
 def check_type(instance, expected_type, name=None):
     if not isinstance(instance, expected_type):
-        prefix = "Received" if (name is None) else ("\"%s\" has" % name)
+        name_str = ("`%s` = " % name) if (name is not None) else ""
+        exp_type_name = expected_type.__name__
+        inst_type_name = type(instance).__name__
         error_msg = (
-            "%s type \"%s\", expected instance of \"%s\""
-            % (prefix, type(instance).__name__, expected_type.__name__)
+            "Expected %sinstance of `%s`, but received %sinstance of `%s`"
+            % (name_str, exp_type_name, name_str, inst_type_name)
         )
         raise TypeError(error_msg)
+
+def check_equal(value, expected_value, name=None):
+    if value != expected_value:
+        name_str = ("%s == " % name) if (name is not None) else ""
+        error_msg = (
+            "Expected `%s%s`, but received `%s%s`"
+            % (name_str, expected_value, name_str, value)
+        )
+        raise RuntimeError(error_msg)

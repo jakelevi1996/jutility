@@ -502,3 +502,33 @@ def test_check_type():
         with pytest.raises(TypeError):
             with util.ExceptionContext(False, printer):
                 util.check_type(instance, t, name)
+
+def test_check_equal():
+    printer = util.Printer("test_check_equal", dir_name=OUTPUT_DIR)
+
+    i = 7
+    f1 = 7.0
+    f2 = 7.1
+    s = "Hello, world"
+
+    util.check_equal(i, i)
+    util.check_equal(i, f1)
+    util.check_equal(f1, f1)
+    util.check_equal(f2, f2)
+    util.check_equal(s, s)
+
+    for value, expected_value, name in [
+        [f2,    i,      "i"],
+        [s,     i,      "i"],
+        [i,     f2,     "f2"],
+        [s,     f2,     "f2"],
+        [i,     s,      "s"],
+        [f2,    s,      "s"],
+    ]:
+        with pytest.raises(RuntimeError):
+            with util.ExceptionContext(False, printer):
+                util.check_equal(value, expected_value)
+
+        with pytest.raises(RuntimeError):
+            with util.ExceptionContext(False, printer):
+                util.check_equal(value, expected_value, name)

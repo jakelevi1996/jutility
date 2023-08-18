@@ -522,6 +522,9 @@ def numpy_set_print_options(
         threshold=threshold,
     )
 
+def log_range(x_lo, x_hi, num_x=50):
+    return np.exp(np.linspace(*np.log([x_lo, x_hi]), num_x))
+
 def check_type(instance, expected_type, name=None):
     if not isinstance(instance, expected_type):
         prefix = "Received" if (name is None) else ("\"%s\" has" % name)

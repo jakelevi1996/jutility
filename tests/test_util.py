@@ -2,7 +2,7 @@ import os
 import time
 import numpy as np
 import pytest
-from jutility import util
+from jutility import util, plotting
 import tests.util
 
 OUTPUT_DIR = tests.util.get_output_dir("test_util")
@@ -438,6 +438,40 @@ def test_callback_interval():
     assert len(table.get_data("x1")) == 100
     assert len(table.get_data("x2")) == 20
     assert len(table.get_data("x3")) == 10
+
+def test_log_range():
+    printer = util.Printer("test_log_range", dir_name=OUTPUT_DIR)
+
+    n = 27
+    x = util.log_range(0.1, 10, n)
+    y = util.log_range(3, 2789, n)
+    z = np.linspace(3, 2789, n)
+
+    printer(x, y, z, sep="\n")
+
+    lines = [
+        plotting.Line(x, y, c="b", marker="o"),
+        plotting.Line(x, z, c="r", marker="o"),
+    ]
+    mp = plotting.MultiPlot(
+        plotting.Subplot(*lines),
+        plotting.Subplot(
+            *lines,
+            axis_properties=plotting.AxisProperties(log_xscale=True),
+        ),
+        plotting.Subplot(
+            *lines,
+            axis_properties=plotting.AxisProperties(log_yscale=True),
+        ),
+        plotting.Subplot(
+            *lines,
+            axis_properties=plotting.AxisProperties(
+                log_xscale=True,
+                log_yscale=True,
+            ),
+        ),
+    )
+    mp.save("test_log_range", dir_name=OUTPUT_DIR)
 
 def test_check_type():
     printer = util.Printer("test_check_type", dir_name=OUTPUT_DIR)

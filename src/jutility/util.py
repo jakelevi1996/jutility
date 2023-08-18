@@ -239,9 +239,9 @@ class Column:
         self._data_list = []
         self._callback = None
 
-    def get_last(self):
-        if self._data_list[-1] is not None:
-            return self._format % self._data_list[-1]
+    def format_item(self, row_ind):
+        if self._data_list[row_ind] is not None:
+            return self._format % self._data_list[row_ind]
         else:
             return "".rjust(self._width)
 
@@ -264,7 +264,7 @@ class Column:
         return self
 
 class SilentColumn(Column):
-    def get_last(self):
+    def format_item(self, row_ind):
         return "".rjust(self._width)
 
 class TimeColumn(Column):
@@ -278,8 +278,8 @@ class TimeColumn(Column):
     def update(self, data, level):
         self._data_list.append(self._timer.time_taken())
 
-    def get_last(self):
-        t = self._data_list[-1]
+    def format_item(self, row_ind):
+        t = self._data_list[row_ind]
         t_str = time_format(t, concise=True)
         return t_str.rjust(self._width)
 
@@ -295,8 +295,8 @@ class CountColumn(Column):
         self._data_list.append(self._count)
         self._count += 1
 
-    def get_last(self):
-        count = self._data_list[-1]
+    def format_item(self, row_ind):
+        count = self._data_list[row_ind]
         return str(count).rjust(self._width)
 
 class Table:
@@ -307,20 +307,22 @@ class Table:
         print_level=0,
         printer=None,
     ):
+        if print_interval is None:
+            print_interval = Always()
+        if printer is None:
+            printer = Printer()
+
         self._column_list = []
         self._column_dict = dict()
         for column in columns:
             self.add_column(column)
-        if print_interval is None:
-            print_interval = Always()
+
         self._print_interval = print_interval
         self._print_level = print_level
-        if printer is None:
-            printer = Printer()
         self._print = printer
         self._num_updates = 0
         if len(columns) > 0:
-            self.print_headings()
+            self._print(self.format_header())
 
     def add_column(self, column):
         if column.name in self._column_dict:
@@ -346,14 +348,22 @@ class Table:
 
         self._num_updates += 1
 
-    def print_headings(self):
+    def format_header(self):
         title_list = [column.title for column in self._column_list]
-        self._print(" | ".join(title_list))
-        self._print(" | ".join("-" * len(t) for t in title_list))
+        title_str = " | ".join(title_list)
+        hline_str = " | ".join("-" * len(t) for t in title_list)
+        header_str = "\n".join([title_str, hline_str])
+        return header_str
+
+    def format_row(self, row_ind):
+        value_list = [
+            column.format_item(row_ind) for column in self._column_list
+        ]
+        row_str = " | ".join(value_list)
+        return row_str
 
     def print_last(self):
-        value_list = [column.get_last() for column in self._column_list]
-        self._print(" | ".join(value_list))
+        self._print(self.format_row(-1))
 
     def get_data(self, *names, filter_none=True, unpack_single=True):
         data_table = [

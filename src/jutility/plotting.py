@@ -241,9 +241,7 @@ class NoisyData:
         results_list_list = [self._results_list_dict[x] for x in x_list]
         mean_array, ucb, lcb = confidence_bounds(results_list_list, n_sigma)
         if log_data:
-            mean_array = np.exp(mean_array)
-            ucb = np.exp(ucb)
-            lcb = np.exp(lcb)
+            mean_array, ucb, lcb = np.exp([mean_array, ucb, lcb])
 
         if mean_line_kwargs is None:
             mean_line_kwargs = {

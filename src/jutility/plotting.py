@@ -193,10 +193,13 @@ def confidence_bounds(data_list, n_sigma=1, split_dim=None):
     return mean, ucb, lcb
 
 class NoisyData:
-    def __init__(self):
+    def __init__(self, log_space_data=False):
         self._results_list_dict = dict()
+        self._log_space_data = log_space_data
 
     def update(self, x, y):
+        if self._log_space_data:
+            y = np.log(y)
         if x in self._results_list_dict:
             self._results_list_dict[x].append(y)
         else:
@@ -212,7 +215,6 @@ class NoisyData:
         mean_line_kwargs=None,
         std_line_kwargs=None,
         plot_all_data=True,
-        log_data=False,
     ):
         line_list = []
         if plot_all_data:
@@ -222,7 +224,7 @@ class NoisyData:
                 for y in result_list
             ]
             all_x, all_y = zip(*all_results_pairs)
-            if log_data:
+            if self._log_space_data:
                 all_y = np.exp(all_y)
             if results_line_kwargs is None:
                 results_line_kwargs = {
@@ -240,7 +242,7 @@ class NoisyData:
         ]
         results_list_list = [self._results_list_dict[x] for x in x_list]
         mean_array, ucb, lcb = confidence_bounds(results_list_list, n_sigma)
-        if log_data:
+        if self._log_space_data:
             mean_array, ucb, lcb = np.exp([mean_array, ucb, lcb])
 
         if mean_line_kwargs is None:

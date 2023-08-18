@@ -326,28 +326,28 @@ def test_noisy_data(plot_all_data):
 
 def test_noisy_log_data():
     rng = util.Seeder().get_rng("test_noisy_log_data")
-    noisy_log_data = plotting.NoisyData()
+    noisy_log_data = plotting.NoisyData(log_space_data=True)
     noisy_data = plotting.NoisyData()
     x_list = util.log_range(0.01, 10, 50)
     for x in x_list:
         for repeat in range(rng.integers(10)):
             y = x * np.exp(rng.normal())
-            noisy_log_data.update(x, np.log(y))
+            noisy_log_data.update(x, y)
             noisy_data.update(x, y)
 
     mp = plotting.MultiPlot(
         plotting.Subplot(
-            *noisy_log_data.get_lines(log_data=True),
+            *noisy_log_data.get_lines(),
             axis_properties=plotting.AxisProperties(
-                title="noisy_log_data, log_data=True",
+                title="noisy_log_data, log_space_data=True",
                 log_xscale=True,
                 log_yscale=True,
             ),
         ),
         plotting.Subplot(
-            *noisy_data.get_lines(log_data=False),
+            *noisy_data.get_lines(),
             axis_properties=plotting.AxisProperties(
-                title="noisy_data, log_data=False",
+                title="noisy_data, log_space_data=False",
                 log_xscale=True,
                 log_yscale=True,
             ),

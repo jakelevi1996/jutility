@@ -119,6 +119,11 @@ class FillBetween(Line):
         self._x = x
         self._y1 = y1
         self._y2 = y2
+
+        c = kwargs.pop("c", None)
+        if c is not None:
+            kwargs["color"] = c
+
         self._kwargs = kwargs
 
     def plot(self, axis):

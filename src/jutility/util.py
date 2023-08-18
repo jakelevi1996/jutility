@@ -523,7 +523,8 @@ def numpy_set_print_options(
     )
 
 def log_range(x_lo, x_hi, num_x=50):
-    return np.exp(np.linspace(*np.log([x_lo, x_hi]), num_x))
+    log_x_lo, log_x_hi = np.log([x_lo, x_hi])
+    return np.exp(np.linspace(log_x_lo, log_x_hi, num_x))
 
 def check_type(instance, expected_type, name=None):
     if not isinstance(instance, expected_type):

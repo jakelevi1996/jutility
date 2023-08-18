@@ -271,6 +271,28 @@ def test_gif_add_image_file_frame():
     gif.save(output_name, OUTPUT_DIR, frame_duration_ms=500)
     assert os.path.isfile(gif.filename)
 
+def test_confidence_bounds():
+    rng = util.Seeder().get_rng("test_confidence_bounds")
+    printer = util.Printer("test_confidence_bounds", dir_name=OUTPUT_DIR)
+    m = 19
+    n = 7
+    y1 = np.arange(m).reshape(m, 1) + 100
+    y2 = np.arange(n).reshape(1, n) + 20
+    y = y1 + y2 + rng.normal(size=[m, n])
+    printer(y)
+    subplots = []
+    for split_dim in [0, 1]:
+        mean, ucb, lcb = plotting.confidence_bounds(y, split_dim=split_dim)
+        x = np.arange(mean.size)
+        sp = plotting.Subplot(
+            plotting.Line(x, mean, c="b", marker="o"),
+            plotting.FillBetween(x, ucb, lcb, c="b", alpha=0.2),
+        )
+        subplots.append(sp)
+
+    mp = plotting.MultiPlot(*subplots)
+    mp.save("test_confidence_bounds", OUTPUT_DIR)
+
 @pytest.mark.parametrize("plot_all_data", [True, False])
 def test_noisy_data(plot_all_data):
     rng = util.Seeder().get_rng("test_noisy_data", plot_all_data)

@@ -212,6 +212,7 @@ class NoisyData:
         mean_line_kwargs=None,
         std_line_kwargs=None,
         plot_all_data=True,
+        log_data=False,
     ):
         line_list = []
         if plot_all_data:
@@ -221,6 +222,8 @@ class NoisyData:
                 for y in result_list
             ]
             all_x, all_y = zip(*all_results_pairs)
+            if log_data:
+                all_y = np.exp(all_y)
             if results_line_kwargs is None:
                 results_line_kwargs = {
                     "color":    colour,
@@ -237,6 +240,10 @@ class NoisyData:
         ]
         results_list_list = [self._results_list_dict[x] for x in x_list]
         mean_array, ucb, lcb = confidence_bounds(results_list_list, n_sigma)
+        if log_data:
+            mean_array = np.exp(mean_array)
+            ucb = np.exp(ucb)
+            lcb = np.exp(lcb)
 
         if mean_line_kwargs is None:
             mean_line_kwargs = {

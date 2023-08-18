@@ -324,6 +324,37 @@ def test_noisy_data(plot_all_data):
     )
     assert os.path.isfile(mp.filename)
 
+def test_noisy_log_data():
+    rng = util.Seeder().get_rng("test_noisy_log_data")
+    noisy_log_data = plotting.NoisyData()
+    noisy_data = plotting.NoisyData()
+    x_list = util.log_range(0.01, 10, 50)
+    for x in x_list:
+        for repeat in range(rng.integers(10)):
+            y = x * np.exp(rng.normal())
+            noisy_log_data.update(x, np.log(y))
+            noisy_data.update(x, y)
+
+    mp = plotting.MultiPlot(
+        plotting.Subplot(
+            *noisy_log_data.get_lines(log_data=True),
+            axis_properties=plotting.AxisProperties(
+                title="noisy_log_data, log_data=True",
+                log_xscale=True,
+                log_yscale=True,
+            ),
+        ),
+        plotting.Subplot(
+            *noisy_data.get_lines(log_data=False),
+            axis_properties=plotting.AxisProperties(
+                title="noisy_data, log_data=False",
+                log_xscale=True,
+                log_yscale=True,
+            ),
+        ),
+    )
+    mp.save("test_noisy_log_data", OUTPUT_DIR)
+
 @pytest.mark.parametrize("constrained_layout", [True, False])
 def test_colourbar(constrained_layout):
     rng = util.Seeder().get_rng("test_colourbar")

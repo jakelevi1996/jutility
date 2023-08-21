@@ -62,9 +62,9 @@ class CallbackContext:
 
 class ExceptionContext:
     def __init__(self, suppress_exceptions=True, printer=None):
-        self._suppress_exceptions = suppress_exceptions
         if printer is None:
             printer = Printer()
+        self._suppress_exceptions = suppress_exceptions
         self._print = printer
 
     def __enter__(self):
@@ -132,9 +132,9 @@ class Seeder:
 
 class Timer:
     def __init__(self, name=None, printer=None):
-        self._name = name
         if printer is None:
             printer = Printer()
+        self._name = name
         self._print = printer
         self.reset()
 
@@ -226,15 +226,15 @@ class TimeInterval(_Interval):
 
 class Column:
     def __init__(self, name, value_format=None, title=None, width=None):
-        self.name = name
+        if value_format is None:
+            value_format = "s"
         if title is None:
             title = name.capitalize().replace("_", " ")
         if width is None:
             width = len(title)
+        self.name = name
         self._width = max(width, len(title))
         self.title = title.ljust(self._width)
-        if value_format is None:
-            value_format = "s"
         self._format = "%%%i%s" % (self._width, value_format)
         self._data_list = []
         self._callback = None

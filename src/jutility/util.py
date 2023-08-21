@@ -106,6 +106,9 @@ class Printer:
         if self._file is not None:
             print(*args, **kwargs, file=self._file)
 
+    def timestamp(self):
+        self(datetime.datetime.now())
+
     def close(self):
         if self._file is not None:
             self._file.close()

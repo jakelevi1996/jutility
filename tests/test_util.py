@@ -258,6 +258,8 @@ def test_printer():
         print_to_console=False,
     )
     printer("Testing __call__ method")
+    printer("Testing timestamp method")
+    printer.timestamp()
     printer("Testing close method")
     printer.close()
 

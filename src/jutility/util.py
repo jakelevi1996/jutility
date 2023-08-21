@@ -453,16 +453,13 @@ def time_format(t, concise=False):
         s_str = " seconds"
 
     if t < 60:
-        return "%7.4f%s" % (t, s_str)
-
+        return "%.4f%s" % (t, s_str)
     m, s = divmod(t, 60)
-
     if m < 60:
-        return "%2i%s %5.2f%s" % (m, m_str, s, s_str)
-
+        return "%i%s %5.2f%s" % (m, m_str, s, s_str)
     h, m = divmod(m, 60)
+    return "%i%s %2i%s %2i%s" % (h, h_str, m, m_str, s, s_str)
 
-    return "%2i%s %2i%s %2i%s" % (h, h_str, m, m_str, s, s_str)
 
 def get_full_path(
     filename,

@@ -460,6 +460,10 @@ def time_format(t, concise=False):
     h, m = divmod(m, 60)
     return "%i%s %2i%s %2i%s" % (h, h_str, m, m_str, s, s_str)
 
+def timestamp(s, suffix=False):
+    now = datetime.datetime.now()
+    s = ("%s %s" % (s, now)) if suffix else ("%s %s" % (now, s))
+    return s
 
 def get_full_path(
     filename,

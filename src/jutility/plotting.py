@@ -215,6 +215,7 @@ class NoisyData:
         mean_line_kwargs=None,
         std_line_kwargs=None,
         plot_all_data=True,
+        mean_std_labels=True,
     ):
         line_list = []
         if plot_all_data:
@@ -248,16 +249,18 @@ class NoisyData:
         if mean_line_kwargs is None:
             mean_line_kwargs = {
                 "color":    colour,
-                "label":    "Mean",
                 "zorder":   30,
             }
+            if mean_std_labels:
+                mean_line_kwargs["label"] = "Mean"
         if std_line_kwargs is None:
             std_line_kwargs = {
                 "color":    colour,
-                "label":    "$\\pm %s \\sigma$" % n_sigma,
                 "alpha":    0.3,
                 "zorder":   10,
             }
+            if mean_std_labels:
+                std_line_kwargs["label"] = "$\\pm %s \\sigma$" % n_sigma
         mean_line = Line(x_list, mean_array, **mean_line_kwargs)
         std_line = FillBetween(x_list, ucb, lcb, **std_line_kwargs)
         line_list.append(mean_line)

@@ -11,7 +11,12 @@ def plot(
     if axis_properties is None:
         axis_properties = AxisProperties()
 
-    printer = util.Printer(plot_name, dir_name, file_ext="tex")
+    printer = util.Printer(
+        plot_name,
+        dir_name,
+        file_ext="tex",
+        print_to_console=False,
+    )
     indent = Indenter(printer)
 
     printer("\\documentclass[tikz]{standalone}")

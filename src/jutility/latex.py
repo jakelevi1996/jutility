@@ -58,27 +58,27 @@ class AxisProperties:
         grid_style="solid",
         shader="flat corner",
         use_times=False,
-        colour_defines_str=None,
+        colour_picker=None,
     ):
-        self._title                 = title
-        self._xlabel                = xlabel
-        self._ylabel                = ylabel
-        self._xlim                  = xlim
-        self._ylim                  = ylim
-        self._figsize_cm            = figsize_cm
-        self._legend_pos            = legend_pos
-        self._grid                  = grid
-        self._grid_style            = grid_style
-        self._shader                = shader
-        self._use_times             = use_times
-        self._colour_defines_str    = colour_defines_str
+        self._title         = title
+        self._xlabel        = xlabel
+        self._ylabel        = ylabel
+        self._xlim          = xlim
+        self._ylim          = ylim
+        self._figsize_cm    = figsize_cm
+        self._legend_pos    = legend_pos
+        self._grid          = grid
+        self._grid_style    = grid_style
+        self._shader        = shader
+        self._use_times     = use_times
+        self._colour_picker = colour_picker
 
     def preamble(self, printer):
         if self._use_times:
             printer("\\usepackage{times}")
             printer()
-        if self._colour_defines_str is not None:
-            printer(self._colour_defines_str)
+        if self._colour_picker is not None:
+            printer(self._colour_picker.define_colours())
             printer()
 
     def apply(self, indent):

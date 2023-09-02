@@ -295,7 +295,8 @@ class ColourPicker:
             % (self.colour_name(i), c[0], c[1], c[2])
             for i, c in enumerate(self._colours)
         ]
-        return definition_list
+        definition_str = "\n".join(definition_list)
+        return definition_str
 
 class AxisProperties:
     def __init__(

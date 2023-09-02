@@ -16,14 +16,14 @@ def test_indenter(indent_str, initial_indent):
     x = iter([x ** 2 for x in range(20)])
 
     printer(indent("Hello"))
-    with indent.new_block:
+    with indent.new_block():
         printer(indent(next(x)))
         printer(indent("world"))
     printer(indent(next(x)))
-    with indent.new_block:
+    with indent.new_block():
         printer(indent(next(x)))
         printer(indent(next(x)))
-        with indent.new_block:
+        with indent.new_block():
             printer(indent(next(x)))
             printer(indent(next(x)))
         printer(indent(next(x)))

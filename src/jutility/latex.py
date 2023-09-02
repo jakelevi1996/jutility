@@ -7,10 +7,12 @@ class Indenter:
         self._indent_str = indent_str
         self._num_indent = initial_indent
 
-        self.new_block = util.CallbackContext(
+    def new_block(self):
+        new_block_context = util.CallbackContext(
             lambda: self._add_indent( 1),
             lambda: self._add_indent(-1),
         )
+        return new_block_context
 
     def _add_indent(self, n):
         self._num_indent += n

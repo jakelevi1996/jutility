@@ -1,3 +1,4 @@
+import textwrap
 from jutility import util
 
 class Indenter:
@@ -19,4 +20,5 @@ class Indenter:
 
     def __call__(self, s):
         prefix = self._indent_str * self._num_indent
-        return prefix + str(s)
+        s_indent = textwrap.indent(str(s), prefix)
+        return s_indent

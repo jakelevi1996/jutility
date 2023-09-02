@@ -8,3 +8,15 @@
 *.egg-info
 
 dist/*
+
+*.tex
+*.pdf
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.gz
+*.bbl
+*.blg
+*.out
+*.synctex(busy)

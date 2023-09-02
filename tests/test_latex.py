@@ -11,20 +11,20 @@ def test_indenter(indent_str, initial_indent):
     test_name = "test_indenter, %s, %s" % (indent_str, initial_indent)
     printer = util.Printer(test_name, OUTPUT_DIR)
 
-    indent = latex.Indenter(indent_str, initial_indent)
+    indent = latex.Indenter(printer, indent_str, initial_indent)
 
     x = iter([x ** 2 for x in range(20)])
 
-    printer(indent("Hello"))
+    indent.print("Hello")
     with indent.new_block():
-        printer(indent(next(x)))
-        printer(indent("world"))
-    printer(indent(next(x)))
+        indent.print(next(x))
+        indent.print("world")
+    indent.print(next(x))
     with indent.new_block():
-        printer(indent(next(x)))
-        printer(indent(next(x)))
+        indent.print(next(x))
+        indent.print(next(x))
         with indent.new_block():
-            printer(indent(next(x)))
-            printer(indent(next(x)))
-        printer(indent(next(x)))
-    printer(indent(next(x)))
+            indent.print(next(x))
+            indent.print(next(x))
+        indent.print(next(x))
+    indent.print(next(x))

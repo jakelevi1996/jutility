@@ -12,7 +12,7 @@ def plot(
         axis_properties = AxisProperties()
 
     printer = util.Printer(plot_name, dir_name, file_ext="tex")
-    indent = Indenter()
+    indent = Indenter(printer)
 
     printer("\\documentclass[tikz]{standalone}")
     printer()
@@ -27,13 +27,13 @@ def plot(
     printer("\\begin{tikzpicture}")
     printer("\\begin{axis}[")
     with indent.new_block():
-        axis_properties.apply(printer, indent)
+        axis_properties.apply(indent)
     printer("]")
     printer()
 
     with indent.new_block():
         for line in lines:
-            line.plot(printer, indent)
+            line.plot(indent)
 
     printer("\\end{axis}")
     printer("\\end{tikzpicture}")
@@ -76,40 +76,44 @@ class AxisProperties:
             printer(self._colour_defines_str)
             printer()
 
-    def apply(self, printer, indent):
+    def apply(self, indent):
         if self._title is not None:
-            printer(indent("title={%s}," % self._title))
+            indent.print("title={%s}," % self._title)
         if self._xlabel is not None:
-            printer(indent("xlabel={%s}," % self._xlabel))
+            indent.print("xlabel={%s}," % self._xlabel)
         if self._ylabel is not None:
-            printer(indent("ylabel={%s}," % self._ylabel))
+            indent.print("ylabel={%s}," % self._ylabel)
         if self._xlim is not None:
             x_min, x_max = self._xlim
-            printer(indent("xmin=%s," % x_min))
-            printer(indent("xmax=%s," % x_max))
+            indent.print("xmin=%s," % x_min)
+            indent.print("xmax=%s," % x_max)
         if self._ylim is not None:
             y_min, y_max = self._ylim
-            printer(indent("ymin=%s," % y_min))
-            printer(indent("ymax=%s," % y_max))
+            indent.print("ymin=%s," % y_min)
+            indent.print("ymax=%s," % y_max)
         if self._figsize_cm is not None:
             width, height = self._figsize_cm
-            printer(indent("width=%scm,"     % width))
-            printer(indent("height=%scm,"    % height))
+            indent.print("width=%scm,"     % width)
+            indent.print("height=%scm,"    % height)
         if self._legend_pos is not None:
-            printer(indent("legend pos=%s," % self._legend_pos))
+            indent.print("legend pos=%s," % self._legend_pos)
         if self._grid:
-            printer(indent("xmajorgrids=true,"))
-            printer(indent("ymajorgrids=true,"))
-            printer(indent("grid style=%s," % self._grid_style))
+            indent.print("xmajorgrids=true,")
+            indent.print("ymajorgrids=true,")
+            indent.print("grid style=%s," % self._grid_style)
         if self._shader is not None:
-            printer(indent("shader=%s," % self._shader))
+            indent.print("shader=%s," % self._shader)
 
 class Indenter:
-    def __init__(self, indent_str=None, initial_indent=0):
+    def __init__(self, printer=None, indent_str=None, initial_indent=0):
+        if printer is None:
+            printer = util.Printer()
         if indent_str is None:
             indent_str = "".ljust(4)
-        self._indent_str = indent_str
-        self._num_indent = initial_indent
+
+        self._print         = printer
+        self._indent_str    = indent_str
+        self._num_indent    = initial_indent
 
     def new_block(self):
         new_block_context = util.CallbackContext(
@@ -121,7 +125,10 @@ class Indenter:
     def _add_indent(self, n):
         self._num_indent += n
 
-    def __call__(self, s):
+    def indent(self, s):
         prefix = self._indent_str * self._num_indent
         s_indent = textwrap.indent(str(s), prefix)
         return s_indent
+
+    def print(self, s):
+        self._print(self.indent(s))

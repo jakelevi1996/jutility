@@ -205,6 +205,30 @@ class NoisyData:
         else:
             self._results_list_dict[x] = [y]
 
+    def get_all_data(self):
+        all_results_pairs = [
+            [x, y]
+            for x, result_list in self._results_list_dict.items()
+            for y in result_list
+        ]
+        all_x, all_y = zip(*all_results_pairs)
+        if self._log_space_data:
+            all_y = np.exp(all_y)
+
+        return all_x, all_y
+
+    def get_statistics(self, n_sigma):
+        x = sorted(
+            x_i for x_i in self._results_list_dict.keys()
+            if len(self._results_list_dict[x_i]) > 0
+        )
+        results_list_list = [self._results_list_dict[x_i] for x_i in x]
+        mean, ucb, lcb = confidence_bounds(results_list_list, n_sigma)
+        if self._log_space_data:
+            mean, ucb, lcb = np.exp([mean, ucb, lcb])
+
+        return x, mean, ucb, lcb
+
     def get_lines(
         self,
         n_sigma=1,
@@ -219,14 +243,7 @@ class NoisyData:
     ):
         line_list = []
         if plot_all_data:
-            all_results_pairs = [
-                [x, y]
-                for x, result_list in self._results_list_dict.items()
-                for y in result_list
-            ]
-            all_x, all_y = zip(*all_results_pairs)
-            if self._log_space_data:
-                all_y = np.exp(all_y)
+            all_x, all_y = self.get_all_data()
             if results_line_kwargs is None:
                 results_line_kwargs = {
                     "color":    colour,
@@ -237,15 +254,7 @@ class NoisyData:
             results_line = Scatter(all_x, all_y, **results_line_kwargs)
             line_list.append(results_line)
 
-        x_list = [
-            x for x in self._results_list_dict.keys()
-            if len(self._results_list_dict[x]) > 0
-        ]
-        results_list_list = [self._results_list_dict[x] for x in x_list]
-        mean_array, ucb, lcb = confidence_bounds(results_list_list, n_sigma)
-        if self._log_space_data:
-            mean_array, ucb, lcb = np.exp([mean_array, ucb, lcb])
-
+        x, mean, ucb, lcb = self.get_statistics(n_sigma)
         if mean_line_kwargs is None:
             mean_line_kwargs = {
                 "color":    colour,
@@ -261,8 +270,8 @@ class NoisyData:
             }
             if mean_std_labels:
                 std_line_kwargs["label"] = "$\\pm %s \\sigma$" % n_sigma
-        mean_line = Line(x_list, mean_array, **mean_line_kwargs)
-        std_line = FillBetween(x_list, ucb, lcb, **std_line_kwargs)
+        mean_line = Line(x, mean, **mean_line_kwargs)
+        std_line = FillBetween(x, ucb, lcb, **std_line_kwargs)
         line_list.append(mean_line)
         line_list.append(std_line)
         return line_list

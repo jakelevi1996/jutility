@@ -64,7 +64,7 @@ class Line:
         self._marker    = marker
         self._label     = label
         self._name      = name
-        self._width     = column_width
+        self._w         = column_width
 
     def plot(self, indent):
         indent.print("\\addplot[")
@@ -83,9 +83,9 @@ class Line:
         indent.print("]")
         indent.print("table {")
         with indent.new_block():
-            indent.print(format_table_row("x", "y", width=self._width))
+            indent.print(format_table_row("x", "y", width=self._w))
             for x, y in zip(self._x_list, self._y_list):
-                indent.print(format_table_row(x, y, width=self._width))
+                indent.print(format_table_row(x, y, width=self._w))
 
         indent.print("};")
 

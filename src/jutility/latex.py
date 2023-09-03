@@ -56,7 +56,6 @@ class Line:
         marker=None,
         label=None,
         name=None,
-        column_width=25,
     ):
         self._x_list    = x
         self._y_list    = y
@@ -65,7 +64,6 @@ class Line:
         self._marker    = marker
         self._label     = label
         self._name      = name
-        self._w         = column_width
 
     def plot(self, indent, counter):
         indent.print("\\addplot[")
@@ -84,9 +82,9 @@ class Line:
         indent.print("]")
         indent.print("table {")
         with indent.new_block():
-            indent.print(format_table_row("x", "y", width=self._w))
+            indent.print(format_table_row("x", "y"))
             for x, y in zip(self._x_list, self._y_list):
-                indent.print(format_table_row(x, y, width=self._w))
+                indent.print(format_table_row(x, y))
 
         indent.print("};")
 
@@ -104,14 +102,12 @@ class Quiver:
         alpha=None,
         label=None,
         name=None,
-        column_width=25,
     ):
         self._data_table    = [x, y, dx, dy]
         self._colour        = c
         self._alpha         = alpha
         self._label         = label
         self._name          = name
-        self._w             = column_width
 
     def plot(self, indent, counter):
         indent.print("\\addplot[")
@@ -135,9 +131,9 @@ class Quiver:
         indent.print("]")
         indent.print("table {")
         with indent.new_block():
-            indent.print(format_table_row("x", "y", "u", "v", width=self._w))
+            indent.print(format_table_row("x", "y", "u", "v"))
             for x, y, dx, dy in zip(*self._data_table):
-                indent.print(format_table_row(x, y, dx, dy, width=self._w))
+                indent.print(format_table_row(x, y, dx, dy))
 
         indent.print("};")
 
@@ -154,7 +150,6 @@ class FillBetween:
         alpha=None,
         label=None,
         name=None,
-        column_width=25,
     ):
         self._x_list    = x
         self._y_list    = [y1, y2]
@@ -162,7 +157,6 @@ class FillBetween:
         self._alpha     = alpha
         self._label     = label
         self._name      = name
-        self._w         = column_width
 
     def plot(self, indent, counter):
         names = ["y%i" % counter() for _ in range(2)]
@@ -283,6 +277,6 @@ class Indenter:
     def print(self, s):
         self._print(self.indent(s))
 
-def format_table_row(*entries, width=0, sep=""):
+def format_table_row(*entries, width=25, sep=""):
     row_str = sep.join(str(i).ljust(width) for i in entries)
     return row_str

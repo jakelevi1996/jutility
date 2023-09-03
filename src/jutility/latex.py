@@ -1,6 +1,10 @@
 import textwrap
 from jutility import util
 
+SHADER_FLAT         = "flat"
+SHADER_FLAT_CORNER  = "flat corner"
+SHADER_INTERP       = "interp"
+
 def plot(
     *lines,
     axis_properties=None,
@@ -263,7 +267,9 @@ class AxisProperties:
         legend_text_align="left",
         grid=False,
         grid_style="solid",
-        shader="flat corner",
+        shader=SHADER_FLAT,
+        colour_map_name="viridis",
+        colour_bar=False,
         use_times=False,
         colour_picker=None,
     ):
@@ -278,6 +284,8 @@ class AxisProperties:
         self._grid              = grid
         self._grid_style        = grid_style
         self._shader            = shader
+        self._colour_map_name   = colour_map_name
+        self._colour_bar        = colour_bar
         self._use_times         = use_times
         self._colour_picker     = colour_picker
 
@@ -318,6 +326,10 @@ class AxisProperties:
             indent.print("grid style=%s," % self._grid_style)
         if self._shader is not None:
             indent.print("shader=%s," % self._shader)
+        if self._colour_map_name is not None:
+            indent.print("colormap name=%s," % self._colour_map_name)
+        if self._colour_bar:
+            indent.print("colorbar,")
 
 class Indenter:
     def __init__(self, printer=None, indent_str=None, initial_indent=0):

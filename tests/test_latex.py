@@ -52,7 +52,7 @@ def test_plot():
             colour_picker=cp,
         ),
         plot_name="test_plot_latex",
-        dir_name=os.path.join(OUTPUT_DIR, "test_plot")
+        dir_name=os.path.join(OUTPUT_DIR, "test_plot"),
     )
 
 def test_plottables():
@@ -108,5 +108,5 @@ def test_plottables():
             colour_picker=cp,
         ),
         plot_name="test_plottables_latex",
-        dir_name=os.path.join(OUTPUT_DIR, "test_plottables")
+        dir_name=os.path.join(OUTPUT_DIR, "test_plottables"),
     )

@@ -110,3 +110,22 @@ def test_plottables():
         plot_name="test_plottables_latex",
         dir_name=os.path.join(OUTPUT_DIR, "test_plottables"),
     )
+
+def test_colour_mesh():
+    nx = 11
+    ny = 21
+    x = np.linspace(-2, 2, nx).reshape(1, nx)
+    y = np.linspace(-2, 2, ny).reshape(ny, 1)
+    z = 100 * np.exp(-x*x-y*y)
+
+    latex.plot(
+        latex.ColourMesh(x.reshape(nx), y.reshape(ny), z),
+        axis_properties=latex.AxisProperties(
+            xlim=[-2, 2],
+            ylim=[-2, 2],
+            colour_bar=True,
+            figsize_cm=[6, 5],
+        ),
+        plot_name="test_colour_mesh_latex",
+        dir_name=os.path.join(OUTPUT_DIR, "test_colour_mesh"),
+    )

@@ -92,6 +92,57 @@ class Line:
         if self._label is not None:
             indent.print("\\addlegendentry{%s}" % self._label)
 
+class Quiver:
+    def __init__(
+        self,
+        x,
+        y,
+        dx,
+        dy,
+        c=None,
+        alpha=None,
+        label=None,
+        name=None,
+        column_width=25,
+    ):
+        self._data_table    = [x, y, dx, dy]
+        self._colour        = c
+        self._alpha         = alpha
+        self._label         = label
+        self._name          = name
+        self._w             = column_width
+
+    def plot(self, indent):
+        indent.print("\\addplot[")
+        with indent.new_block():
+            if self._colour is not None:
+                indent.print("color=%s," % self._colour)
+            if self._alpha is not None:
+                indent.print("opacity=%s," % self._alpha)
+            if self._name is not None:
+                indent.print("name path=%s," % self._name)
+            if self._label is None:
+                indent.print("forget plot,")
+
+            indent.print("quiver={")
+            with indent.new_block():
+                indent.print("u=\\thisrow{u},")
+                indent.print("v=\\thisrow{v},")
+            indent.print("},")
+            indent.print("-stealth,")
+
+        indent.print("]")
+        indent.print("table {")
+        with indent.new_block():
+            indent.print(format_table_row("x", "y", "u", "v", width=self._w))
+            for x, y, dx, dy in zip(*self._data_table):
+                indent.print(format_table_row(x, y, dx, dy, width=self._w))
+
+        indent.print("};")
+
+        if self._label is not None:
+            indent.print("\\addlegendentry{%s}" % self._label)
+
 class AxisProperties:
     def __init__(
         self,

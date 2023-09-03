@@ -54,3 +54,59 @@ def test_plot():
         plot_name="test_plot_latex",
         dir_name=os.path.join(OUTPUT_DIR, "test_plot")
     )
+
+def test_plottables():
+    cp = plotting.ColourPicker(4)
+
+    latex.plot(
+        latex.Line(
+            x=[0.083, 0.205, 1.349, 3.185, 4.066],
+            y=[0.263, 0.857, 1.822, 2.833, 3.434],
+            c=cp.colour_name(0),
+            marker="*",
+            alpha=0.5,
+            label="Legend entry 1",
+        ),
+        latex.Line(
+            x=[0.721, 1.559, 2.559, 4.743, 4.752],
+            y=[0.944, 1.291, 2.85,  4.926, 4.899],
+            c=cp.colour_name(1),
+            marker="*",
+            label="Legend entry 2",
+        ),
+        latex.FillBetween(
+            x=[0, 2, 5],
+            y1=[-1, 0, 4],
+            y2=[1, 4, 6],
+            c=cp.colour_name(2),
+            alpha=0.2,
+            label="Patch",
+        ),
+        latex.Quiver(
+            x=[1, 4, 0],
+            y=[-1, 0, 3],
+            dx=[2, 1, 2],
+            dy=[1, 2, 2],
+            c=cp.colour_name(3),
+            label="Arrow",
+        ),
+        latex.HVLine(
+            x=1.2,
+            c="red",
+            label="Vertical line",
+        ),
+        latex.HVLine(
+            y=5.5,
+            c="blue",
+            label="Horizontal line",
+        ),
+        axis_properties=latex.AxisProperties(
+            title="Title of plot",
+            xlabel="$x$ axis label",
+            ylabel="$y$ axis label",
+            figsize_cm=[8, 6],
+            colour_picker=cp,
+        ),
+        plot_name="test_plottables_latex",
+        dir_name=os.path.join(OUTPUT_DIR, "test_plottables")
+    )

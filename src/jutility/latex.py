@@ -46,7 +46,31 @@ def plot(
     printer("\\end{tikzpicture}")
     printer("\\end{document}")
 
-class Line:
+class _Plottable:
+    def plot(self, indent, counter):
+        raise NotImplementedError()
+
+    def _init_default_options(self):
+        self._colour            = None
+        self._alpha             = None
+        self._marker            = None
+        self._name              = None
+        self._label             = None
+        self._is_forgettable    = True
+
+    def _print_latex_plot_options(self, indent):
+        if self._colour is not None:
+            indent.print("color=%s," % self._colour)
+        if self._alpha is not None:
+            indent.print("opacity=%s," % self._alpha)
+        if self._marker is not None:
+            indent.print("mark=%s," % self._marker)
+        if self._name is not None:
+            indent.print("name path=%s," % self._name)
+        if self._is_forgettable and (self._label is None):
+            indent.print("forget plot,")
+
+class Line(_Plottable):
     def __init__(
         self,
         x,
@@ -57,6 +81,7 @@ class Line:
         label=None,
         name=None,
     ):
+        self._init_default_options()
         self._x_list    = x
         self._y_list    = y
         self._colour    = c
@@ -68,16 +93,7 @@ class Line:
     def plot(self, indent, counter):
         indent.print("\\addplot[")
         with indent.new_block():
-            if self._colour is not None:
-                indent.print("color=%s," % self._colour)
-            if self._alpha is not None:
-                indent.print("opacity=%s," % self._alpha)
-            if self._marker is not None:
-                indent.print("mark=%s," % self._marker)
-            if self._name is not None:
-                indent.print("name path=%s," % self._name)
-            if self._label is None:
-                indent.print("forget plot,")
+            self._print_latex_plot_options(indent)
 
         indent.print("]")
         indent.print("table {")
@@ -91,7 +107,7 @@ class Line:
         if self._label is not None:
             indent.print("\\addlegendentry{%s}" % self._label)
 
-class Quiver:
+class Quiver(_Plottable):
     def __init__(
         self,
         x,
@@ -103,6 +119,7 @@ class Quiver:
         label=None,
         name=None,
     ):
+        self._init_default_options()
         self._data_table    = [x, y, dx, dy]
         self._colour        = c
         self._alpha         = alpha
@@ -112,14 +129,7 @@ class Quiver:
     def plot(self, indent, counter):
         indent.print("\\addplot[")
         with indent.new_block():
-            if self._colour is not None:
-                indent.print("color=%s," % self._colour)
-            if self._alpha is not None:
-                indent.print("opacity=%s," % self._alpha)
-            if self._name is not None:
-                indent.print("name path=%s," % self._name)
-            if self._label is None:
-                indent.print("forget plot,")
+            self._print_latex_plot_options(indent)
 
             indent.print("quiver={")
             with indent.new_block():
@@ -140,7 +150,7 @@ class Quiver:
         if self._label is not None:
             indent.print("\\addlegendentry{%s}" % self._label)
 
-class FillBetween:
+class FillBetween(_Plottable):
     def __init__(
         self,
         x,
@@ -151,6 +161,7 @@ class FillBetween:
         label=None,
         name=None,
     ):
+        self._init_default_options()
         self._x_list    = x
         self._y_list    = [y1, y2]
         self._colour    = c
@@ -169,14 +180,7 @@ class FillBetween:
 
         indent.print("\\addplot[")
         with indent.new_block():
-            if self._colour is not None:
-                indent.print("color=%s," % self._colour)
-            if self._alpha is not None:
-                indent.print("opacity=%s," % self._alpha)
-            if self._name is not None:
-                indent.print("name path=%s," % self._name)
-            if self._label is None:
-                indent.print("forget plot,")
+            self._print_latex_plot_options(indent)
 
         indent.print("]")
         indent.print("fill between[of=%s and %s];" % tuple(names))

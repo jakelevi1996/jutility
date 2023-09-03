@@ -18,6 +18,7 @@ def plot(
         print_to_console=False,
     )
     indent = Indenter(printer)
+    counter = util.Counter()
 
     printer("\\documentclass[tikz]{standalone}")
     printer()
@@ -38,7 +39,7 @@ def plot(
 
     with indent.new_block():
         for line in lines:
-            line.plot(indent)
+            line.plot(indent, counter)
             printer()
 
     printer("\\end{axis}")
@@ -66,7 +67,7 @@ class Line:
         self._name      = name
         self._w         = column_width
 
-    def plot(self, indent):
+    def plot(self, indent, counter):
         indent.print("\\addplot[")
         with indent.new_block():
             if self._colour is not None:
@@ -112,7 +113,7 @@ class Quiver:
         self._name          = name
         self._w             = column_width
 
-    def plot(self, indent):
+    def plot(self, indent, counter):
         indent.print("\\addplot[")
         with indent.new_block():
             if self._colour is not None:
@@ -140,6 +141,51 @@ class Quiver:
 
         indent.print("};")
 
+        if self._label is not None:
+            indent.print("\\addlegendentry{%s}" % self._label)
+
+class FillBetween:
+    def __init__(
+        self,
+        x,
+        y1,
+        y2,
+        c=None,
+        alpha=None,
+        label=None,
+        name=None,
+        column_width=25,
+    ):
+        self._x_list    = x
+        self._y_list    = [y1, y2]
+        self._colour    = c
+        self._alpha     = alpha
+        self._label     = label
+        self._name      = name
+        self._w         = column_width
+
+    def plot(self, indent, counter):
+        names = ["y%i" % counter() for _ in range(2)]
+        lines = [
+            Line(x=self._x_list, y=y, alpha=0, name=name)
+            for y, name in zip(self._y_list, names)
+        ]
+        lines[0].plot(indent, counter)
+        lines[1].plot(indent, counter)
+
+        indent.print("\\addplot[")
+        with indent.new_block():
+            if self._colour is not None:
+                indent.print("color=%s," % self._colour)
+            if self._alpha is not None:
+                indent.print("opacity=%s," % self._alpha)
+            if self._name is not None:
+                indent.print("name path=%s," % self._name)
+            if self._label is None:
+                indent.print("forget plot,")
+
+        indent.print("]")
+        indent.print("fill between[of=%s and %s];" % tuple(names))
         if self._label is not None:
             indent.print("\\addlegendentry{%s}" % self._label)
 

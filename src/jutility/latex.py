@@ -241,24 +241,26 @@ class AxisProperties:
         ylim=None,
         figsize_cm=None,
         legend_pos="outer north east",
+        legend_text_align="left",
         grid=False,
         grid_style="solid",
         shader="flat corner",
         use_times=False,
         colour_picker=None,
     ):
-        self._title         = title
-        self._xlabel        = xlabel
-        self._ylabel        = ylabel
-        self._xlim          = xlim
-        self._ylim          = ylim
-        self._figsize_cm    = figsize_cm
-        self._legend_pos    = legend_pos
-        self._grid          = grid
-        self._grid_style    = grid_style
-        self._shader        = shader
-        self._use_times     = use_times
-        self._colour_picker = colour_picker
+        self._title             = title
+        self._xlabel            = xlabel
+        self._ylabel            = ylabel
+        self._xlim              = xlim
+        self._ylim              = ylim
+        self._figsize_cm        = figsize_cm
+        self._legend_pos        = legend_pos
+        self._legend_text_align = legend_text_align
+        self._grid              = grid
+        self._grid_style        = grid_style
+        self._shader            = shader
+        self._use_times         = use_times
+        self._colour_picker     = colour_picker
 
     def preamble(self, printer):
         if self._use_times:
@@ -289,6 +291,8 @@ class AxisProperties:
             indent.print("height=%scm,"    % height)
         if self._legend_pos is not None:
             indent.print("legend pos=%s," % self._legend_pos)
+        if self._legend_text_align is not None:
+            indent.print("legend cell align={%s}," % self._legend_text_align)
         if self._grid:
             indent.print("xmajorgrids=true,")
             indent.print("ymajorgrids=true,")

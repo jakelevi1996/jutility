@@ -51,14 +51,13 @@ class _Plottable:
         raise NotImplementedError()
 
     def _init_default_options(self):
-        self._colour            = None
-        self._alpha             = None
-        self._marker            = None
-        self._name              = None
-        self._label             = None
-        self._is_forgettable    = True
+        self._colour    = None
+        self._alpha     = None
+        self._marker    = None
+        self._name      = None
+        self._label     = None
 
-    def _print_latex_plot_options(self, indent):
+    def _print_latex_plot_options(self, indent, forgettable=True):
         if self._colour is not None:
             indent.print("color=%s," % self._colour)
         if self._alpha is not None:
@@ -67,7 +66,7 @@ class _Plottable:
             indent.print("mark=%s," % self._marker)
         if self._name is not None:
             indent.print("name path=%s," % self._name)
-        if self._is_forgettable and (self._label is None):
+        if forgettable and (self._label is None):
             indent.print("forget plot,")
 
 class Line(_Plottable):
@@ -185,6 +184,42 @@ class FillBetween(_Plottable):
         indent.print("]")
         indent.print("fill between[of=%s and %s];" % tuple(names))
         if self._label is not None:
+            indent.print("\\addlegendentry{%s}" % self._label)
+
+class VLine(_Plottable):
+    def __init__(
+        self,
+        x,
+        c=None,
+        alpha=None,
+        label=None,
+        name=None,
+    ):
+        self._init_default_options()
+        self._x         = x
+        self._colour    = c
+        self._alpha     = alpha
+        self._label     = label
+        self._name      = name
+
+    def plot(self, indent, counter):
+        indent.print("\\draw[")
+        with indent.new_block():
+            self._print_latex_plot_options(indent, forgettable=False)
+
+        indent.print("]")
+        indent.print(
+            "(%s,0 |- current axis.south) -- "
+            "(%s,0 |- current axis.north);"
+            % (self._x, self._x)
+        )
+
+        if self._label is not None:
+            indent.print("\\addlegendimage{")
+            with indent.new_block():
+                self._print_latex_plot_options(indent)
+
+            indent.print("}")
             indent.print("\\addlegendentry{%s}" % self._label)
 
 class AxisProperties:

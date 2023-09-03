@@ -186,10 +186,11 @@ class FillBetween(_Plottable):
         if self._label is not None:
             indent.print("\\addlegendentry{%s}" % self._label)
 
-class VLine(_Plottable):
+class HVLine(_Plottable):
     def __init__(
         self,
-        x,
+        x=None,
+        y=None,
         c=None,
         alpha=None,
         label=None,
@@ -197,6 +198,7 @@ class VLine(_Plottable):
     ):
         self._init_default_options()
         self._x         = x
+        self._y         = y
         self._colour    = c
         self._alpha     = alpha
         self._label     = label
@@ -208,11 +210,18 @@ class VLine(_Plottable):
             self._print_latex_plot_options(indent, forgettable=False)
 
         indent.print("]")
-        indent.print(
-            "(%s,0 |- current axis.south) -- "
-            "(%s,0 |- current axis.north);"
-            % (self._x, self._x)
-        )
+        if self._x is not None:
+            indent.print(
+                "(%s,0 |- current axis.south) -- "
+                "(%s,0 |- current axis.north);"
+                % (self._x, self._x)
+            )
+        if self._y is not None:
+            indent.print(
+                "(current axis.east |- 0,%s) -- "
+                "(current axis.west |- 0,%s);"
+                % (self._y, self._y)
+            )
 
         if self._label is not None:
             indent.print("\\addlegendimage{")

@@ -231,6 +231,25 @@ class HVLine(_Plottable):
             indent.print("}")
             indent.print("\\addlegendentry{%s}" % self._label)
 
+class ColourMesh(_Plottable):
+    def __init__(self, x, y, z):
+        self._x_list = x
+        self._y_list = y
+        self._z_list = z
+
+    def plot(self, indent, counter):
+        indent.print("\\addplot[surf,point meta=\\thisrow{z}]")
+        indent.print("table {")
+        with indent.new_block():
+            indent.print(format_table_row("x", "y", "z"))
+            for i, x in enumerate(self._x_list):
+                for j, y in enumerate(self._y_list):
+                    indent.print(format_table_row(x, y, self._z_list[j, i]))
+
+                indent.blank_line()
+
+        indent.print("};")
+
 class AxisProperties:
     def __init__(
         self,
@@ -328,6 +347,9 @@ class Indenter:
 
     def print(self, s):
         self._print(self.indent(s))
+
+    def blank_line(self):
+        self._print()
 
 def format_table_row(*entries, width=25, sep=""):
     row_str = sep.join(str(i).ljust(width) for i in entries)

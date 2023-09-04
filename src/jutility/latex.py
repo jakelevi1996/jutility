@@ -253,6 +253,8 @@ class AxisProperties:
         legend_text_align="left",
         grid=False,
         grid_style="solid",
+        log_xscale=False,
+        log_yscale=False,
         shader=SHADER_FLAT,
         colour_map_name="viridis",
         colour_bar=False,
@@ -269,6 +271,8 @@ class AxisProperties:
         self._legend_text_align = legend_text_align
         self._grid              = grid
         self._grid_style        = grid_style
+        self._log_xscale        = log_xscale
+        self._log_yscale        = log_yscale
         self._shader            = shader
         self._colour_map_name   = colour_map_name
         self._colour_bar        = colour_bar
@@ -310,6 +314,10 @@ class AxisProperties:
             indent.print("xmajorgrids=true,")
             indent.print("ymajorgrids=true,")
             indent.print("grid style=%s," % self._grid_style)
+        if self._log_xscale:
+            indent.print("xmode=log,")
+        if self._log_yscale:
+            indent.print("ymode=log,")
         if self._shader is not None:
             indent.print("shader=%s," % self._shader)
         if self._colour_map_name is not None:

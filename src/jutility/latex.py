@@ -55,7 +55,7 @@ def plot(
     printer("\\end{document}")
 
     if autocompile:
-        printer(flush=True)
+        printer(flush=True, end="")
         compile(plot_name, dir_name, lualatex)
 
 class _Plottable:

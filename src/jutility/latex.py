@@ -51,15 +51,38 @@ def plot(
     printer("\\end{document}")
 
 class _Plottable:
-    def plot(self, indent, counter):
+    def __init__(self):
+        """
+        Initialise object to be plotted. Optional keyword arguments:
+
+        - `c`: colour of line/marker/patch
+        - `alpha`: opacity, which satisfies `0 <= alpha <= 1`, where 1 = opaque
+          and 0 = transparent
+        - `marker`: marker to use for each point, EG `"*"` for filled marker,
+          or `"o"` for unfilled marker. Default is `None`, in which case no
+          marker is plotted
+        - `label`: entry to be added to legend
+        - `name`: name which is applied to this object, allowing it to be
+          referred to by other objects, EG filled areas
+        """
         raise NotImplementedError()
 
-    def _init_default_options(self):
-        self._colour    = None
-        self._alpha     = None
-        self._marker    = None
-        self._name      = None
-        self._label     = None
+    def _set_kwargs(
+        self,
+        c=None,
+        alpha=None,
+        marker=None,
+        name=None,
+        label=None,
+    ):
+        self._colour    = c
+        self._alpha     = alpha
+        self._marker    = marker
+        self._name      = name
+        self._label     = label
+
+    def plot(self, indent, counter):
+        raise NotImplementedError()
 
     def _print_latex_plot_options(self, indent, forgettable=True):
         if self._colour is not None:
@@ -74,24 +97,10 @@ class _Plottable:
             indent.print("forget plot,")
 
 class Line(_Plottable):
-    def __init__(
-        self,
-        x,
-        y,
-        c=None,
-        alpha=None,
-        marker=None,
-        label=None,
-        name=None,
-    ):
-        self._init_default_options()
-        self._x_list    = x
-        self._y_list    = y
-        self._colour    = c
-        self._alpha     = alpha
-        self._marker    = marker
-        self._label     = label
-        self._name      = name
+    def __init__(self, x, y, **kwargs):
+        self._set_kwargs(**kwargs)
+        self._x_list = x
+        self._y_list = y
 
     def plot(self, indent, counter):
         indent.print("\\addplot[")
@@ -111,23 +120,9 @@ class Line(_Plottable):
             indent.print("\\addlegendentry{%s}" % self._label)
 
 class Quiver(_Plottable):
-    def __init__(
-        self,
-        x,
-        y,
-        dx,
-        dy,
-        c=None,
-        alpha=None,
-        label=None,
-        name=None,
-    ):
-        self._init_default_options()
-        self._data_table    = [x, y, dx, dy]
-        self._colour        = c
-        self._alpha         = alpha
-        self._label         = label
-        self._name          = name
+    def __init__(self, x, y, dx, dy, **kwargs):
+        self._set_kwargs(**kwargs)
+        self._data_table = [x, y, dx, dy]
 
     def plot(self, indent, counter):
         indent.print("\\addplot[")
@@ -154,23 +149,10 @@ class Quiver(_Plottable):
             indent.print("\\addlegendentry{%s}" % self._label)
 
 class FillBetween(_Plottable):
-    def __init__(
-        self,
-        x,
-        y1,
-        y2,
-        c=None,
-        alpha=None,
-        label=None,
-        name=None,
-    ):
-        self._init_default_options()
-        self._x_list    = x
-        self._y_list    = [y1, y2]
-        self._colour    = c
-        self._alpha     = alpha
-        self._label     = label
-        self._name      = name
+    def __init__(self, x, y1, y2, **kwargs):
+        self._set_kwargs(**kwargs)
+        self._x_list = x
+        self._y_list = [y1, y2]
 
     def plot(self, indent, counter):
         names = ["y%i" % counter() for _ in range(2)]

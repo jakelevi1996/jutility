@@ -129,3 +129,33 @@ def test_colour_mesh():
         plot_name="test_colour_mesh_latex",
         dir_name=os.path.join(OUTPUT_DIR, "test_colour_mesh"),
     )
+
+@pytest.mark.parametrize("normalise", [True, False])
+def test_quiver(normalise):
+    nx = 15
+    ny = 25
+    n = nx * ny
+    x = np.tile(np.linspace(-2, 2, nx).reshape(1, nx), [ny, 1])
+    y = np.tile(np.linspace(-2, 2, ny).reshape(ny, 1), [1, nx])
+    dx = (y - x) / 10
+    dy = (x + y) / 10
+
+    norm_length = 0.2 if normalise else None
+    plot_name = "test quiver latex, normalise = %s" % normalise
+    latex.plot(
+        latex.Quiver(
+            x.reshape(n),
+            y.reshape(n),
+            dx.reshape(n),
+            dy.reshape(n),
+            norm_length=norm_length,
+            label="Arrow",
+        ),
+        axis_properties=latex.AxisProperties(
+            title=plot_name,
+            xlabel="$x$",
+            ylabel="$y$",
+        ),
+        plot_name=plot_name,
+        dir_name=os.path.join(OUTPUT_DIR, "test_quiver"),
+    )

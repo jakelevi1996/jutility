@@ -14,6 +14,7 @@ def plot(
     plot_name="output",
     dir_name=None,
     autocompile=False,
+    lualatex=False,
 ):
     if axis_properties is None:
         axis_properties = AxisProperties()
@@ -55,7 +56,7 @@ def plot(
 
     if autocompile:
         printer(flush=True)
-        compile(plot_name, dir_name)
+        compile(plot_name, dir_name, lualatex)
 
 class _Plottable:
     def __init__(self):
@@ -363,7 +364,7 @@ class Indenter:
     def blank_line(self):
         self._print()
 
-def compile(plot_name, dir_name):
+def compile(plot_name, dir_name, lualatex=False):
     tex_path = util.get_full_path(
         plot_name,
         dir_name,
@@ -373,8 +374,9 @@ def compile(plot_name, dir_name):
     tex_dir_name, tex_plot_name = os.path.split(tex_path)
     pdf_path = util.get_full_path(plot_name, dir_name, "pdf")
 
+    program_str = "lualatex" if lualatex else "pdflatex"
     completed_process = subprocess.run(
-        ["pdflatex", tex_plot_name],
+        [program_str, tex_plot_name],
         cwd=tex_dir_name,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,

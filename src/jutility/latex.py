@@ -1,4 +1,5 @@
 import textwrap
+import numpy as np
 from jutility import util
 
 SHADER_FLAT         = "flat"
@@ -120,8 +121,15 @@ class Line(_Plottable):
             indent.print("\\addlegendentry{%s}" % self._label)
 
 class Quiver(_Plottable):
-    def __init__(self, x, y, dx, dy, **kwargs):
+    def __init__(self, x, y, dx, dy, norm_length=None, tol=1e-5, **kwargs):
         self._set_kwargs(**kwargs)
+
+        if norm_length is not None:
+            dr = np.sqrt(np.square(dx) + np.square(dy))
+            scale = norm_length / np.maximum(dr, tol)
+            dx = dx * scale
+            dy = dy * scale
+
         self._data_table = [x, y, dx, dy]
 
     def plot(self, indent, counter):

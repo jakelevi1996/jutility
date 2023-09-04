@@ -182,9 +182,14 @@ class ImShow(FillBetween):
     def plot(self, axis):
         axis.imshow(self._c, **self._kwargs)
 
-def confidence_bounds(data_list, n_sigma=1, split_dim=None):
+def confidence_bounds(
+    data_list,
+    n_sigma=1,
+    split_dim=None,
+    downsample_ratio=1,
+):
     if split_dim is not None:
-        n_split = data_list.shape[split_dim]
+        n_split = int(data_list.shape[split_dim] / downsample_ratio)
         data_list = np.split(data_list, n_split, split_dim)
     mean = np.array([np.mean(x) for x in data_list])
     std  = np.array([np.std( x) for x in data_list])

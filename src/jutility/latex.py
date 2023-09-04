@@ -172,43 +172,14 @@ class FillBetween(_Plottable):
         if self._label is not None:
             indent.print("\\addlegendentry{%s}" % self._label)
 
-class HVLine(_Plottable):
-    def __init__(
-        self,
-        x=None,
-        y=None,
-        c=None,
-        alpha=None,
-        label=None,
-        name=None,
-    ):
-        self._init_default_options()
-        self._x         = x
-        self._y         = y
-        self._colour    = c
-        self._alpha     = alpha
-        self._label     = label
-        self._name      = name
-
+class _ConstantLine(_Plottable):
     def plot(self, indent, counter):
         indent.print("\\draw[")
         with indent.new_block():
             self._print_latex_plot_options(indent, forgettable=False)
 
         indent.print("]")
-        if self._x is not None:
-            indent.print(
-                "(%s,0 |- current axis.south) -- "
-                "(%s,0 |- current axis.north);"
-                % (self._x, self._x)
-            )
-        if self._y is not None:
-            indent.print(
-                "(current axis.east |- 0,%s) -- "
-                "(current axis.west |- 0,%s);"
-                % (self._y, self._y)
-            )
-
+        self._print_line_data(indent)
         if self._label is not None:
             indent.print("\\addlegendimage{")
             with indent.new_block():
@@ -216,6 +187,31 @@ class HVLine(_Plottable):
 
             indent.print("}")
             indent.print("\\addlegendentry{%s}" % self._label)
+
+    def _print_line_data(self, indent):
+        raise NotImplementedError()
+
+class HLine(_ConstantLine):
+    def __init__(self, y, **kwargs):
+        self._set_kwargs(**kwargs)
+        self._y = y
+
+    def _print_line_data(self, indent):
+        indent.print(
+            "(current axis.east |- 0,%s) -- (current axis.west |- 0,%s);"
+            % (self._y, self._y)
+        )
+
+class VLine(_ConstantLine):
+    def __init__(self, x, **kwargs):
+        self._set_kwargs(**kwargs)
+        self._x = x
+
+    def _print_line_data(self, indent):
+        indent.print(
+            "(%s,0 |- current axis.south) -- (%s,0 |- current axis.north);"
+            % (self._x, self._x)
+        )
 
 class ColourMesh(_Plottable):
     def __init__(self, x, y, z):

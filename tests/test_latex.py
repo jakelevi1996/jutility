@@ -90,12 +90,12 @@ def test_plottables():
             c=cp.colour_name(3),
             label="Arrow",
         ),
-        latex.HVLine(
+        latex.VLine(
             x=1.2,
             c="red",
             label="Vertical line",
         ),
-        latex.HVLine(
+        latex.HLine(
             y=5.5,
             c="blue",
             label="Horizontal line",

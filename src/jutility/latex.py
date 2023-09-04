@@ -1,3 +1,5 @@
+import os
+import subprocess
 import textwrap
 import numpy as np
 from jutility import util
@@ -50,6 +52,10 @@ def plot(
     printer("\\end{axis}")
     printer("\\end{tikzpicture}")
     printer("\\end{document}")
+
+    if autocompile:
+        printer(flush=True)
+        compile(plot_name, dir_name)
 
 class _Plottable:
     def __init__(self):
@@ -356,6 +362,25 @@ class Indenter:
 
     def blank_line(self):
         self._print()
+
+def compile(plot_name, dir_name):
+    tex_path = util.get_full_path(
+        plot_name,
+        dir_name,
+        file_ext="tex",
+        verbose=False,
+    )
+    tex_dir_name, tex_plot_name = os.path.split(tex_path)
+    pdf_path = util.get_full_path(plot_name, dir_name, "pdf")
+
+    subprocess.run(
+        ["pdflatex", tex_plot_name],
+        cwd=tex_dir_name,
+        check=True,
+        capture_output=True,
+    )
+
+    return pdf_path
 
 def format_table_row(*entries, width=25, sep=""):
     row_str = sep.join(str(i).ljust(width) for i in entries)

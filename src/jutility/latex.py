@@ -373,12 +373,15 @@ def compile(plot_name, dir_name):
     tex_dir_name, tex_plot_name = os.path.split(tex_path)
     pdf_path = util.get_full_path(plot_name, dir_name, "pdf")
 
-    subprocess.run(
+    completed_process = subprocess.run(
         ["pdflatex", tex_plot_name],
         cwd=tex_dir_name,
-        check=True,
-        capture_output=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
     )
+    if completed_process.returncode != 0:
+        print(completed_process.stdout.decode())
+        completed_process.check_returncode()
 
     return pdf_path
 

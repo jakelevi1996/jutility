@@ -160,7 +160,6 @@ def test_quiver(normalise):
         dir_name=os.path.join(OUTPUT_DIR, "test_quiver"),
     )
 
-
 @pytest.mark.parametrize("log_x", [True, False])
 @pytest.mark.parametrize("log_y", [True, False])
 def test_log_axes(log_x, log_y):

@@ -255,7 +255,7 @@ class AxisProperties:
         grid_style="solid",
         log_xscale=False,
         log_yscale=False,
-        shader=SHADER_FLAT,
+        shader=SHADER_INTERP,
         colour_map_name="viridis",
         colour_bar=False,
         use_times=False,

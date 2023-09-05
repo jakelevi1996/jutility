@@ -260,6 +260,8 @@ def test_printer():
     printer("Testing __call__ method")
     printer("Testing timestamp method")
     printer.timestamp()
+    printer("Testing get_filename method")
+    printer(printer.get_filename())
     printer("Testing close method")
     printer.close()
 

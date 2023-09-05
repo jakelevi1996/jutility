@@ -109,6 +109,10 @@ class Printer:
     def timestamp(self):
         self(datetime.datetime.now())
 
+    def get_filename(self):
+        if self._file is not None:
+            return self._file.name
+
     def close(self):
         if self._file is not None:
             self._file.close()

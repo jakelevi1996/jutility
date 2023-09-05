@@ -62,7 +62,7 @@ def test_plottables():
         latex.Line(
             x=[0.083, 0.205, 1.349, 3.185, 4.066],
             y=[0.263, 0.857, 1.822, 2.833, 3.434],
-            c=cp.colour_name(0),
+            c=cp(0),
             marker="*",
             alpha=0.5,
             label="Legend entry 1",
@@ -70,7 +70,7 @@ def test_plottables():
         latex.Line(
             x=[0.721, 1.559, 2.559, 4.743, 4.752],
             y=[0.944, 1.291, 2.85,  4.926, 4.899],
-            c=cp.colour_name(1),
+            c=cp(1),
             marker="*",
             label="Legend entry 2",
         ),
@@ -78,7 +78,7 @@ def test_plottables():
             x=[0, 2, 5],
             y1=[-1, 0, 4],
             y2=[1, 4, 6],
-            c=cp.colour_name(2),
+            c=cp(2),
             alpha=0.2,
             label="Patch",
         ),
@@ -87,7 +87,7 @@ def test_plottables():
             y=[-1, 0, 3],
             dx=[2, 1, 2],
             dy=[1, 2, 2],
-            c=cp.colour_name(3),
+            c=cp(3),
             label="Arrow",
         ),
         latex.VLine(
@@ -105,7 +105,6 @@ def test_plottables():
             xlabel="$x$ axis label",
             ylabel="$y$ axis label",
             figsize_cm=[8, 6],
-            colour_picker=cp,
         ),
         plot_name="test_plottables_latex",
         dir_name=os.path.join(OUTPUT_DIR, "test_plottables"),

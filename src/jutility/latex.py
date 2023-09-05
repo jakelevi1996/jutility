@@ -63,7 +63,10 @@ class _Plottable:
         """
         Initialise object to be plotted. Optional keyword arguments:
 
-        - `c`: colour of line/marker/patch
+        - `c`: colour of line/marker/patch, either as a string, or as a
+          sequence of at least 3 floats in the range [0, 1], in which the first
+          3 elements refer to the red, green, and blue colour components (any
+          subsequent elements are ignored)
         - `alpha`: opacity, which satisfies `0 <= alpha <= 1`, where 1 = opaque
           and 0 = transparent
         - `marker`: marker to use for each point, EG `"*"` for filled marker,
@@ -94,7 +97,13 @@ class _Plottable:
 
     def _print_latex_plot_options(self, indent, forgettable=True):
         if self._colour is not None:
-            indent.print("color=%s," % self._colour)
+            if isinstance(self._colour, str):
+                indent.print("color=%s," % self._colour)
+            else:
+                indent.print(
+                    "color={rgb,1:red,%s;green,%s;blue,%s},"
+                    % (self._colour[0], self._colour[1], self._colour[2])
+                )
         if self._alpha is not None:
             indent.print("opacity=%s," % self._alpha)
         if self._marker is not None:

@@ -30,8 +30,8 @@ def test_indenter(indent_str, initial_indent):
         indent.print(next(x))
     indent.print(next(x))
 
-def test_plot():
-    rng = util.Seeder().get_rng("test_plot")
+def test_plot_colour_picker():
+    rng = util.Seeder().get_rng("test_plot_colour_picker")
 
     x = np.linspace(0, 1, 100)
     f = lambda x, slope: slope * x + 0.01 * rng.normal(size=x.shape)
@@ -51,8 +51,8 @@ def test_plot():
             ylabel="$y$ label",
             colour_picker=cp,
         ),
-        plot_name="test_plot_latex",
-        dir_name=os.path.join(OUTPUT_DIR, "test_plot"),
+        plot_name="test_plot_colour_picker_latex",
+        dir_name=os.path.join(OUTPUT_DIR, "test_plot_colour_picker"),
     )
 
 def test_plottables():

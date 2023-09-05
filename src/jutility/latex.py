@@ -56,7 +56,11 @@ def plot(
 
     if autocompile:
         printer(flush=True, end="")
-        compile(plot_name, dir_name, lualatex)
+        output_path = compile(plot_name, dir_name, lualatex)
+    else:
+        output_path = printer.get_filename()
+
+    return output_path
 
 class _Plottable:
     def __init__(self):

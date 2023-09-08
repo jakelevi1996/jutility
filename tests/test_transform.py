@@ -8,6 +8,24 @@ OUTPUT_DIR = tests.util.get_output_dir("test_latex")
 
 TOL = 1e-8
 
+def test_least_squares_linear():
+    rng = util.Seeder().get_rng("test_least_squares_linear")
+    printer = util.Printer("test_least_squares_linear", OUTPUT_DIR)
+
+    nx = 4
+    ny = 6
+    nd = 10
+    x = rng.normal(size=[nx, nd])
+    w = rng.normal(size=[ny, nx])
+    y = w @ x
+
+    f = transform.least_squares_linear(x, y, reg=1e-10)
+
+    printer(y, f(x), y - f(x), sep="\n")
+    printer(w, f.w , w - f.w , sep="\n")
+    assert np.max(np.abs(y - f(x))) < TOL
+    assert np.max(np.abs(w - f.w )) < TOL
+
 def test_least_squares_affine():
     rng = util.Seeder().get_rng("test_least_squares_affine")
     printer = util.Printer("test_least_squares_affine", OUTPUT_DIR)

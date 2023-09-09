@@ -396,6 +396,12 @@ def plot_figure(
     if num_cols is None:
         num_cols = math.ceil(math.sqrt(len(subfigures)))
 
+    num_rows = math.ceil(len(subfigures) / num_cols)
+    use_hspace = ((num_rows * num_cols) != len(subfigures))
+    if use_hspace:
+        pre_hspace_ind = num_cols * int(len(subfigures) / num_cols)
+        post_hspace_ind = len(subfigures) - 1
+
     with indent.new_block():
         if len(subfigures) == 1:
             [subfig] = subfigures
@@ -405,6 +411,9 @@ def plot_figure(
             indent.print("\\captionsetup[subfigure]{justification=centering}")
 
             for i, subfig in enumerate(subfigures):
+                if use_hspace and (i == pre_hspace_ind):
+                    indent.print("\\hspace*{\\fill}")
+
                 w = subfig.get_width_str()
                 indent.print("\\begin{subfigure}[t]{%s\\textwidth}" % w)
 
@@ -412,6 +421,12 @@ def plot_figure(
                     subfig.plot(indent, graphics_path, False)
 
                 indent.print("\\end{subfigure}")
+
+                if use_hspace and (i == post_hspace_ind):
+                    indent.print("\\hspace*{\\fill}")
+
+                if (i + 1) == len(subfigures):
+                    break
 
                 if ((i + 1) % num_cols) == 0:
                     indent.print("\\newline")

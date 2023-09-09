@@ -4,7 +4,7 @@ import pytest
 from jutility import transform, plotting, util
 import tests.util
 
-OUTPUT_DIR = tests.util.get_output_dir("test_latex")
+OUTPUT_DIR = tests.util.get_output_dir("test_transform")
 
 TOL = 1e-8
 

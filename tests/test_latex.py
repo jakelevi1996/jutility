@@ -10,7 +10,8 @@ OUTPUT_DIR = tests.util.get_output_dir("test_latex")
 @pytest.mark.parametrize("initial_indent", range(3))
 def test_indenter(indent_str, initial_indent):
     test_name = "test_indenter, %s, %s" % (indent_str, initial_indent)
-    printer = util.Printer(test_name, OUTPUT_DIR)
+    test_dir = os.path.join(OUTPUT_DIR, "test_indenter")
+    printer = util.Printer(test_name, test_dir)
 
     indent = latex.Indenter(printer, indent_str, initial_indent)
 

@@ -1,6 +1,7 @@
 import os
 import subprocess
 import textwrap
+import math
 import numpy as np
 from jutility import util
 
@@ -360,7 +361,7 @@ class Subfigure:
 
     def plot(self, indent, graphics_path, only_subfigure):
         indent.print("\\centering")
-        width_str = str(self._width) if only_subfigure else ""
+        width_str = self.get_width_str() if only_subfigure else ""
         rel_path = os.path.relpath(self._full_path, graphics_path)
         rel_path = rel_path.replace("\\", "/")
         indent.print(
@@ -371,6 +372,9 @@ class Subfigure:
             indent.print("\\caption{%s}" % self._caption)
         if self._label is not None:
             indent.print("\\label{fig:%s}" % self._label)
+
+    def get_width_str(self):
+        return str(self._width)
 
 def plot_figure(
     *subfigures,
@@ -389,11 +393,30 @@ def plot_figure(
     )
     indent = Indenter(printer)
     indent.print("\\begin{figure}")
+    if num_cols is None:
+        num_cols = math.ceil(math.sqrt(len(subfigures)))
 
     with indent.new_block():
         if len(subfigures) == 1:
             [subfig] = subfigures
             subfig.plot(indent, graphics_path, True)
+        else:
+            indent.print("\\centering")
+            indent.print("\\captionsetup[subfigure]{justification=centering}")
+
+            for i, subfig in enumerate(subfigures):
+                w = subfig.get_width_str()
+                indent.print("\\begin{subfigure}[t]{%s\\textwidth}" % w)
+
+                with indent.new_block():
+                    subfig.plot(indent, graphics_path, False)
+
+                indent.print("\\end{subfigure}")
+
+                if ((i + 1) % num_cols) == 0:
+                    indent.print("\\newline")
+                else:
+                    indent.print("\\hfill")
 
     indent.print("\\end{figure}")
     return printer.get_filename()

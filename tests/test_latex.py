@@ -178,3 +178,46 @@ def test_log_axes(log_x, log_y):
         plot_name=plot_name,
         dir_name=os.path.join(OUTPUT_DIR, "test_log_axes"),
     )
+
+def test_plot_figure(n_plots=1, width=0.8, compile_pdf=False):
+    test_dir        = os.path.join(OUTPUT_DIR,      "test_plot_figure")
+    graphics_dir    = os.path.join(test_dir,        "figures")
+    fig_dir         = os.path.join(graphics_dir,    "test_figure")
+    subfig_dir      = os.path.join(fig_dir,         "test_subfigure")
+
+    if compile_pdf:
+        x = np.linspace(0, 2 * np.pi, 250)
+        f = lambda x, scale: np.sin(x) + scale * np.sin(20 * x)
+
+        for i in range(n_plots):
+            latex.plot(
+                latex.Line(x, f(x, 0.1 + 0.2 * i), c="blue"),
+                plot_name="subfig_%i" % i,
+                dir_name=subfig_dir,
+                autocompile=True,
+            )
+
+    subfigures = [
+        latex.Subfigure(
+            os.path.join(subfig_dir, "subfig_%i.pdf" % i),
+            width=width,
+            caption="Test subfigure caption %i" % i,
+            label="test subfig label %i" % i,
+        )
+        for i in range(n_plots)
+    ]
+    fig_path = latex.plot_figure(
+        *subfigures,
+        graphics_path=graphics_dir,
+        num_cols=3,
+        caption="Test figure caption",
+        label="test fig label",
+        fig_name="fig name",
+        dir_name=fig_dir,
+    )
+    latex.standalone_document(
+        fig_path,
+        graphics_path=graphics_dir,
+        document_name="test_plot_figure_latex",
+        dir_name=test_dir,
+    )

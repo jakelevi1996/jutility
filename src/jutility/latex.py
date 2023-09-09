@@ -345,6 +345,102 @@ class AxisProperties:
         if self._colour_bar:
             indent.print("colorbar,")
 
+class Subfigure:
+    def __init__(
+        self,
+        full_path,
+        width="",
+        caption=None,
+        label=None,
+    ):
+        self._full_path = full_path
+        self._width     = width
+        self._caption   = caption
+        self._label     = label
+
+    def plot(self, indent, graphics_path, only_subfigure):
+        indent.print("\\centering")
+        width_str = str(self._width) if only_subfigure else ""
+        rel_path = os.path.relpath(self._full_path, graphics_path)
+        rel_path = rel_path.replace("\\", "/")
+        indent.print(
+            "\\includegraphics[width=%s\\textwidth]{%s}"
+            % (width_str, rel_path)
+        )
+        if self._caption is not None:
+            indent.print("\\caption{%s}" % self._caption)
+        if self._label is not None:
+            indent.print("\\label{fig:%s}" % self._label)
+
+def plot_figure(
+    *subfigures,
+    graphics_path=None,
+    num_cols=None,
+    caption=None,
+    label=None,
+    fig_name="figure",
+    dir_name=None,
+):
+    printer = util.Printer(
+        fig_name,
+        dir_name,
+        file_ext="tex",
+        print_to_console=False,
+    )
+    indent = Indenter(printer)
+    indent.print("\\begin{figure}")
+
+    with indent.new_block():
+        if len(subfigures) == 1:
+            [subfig] = subfigures
+            subfig.plot(indent, graphics_path, True)
+
+    indent.print("\\end{figure}")
+    return printer.get_filename()
+
+def standalone_document(
+    *input_paths,
+    graphics_path=None,
+    document_name="document",
+    dir_name=None,
+    autocompile=False,
+    lualatex=False,
+):
+    printer = util.Printer(
+        document_name,
+        dir_name,
+        file_ext="tex",
+        print_to_console=False,
+    )
+    document_dir = os.path.dirname(printer.get_filename())
+
+    printer("\\documentclass{article}")
+    printer("\\usepackage{subcaption}")
+    printer("\\usepackage{graphicx}")
+    printer("\\pagestyle{empty}")
+    if graphics_path is not None:
+        graphics_rel_path = os.path.relpath(graphics_path, document_dir)
+        graphics_rel_path = graphics_rel_path.replace("\\", "/")
+        printer("\\graphicspath{{%s}}" % graphics_rel_path)
+
+    printer()
+    printer("\\begin{document}")
+
+    for input_path in input_paths:
+        input_rel_path = os.path.relpath(input_path, document_dir)
+        input_rel_path = input_rel_path.replace("\\", "/")
+        printer("\\input{%s}" % input_rel_path)
+
+    printer("\\end{document}")
+
+    if autocompile:
+        printer(flush=True, end="")
+        output_path = compile_latex(printer.get_filename(), lualatex)
+    else:
+        output_path = printer.get_filename()
+
+    return output_path
+
 class Indenter:
     def __init__(self, printer=None, indent_str=None, initial_indent=0):
         if printer is None:

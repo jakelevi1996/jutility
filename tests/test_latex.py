@@ -180,9 +180,9 @@ def test_log_axes(log_x, log_y):
         dir_name=os.path.join(OUTPUT_DIR, "test_log_axes"),
     )
 
-@pytest.mark.parametrize("n_plots, width", [[1, 0.8], [5, 0.3]])
-def test_plot_figure(n_plots, width, compile_pdf=False):
-    test_name       = "test_plot_figure %i" % n_plots
+@pytest.mark.parametrize("n_plots", [1, 5, 8, 9])
+def test_plot_figure(n_plots, compile_pdf=False):
+    test_name       = "test_plot_figure_%i" % n_plots
     test_dir        = os.path.join(OUTPUT_DIR,      test_name)
     graphics_dir    = os.path.join(test_dir,        "figures")
     fig_dir         = os.path.join(graphics_dir,    "test_figure")
@@ -203,7 +203,7 @@ def test_plot_figure(n_plots, width, compile_pdf=False):
     subfigures = [
         latex.Subfigure(
             os.path.join(subfig_dir, "subfig_%i.pdf" % i),
-            width=width,
+            width=0.3,
             caption="Test subfigure caption %i" % i,
             label="test subfig label %i" % i,
         )

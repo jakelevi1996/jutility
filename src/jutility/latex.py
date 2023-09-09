@@ -56,7 +56,7 @@ def plot(
 
     if autocompile:
         printer(flush=True, end="")
-        output_path = compile(plot_name, dir_name, lualatex)
+        output_path = compile_latex(printer.get_filename(), lualatex)
     else:
         output_path = printer.get_filename()
 
@@ -377,19 +377,14 @@ class Indenter:
     def blank_line(self):
         self._print()
 
-def compile(plot_name, dir_name, lualatex=False):
-    tex_path = util.get_full_path(
-        plot_name,
-        dir_name,
-        file_ext="tex",
-        verbose=False,
-    )
-    tex_dir_name, tex_plot_name = os.path.split(tex_path)
-    pdf_path = util.get_full_path(plot_name, dir_name, "pdf")
+def compile_latex(full_path, lualatex=False):
+    tex_dir_name, tex_filename = os.path.split(full_path)
+    tex_root, _ = os.path.splitext(tex_filename)
+    pdf_path = util.get_full_path(tex_root, tex_dir_name, "pdf")
 
     program_str = "lualatex" if lualatex else "pdflatex"
     completed_process = subprocess.run(
-        [program_str, tex_plot_name],
+        [program_str, tex_filename],
         cwd=tex_dir_name,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,

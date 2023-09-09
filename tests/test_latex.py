@@ -179,8 +179,10 @@ def test_log_axes(log_x, log_y):
         dir_name=os.path.join(OUTPUT_DIR, "test_log_axes"),
     )
 
-def test_plot_figure(n_plots=1, width=0.8, compile_pdf=False):
-    test_dir        = os.path.join(OUTPUT_DIR,      "test_plot_figure")
+@pytest.mark.parametrize("n_plots, width", [[1, 0.8], [5, 0.3]])
+def test_plot_figure(n_plots, width, compile_pdf=False):
+    test_name       = "test_plot_figure %i" % n_plots
+    test_dir        = os.path.join(OUTPUT_DIR,      test_name)
     graphics_dir    = os.path.join(test_dir,        "figures")
     fig_dir         = os.path.join(graphics_dir,    "test_figure")
     subfig_dir      = os.path.join(fig_dir,         "test_subfigure")

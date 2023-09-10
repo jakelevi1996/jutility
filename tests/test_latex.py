@@ -180,7 +180,7 @@ def test_log_axes(log_x, log_y):
         dir_name=os.path.join(OUTPUT_DIR, "test_log_axes"),
     )
 
-@pytest.mark.parametrize("n_plots", [1, 5, 8, 9])
+@pytest.mark.parametrize("n_plots", [1, 5, 6, 8, 9])
 def test_plot_figure(n_plots, compile_pdf=False):
     test_name       = "test_plot_figure_%i" % n_plots
     test_dir        = os.path.join(OUTPUT_DIR,      test_name)
@@ -189,12 +189,12 @@ def test_plot_figure(n_plots, compile_pdf=False):
     subfig_dir      = os.path.join(fig_dir,         "test_subfigure")
 
     if compile_pdf:
-        x = np.linspace(0, 2 * np.pi, 250)
-        f = lambda x, scale: np.sin(x) + scale * np.sin(20 * x)
+        x = np.linspace(0, 1, 250)
+        f = lambda x, freq: np.sin(2 * np.pi * freq * x)
 
         for i in range(n_plots):
             latex.plot(
-                latex.Line(x, f(x, 0.1 + 0.2 * i), c="blue"),
+                latex.Line(x, f(x, i + 1), c="blue"),
                 plot_name="subfig_%i" % i,
                 dir_name=subfig_dir,
                 autocompile=True,

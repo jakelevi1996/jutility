@@ -112,7 +112,7 @@ class _Plottable:
                 indent.print("color=%s," % self._colour)
             else:
                 indent.print(
-                    "color={rgb,1:red,%s;green,%s;blue,%s},"
+                    "color={rgb,1:red,%f;green,%f;blue,%f},"
                     % (self._colour[0], self._colour[1], self._colour[2])
                 )
         if self._alpha is not None:

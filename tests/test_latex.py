@@ -75,6 +75,13 @@ def test_plottables():
             marker="*",
             label="Legend entry 2",
         ),
+        latex.Line(
+            x=[3, 3.5, 4],
+            y=[5, 6, 5],
+            c="black",
+            only_marks=True,
+            label="Scatter",
+        ),
         latex.FillBetween(
             x=[0, 2, 5],
             y1=[-1, 0, 4],

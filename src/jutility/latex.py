@@ -77,6 +77,10 @@ class _Plottable:
         - `marker`: marker to use for each point, EG `"*"` for filled marker,
           or `"o"` for unfilled marker. Default is `None`, in which case no
           marker is plotted
+        - `only_marks`: if True, only markers are added to the plot for each
+          point, and no line is drawn between them. If `only_marks` is True,
+          then by default a filled circle (`*`) is used as the marker, even if
+          no marker is specified. Default is `only_marks=False`
         - `label`: entry to be added to legend
         - `name`: name which is applied to this object, allowing it to be
           referred to by other objects, EG filled areas
@@ -88,14 +92,16 @@ class _Plottable:
         c=None,
         alpha=None,
         marker=None,
+        only_marks=False,
         name=None,
         label=None,
     ):
-        self._colour    = c
-        self._alpha     = alpha
-        self._marker    = marker
-        self._name      = name
-        self._label     = label
+        self._colour        = c
+        self._alpha         = alpha
+        self._marker        = marker
+        self._only_marks    = only_marks
+        self._name          = name
+        self._label         = label
 
     def plot(self, indent, counter):
         raise NotImplementedError()
@@ -113,6 +119,8 @@ class _Plottable:
             indent.print("opacity=%s," % self._alpha)
         if self._marker is not None:
             indent.print("mark=%s," % self._marker)
+        if self._only_marks:
+            indent.print("only marks,")
         if self._name is not None:
             indent.print("name path=%s," % self._name)
         if forgettable and (self._label is None):

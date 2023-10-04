@@ -269,6 +269,46 @@ class ColourMesh(_Plottable):
 
         indent.print("};")
 
+def get_noisy_data_lines(
+    noisy_data,
+    n_sigma=1,
+    colour="blue",
+    name="Result",
+    result_alpha=0.3,
+    results_line_kwargs=None,
+    mean_line_kwargs=None,
+    std_line_kwargs=None,
+    plot_all_data=True,
+    mean_std_labels=True,
+):
+    line_list = []
+    if plot_all_data:
+        all_x, all_y = noisy_data.get_all_data()
+        if results_line_kwargs is None:
+            results_line_kwargs = {
+                "c":            colour,
+                "label":        name,
+                "alpha":        result_alpha,
+                "only_marks":   True,
+            }
+        results_line = Line(all_x, all_y, **results_line_kwargs)
+        line_list.append(results_line)
+
+    x, mean, ucb, lcb = noisy_data.get_statistics(n_sigma)
+    if mean_line_kwargs is None:
+        mean_line_kwargs = {"c": colour}
+        if mean_std_labels:
+            mean_line_kwargs["label"] = "Mean"
+    if std_line_kwargs is None:
+        std_line_kwargs = {"c": colour, "alpha": 0.3}
+        if mean_std_labels:
+            std_line_kwargs["label"] = "$\\pm %s \\sigma$" % n_sigma
+    mean_line = Line(x, mean, **mean_line_kwargs)
+    std_line = FillBetween(x, ucb, lcb, **std_line_kwargs)
+    line_list.append(mean_line)
+    line_list.append(std_line)
+    return line_list
+
 class AxisProperties:
     def __init__(
         self,

@@ -187,6 +187,43 @@ def test_log_axes(log_x, log_y):
         dir_name=os.path.join(OUTPUT_DIR, "test_log_axes"),
     )
 
+@pytest.mark.parametrize("plot_all_data", [True, False])
+def test_noisy_data(plot_all_data):
+    rng = util.Seeder().get_rng("test_noisy_data", plot_all_data)
+    noisy_data_blue = plotting.NoisyData()
+    noisy_data_red  = plotting.NoisyData()
+    x_list = np.linspace(0, 1)
+
+    for x in x_list:
+        for num_repeats in range(rng.integers(10)):
+            noisy_data_blue.update(x, x + 0.04 * rng.normal())
+        for num_repeats in range(rng.integers(10)):
+            noisy_data_red.update(x, 0.3 + (0.3 * x) + (0.04 * rng.normal()))
+
+    mp = latex.plot(
+        *latex.get_noisy_data_lines(
+            noisy_data_blue,
+            colour="blue",
+            name="Blue data",
+            plot_all_data=plot_all_data,
+        ),
+        *latex.get_noisy_data_lines(
+            noisy_data_red,
+            colour="red",
+            name="Red data",
+            plot_all_data=plot_all_data,
+        ),
+        dir_name=os.path.join(
+            OUTPUT_DIR,
+            "test_noisy_data, plot_all_data = %s" % plot_all_data,
+        ),
+        axis_properties=latex.AxisProperties(
+            xlabel="$x$",
+            ylabel="$y$",
+            ylim=[-0.2, 1.2],
+        ),
+    )
+
 @pytest.mark.parametrize("n_plots", [1, 5, 6, 8, 9])
 def test_plot_figure(n_plots, compile_pdf=False):
     test_name       = "test_plot_figure_%i" % n_plots

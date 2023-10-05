@@ -462,7 +462,7 @@ def plot_figure(
             subfig.plot(indent, graphics_path, True)
         else:
             indent.print("\\centering")
-            indent.print("\\captionsetup[subfigure]{justification=centering}")
+            indent.print("\\captionsetup{justification=centering}")
 
             for i, subfig in enumerate(subfigures):
                 if use_hspace and (i == pre_hspace_ind):

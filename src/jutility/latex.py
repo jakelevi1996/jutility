@@ -81,6 +81,8 @@ class _Plottable:
           point, and no line is drawn between them. If `only_marks` is True,
           then by default a filled circle (`*`) is used as the marker, even if
           no marker is specified. Default is `only_marks=False`
+        - `line_width`: width of line in pt as a float. Default is None, which
+          uses pgfplots' default line width
         - `label`: entry to be added to legend
         - `name`: name which is applied to this object, allowing it to be
           referred to by other objects, EG filled areas
@@ -93,6 +95,7 @@ class _Plottable:
         alpha=None,
         marker=None,
         only_marks=False,
+        line_width=None,
         name=None,
         label=None,
     ):
@@ -100,6 +103,7 @@ class _Plottable:
         self._alpha         = alpha
         self._marker        = marker
         self._only_marks    = only_marks
+        self._line_width    = line_width
         self._name          = name
         self._label         = label
 
@@ -121,6 +125,8 @@ class _Plottable:
             indent.print("mark=%s," % self._marker)
         if self._only_marks:
             indent.print("only marks,")
+        if self._line_width is not None:
+            indent.print("line width=%fpt," % self._line_width)
         if self._name is not None:
             indent.print("name path=%s," % self._name)
         if forgettable and (self._label is None):

@@ -436,6 +436,7 @@ def plot_figure(
     num_cols=None,
     caption=None,
     label=None,
+    starred_env=False,
     fig_name="figure",
     dir_name=None,
 ):
@@ -446,7 +447,8 @@ def plot_figure(
         print_to_console=False,
     )
     indent = Indenter(printer)
-    indent.print("\\begin{figure}")
+    star_str = "*" if starred_env else ""
+    indent.print("\\begin{figure%s}" % star_str)
     if num_cols is None:
         num_cols = math.ceil(math.sqrt(len(subfigures)))
 
@@ -492,7 +494,7 @@ def plot_figure(
             if label is not None:
                 indent.print("\\label{%s}" % label)
 
-    indent.print("\\end{figure}")
+    indent.print("\\end{figure%s}" % star_str)
     return printer.get_filename()
 
 def standalone_document(

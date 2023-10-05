@@ -487,6 +487,11 @@ def plot_figure(
                 else:
                     indent.print("\\hfill")
 
+            if caption is not None:
+                indent.print("\\caption{%s}" % caption)
+            if label is not None:
+                indent.print("\\label{%s}" % label)
+
     indent.print("\\end{figure}")
     return printer.get_filename()
 

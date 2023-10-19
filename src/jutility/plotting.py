@@ -34,12 +34,16 @@ import PIL
 from jutility import util
 
 class Line:
-    def __init__(self, x=None, y=None, **kwargs):
+    def __init__(self, x=None, y=None, batch_first=False, **kwargs):
         if (y is None) and (x is not None):
             y = x
             x = None
-        if (x is None) and (y is not None):
-            x = np.arange(np.array(y).shape[0])
+        if y is not None:
+            y = np.array(y)
+            if batch_first:
+                y = y.T
+            if x is None:
+                x = np.arange(y.shape[0])
 
         self._x = x
         self._y = y

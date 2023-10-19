@@ -402,3 +402,22 @@ def test_quiver():
     )
     mp.save(plot_name="test_quiver", dir_name=OUTPUT_DIR)
     assert os.path.isfile(mp.filename)
+
+def test_batch_first():
+    rng = util.Seeder().get_rng("test_batch_first")
+    nd = 100
+    batch_size = 5
+    x = np.linspace(0, 1, nd)
+    y = rng.normal(size=[batch_size, nd])
+    with pytest.raises(ValueError):
+        plotting.plot(
+            plotting.Line(x, y, c="b", alpha=0.6),
+            plot_name="test_batch_first",
+            dir_name=OUTPUT_DIR,
+        )
+
+    plotting.plot(
+        plotting.Line(x, y, c="b", alpha=0.6, batch_first=True),
+        plot_name="test_batch_first",
+        dir_name=OUTPUT_DIR,
+    )

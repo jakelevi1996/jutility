@@ -282,7 +282,7 @@ def test_confidence_bounds():
     printer(y)
     subplots = []
     for split_dim in [0, 1]:
-        mean, ucb, lcb = plotting.confidence_bounds(y, split_dim=split_dim)
+        mean, ucb, lcb = util.confidence_bounds(y, split_dim=split_dim)
         x = np.arange(mean.size)
         sp = plotting.Subplot(
             plotting.Line(x, mean, c="b", marker="o"),
@@ -296,8 +296,8 @@ def test_confidence_bounds():
 @pytest.mark.parametrize("plot_all_data", [True, False])
 def test_noisy_data(plot_all_data):
     rng = util.Seeder().get_rng("test_noisy_data", plot_all_data)
-    noisy_data_blue = plotting.NoisyData()
-    noisy_data_red  = plotting.NoisyData()
+    noisy_data_blue = util.NoisyData()
+    noisy_data_red  = util.NoisyData()
     x_list = np.linspace(0, 1)
 
     for x in x_list:
@@ -307,12 +307,14 @@ def test_noisy_data(plot_all_data):
             noisy_data_red.update(x, 0.3 + (0.3 * x) + (0.04 * rng.normal()))
 
     mp = plotting.plot(
-        *noisy_data_blue.get_lines(
+        *plotting.get_noisy_data_lines(
+            noisy_data_blue,
             colour="b",
             name="Blue data",
             plot_all_data=plot_all_data,
         ),
-        *noisy_data_red.get_lines(
+        *plotting.get_noisy_data_lines(
+            noisy_data_red,
             colour="r",
             name="Red data",
             plot_all_data=plot_all_data,
@@ -326,8 +328,8 @@ def test_noisy_data(plot_all_data):
 
 def test_noisy_log_data():
     rng = util.Seeder().get_rng("test_noisy_log_data")
-    noisy_log_data = plotting.NoisyData(log_space_data=True)
-    noisy_data = plotting.NoisyData()
+    noisy_log_data = util.NoisyData(log_space_data=True)
+    noisy_data = util.NoisyData()
     x_list = util.log_range(0.01, 10, 50)
     for x in x_list:
         for repeat in range(rng.integers(10)):
@@ -337,7 +339,7 @@ def test_noisy_log_data():
 
     mp = plotting.MultiPlot(
         plotting.Subplot(
-            *noisy_log_data.get_lines(),
+            *plotting.get_noisy_data_lines(noisy_log_data),
             axis_properties=plotting.AxisProperties(
                 title="noisy_log_data, log_space_data=True",
                 log_xscale=True,
@@ -345,7 +347,7 @@ def test_noisy_log_data():
             ),
         ),
         plotting.Subplot(
-            *noisy_data.get_lines(),
+            *plotting.get_noisy_data_lines(noisy_data),
             axis_properties=plotting.AxisProperties(
                 title="noisy_data, log_space_data=False",
                 log_xscale=True,

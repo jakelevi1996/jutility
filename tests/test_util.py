@@ -564,6 +564,38 @@ def test_confidence_bounds():
     mp = plotting.MultiPlot(*subplots)
     mp.save("test_confidence_bounds", OUTPUT_DIR)
 
+@pytest.mark.parametrize("data_len", [23, 25])
+def test_confidence_bounds_downsample(data_len):
+    test_name = "test_confidence_bounds_downsample_%s" % data_len
+    printer = util.Printer(test_name, dir_name=OUTPUT_DIR)
+
+    x = list(range(data_len))
+
+    subplots = []
+    for ds in [1, 3, 5]:
+        mean, ucb, lcb = util.confidence_bounds(
+            x,
+            split_dim=0,
+            downsample_ratio=ds,
+        )
+        printer(mean, ucb, lcb, sep="\n", end="\n"+"*"*50+"\n")
+        sp = plotting.Subplot(
+            plotting.Line(x[::ds], mean, c="b", marker="o"),
+            plotting.FillBetween(x[::ds], ucb, lcb, c="b", alpha=0.3),
+            axis_properties=plotting.AxisProperties(title="ds = %s" % ds)
+        )
+        subplots.append(sp)
+
+    mp = plotting.MultiPlot(
+        *subplots,
+        figure_properties=plotting.FigureProperties(
+            num_rows=1,
+            title=test_name,
+            constrained_layout=True,
+        ),
+    )
+    mp.save(test_name, OUTPUT_DIR)
+
 @pytest.mark.parametrize("plot_all_data", [True, False])
 def test_noisy_data(plot_all_data):
     rng = util.Seeder().get_rng("test_noisy_data", plot_all_data)

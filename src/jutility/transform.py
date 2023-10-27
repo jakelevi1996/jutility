@@ -21,7 +21,11 @@ def outer_product_batched(x, y):
     p = x.reshape(nx_0, 1, nx_1) * y.reshape(1, ny_0, ny_1)
     return p
 
-def least_squares_linear(x, y, reg=1e-5):
+def least_squares_linear(x, y, reg=1e-5, batch_first=False):
+    if batch_first:
+        x = x.T
+        y = y.T
+
     nx, nd = x.shape
     cov_xx = outer_product_batched(x, x).mean(axis=2)
     cov_yx = outer_product_batched(y, x).mean(axis=2)
@@ -29,7 +33,11 @@ def least_squares_linear(x, y, reg=1e-5):
     f = Linear(w)
     return f
 
-def least_squares_affine(x, y, reg=1e-5):
+def least_squares_affine(x, y, reg=1e-5, batch_first=False):
+    if batch_first:
+        x = x.T
+        y = y.T
+
     nx, nd = x.shape
     x_mean = x.mean(axis=1, keepdims=True)
     y_mean = y.mean(axis=1, keepdims=True)

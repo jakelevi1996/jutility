@@ -135,11 +135,19 @@ class Seeder:
         return rng
 
 class Timer:
-    def __init__(self, name=None, printer=None):
+    def __init__(
+        self,
+        name=None,
+        printer=None,
+        verbose_entry=False,
+        verbose_exit=True,
+    ):
         if printer is None:
             printer = Printer()
-        self._name = name
-        self._print = printer
+        self._name          = name
+        self._print         = printer
+        self._verbose_entry = verbose_entry
+        self._verbose_exit  = verbose_exit
         self.reset()
 
     def reset(self):
@@ -149,15 +157,22 @@ class Timer:
         t1 = time.perf_counter()
         return t1 - self._t0
 
+    def _get_name_str(self):
+        return (" for %s" % self._name) if (self._name is not None) else ""
+
     def __enter__(self):
+        if self._verbose_entry:
+            self._print("Starting timer%s..." % self._get_name_str())
+
+        self.reset()
         return self
 
     def __exit__(self, *args):
         self.time_measured = self.time_taken()
-        t_str = time_format(self.time_measured)
-        has_name = (self._name is not None)
-        name_str = ("for %s " % self._name) if has_name else ""
-        self._print("Time taken %s= %s" % (name_str, t_str))
+
+        if self._verbose_exit:
+            t_str = time_format(self.time_measured)
+            self._print("Time taken%s = %s" % (self._get_name_str(), t_str))
 
 class Counter:
     def __init__(self, init_count=0):

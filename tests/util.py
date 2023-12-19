@@ -1,5 +1,4 @@
 import os
-import torch
 import tests
 
 def get_output_dir(*subdir_names):

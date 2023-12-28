@@ -183,6 +183,9 @@ class Counter:
         self._count += 1
         return count
 
+    def get_value(self):
+        return self._count
+
 class _Interval:
     def __init__(self):
         self._total_count = 0

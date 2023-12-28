@@ -664,3 +664,29 @@ def test_noisy_log_data():
         ),
     )
     mp.save("test_noisy_log_data", OUTPUT_DIR)
+
+def test_function_list():
+    fl = util.FunctionList()
+    c1 = util.Counter()
+    c2 = util.Counter()
+
+    fl.add_functions(
+        lambda: c1(),
+        lambda: c2(),
+        lambda: c2(),
+    )
+
+    assert c1.get_value() == 0
+    assert c2.get_value() == 0
+
+    results = fl.call_all()
+
+    assert c1.get_value() == 1
+    assert c2.get_value() == 2
+    assert results == [0, 0, 1]
+
+    results = fl.call_all(return_results=False)
+
+    assert c1.get_value() == 2
+    assert c2.get_value() == 4
+    assert results == None

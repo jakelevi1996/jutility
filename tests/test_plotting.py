@@ -337,3 +337,11 @@ def test_batch_first():
         plot_name="test_batch_first",
         dir_name=OUTPUT_DIR,
     )
+
+def test_text():
+    plotting.plot(
+        plotting.Text(0.5, 0.5, "Text example", size=60, center_align=True),
+        axis_properties=plotting.AxisProperties(axis_off=True, title=""),
+        plot_name="test_text",
+        dir_name=OUTPUT_DIR,
+    )

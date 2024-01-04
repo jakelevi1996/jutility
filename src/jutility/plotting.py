@@ -137,6 +137,22 @@ class FillBetween(Line):
         if self.has_label():
             return matplotlib.patches.Patch(**self._kwargs)
 
+class Text(Line):
+    def __init__(self, *args, center_align=False, **kwargs):
+        """
+        See
+        https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.text.html
+        """
+        if center_align:
+            kwargs["horizontalalignment"]   = "center"
+            kwargs["verticalalignment"]     = "center"
+
+        self._args = args
+        self._kwargs = kwargs
+
+    def plot(self, axis):
+        axis.text(*self._args, **self._kwargs)
+
 class Bar(FillBetween):
     def __init__(self, x, height, **kwargs):
         self._x = x

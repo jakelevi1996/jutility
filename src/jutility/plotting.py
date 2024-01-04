@@ -142,6 +142,10 @@ class Text(Line):
         """
         See
         https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.text.html
+
+        Further examples:
+        https://matplotlib.org/stable/gallery/text_labels_and_annotations/fancytextbox_demo.html
+        https://matplotlib.org/stable/gallery/subplots_axes_and_figures/figure_size_units.html
         """
         if center_align:
             kwargs["horizontalalignment"]   = "center"

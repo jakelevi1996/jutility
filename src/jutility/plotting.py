@@ -166,6 +166,14 @@ class Bar(FillBetween):
     def plot(self, axis):
         axis.bar(self._x, self._height, **self._kwargs)
 
+class Hist(FillBetween):
+    def __init__(self, *args, **kwargs):
+        self._args = args
+        self._kwargs = kwargs
+
+    def plot(self, axis):
+        axis.hist(*self._args, **self._kwargs)
+
 class HVSpan(FillBetween):
     def __init__(self, xlims=None, ylims=None, **kwargs):
         self._xlims = xlims

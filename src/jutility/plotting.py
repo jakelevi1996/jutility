@@ -484,6 +484,7 @@ def plot(
     *lines,
     axis_properties=None,
     legend=False,
+    figsize=None,
     plot_name=None,
     dir_name=None,
     save_close=True,
@@ -491,11 +492,12 @@ def plot(
 ):
     if axis_properties is None:
         axis_properties = AxisProperties()
+    if figsize is None:
+        figsize = [10, 6] if legend else [8, 6]
     if plot_name is not None:
         axis_properties.set_default_title(plot_name)
 
     if legend:
-        figsize = [10, 6]
         wr =  [1, 0.2]
         fig_properties = FigureProperties(1, 2, figsize, width_ratios=wr)
         multi_plot = MultiPlot(
@@ -504,7 +506,6 @@ def plot(
             figure_properties=fig_properties,
         )
     else:
-        figsize = [8, 6]
         fig_properties = FigureProperties(1, 1, figsize)
         multi_plot = MultiPlot(
             Subplot(*lines, axis_properties=axis_properties),

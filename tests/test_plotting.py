@@ -345,3 +345,19 @@ def test_text():
         plot_name="test_text",
         dir_name=OUTPUT_DIR,
     )
+
+def test_save_pdf():
+    n = 10
+    x = np.linspace(0, 4, n).reshape(1, n)
+    y = np.linspace(0, 4, n).reshape(n, 1)
+    dx = y - x
+    dy = x + y
+    for pdf in [True, False]:
+        plotting.plot(
+            plotting.Line([1, 2, 3], [1, 3, 2], c="b", marker="o"),
+            plotting.Text(2, 3, "Example text", size=30),
+            plotting.Quiver(x, y, dx, dy, zorder=10, normalise=False),
+            plot_name="test_save_pdf, pdf = %s" % pdf,
+            dir_name=OUTPUT_DIR,
+            pdf=pdf,
+        )

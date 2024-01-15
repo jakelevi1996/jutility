@@ -487,6 +487,7 @@ def plot(
     plot_name=None,
     dir_name=None,
     save_close=True,
+    pdf=False,
 ):
     if axis_properties is None:
         axis_properties = AxisProperties()
@@ -511,7 +512,7 @@ def plot(
         )
 
     if save_close:
-        multi_plot.save(plot_name, dir_name)
+        multi_plot.save(plot_name, dir_name, pdf=pdf)
         multi_plot.close()
 
     return multi_plot
@@ -538,10 +539,13 @@ class MultiPlot:
         plot_name=None,
         dir_name=None,
         verbose=True,
-        file_ext="png",
+        file_ext=None,
+        pdf=False,
     ):
         if plot_name is None:
             plot_name = "Output"
+        if file_ext is None:
+            file_ext = "pdf" if pdf else "png"
 
         self.filename = util.get_full_path(
             plot_name,

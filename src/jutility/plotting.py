@@ -633,3 +633,19 @@ class Gif:
             optimise=optimise,
             loop=n_loops,
         )
+
+def set_latex_params(use_tex=True):
+    latex_params_dict = {
+        "font.family":          "serif",
+        "font.serif":           ["Computer Modern"],
+        "text.usetex":          True,
+        "text.latex.preamble":  "\\usepackage{amsmath}",
+        "legend.edgecolor":     "k",
+        "legend.fancybox":      "False",
+    }
+
+    for key, value in latex_params_dict.items():
+        if use_tex:
+            matplotlib.rcParams[key] = value
+        else:
+            matplotlib.rcParams[key] = matplotlib.rcParamsDefault[key]

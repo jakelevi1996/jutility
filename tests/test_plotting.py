@@ -382,3 +382,46 @@ def test_save_pdf():
             dir_name=OUTPUT_DIR,
             pdf=pdf,
         )
+
+@pytest.mark.parametrize("pdf", [True, False])
+def test_set_latex_params(pdf):
+    for use_tex in [True, False]:
+        plotting.set_latex_params(use_tex=use_tex)
+
+        plot_name = (
+            "test_set_latex_params, use_tex=%s, pdf=%s" % (use_tex, pdf)
+        )
+
+        plotting.plot(
+            plotting.Line(
+                [1, 3, 2, 3, 4],
+                [1, 2, 3, 3, 4],
+                c="b",
+                marker="o",
+                label="label",
+                zorder=20,
+            ),
+            plotting.FillBetween(
+                [0, 5],
+                [-1, 1],
+                [1, 8],
+                c="b",
+                alpha=0.3,
+                label="$\\sigma$",
+                lw=0,
+                zorder=10,
+            ),
+            plotting.Text(1, 6, "Example text", size=10),
+            axis_properties=plotting.AxisProperties(
+                grid=False,
+                xlabel="$x$ label",
+                ylabel="$\\mathcal{L}$",
+            ),
+            figsize=[5, 3],
+            legend=True,
+            plot_name=plot_name,
+            dir_name=OUTPUT_DIR,
+            pdf=pdf,
+        )
+
+    plotting.set_latex_params(use_tex=False)

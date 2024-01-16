@@ -276,9 +276,18 @@ class ColourPicker:
         cmap = plt.get_cmap(cmap_name)
         cmap_sample_points = np.linspace(0, 1, num_colours, endpoint)
         self._colours = [cmap(i) for i in cmap_sample_points]
+        self._index = 0
 
     def __call__(self, colour_ind):
         return self._colours[colour_ind]
+
+    def next(self):
+        c = self._colours[self._index]
+        self._index += 1
+        if self._index >= len(self._colours):
+            self._index = 0
+
+        return c
 
     def colour_name(self, colour_ind):
         return "c%i" % colour_ind

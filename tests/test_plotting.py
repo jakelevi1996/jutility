@@ -173,6 +173,27 @@ def test_colour_picker(num_colours, cyclic):
     )
     assert os.path.isfile(mp.filename)
 
+def test_colour_picker_next():
+    num_colours = 5
+    cp = plotting.ColourPicker(num_colours)
+    x = np.linspace(-1, 7, 200)
+    line_list = [
+        plotting.Line(
+            x=x,
+            y=np.sin((1 + i / num_colours) * x),
+            c=cp.next(),
+            label="Line %i" % i,
+        )
+        for i in range(2 * num_colours)
+    ]
+    mp = plotting.plot(
+        *line_list,
+        plot_name="test_colour_picker_next",
+        dir_name=OUTPUT_DIR,
+        legend=True,
+    )
+    assert os.path.isfile(mp.filename)
+
 def test_title():
     title = (
         "This is a very long title containing /|\\*:<\"$pecial?\">:*/|\\ "

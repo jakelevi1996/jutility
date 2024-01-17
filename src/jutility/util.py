@@ -234,7 +234,7 @@ class TimeInterval(_Interval):
             self._num_seconds_limit += self._num_seconds_interval
 
 class Column:
-    def __init__(self, name, value_format=None, title=None, width=None):
+    def __init__(self, name, value_format=None, width=None, title=None):
         if value_format is None:
             value_format = "s"
         if title is None:

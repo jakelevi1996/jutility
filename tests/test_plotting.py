@@ -425,3 +425,24 @@ def test_set_latex_params(pdf):
         )
 
     plotting.set_latex_params(use_tex=False)
+
+def test_get_image_array():
+    plot_name = "test_get_image_array"
+    mp = plotting.plot(
+        plotting.Text(0.5, 0.5, plot_name, center_align=True, size=10),
+        axis_properties=plotting.AxisProperties(axis_off=True),
+        figsize=[2, 2],
+        save_close=False,
+    )
+    image_array = mp.get_image_array()
+    mp.close()
+    sp = plotting.Subplot(
+        plotting.ImShow(image_array),
+        axis_properties=plotting.AxisProperties(axis_off=True),
+    )
+    sp_list = [sp] * 9
+    mp = plotting.MultiPlot(*sp_list)
+    mp.save(
+        plot_name=plot_name,
+        dir_name=OUTPUT_DIR,
+    )

@@ -587,11 +587,11 @@ class MultiPlot:
         return rgba_bytes, width, height
 
     def get_image_array(self):
-        image_bytes, w, h = self.get_rgba_bytes()
+        rgba_bytes, width, height = self.get_rgba_bytes()
         pil_image = PIL.Image.frombytes(
             mode="RGBA",
-            size=[w, h],
-            data=image_bytes,
+            size=[width, height],
+            data=rgba_bytes,
         )
         image_array = np.array(pil_image)
         return image_array

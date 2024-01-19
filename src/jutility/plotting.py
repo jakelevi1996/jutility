@@ -207,12 +207,15 @@ class ContourFilled(FillBetween):
         axis.contourf(self._x, self._y, self._c, **self._kwargs)
 
 class ImShow(FillBetween):
-    def __init__(self, c, **kwargs):
+    def __init__(self, c, axis_off=False, **kwargs):
         self._c = c
+        self._axis_off = axis_off
         self._kwargs = kwargs
 
     def plot(self, axis):
         axis.imshow(self._c, **self._kwargs)
+        if self._axis_off:
+            axis.axis("off")
 
 def get_noisy_data_lines(
     noisy_data,

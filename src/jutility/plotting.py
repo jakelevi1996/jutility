@@ -589,15 +589,17 @@ class MultiPlot:
         width, height   = self._fig.canvas.get_width_height()
         return rgba_bytes, width, height
 
-    def get_image_array(self):
+    def get_pil_image(self):
         rgba_bytes, width, height = self.get_rgba_bytes()
         pil_image = PIL.Image.frombytes(
             mode="RGBA",
             size=[width, height],
             data=rgba_bytes,
         )
-        image_array = np.array(pil_image)
-        return image_array
+        return pil_image
+
+    def get_image_array(self):
+        return np.array(self.get_pil_image())
 
     def close(self):
         plt.close(self._fig)
@@ -626,7 +628,7 @@ class Gif:
         self.add_pil_image_frame(pil_image)
 
     def add_multiplot_frame(self, multi_plot):
-        self.add_rgba_bytes_frame(*multi_plot.get_rgba_bytes())
+        self.add_pil_image_frame(multi_plot.get_pil_image())
 
     def add_plot_frame(self, *lines, save=False, **plot_kwargs):
         plot_kwargs.setdefault("save_close", False)

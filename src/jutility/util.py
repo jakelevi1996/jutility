@@ -550,7 +550,7 @@ def get_full_path(
     dir_name=None,
     file_ext=None,
     verbose=True,
-    for_saving=True,
+    loading=False,
 ):
     if dir_name is None:
         dir_name = RESULTS_DIR
@@ -566,7 +566,7 @@ def get_full_path(
     full_path = os.path.join(dir_name, filename)
 
     if verbose:
-        action_str = "Saving in" if for_saving else "Loading from"
+        action_str = "Loading from" if loading else "Saving in"
         print("%s \"%s\"" % (action_str, full_path))
 
     return full_path

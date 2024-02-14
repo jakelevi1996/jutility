@@ -113,6 +113,10 @@ class Printer:
         if self._file is not None:
             return self._file.name
 
+    def flush(self):
+        if self._file is not None:
+            self._file.flush()
+
     def close(self):
         if self._file is not None:
             self._file.close()

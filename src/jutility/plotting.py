@@ -453,10 +453,10 @@ class FigureProperties:
             figure.subplots_adjust(top=(1 - self._top_space))
 
 class Subplot:
-    def __init__(self, *lines, axis_properties=None):
+    def __init__(self, *lines, axis_properties=None, **axis_kwargs):
         self._lines = lines
         if axis_properties is None:
-            axis_properties = AxisProperties()
+            axis_properties = AxisProperties(**axis_kwargs)
         self._axis_properties = axis_properties
 
     def plot(self, axis):
@@ -509,9 +509,10 @@ def plot(
     dir_name=None,
     save_close=True,
     pdf=False,
+    **axis_kwargs,
 ):
     if axis_properties is None:
-        axis_properties = AxisProperties()
+        axis_properties = AxisProperties(**axis_kwargs)
     if figsize is None:
         figsize = [10, 6] if legend else [8, 6]
     if plot_name is not None:
@@ -539,9 +540,9 @@ def plot(
     return multi_plot
 
 class MultiPlot:
-    def __init__(self, *subplots, figure_properties=None):
+    def __init__(self, *subplots, figure_properties=None, **figure_kwargs):
         if figure_properties is None:
-            figure_properties = FigureProperties()
+            figure_properties = FigureProperties(**figure_kwargs)
 
         self._fig, axes = figure_properties.get_figure_and_axes(len(subplots))
 

@@ -207,7 +207,7 @@ class ContourFilled(FillBetween):
         axis.contourf(self._x, self._y, self._c, **self._kwargs)
 
 class ImShow(FillBetween):
-    def __init__(self, c, axis_off=False, **kwargs):
+    def __init__(self, c, axis_off=True, **kwargs):
         self._c = c
         self._axis_off = axis_off
         self._kwargs = kwargs

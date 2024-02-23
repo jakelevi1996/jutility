@@ -215,7 +215,7 @@ class ImShow(FillBetween):
     def plot(self, axis):
         axis.imshow(self._c, **self._kwargs)
         if self._axis_off:
-            axis.axis("off")
+            axis.set_axis_off()
 
 def get_noisy_data_lines(
     noisy_data,
@@ -349,7 +349,7 @@ class AxisProperties:
         if self._axis_equal:
             axis.axis("equal")
         if self._axis_off:
-            axis.axis("off")
+            axis.set_axis_off()
         if self._ylim is not None:
             axis.set_ylim(self._ylim)
         if self._log_xscale:
@@ -474,7 +474,7 @@ class Legend(Subplot):
             line.get_handle() for line in self._lines if line.has_label()
         ]
         axis.legend(handles=handles, loc="center")
-        axis.axis("off")
+        axis.set_axis_off()
 
 class ColourBar(Subplot):
     def __init__(self, vmin, vmax):
@@ -487,7 +487,7 @@ class ColourBar(Subplot):
         if self._colourbar is not None:
             self._colourbar.remove()
 
-        axis.axis("off")
+        axis.set_axis_off()
         self._axes.append(axis)
         self._colourbar = plt.colorbar(
             mappable=self._sm,
@@ -498,7 +498,7 @@ class ColourBar(Subplot):
 
 class Empty(Subplot):
     def plot(self, axis):
-        axis.axis("off")
+        axis.set_axis_off()
 
 def plot(
     *lines,

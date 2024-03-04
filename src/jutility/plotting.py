@@ -320,6 +320,9 @@ class AxisProperties:
         title=None,
         wrap_title=True,
         colour=None,
+        legend=False,
+        legend_args=None,
+        legend_kwargs=None,
     ):
         self._xlabel = xlabel
         self._ylabel = ylabel
@@ -334,6 +337,9 @@ class AxisProperties:
         self._title = title
         self._wrap_title = wrap_title
         self._colour = colour
+        self._legend = legend
+        self._legend_args = legend_args
+        self._legend_kwargs = legend_kwargs
 
     def set_default_title(self, title):
         if self._title is None:
@@ -367,6 +373,16 @@ class AxisProperties:
             axis.set_title(self._title)
         if self._colour is not None:
             axis.set_facecolor(self._colour)
+        if (
+            self._legend
+            or (self._legend_args is not None)
+            or (self._legend_kwargs is not None)
+        ):
+            if self._legend_args is None:
+                self._legend_args = []
+            if self._legend_kwargs is None:
+                self._legend_kwargs = dict()
+            axis.legend(*self._legend_args, **self._legend_kwargs)
 
 class FigureProperties:
     def __init__(

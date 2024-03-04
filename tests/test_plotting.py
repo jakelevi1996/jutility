@@ -446,3 +446,27 @@ def test_get_image_array():
         plot_name=plot_name,
         dir_name=OUTPUT_DIR,
     )
+
+def test_legend_in_existing_subplot():
+    x = [1, 2, 3]
+    mp = plotting.MultiPlot(
+        plotting.Subplot(
+            plotting.Line(x, [1, 3, 2], c="b", marker="o", label="Blue"),
+            plotting.Line(x, [2, 1, 3], c="r", marker="o", label="Red"),
+            legend=True,
+            grid=False,
+            title="First plot",
+        ),
+        plotting.Subplot(
+            plotting.Line(x, [3, 1, 2], c="g", marker="o", label="Green"),
+            plotting.Line(x, [2, 3, 1], c="c", marker="o", label="Cyan"),
+            legend_kwargs={"loc": "lower left"},
+            grid=False,
+            title="Second plot",
+        ),
+        figsize=[6, 3],
+    )
+    mp.save(
+        plot_name="test_legend_in_existing_subplot",
+        dir_name=OUTPUT_DIR,
+    )

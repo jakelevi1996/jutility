@@ -321,8 +321,7 @@ class AxisProperties:
         wrap_title=True,
         colour=None,
         legend=False,
-        legend_args=None,
-        legend_kwargs=None,
+        legend_properties=None,
     ):
         self._xlabel = xlabel
         self._ylabel = ylabel
@@ -338,8 +337,7 @@ class AxisProperties:
         self._wrap_title = wrap_title
         self._colour = colour
         self._legend = legend
-        self._legend_args = legend_args
-        self._legend_kwargs = legend_kwargs
+        self._legend_properties = legend_properties
 
     def set_default_title(self, title):
         if self._title is None:
@@ -373,16 +371,10 @@ class AxisProperties:
             axis.set_title(self._title)
         if self._colour is not None:
             axis.set_facecolor(self._colour)
-        if (
-            self._legend
-            or (self._legend_args is not None)
-            or (self._legend_kwargs is not None)
-        ):
-            if self._legend_args is None:
-                self._legend_args = []
-            if self._legend_kwargs is None:
-                self._legend_kwargs = dict()
-            axis.legend(*self._legend_args, **self._legend_kwargs)
+        if self._legend or (self._legend_properties is not None):
+            if self._legend_properties is None:
+                self._legend_properties = LegendProperties()
+            self._legend_properties.apply(axis)
 
 class FigureProperties:
     def __init__(
@@ -468,6 +460,14 @@ class FigureProperties:
         if self._top_space is not None:
             figure.subplots_adjust(top=(1 - self._top_space))
 
+class LegendProperties:
+    def __init__(self, *args, **kwargs):
+        self._args = args
+        self._kwargs = kwargs
+
+    def apply(self, axis):
+        axis.legend(*self._args, **self._kwargs)
+
 class Subplot:
     def __init__(self, *lines, axis_properties=None, **axis_kwargs):
         self._lines = lines
@@ -482,14 +482,18 @@ class Subplot:
         self._axis_properties.apply(axis)
 
 class Legend(Subplot):
-    def __init__(self, *lines):
-        self._lines = lines
+    def __init__(self, *lines, **legend_kwargs):
+        handles = [
+            line.get_handle() for line in lines if line.has_label()
+        ]
+        self._legend_properties = LegendProperties(
+            handles=handles,
+            loc="center",
+            **legend_kwargs,
+        )
 
     def plot(self, axis):
-        handles = [
-            line.get_handle() for line in self._lines if line.has_label()
-        ]
-        axis.legend(handles=handles, loc="center")
+        self._legend_properties.apply(axis)
         axis.set_axis_off()
 
 class ColourBar(Subplot):

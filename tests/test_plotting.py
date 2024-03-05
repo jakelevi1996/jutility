@@ -460,7 +460,7 @@ def test_legend_in_existing_subplot():
         plotting.Subplot(
             plotting.Line(x, [3, 1, 2], c="g", marker="o", label="Green"),
             plotting.Line(x, [2, 3, 1], c="c", marker="o", label="Cyan"),
-            legend_kwargs={"loc": "lower left"},
+            legend_properties=plotting.LegendProperties(loc="lower left"),
             grid=False,
             title="Second plot",
         ),

@@ -313,6 +313,8 @@ class AxisProperties:
         ylim=None,
         log_xscale=False,
         log_yscale=False,
+        symlogx=False,
+        symlogy=False,
         rotate_xticklabels=False,
         axis_equal=False,
         axis_off=False,
@@ -329,6 +331,8 @@ class AxisProperties:
         self._ylim = ylim
         self._log_xscale = log_xscale
         self._log_yscale = log_yscale
+        self._symlogx = symlogx
+        self._symlogy = symlogy
         self._rotate_xticklabels = rotate_xticklabels
         self._axis_equal = axis_equal
         self._axis_off = axis_off
@@ -360,6 +364,10 @@ class AxisProperties:
             axis.set_xscale("log")
         if self._log_yscale:
             axis.set_yscale("log")
+        if self._symlogx:
+            axis.set_xscale("symlog")
+        if self._symlogy:
+            axis.set_yscale("symlog")
         if self._grid:
             axis.grid(True, which="both")
         if self._rotate_xticklabels:

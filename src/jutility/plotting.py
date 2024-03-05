@@ -505,11 +505,12 @@ class Legend(Subplot):
         axis.set_axis_off()
 
 class ColourBar(Subplot):
-    def __init__(self, vmin, vmax):
+    def __init__(self, vmin, vmax, cmap=None, **kwargs):
         norm = matplotlib.colors.Normalize(vmin, vmax)
-        self._sm = matplotlib.cm.ScalarMappable(norm)
+        self._sm = matplotlib.cm.ScalarMappable(norm, cmap=cmap)
         self._axes = []
         self._colourbar = None
+        self._kwargs = kwargs
 
     def plot(self, axis):
         if self._colourbar is not None:
@@ -522,6 +523,7 @@ class ColourBar(Subplot):
             ax=self._axes,
             fraction=1,
             location="left",
+            **self._kwargs,
         )
 
 class Empty(Subplot):

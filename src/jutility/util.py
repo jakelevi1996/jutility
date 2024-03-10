@@ -162,7 +162,7 @@ class Timer:
         return t1 - self._t0
 
     def _get_name_str(self):
-        return (" for %s" % self._name) if (self._name is not None) else ""
+        return (" for `%s`" % self._name) if (self._name is not None) else ""
 
     def __enter__(self):
         if self._verbose_entry:

@@ -184,6 +184,12 @@ python -m build
 python -m pip install --force-reinstall --no-deps dist/$WHEEL_NAME
 ```
 
+Or alternatively, run the script `build_local.py`, which automatically extracts the version number to infer the name of the wheel and then builds it:
+
+```
+python build_local.py
+```
+
 ## Updating package on PyPI
 
 This package was uploaded to PyPI following [the Packaging Python Projects tutorial in the official Python documentation](https://packaging.python.org/en/latest/tutorials/packaging-projects/).

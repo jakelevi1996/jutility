@@ -575,6 +575,19 @@ def get_full_path(
 
     return full_path
 
+def save_text(s, filename, dir_name=None, verbose=True):
+    full_path = get_full_path(filename, dir_name, "txt", verbose)
+    with open(full_path, "w") as f:
+        print(s, file=f)
+
+    return full_path
+
+def load_text(full_path):
+    with open(full_path, "r") as f:
+        s = f.read()
+
+    return s
+
 def save_pickle(data, filename, dir_name=None, verbose=True):
     full_path = get_full_path(filename, dir_name, "pkl", verbose)
     with open(full_path, "wb") as f:

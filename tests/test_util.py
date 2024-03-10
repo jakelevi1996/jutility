@@ -703,3 +703,14 @@ def test_extract_substring():
 
     s = "hello $123123$ hello"
     assert util.extract_substring(s, "$", "$") == substr
+
+def test_save_load_text():
+    rng = util.Seeder().get_rng("test_save_load_text")
+    x = rng.normal(size=[8, 7])
+    util.numpy_set_print_options(precision=8)
+
+    full_path = util.save_text(x, "test_save_load_text", OUTPUT_DIR)
+
+    s = util.load_text(full_path)
+
+    assert s.rstrip() == str(x)

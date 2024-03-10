@@ -690,3 +690,16 @@ def test_function_list():
     assert c1.get_value() == 2
     assert c2.get_value() == 4
     assert results == None
+
+def test_extract_substring():
+    substr = "123123"
+
+    s = "hello $123123& hello"
+    assert util.extract_substring(s, "$", "&") == substr
+
+    with pytest.raises(ValueError):
+        s = "hello &123123$ hello"
+        util.extract_substring(s, "$", "&")
+
+    s = "hello $123123$ hello"
+    assert util.extract_substring(s, "$", "$") == substr

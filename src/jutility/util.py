@@ -588,6 +588,19 @@ def load_pickle(full_path):
 
     return data
 
+def extract_substring(s, prefix=None, suffix=None, offset=None):
+    if prefix is not None:
+        start_ind = s.index(prefix, offset) + len(prefix)
+    else:
+        start_ind = 0
+
+    if suffix is not None:
+        end_ind = s.index(suffix, start_ind)
+    else:
+        end_ind = len(s)
+
+    return s[start_ind:end_ind]
+
 def save_json(data, filename, dir_name=None, verbose=True):
     full_path = get_full_path(filename, dir_name, "json", verbose)
     with open(full_path, "w") as f:

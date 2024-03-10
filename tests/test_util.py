@@ -697,6 +697,9 @@ def test_extract_substring():
     s = "hello $123123& hello"
     assert util.extract_substring(s, "$", "&") == substr
 
+    s = "hello & $123123& hello $ & $ & $"
+    assert util.extract_substring(s, "$", "&") == substr
+
     with pytest.raises(ValueError):
         s = "hello &123123$ hello"
         util.extract_substring(s, "$", "&")

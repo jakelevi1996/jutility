@@ -714,3 +714,25 @@ def test_save_load_text():
     s = util.load_text(full_path)
 
     assert s.rstrip() == str(x)
+
+def test_abbreviate_dictionary():
+    d = {
+        "num_epochs":   10,
+        "hidden_dim":   200,
+        "lr":           1e-3,
+        "log_std":      -4,
+        "model_name":   None,
+        "top_down":     True,
+        "bottom_up":    False,
+    }
+    key_abbreviations = {
+        "num_epochs":   "ne",
+        "hidden_dim":   "hd",
+        "lr":           "lr",
+        "log_std":      "ls",
+        "top_down":     "td",
+        "bottom_up":    "bu",
+    }
+
+    s = util.abbreviate_dictionary(d, key_abbreviations)
+    assert s == "buFhd200lr0.001ls-4ne10tdT"

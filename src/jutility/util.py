@@ -627,6 +627,27 @@ def load_json(full_path):
 
     return data
 
+def abbreviate_dictionary(d, key_abbreviations, str_abbreviations=None):
+    if str_abbreviations is None:
+        str_abbreviations = {
+            "_":        "",
+            ",":        "",
+            "False":    "F",
+            "True":     "T",
+        }
+
+    d_abbreviated = {
+        key_abbreviations[k]: v
+        for k, v in d.items()
+        if k in key_abbreviations
+    }
+    d_sorted = sorted(d_abbreviated.items())
+    s = clean_string(d_sorted)
+    for k, v in str_abbreviations.items():
+        s = s.replace(k, v)
+
+    return s
+
 def is_numeric(x):
     return any(isinstance(x, t) for t in [int, float, np.number])
 

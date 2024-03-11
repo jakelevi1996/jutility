@@ -92,7 +92,7 @@ class Printer:
                 filename,
                 dir_name,
                 file_ext,
-                display_path,
+                verbose=display_path,
             )
             self._file = open(full_path, "w")
         else:
@@ -559,8 +559,8 @@ def get_full_path(
     filename,
     dir_name=None,
     file_ext=None,
-    verbose=True,
     loading=False,
+    verbose=True,
 ):
     if dir_name is None:
         dir_name = RESULTS_DIR
@@ -582,7 +582,7 @@ def get_full_path(
     return full_path
 
 def save_text(s, filename, dir_name=None, verbose=True):
-    full_path = get_full_path(filename, dir_name, "txt", verbose)
+    full_path = get_full_path(filename, dir_name, "txt", verbose=verbose)
     with open(full_path, "w") as f:
         print(s, file=f)
 
@@ -595,7 +595,7 @@ def load_text(full_path):
     return s
 
 def save_pickle(data, filename, dir_name=None, verbose=True):
-    full_path = get_full_path(filename, dir_name, "pkl", verbose)
+    full_path = get_full_path(filename, dir_name, "pkl", verbose=verbose)
     with open(full_path, "wb") as f:
         pickle.dump(data, f)
 
@@ -608,7 +608,7 @@ def load_pickle(full_path):
     return data
 
 def save_json(data, filename, dir_name=None, verbose=True):
-    full_path = get_full_path(filename, dir_name, "json", verbose)
+    full_path = get_full_path(filename, dir_name, "json", verbose=verbose)
     with open(full_path, "w") as f:
         json.dump(data, f)
 

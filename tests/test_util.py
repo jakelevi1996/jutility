@@ -739,3 +739,20 @@ def test_abbreviate_dictionary():
 
     s = util.abbreviate_dictionary(d, key_abbreviations)
     assert s == "buFhd200lr0.001ls-4ne10tdT"
+
+def test_table_str():
+    rng = util.Seeder().get_rng("test_table_str")
+
+    table = util.Table(
+        util.CountColumn("c"),
+        util.TimeColumn("t"),
+        util.Column("x", ".5f", 10),
+        util.Column("u", ".5f", 10),
+    )
+    for i in range(20):
+        if i % 2 == 0:
+            table.update(x=rng.normal(), u=rng.uniform())
+        else:
+            table.update(x=rng.normal())
+
+    util.save_text(table, "test_table_str", OUTPUT_DIR)

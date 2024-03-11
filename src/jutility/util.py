@@ -425,6 +425,12 @@ class Table:
     def __len__(self):
         return self._num_updates
 
+    def __str__(self):
+        header_str = self.format_header()
+        row_list = [self.format_row(i) for i in range(self._num_updates)]
+        table_str = "\n".join([header_str] + row_list)
+        return table_str
+
     def latex(self):
         raise NotImplementedError()
 

@@ -7,18 +7,13 @@ SOURCE_DIR = os.path.abspath(os.path.join(CURRENT_DIR, "src"))
 sys.path.insert(0, SOURCE_DIR)
 
 import subprocess
-import shutil
 from jutility import util
 
 def main():
     package_info = util.load_text("setup.cfg")
     version = util.extract_substring(package_info, "version = ", "\n")
     wheel_name = "dist/jutility-%s-py3-none-any.whl" % version
-
-    if shutil.which("python3") is not None:
-        python_exe = "python3"
-    else:
-        python_exe = "python"
+    python_exe = sys.executable
 
     build_args = [python_exe, "-m", "build"]
     install_args = [

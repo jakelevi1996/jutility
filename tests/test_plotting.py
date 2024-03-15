@@ -470,3 +470,27 @@ def test_legend_in_existing_subplot():
         plot_name="test_legend_in_existing_subplot",
         dir_name=OUTPUT_DIR,
     )
+
+def test_gif_add_bw_array_frame():
+    test_name = "test_gif_add_bw_array_frame"
+    rng = util.Seeder().get_rng(test_name)
+
+    gif = plotting.Gif()
+    for i in range(20):
+        x = rng.uniform(0, 1, [50, 100])
+        x[:i] = 0
+        gif.add_bw_array_frame(x)
+
+    gif.save(test_name, OUTPUT_DIR, frame_duration_ms=100)
+
+def test_gif_add_rgb_array_frame():
+    test_name = "test_gif_add_rgb_array_frame"
+    rng = util.Seeder().get_rng(test_name)
+
+    gif = plotting.Gif()
+    for i in range(20):
+        x = rng.uniform(0, 1, [50, 100, 3])
+        x[:i] = 0
+        gif.add_rgb_array_frame(x)
+
+    gif.save(test_name, OUTPUT_DIR, frame_duration_ms=100)

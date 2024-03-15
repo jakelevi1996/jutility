@@ -669,8 +669,31 @@ class Gif:
             mp.save(plot_kwargs.get("plot_name"), plot_kwargs.get("dir_name"))
         mp.close()
 
-    def add_rgb_array_frame(self, rgb_array):
-        self.add_pil_image_frame(PIL.Image.fromarray(rgb_array))
+    def add_rgb_array_frame(self, ndarray_hwc, vmin=0, vmax=1):
+        util.check_type(ndarray_hwc, np.ndarray, "ndarray_hwc")
+        if (ndarray_hwc.ndim != 3) or (ndarray_hwc.shape[2] != 3):
+            raise ValueError(
+                "Expected shape (H, W, C=3), but received shape %s"
+                % ndarray_hwc.shape
+            )
+
+        ndarray_scaled = 255 * (ndarray_hwc - vmin) / (vmax - vmin)
+        ndarray_int8 = ndarray_scaled.astype(np.int8)
+        pil_image = PIL.Image.fromarray(ndarray_int8, mode="RGB")
+        self.add_pil_image_frame(pil_image)
+
+    def add_bw_array_frame(self, ndarray_hw, vmin=0, vmax=1):
+        util.check_type(ndarray_hw, np.ndarray, "ndarray_hw")
+        if ndarray_hw.ndim != 2:
+            raise ValueError(
+                "Expected shape (H, W), but received shape %s"
+                % ndarray_hw.shape
+            )
+
+        ndarray_scaled = 255 * (ndarray_hw - vmin) / (vmax - vmin)
+        ndarray_int8 = ndarray_scaled.astype(np.int8)
+        pil_image = PIL.Image.fromarray(ndarray_int8, mode="L")
+        self.add_pil_image_frame(pil_image)
 
     def add_image_file_frame(self, filename, dir_name=None):
         if dir_name is None:

@@ -695,6 +695,28 @@ class Gif:
         pil_image = PIL.Image.fromarray(ndarray_int8, mode="L")
         self.add_pil_image_frame(pil_image)
 
+    def add_rgb_array_sequence(self, ndarray_lhwc, vmin=0, vmax=1):
+        util.check_type(ndarray_lhwc, np.ndarray, "ndarray_lhwc")
+        if (ndarray_lhwc.ndim != 4) or (ndarray_lhwc.shape[3] != 3):
+            raise ValueError(
+                "Expected shape (L, H, W, C=3), but received shape %s"
+                % ndarray_lhwc.shape
+            )
+
+        for i in range(ndarray_lhwc.shape[0]):
+            self.add_rgb_array_frame(ndarray_lhwc[i], vmin, vmax)
+
+    def add_bw_array_sequence(self, ndarray_lhw, vmin=0, vmax=1):
+        util.check_type(ndarray_lhw, np.ndarray, "ndarray_lhw")
+        if ndarray_lhw.ndim != 3:
+            raise ValueError(
+                "Expected shape (L, H, W), but received shape %s"
+                % ndarray_lhw.shape
+            )
+
+        for i in range(ndarray_lhw.shape[0]):
+            self.add_bw_array_frame(ndarray_lhw[i], vmin, vmax)
+
     def add_image_file_frame(self, filename, dir_name=None):
         if dir_name is None:
             dir_name = util.RESULTS_DIR

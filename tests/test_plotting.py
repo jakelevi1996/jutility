@@ -494,3 +494,33 @@ def test_gif_add_rgb_array_frame():
         gif.add_rgb_array_frame(x)
 
     gif.save(test_name, OUTPUT_DIR, frame_duration_ms=100)
+
+def test_gif_add_bw_array_sequence():
+    test_name = "test_gif_add_bw_array_sequence"
+    rng = util.Seeder().get_rng(test_name)
+
+    num_frames = 20
+    width = 50
+    height = 100
+    x = rng.uniform(0, 1, [num_frames, width, height])
+    for i in range(num_frames):
+        x[i, :, :i] = 0
+
+    gif = plotting.Gif()
+    gif.add_bw_array_sequence(x)
+    gif.save(test_name, OUTPUT_DIR, frame_duration_ms=100)
+
+def test_gif_add_rgb_array_sequence():
+    test_name = "test_gif_add_rgb_array_sequence"
+    rng = util.Seeder().get_rng(test_name)
+
+    num_frames = 20
+    width = 50
+    height = 100
+    x = rng.uniform(0, 1, [num_frames, width, height, 3])
+    for i in range(num_frames):
+        x[i, :, :i] = 0
+
+    gif = plotting.Gif()
+    gif.add_rgb_array_sequence(x)
+    gif.save(test_name, OUTPUT_DIR, frame_duration_ms=100)

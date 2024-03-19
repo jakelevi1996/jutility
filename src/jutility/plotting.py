@@ -679,7 +679,7 @@ class Gif:
 
         ndarray_scaled = 255 * (ndarray_hwc - vmin) / (vmax - vmin)
         ndarray_clipped = np.clip(ndarray_scaled, 0, 255)
-        ndarray_int8 = ndarray_clipped.astype(np.int8)
+        ndarray_int8 = ndarray_clipped.astype(np.uint8)
         pil_image = PIL.Image.fromarray(ndarray_int8, mode="RGB")
         self.add_pil_image_frame(pil_image)
 
@@ -693,7 +693,7 @@ class Gif:
 
         ndarray_scaled = 255 * (ndarray_hw - vmin) / (vmax - vmin)
         ndarray_clipped = np.clip(ndarray_scaled, 0, 255)
-        ndarray_int8 = ndarray_clipped.astype(np.int8)
+        ndarray_int8 = ndarray_clipped.astype(np.uint8)
         pil_image = PIL.Image.fromarray(ndarray_int8, mode="L")
         self.add_pil_image_frame(pil_image)
 

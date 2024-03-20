@@ -766,6 +766,7 @@ def set_latex_params(use_tex=True):
         "text.latex.preamble":  "\\usepackage{amsmath}",
         "legend.edgecolor":     "k",
         "legend.fancybox":      False,
+        "legend.framealpha":    1,
     }
 
     for key, value in latex_params_dict.items():

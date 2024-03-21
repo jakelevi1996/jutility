@@ -250,7 +250,7 @@ class Column:
         self.title = title.ljust(self._width)
         self._format = "%%%i%s" % (self._width, value_format)
         self._data_list = []
-        self._callback = None
+        self.reset_callback()
 
     def format_item(self, row_ind):
         if self._data_list[row_ind] is not None:
@@ -275,6 +275,9 @@ class Column:
             interval = Always()
         self._callback_interval = interval
         return self
+
+    def reset_callback(self):
+        self._callback = None
 
 class SilentColumn(Column):
     def format_item(self, row_ind):
@@ -421,6 +424,10 @@ class Table:
 
         self._print_interval = old_print_interval
         return self
+
+    def remove_callbacks(self):
+        for column in self._column_list:
+            column.reset_callback()
 
     def __len__(self):
         return self._num_updates

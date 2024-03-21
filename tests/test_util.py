@@ -756,3 +756,21 @@ def test_table_str():
             table.update(x=rng.normal())
 
     util.save_text(table, "test_table_str", OUTPUT_DIR)
+
+def test_table_remove_callbacks():
+    test_name = "test_table_remove_callbacks"
+    table = util.Table(
+        util.Column("c", "s", 10).set_callback(
+            lambda: 42,
+        ),
+        util.Column("d", "s", 10),
+    )
+    for _ in range(3):
+        table.update()
+
+    util.save_text(table, test_name, OUTPUT_DIR)
+    with pytest.raises(AttributeError):
+        util.save_pickle(table, test_name, OUTPUT_DIR)
+
+    table.remove_callbacks()
+    util.save_pickle(table, test_name, OUTPUT_DIR)

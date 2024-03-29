@@ -434,7 +434,7 @@ class FigureProperties:
             self._num_cols = math.ceil(num_subplots / self._num_rows)
 
         if self._figsize is None:
-            self._figsize = [6 * self._num_cols, 6 * self._num_rows]
+            self._figsize = [6 * self._num_cols, 4 * self._num_rows]
 
         gridspec_kw = {
             "width_ratios": self._width_ratios,

@@ -23,6 +23,7 @@ SOFTWARE.
 """
 
 import os
+import sys
 import pickle
 import json
 import textwrap
@@ -626,6 +627,9 @@ def load_json(full_path):
         data = json.load(f)
 
     return data
+
+def get_program_command():
+    return " ".join([sys.executable] + sys.argv)
 
 def extract_substring(s, prefix=None, suffix=None, offset=None):
     if prefix is not None:

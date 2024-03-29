@@ -589,8 +589,8 @@ def get_full_path(
 
     return full_path
 
-def save_text(s, filename, dir_name=None, verbose=True):
-    full_path = get_full_path(filename, dir_name, "txt", verbose=verbose)
+def save_text(s, filename, dir_name=None, file_ext="txt", verbose=True):
+    full_path = get_full_path(filename, dir_name, file_ext, verbose=verbose)
     with open(full_path, "w") as f:
         print(s, file=f)
 

@@ -30,7 +30,7 @@ import matplotlib.patches
 import matplotlib.colors
 import matplotlib.cm
 import numpy as np
-import PIL
+import PIL.Image
 from jutility import util
 
 class Line:

@@ -127,7 +127,7 @@ class Seeder:
         self._used_seeds = set()
 
     def get_seed(self, *args):
-        seed = sum((i + 1) * ord(c) for i, c in enumerate(str(args)))
+        seed = sum(i * ord(c) for i, c in enumerate(str(args), start=1))
         while seed in self._used_seeds:
             seed += 1
 

@@ -3,9 +3,9 @@ import time
 import numpy as np
 import pytest
 from jutility import util, plotting
-import tests.util
+import tests
 
-OUTPUT_DIR = tests.util.get_output_dir("test_util")
+OUTPUT_DIR = tests.get_output_dir("test_util")
 
 def test_counter():
     count = util.Counter()

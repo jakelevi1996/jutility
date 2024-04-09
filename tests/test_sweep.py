@@ -2,9 +2,9 @@ import os
 import pytest
 import numpy as np
 from jutility import sweep, util
-import tests.util
+import tests
 
-OUTPUT_DIR = tests.util.get_output_dir("test_sweep")
+OUTPUT_DIR = tests.get_output_dir("test_sweep")
 
 @pytest.mark.parametrize("higher_is_better", [True, False])
 def test_sweep(higher_is_better):

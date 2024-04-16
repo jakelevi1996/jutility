@@ -383,6 +383,11 @@ def test_timer_context():
 
     assert t.time_measured >= sleep_interval
 
+    with util.Timer("name 1", printer) as t:
+        time.sleep(sleep_interval)
+        t.display()
+        t.set_name("name 2")
+
 def test_intervals():
     printer = util.Printer("test_intervals", dir_name=OUTPUT_DIR)
 

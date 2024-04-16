@@ -149,14 +149,17 @@ class Timer:
     ):
         if printer is None:
             printer = Printer()
-        self._name          = name
         self._print         = printer
         self._verbose_entry = verbose_entry
         self._verbose_exit  = verbose_exit
         self.reset()
+        self.set_name(name)
 
     def reset(self):
         self._t0 = time.perf_counter()
+
+    def set_name(self, name):
+        self._name = str(name)
 
     def time_taken(self):
         t1 = time.perf_counter()

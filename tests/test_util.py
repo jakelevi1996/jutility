@@ -779,3 +779,13 @@ def test_table_remove_callbacks():
 
     table.remove_callbacks()
     util.save_pickle(table, test_name, OUTPUT_DIR)
+
+def test_progress():
+    printer = util.Printer("test_progress", OUTPUT_DIR)
+
+    for i in util.progress(
+        range(23),
+        printer=printer,
+        print_interval=util.Always(),
+    ):
+        pass

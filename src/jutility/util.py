@@ -725,16 +725,17 @@ def progress(input_iter, prefix="", printer=None, print_interval=None):
     for i, element in enumerate(input_iter, start=1):
         if print_interval.ready() or (i == total_len):
             i_str = str(i).rjust(i_str_len)
+            percent = 100 * i / total_len
             t_taken  = timer.time_taken()
             t_total  = total_len * (t_taken / i)
             t_remain = t_total - t_taken
-            t_taken_str  = time_format(t_taken,  concise=True)
-            t_remain_str = time_format(t_remain, concise=True)
-            printer(
-                "\r%s%s/%i | time taken = %11s | time remaining = %11s"
-                % (prefix, i_str, total_len, t_taken_str, t_remain_str),
-                end="",
-            )
+            str_elements = [
+                "%s%s/%i"   % (prefix, i_str, total_len),
+                "%5.1f %%"  % percent,
+                "time taken = %11s"     % time_format(t_taken,  concise=True),
+                "time remaining = %11s" % time_format(t_remain, concise=True),
+            ]
+            printer("\r" + " | ".join(str_elements), end="")
             print_interval.reset()
 
         yield element

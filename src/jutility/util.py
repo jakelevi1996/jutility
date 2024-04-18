@@ -737,5 +737,7 @@ def progress(input_iter, prefix="", printer=None, print_interval=None):
             ]
             printer(" | ".join(str_elements), end="")
             print_interval.reset()
+        if i == total_len:
+            printer()
 
         yield element

@@ -730,12 +730,12 @@ def progress(input_iter, prefix="", printer=None, print_interval=None):
             t_total  = total_len * (t_taken / i)
             t_remain = t_total - t_taken
             str_elements = [
-                "%s%s/%i"   % (prefix, i_str, total_len),
+                "\r%s%s/%i"   % (prefix, i_str, total_len),
                 "%5.1f %%"  % percent,
                 "time taken = %11s"     % time_format(t_taken,  concise=True),
                 "time remaining = %11s" % time_format(t_remain, concise=True),
             ]
-            printer("\r" + " | ".join(str_elements), end="")
+            printer(" | ".join(str_elements), end="")
             print_interval.reset()
 
         yield element

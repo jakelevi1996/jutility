@@ -713,7 +713,13 @@ def check_equal(value, expected_value, name=None):
         )
         raise RuntimeError(error_msg)
 
-def progress(input_iter, prefix="", printer=None, print_interval=None):
+def progress(
+    input_iter,
+    prefix="",
+    printer=None,
+    print_interval=None,
+    bar_length=25,
+):
     if printer is None:
         printer = Printer()
     if print_interval is None:
@@ -725,7 +731,8 @@ def progress(input_iter, prefix="", printer=None, print_interval=None):
     for i, element in enumerate(input_iter, start=1):
         if print_interval.ready() or (i == total_len):
             i_str = str(i).rjust(i_str_len)
-            percent = 100 * i / total_len
+            fraction = i / total_len
+            percent  = 100 * fraction
             t_taken  = timer.time_taken()
             t_total  = total_len * (t_taken / i)
             t_remain = t_total - t_taken
@@ -735,6 +742,12 @@ def progress(input_iter, prefix="", printer=None, print_interval=None):
                 "time taken = %11s"     % time_format(t_taken,  concise=True),
                 "time remaining = %11s" % time_format(t_remain, concise=True),
             ]
+            if bar_length is not None:
+                num_done_chars = int(fraction * bar_length)
+                num_remain_chars = bar_length - num_done_chars
+                bar = ("*" * num_done_chars) + ("-" * num_remain_chars)
+                str_elements.append(bar)
+
             printer(" | ".join(str_elements), end="")
             print_interval.reset()
         if i == total_len:

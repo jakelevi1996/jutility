@@ -639,7 +639,7 @@ def load_json(full_path):
 def get_program_command():
     return " ".join([sys.executable] + sys.argv)
 
-def extract_substring(s, prefix=None, suffix=None, offset=None):
+def extract_substring(s, prefix=None, suffix=None, offset=None, strip=True):
     if prefix is not None:
         start_ind = s.index(prefix, offset) + len(prefix)
     else:
@@ -650,7 +650,11 @@ def extract_substring(s, prefix=None, suffix=None, offset=None):
     else:
         end_ind = len(s)
 
-    return s[start_ind:end_ind]
+    s_substring = s[start_ind:end_ind]
+    if strip:
+        s_substring = s_substring.strip()
+
+    return s_substring
 
 def abbreviate_dictionary(d, key_abbreviations, str_abbreviations=None):
     if str_abbreviations is None:

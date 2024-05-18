@@ -84,6 +84,14 @@ class HVLine(Line):
         if self._v is not None:
             axis.axvline(self._v, **self._kwargs)
 
+class AxLine(Line):
+    def __init__(self, *args, **kwargs):
+        self.args   = args
+        self.kwargs = kwargs
+
+    def plot(self, axis):
+        axis.axline(*self.args, **self.kwargs)
+
 class Quiver(Line):
     def __init__(self, x, y, u, v, normalise=False, tol=1e-5, **kwargs):
         self._x = x

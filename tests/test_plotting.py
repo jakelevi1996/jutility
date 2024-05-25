@@ -524,3 +524,20 @@ def test_gif_add_rgb_array_sequence():
     gif = plotting.Gif()
     gif.add_rgb_array_sequence(x)
     gif.save(test_name, OUTPUT_DIR, frame_duration_ms=100)
+
+def test_axline():
+    rng = util.Seeder().get_rng("test_axline")
+    num_lines = 10
+    cp = plotting.ColourPicker(num_lines)
+    plotting.plot(
+        *[
+            plotting.AxLine(
+                rng.uniform(-1, 1, 2),
+                rng.uniform(-1, 1, 2),
+                c=cp(i),
+            )
+            for i in range(num_lines)
+        ],
+        plot_name="test_axline",
+        dir_name=OUTPUT_DIR,
+    )

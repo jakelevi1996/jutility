@@ -86,6 +86,10 @@ class HVLine(Line):
 
 class AxLine(Line):
     def __init__(self, *args, **kwargs):
+        """
+        See
+        https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.axline.html
+        """
         self.args   = args
         self.kwargs = kwargs
 

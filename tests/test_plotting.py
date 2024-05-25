@@ -541,3 +541,24 @@ def test_axline():
         plot_name="test_axline",
         dir_name=OUTPUT_DIR,
     )
+
+def test_circle():
+    rng = util.Seeder().get_rng("test_circle")
+    num_circles = 10
+    cp = plotting.ColourPicker(num_circles)
+    plotting.plot(
+        *[
+            plotting.Circle(
+                rng.uniform(-1, 1, 2),
+                np.exp(rng.uniform(-1, 1)),
+                c=cp(i),
+            )
+            for i in range(num_circles)
+        ],
+        xlim=[-5, 5],
+        ylim=[-5, 5],
+        axis_equal=True,
+        grid=False,
+        plot_name="test_circle",
+        dir_name=OUTPUT_DIR,
+    )

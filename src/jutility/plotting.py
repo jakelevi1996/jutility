@@ -130,6 +130,28 @@ class Contour(Line):
     def plot(self, axis):
         axis.contour(self._x, self._y, self._z, self._levels, **self._kwargs)
 
+class Circle(Line):
+    def __init__(self, *args, **kwargs):
+        """
+        See
+        https://matplotlib.org/stable/api/_as_gen/matplotlib.patches.Circle.html
+        and
+        https://matplotlib.org/stable/gallery/shapes_and_collections/artist_reference.html
+        """
+        c = kwargs.pop("c", None)
+        if c is not None:
+            kwargs["color"] = c
+
+        self.args   = args
+        self.kwargs = kwargs
+
+    def plot(self, axis):
+        default_lw = matplotlib.rcParams["lines.linewidth"]
+        self.kwargs.setdefault("lw", default_lw)
+        self.kwargs.setdefault("fill", False)
+        circle = matplotlib.patches.Circle(*self.args, **self.kwargs)
+        axis.add_artist(circle)
+
 class FillBetween(Line):
     def __init__(self, x, y1, y2, **kwargs):
         self._x = x

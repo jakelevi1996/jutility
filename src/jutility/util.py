@@ -159,7 +159,7 @@ class Timer:
         self._t0 = time.perf_counter()
 
     def set_name(self, name):
-        self._name = str(name)
+        self._name = str(name) if (name is not None) else None
 
     def time_taken(self):
         t1 = time.perf_counter()

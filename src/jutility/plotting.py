@@ -314,9 +314,9 @@ class ColourPicker:
         else:
             endpoint = True
 
-        cmap = plt.get_cmap(cmap_name)
+        self._cmap = plt.get_cmap(cmap_name)
         cmap_sample_points = np.linspace(0, 1, num_colours, endpoint)
-        self._colours = [cmap(i) for i in cmap_sample_points]
+        self._colours = [self._cmap(i) for i in cmap_sample_points]
         self._index = 0
 
     def __call__(self, colour_ind):
@@ -329,6 +329,9 @@ class ColourPicker:
             self._index = 0
 
         return c
+
+    def get_cmap(self):
+        return self._cmap
 
     def colour_name(self, colour_ind):
         return "c%i" % colour_ind

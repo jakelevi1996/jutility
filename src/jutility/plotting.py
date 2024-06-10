@@ -60,6 +60,10 @@ class Line:
         if self.has_label():
             return self._get_handle_from_kwargs(self._kwargs)
 
+    def set_options(self, **kwargs):
+        for k, v in kwargs.items():
+            self._kwargs[k] = v
+
     def _get_handle_from_kwargs(self, kwargs):
         return matplotlib.lines.Line2D([], [], **kwargs)
 

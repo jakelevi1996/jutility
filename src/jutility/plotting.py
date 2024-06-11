@@ -303,7 +303,13 @@ def get_noisy_data_lines(
     return line_list
 
 class ColourPicker:
-    def __init__(self, num_colours, cyclic=True, cmap_name=None):
+    def __init__(
+        self,
+        num_colours,
+        cyclic=True,
+        cmap_name=None,
+        dynamic_range=None,
+    ):
         if cmap_name is None:
             if cyclic:
                 cmap_name = "hsv"
@@ -315,6 +321,11 @@ class ColourPicker:
             endpoint = True
 
         self._cmap = plt.get_cmap(cmap_name)
+        if dynamic_range is not None:
+            lo, hi = dynamic_range
+            colour_list = self._cmap(np.linspace(lo, hi, num_colours))
+            self._cmap = matplotlib.colors.ListedColormap(colour_list)
+
         cmap_sample_points = np.linspace(0, 1, num_colours, endpoint)
         self._colours = [self._cmap(i) for i in cmap_sample_points]
         self._index = 0

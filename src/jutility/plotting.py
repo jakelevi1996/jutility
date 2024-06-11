@@ -333,7 +333,7 @@ class ColourPicker:
     def get_cmap(self):
         return self._cmap
 
-    def get_colourbar(self, vmin, vmax, cmap=None, **kwargs):
+    def get_colourbar(self, vmin, vmax, **kwargs):
         return ColourBar(vmin, vmax, cmap=self._cmap, **kwargs)
 
     def colour_name(self, colour_ind):

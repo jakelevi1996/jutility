@@ -54,6 +54,9 @@ class _Plottable:
 
         self._expand_abbreviated_keys()
 
+    def _get_default_kwargs(self):
+        return {"zorder": 10}
+
     def _expand_abbreviated_keys(self):
         for k, k_full in self._get_abbreviated_keys_dict().items():
             if k not in self._get_no_expand_keys_list():
@@ -69,9 +72,6 @@ class _Plottable:
 
     def _get_no_expand_keys_list(self):
         return []
-
-    def _get_default_kwargs(self):
-        return {"zorder": 10}
 
     def _rename_key(self, k, k_new):
         if k in self._kwargs:

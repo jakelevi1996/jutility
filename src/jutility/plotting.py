@@ -43,7 +43,7 @@ class _Plottable:
     def plot(self, axis):
         raise NotImplementedError()
 
-    def _get_handle_from_kwargs(self):
+    def get_handle(self):
         raise NotImplementedError()
 
     def set_options(self, **kwargs):
@@ -86,10 +86,6 @@ class _Plottable:
     def has_label(self):
         return ("label" in self._kwargs)
 
-    def get_handle(self):
-        if self.has_label():
-            return self._get_handle_from_kwargs()
-
 class Line(_Plottable):
     """
     See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html
@@ -97,7 +93,7 @@ class Line(_Plottable):
     def plot(self, axis):
         axis.plot(*self._args, **self._kwargs)
 
-    def _get_handle_from_kwargs(self):
+    def get_handle(self):
         return matplotlib.lines.Line2D([], [], **self._kwargs)
 
 class Scatter(Line):
@@ -108,7 +104,7 @@ class Scatter(Line):
     def plot(self, axis):
         axis.scatter(*self._args, **self._kwargs)
 
-    def _get_handle_from_kwargs(self):
+    def get_handle(self):
         self._kwargs.setdefault("marker", "o")
         self._kwargs.setdefault("ls", "")
         return matplotlib.lines.Line2D(*self._args, **self._kwargs)
@@ -196,7 +192,7 @@ class FillBetween(Line):
     def plot(self, axis):
         axis.fill_between(*self._args, **self._kwargs)
 
-    def _get_handle_from_kwargs(self):
+    def get_handle(self):
         self._store_kwargs("x", "y1", "y2")
         handle = matplotlib.patches.Patch(**self._kwargs)
         self._release_kwargs()

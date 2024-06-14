@@ -77,16 +77,6 @@ class _Plottable:
             v = self._kwargs.pop(k)
             self._kwargs[k_new] = v
 
-    def _store_kwargs(self, *keys_to_store):
-        for k in keys_to_store:
-            if k in self._kwargs:
-                v = self._kwargs.pop(k)
-                self._stored_kwargs_dict[k] = v
-
-    def _release_kwargs(self):
-        for k, v in self._stored_kwargs_dict.items():
-            self._kwargs[k] = v
-
     def has_label(self):
         return ("label" in self._kwargs)
 
@@ -205,10 +195,8 @@ class Text(_Plottable):
 
 class _Patch(_Plottable):
     def get_handle(self):
-        self._store_kwargs("x", "y1", "y2")
-        handle = matplotlib.patches.Patch(**self._kwargs)
-        self._release_kwargs()
-        return handle
+        with util.StoreDictContext(self._kwargs, "x", "y1", "y2"):
+            return matplotlib.patches.Patch(**self._kwargs)
 
 class FillBetween(_Patch):
     """

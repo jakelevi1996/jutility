@@ -159,8 +159,8 @@ def test_colour_picker(num_colours, cyclic):
     x = np.linspace(-1, 7, 100)
     line_list = [
         plotting.Line(
-            x=x,
-            y=((1 + (i/10)) * np.sin(x + (i / num_colours))),
+            x,
+            ((1 + (i/10)) * np.sin(x + (i / num_colours))),
             c=cp(i),
             label="Line %i" % i,
         )
@@ -180,8 +180,8 @@ def test_colour_picker_next():
     x = np.linspace(-1, 7, 200)
     line_list = [
         plotting.Line(
-            x=x,
-            y=np.sin((1 + i / num_colours) * x),
+            x,
+            np.sin((1 + i / num_colours) * x),
             c=cp.next(),
             label="Line %i" % i,
         )
@@ -204,8 +204,8 @@ def test_title():
     )
     mp = plotting.plot(
         plotting.Line(
-            x=[1, 2, 3],
-            y=[4, 4.5, 6],
+            [1, 2, 3],
+            [4, 4.5, 6],
             c="b",
             marker="o",
             label="$\\beta ^ \\varepsilon$",

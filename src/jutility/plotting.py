@@ -33,42 +33,72 @@ import numpy as np
 import PIL.Image
 from jutility import util
 
-class Line:
-    """
-    See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html
-    """
-    def __init__(self, x=None, y=None, batch_first=False, **kwargs):
-        if (y is None) and (x is not None):
-            y = x
-            x = None
-        if y is not None:
-            y = np.array(y)
-            if batch_first:
-                y = y.T
-            if x is None:
-                x = np.arange(y.shape[0])
-
-        self._x = x
-        self._y = y
+class _Plottable:
+    def __init__(self, *args, **kwargs):
+        self._args = args
         self._kwargs = kwargs
+        self._stored_kwargs_dict = dict()
+        self._expand_abbreviated_keys()
 
     def plot(self, axis):
-        if (self._x is not None) and (self._y is not None):
-            axis.plot(self._x, self._y, **self._kwargs)
+        raise NotImplementedError()
+
+    def _get_handle_from_kwargs(self):
+        raise NotImplementedError()
+
+    def set_options(self, **kwargs):
+        for k, v in kwargs.items():
+            self._kwargs[k] = v
+
+        self._expand_abbreviated_keys()
+
+    def _expand_abbreviated_keys(self):
+        for k, k_full in self._get_abbreviated_keys_dict().items():
+            if k not in self._get_no_expand_keys_list():
+                self._rename_key(k, k_full)
+
+    def _get_abbreviated_keys_dict(self):
+        return {
+            "c": "color",
+            "z": "zorder",
+            "a": "alpha",
+            "m": "marker",
+        }
+
+    def _get_no_expand_keys_list(self):
+        return []
+
+    def _rename_key(self, k, k_new):
+        if k in self._kwargs:
+            v = self._kwargs.pop(k)
+            self._kwargs[k_new] = v
+
+    def _store_kwargs(self, *keys_to_store):
+        for k in keys_to_store:
+            if k in self._kwargs:
+                v = self._kwargs.pop(k)
+                self._stored_kwargs_dict[k] = v
+
+    def _release_kwargs(self):
+        for k, v in self._stored_kwargs_dict.items():
+            self._kwargs[k] = v
 
     def has_label(self):
         return ("label" in self._kwargs)
 
     def get_handle(self):
         if self.has_label():
-            return self._get_handle_from_kwargs(self._kwargs)
+            return self._get_handle_from_kwargs()
 
-    def set_options(self, **kwargs):
-        for k, v in kwargs.items():
-            self._kwargs[k] = v
+class Line(_Plottable):
+    """
+    See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html
+    """
+    def plot(self, axis):
+        axis.plot(*self._args, **self._kwargs)
 
-    def _get_handle_from_kwargs(self, kwargs):
-        return matplotlib.lines.Line2D([], [], **kwargs)
+    def _get_handle_from_kwargs(self):
+        return matplotlib.lines.Line2D([], [], **self._kwargs)
 
 class Scatter(Line):
     """
@@ -76,22 +106,18 @@ class Scatter(Line):
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.scatter.html
     """
     def plot(self, axis):
-        axis.scatter(self._x, self._y, **self._kwargs)
+        axis.scatter(*self._args, **self._kwargs)
 
-    def _get_handle_from_kwargs(self, kwargs):
-        kwargs.setdefault("marker", "o")
-        kwargs.setdefault("ls", "")
-        return matplotlib.lines.Line2D([], [], **kwargs)
+    def _get_handle_from_kwargs(self):
+        self._kwargs.setdefault("marker", "o")
+        self._kwargs.setdefault("ls", "")
+        return matplotlib.lines.Line2D(*self._args, **self._kwargs)
 
 class HLine(Line):
     """
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.axhline.html
     """
-    def __init__(self, *args, **kwargs):
-        self._args = args
-        self._kwargs = kwargs
-
     def plot(self, axis):
         axis.axhline(*self._args, **self._kwargs)
 
@@ -100,10 +126,6 @@ class VLine(Line):
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.axvline.html
     """
-    def __init__(self, *args, **kwargs):
-        self._args = args
-        self._kwargs = kwargs
-
     def plot(self, axis):
         axis.axvline(*self._args, **self._kwargs)
 
@@ -111,12 +133,8 @@ class AxLine(Line):
     """
     See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.axline.html
     """
-    def __init__(self, *args, **kwargs):
-        self.args   = args
-        self.kwargs = kwargs
-
     def plot(self, axis):
-        axis.axline(*self.args, **self.kwargs)
+        axis.axline(*self._args, **self._kwargs)
 
 class Quiver(Line):
     """
@@ -146,22 +164,15 @@ class Step(Line):
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.step.html
     """
     def plot(self, axis):
-        axis.step(self._x, self._y, **self._kwargs)
+        axis.step(*self._args, **self._kwargs)
 
 class Contour(Line):
     """
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.contour.html
     """
-    def __init__(self, x, y, z, levels, **kwargs):
-        self._x = x
-        self._y = y
-        self._z = z
-        self._levels = levels
-        self._kwargs = kwargs
-
     def plot(self, axis):
-        axis.contour(self._x, self._y, self._z, self._levels, **self._kwargs)
+        axis.contour(*self._args, **self._kwargs)
 
 class Circle(Line):
     """
@@ -170,19 +181,11 @@ class Circle(Line):
     and
     https://matplotlib.org/stable/gallery/shapes_and_collections/artist_reference.html
     """
-    def __init__(self, *args, **kwargs):
-        c = kwargs.pop("c", None)
-        if c is not None:
-            kwargs["color"] = c
-
-        self.args   = args
-        self.kwargs = kwargs
-
     def plot(self, axis):
         default_lw = matplotlib.rcParams["lines.linewidth"]
-        self.kwargs.setdefault("lw", default_lw)
-        self.kwargs.setdefault("fill", False)
-        circle = matplotlib.patches.Circle(*self.args, **self.kwargs)
+        self._kwargs.setdefault("lw", default_lw)
+        self._kwargs.setdefault("fill", False)
+        circle = matplotlib.patches.Circle(*self._args, **self._kwargs)
         axis.add_artist(circle)
 
 class FillBetween(Line):
@@ -190,23 +193,14 @@ class FillBetween(Line):
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.fill_between.html
     """
-    def __init__(self, x, y1, y2, **kwargs):
-        self._x = x
-        self._y1 = y1
-        self._y2 = y2
-
-        c = kwargs.pop("c", None)
-        if c is not None:
-            kwargs["color"] = c
-
-        self._kwargs = kwargs
-
     def plot(self, axis):
-        axis.fill_between(self._x, self._y1, self._y2, **self._kwargs)
+        axis.fill_between(*self._args, **self._kwargs)
 
-    def get_handle(self):
-        if self.has_label():
-            return matplotlib.patches.Patch(**self._kwargs)
+    def _get_handle_from_kwargs(self):
+        self._store_kwargs("x", "y1", "y2")
+        handle = matplotlib.patches.Patch(**self._kwargs)
+        self._release_kwargs()
+        return handle
 
 class Text(Line):
     """
@@ -232,23 +226,14 @@ class Bar(FillBetween):
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.bar.html
     """
-    def __init__(self, x, height, **kwargs):
-        self._x = x
-        self._height = height
-        self._kwargs = kwargs
-
     def plot(self, axis):
-        axis.bar(self._x, self._height, **self._kwargs)
+        axis.bar(*self._args, **self._kwargs)
 
 class Hist(FillBetween):
     """
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.hist.html
     """
-    def __init__(self, *args, **kwargs):
-        self._args = args
-        self._kwargs = kwargs
-
     def plot(self, axis):
         axis.hist(*self._args, **self._kwargs)
 
@@ -257,10 +242,6 @@ class HSpan(FillBetween):
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.axhspan.html
     """
-    def __init__(self, *args, **kwargs):
-        self._args = args
-        self._kwargs = kwargs
-
     def plot(self, axis):
         axis.axhspan(*self._args, **self._kwargs)
 
@@ -269,10 +250,6 @@ class VSpan(FillBetween):
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.axvspan.html
     """
-    def __init__(self, *args, **kwargs):
-        self._args = args
-        self._kwargs = kwargs
-
     def plot(self, axis):
         axis.axvspan(*self._args, **self._kwargs)
 
@@ -281,28 +258,16 @@ class ColourMesh(FillBetween):
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.pcolormesh.html
     """
-    def __init__(self, x, y, c, **kwargs):
-        self._x = x
-        self._y = y
-        self._c = c
-        self._kwargs = kwargs
-
     def plot(self, axis):
-        axis.pcolormesh(self._x, self._y, self._c, **self._kwargs)
+        axis.pcolormesh(*self._args, **self._kwargs)
 
 class ContourFilled(FillBetween):
     """
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.contourf.html
     """
-    def __init__(self, x, y, c, **kwargs):
-        self._x = x
-        self._y = y
-        self._c = c
-        self._kwargs = kwargs
-
     def plot(self, axis):
-        axis.contourf(self._x, self._y, self._c, **self._kwargs)
+        axis.contourf(*self._args, **self._kwargs)
 
 class ImShow(FillBetween):
     """

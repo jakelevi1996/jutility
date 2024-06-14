@@ -91,13 +91,6 @@ class _Plottable:
     def has_label(self):
         return ("label" in self._kwargs)
 
-class _Patch(_Plottable):
-    def get_handle(self):
-        self._store_kwargs("x", "y1", "y2")
-        handle = matplotlib.patches.Patch(**self._kwargs)
-        self._release_kwargs()
-        return handle
-
 class Line(_Plottable):
     """
     See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html
@@ -110,22 +103,6 @@ class Line(_Plottable):
 
     def _get_default_kwargs(self):
         return {"zorder": 10, "color": "b"}
-
-class Scatter(_Plottable):
-    """
-    See
-    https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.scatter.html
-    """
-    def plot(self, axis):
-        axis.scatter(*self._args, **self._kwargs)
-
-    def get_handle(self):
-        self._kwargs.setdefault("marker", "o")
-        self._kwargs.setdefault("ls", "")
-        return matplotlib.lines.Line2D([], [], **self._kwargs)
-
-    def _get_no_expand_keys_list(self):
-        return ["c"]
 
 class HLine(Line):
     """
@@ -180,14 +157,6 @@ class Step(Line):
     def plot(self, axis):
         axis.step(*self._args, **self._kwargs)
 
-class Contour(_Plottable):
-    """
-    See
-    https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.contour.html
-    """
-    def plot(self, axis):
-        axis.contour(*self._args, **self._kwargs)
-
 class Circle(Line):
     """
     See
@@ -201,6 +170,30 @@ class Circle(Line):
         self._kwargs.setdefault("fill", False)
         circle = matplotlib.patches.Circle(*self._args, **self._kwargs)
         axis.add_artist(circle)
+
+class Scatter(_Plottable):
+    """
+    See
+    https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.scatter.html
+    """
+    def plot(self, axis):
+        axis.scatter(*self._args, **self._kwargs)
+
+    def get_handle(self):
+        self._kwargs.setdefault("marker", "o")
+        self._kwargs.setdefault("ls", "")
+        return matplotlib.lines.Line2D([], [], **self._kwargs)
+
+    def _get_no_expand_keys_list(self):
+        return ["c"]
+
+class Contour(_Plottable):
+    """
+    See
+    https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.contour.html
+    """
+    def plot(self, axis):
+        axis.contour(*self._args, **self._kwargs)
 
 class Text(_Plottable):
     """
@@ -221,6 +214,13 @@ class Text(_Plottable):
     def plot(self, axis):
         axis.text(*self._args, **self._kwargs)
 
+class _Patch(_Plottable):
+    def get_handle(self):
+        self._store_kwargs("x", "y1", "y2")
+        handle = matplotlib.patches.Patch(**self._kwargs)
+        self._release_kwargs()
+        return handle
+
 class FillBetween(_Patch):
     """
     See
@@ -231,6 +231,22 @@ class FillBetween(_Patch):
 
     def _get_default_kwargs(self):
         return {"zorder": 10, "color": "b", "ec": None}
+
+class HSpan(FillBetween):
+    """
+    See
+    https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.axhspan.html
+    """
+    def plot(self, axis):
+        axis.axhspan(*self._args, **self._kwargs)
+
+class VSpan(FillBetween):
+    """
+    See
+    https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.axvspan.html
+    """
+    def plot(self, axis):
+        axis.axvspan(*self._args, **self._kwargs)
 
 class Bar(_Patch):
     """
@@ -250,22 +266,6 @@ class Hist(Bar):
     """
     def plot(self, axis):
         axis.hist(*self._args, **self._kwargs)
-
-class HSpan(FillBetween):
-    """
-    See
-    https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.axhspan.html
-    """
-    def plot(self, axis):
-        axis.axhspan(*self._args, **self._kwargs)
-
-class VSpan(FillBetween):
-    """
-    See
-    https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.axvspan.html
-    """
-    def plot(self, axis):
-        axis.axvspan(*self._args, **self._kwargs)
 
 class ColourMesh(_Plottable):
     """

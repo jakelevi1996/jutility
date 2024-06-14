@@ -1,6 +1,5 @@
 import os
 import numpy as np
-import __init__
 from jutility import plotting
 
 num_colours = 7
@@ -8,8 +7,8 @@ cp = plotting.ColourPicker(num_colours, cyclic=False)
 x = np.linspace(-1, 7, 100)
 line_list = [
     plotting.Line(
-        x=x,
-        y=((1 + (i/10)) * np.sin(x + (i / num_colours))),
+        x,
+        ((1 + (i/10)) * np.sin(x + (i / num_colours))),
         c=cp(i),
     )
     for i in range(num_colours)

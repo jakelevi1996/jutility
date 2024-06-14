@@ -305,9 +305,9 @@ def test_colourbar(constrained_layout):
 
     plot_name = "test_colourbar, constrained_layout=%s" % constrained_layout
     mp = plotting.MultiPlot(
-        plotting.ImShow(c=z1, vmin=v_min, vmax=v_max),
+        plotting.ImShow(z1, vmin=v_min, vmax=v_max),
         colour_bar,
-        plotting.ImShow(c=z2, vmin=v_min, vmax=v_max),
+        plotting.ImShow(z2, vmin=v_min, vmax=v_max),
         colour_bar,
         figure_properties=plotting.FigureProperties(
             num_rows=2,

@@ -1,11 +1,4 @@
-import os
 import sys
-
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-SOURCE_DIR = os.path.abspath(os.path.join(CURRENT_DIR, "src"))
-
-sys.path.insert(0, SOURCE_DIR)
-
 import subprocess
 from jutility import util
 

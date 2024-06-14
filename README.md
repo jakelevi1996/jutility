@@ -30,6 +30,14 @@ python -m pip install -U pip
 python -m pip install -U jutility
 ```
 
+Alternatively, `jutility` can be installed in "editable mode" from the GitHub repository:
+
+```
+git clone https://github.com/jakelevi1996/jutility.git
+cd jutility
+python -m pip install -e .
+```
+
 ## Usage examples
 
 ### `plotting`
@@ -177,7 +185,13 @@ pytest
 
 ## Build package locally
 
-`jutility` can be built and installed locally using the following commands, replacing `$WHEEL_NAME` with the name of the wheel built by the `python -m build` command (for example, `jutility-0.0.5-py3-none-any.whl`):
+`jutility` can be installed in "editable mode" using `pip` using the following command:
+
+```
+python -m pip install -e .
+```
+
+Alternatively, `jutility` can be built and installed locally using the following commands, replacing `$WHEEL_NAME` with the name of the wheel built by the `python -m build` command (for example, `jutility-0.0.5-py3-none-any.whl`):
 
 ```
 python -m build

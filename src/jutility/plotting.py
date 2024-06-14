@@ -67,15 +67,11 @@ class _Plottable:
         }
         for k, k_full in abbreviated_keys_dict.items():
             if k not in self._get_no_expand_keys_list():
-                self._rename_key(k, k_full)
+                if k in self._kwargs:
+                    self._kwargs[k_full] = self._kwargs.pop(k)
 
     def _get_no_expand_keys_list(self):
         return []
-
-    def _rename_key(self, k, k_new):
-        if k in self._kwargs:
-            v = self._kwargs.pop(k)
-            self._kwargs[k_new] = v
 
     def has_label(self):
         return ("label" in self._kwargs)

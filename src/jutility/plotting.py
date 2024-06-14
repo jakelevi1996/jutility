@@ -53,6 +53,7 @@ class _Plottable:
             self._kwargs[k] = v
 
         self._expand_abbreviated_keys()
+        return self
 
     def _get_default_kwargs(self):
         return {"zorder": 10}

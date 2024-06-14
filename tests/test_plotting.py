@@ -597,3 +597,24 @@ def test_default_colours():
         figsize=[15, 10],
     )
     mp.save("test_default_colours", OUTPUT_DIR)
+
+def test_legend_labels():
+    rng = util.Seeder().get_rng("test_legend_labels")
+    n = lambda s: rng.normal(size=s)
+    plotting.plot(
+        plotting.Scatter(n(20), n(20), c="r"),
+        plotting.Scatter(n(20), n(20), color="c"),
+        plotting.Scatter(n(20), n(20), c=n(20), cmap="binary"),
+        plotting.Scatter([], [],            c="r",  label="red"),
+        plotting.Line(sorted(n(20)), n(20),         label="blue"),
+        plotting.Line(                              label="blue2"),
+        plotting.Line(                      c="g",  label="green"),
+        plotting.Line([], [],               c="c",  label="cyan"),
+        plotting.FillBetween([], [], a=0.5, c="m",  label="patch"),
+        legend=True,
+        legend_outside=True,
+        grid=False,
+        figsize=[6, 4],
+        plot_name="test_legend_labels",
+        dir_name=OUTPUT_DIR,
+    )

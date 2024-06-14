@@ -33,7 +33,7 @@ import time
 import numpy as np
 
 CURRENT_DIR = os.path.abspath(os.getcwd())
-RESULTS_DIR = os.path.join(CURRENT_DIR, "Results")
+RESULTS_DIR = os.path.join(CURRENT_DIR, "results")
 
 class CallbackContext:
     def __init__(

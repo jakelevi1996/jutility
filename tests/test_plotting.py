@@ -11,7 +11,8 @@ def test_plot_lines():
         plotting.Line([1, 2, 3], [4, 5, 7], c="b"),
         plotting.Line([1.6, 1.3, 1.8], [3.1, 5.6, 4], marker="o", c="r"),
         plotting.Line([1.4, 2.5], [3.5, 3.9], ls="--", c="g"),
-        plotting.HVLine(h=5.3, v=2.2, c="m", zorder=-10, lw=10, alpha=0.4),
+        plotting.HLine(5.3, c="m", zorder=-10, lw=10, alpha=0.4),
+        plotting.VLine(2.2, c="m", zorder=-10, lw=10, alpha=0.4),
     ]
     mp = plotting.plot(
         *line_list,
@@ -78,7 +79,7 @@ def test_legend():
         plotting.Line([1, 2], [1, 2], marker="o", c="r", label="Red line"),
         plotting.Line([1.2, 1.8], [1.8, 1.2], c="g", label="Green line"),
         plotting.Line([1.3, 1.7], [1.5, 1.6], marker="o", c="y"),
-        plotting.HVLine(h=1.7, c="m", ls="--", label="hline"),
+        plotting.HLine(1.7, c="m", ls="--", label="hline"),
         plotting.FillBetween(
             x=[1.3, 1.6],
             y1=[1.2, 1.3],

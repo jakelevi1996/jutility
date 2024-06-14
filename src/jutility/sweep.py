@@ -209,12 +209,17 @@ class ParamSweeper:
                     noisy_data,
                     n_sigma=self._n_sigma,
                 ),
-                plotting.HVLine(
-                    v=parameter.default,
-                    h=optimal_h,
+                plotting.VLine(
+                    parameter.default,
                     c="r",
                     ls="--",
                     label="Optimal value = %s" % param_default_str,
+                    zorder=40,
+                ),
+                plotting.HLine(
+                    optimal_h,
+                    c="r",
+                    ls="--",
                     zorder=40,
                 ),
                 plot_name=(

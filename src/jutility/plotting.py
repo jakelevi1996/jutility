@@ -83,23 +83,29 @@ class Scatter(Line):
         kwargs.setdefault("ls", "")
         return matplotlib.lines.Line2D([], [], **kwargs)
 
-class HVLine(Line):
+class HLine(Line):
     """
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.axhline.html
-    and
-    https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.axvline.html
     """
-    def __init__(self, h=None, v=None, **kwargs):
-        self._h = h
-        self._v = v
+    def __init__(self, *args, **kwargs):
+        self._args = args
         self._kwargs = kwargs
 
     def plot(self, axis):
-        if self._h is not None:
-            axis.axhline(self._h, **self._kwargs)
-        if self._v is not None:
-            axis.axvline(self._v, **self._kwargs)
+        axis.axhline(*self._args, **self._kwargs)
+
+class VLine(Line):
+    """
+    See
+    https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.axvline.html
+    """
+    def __init__(self, *args, **kwargs):
+        self._args = args
+        self._kwargs = kwargs
+
+    def plot(self, axis):
+        axis.axvline(*self._args, **self._kwargs)
 
 class AxLine(Line):
     """
@@ -246,23 +252,29 @@ class Hist(FillBetween):
     def plot(self, axis):
         axis.hist(*self._args, **self._kwargs)
 
-class HVSpan(FillBetween):
+class HSpan(FillBetween):
     """
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.axhspan.html
-    and
-    https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.axvspan.html
     """
-    def __init__(self, xlims=None, ylims=None, **kwargs):
-        self._xlims = xlims
-        self._ylims = ylims
+    def __init__(self, *args, **kwargs):
+        self._args = args
         self._kwargs = kwargs
 
     def plot(self, axis):
-        if self._xlims is not None:
-            axis.axvspan(*self._xlims, **self._kwargs)
-        if self._ylims is not None:
-            axis.axhspan(*self._ylims, **self._kwargs)
+        axis.axhspan(*self._args, **self._kwargs)
+
+class VSpan(FillBetween):
+    """
+    See
+    https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.axvspan.html
+    """
+    def __init__(self, *args, **kwargs):
+        self._args = args
+        self._kwargs = kwargs
+
+    def plot(self, axis):
+        axis.axvspan(*self._args, **self._kwargs)
 
 class ColourMesh(FillBetween):
     """

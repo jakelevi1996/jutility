@@ -563,3 +563,37 @@ def test_imshow_axis_off():
         constrained_layout=True,
     )
     mp.save("test_imshow_axis_off", OUTPUT_DIR)
+
+def test_default_colours():
+    rng = util.Seeder().get_rng("test_default_colours")
+    n = lambda s: rng.normal(size=s)
+    mp = plotting.MultiPlot(
+        plotting.Subplot(plotting.Line(n(20), n(20))),
+        plotting.Subplot(plotting.Step(n(20), n(20))),
+        plotting.Subplot(plotting.Scatter(n(20), n(20), c="b")),
+        plotting.Subplot(plotting.Scatter(n(20), n(20), c=n(20))),
+        plotting.Subplot(
+            plotting.Circle([1, 2], 3),
+            plotting.Circle([2, 1], 3),
+            plotting.Circle([1, 1], 1, c="r"),
+            plotting.Text(-4, -4, "Circles", size=50),
+            xlim=[-6, 6],
+            ylim=[-6, 6],
+        ),
+        plotting.Subplot(plotting.Bar(np.arange(50), n(50))),
+        plotting.Subplot(plotting.Bar(np.arange(50), n(50), c="r")),
+        plotting.Subplot(plotting.Hist(n(1000), 100)),
+        plotting.Subplot(
+            plotting.FillBetween(np.arange(20), n(20), n(20), a=0.2),
+        ),
+        plotting.Subplot(
+            plotting.FillBetween(np.arange(20), n(20), n(20), a=0.2, c="r"),
+            plotting.FillBetween(np.arange(20), n(20), n(20), a=0.2, ec="b"),
+        ),
+        plotting.Subplot(plotting.Contour(n([50, 50])), axis_off=True),
+        plotting.Subplot(plotting.ContourFilled(n([50, 50])), axis_off=True),
+        title="test_default_colours",
+        constrained_layout=True,
+        figsize=[15, 10],
+    )
+    mp.save("test_default_colours", OUTPUT_DIR)

@@ -550,3 +550,16 @@ def test_scatter():
         plot_name="test_scatter",
         dir_name=OUTPUT_DIR,
     )
+
+def test_imshow_axis_off():
+    rng = util.Seeder().get_rng("test_imshow_axis_off")
+    x = rng.normal(size=[20, 20])
+    mp = plotting.MultiPlot(
+        plotting.Subplot(plotting.ImShow(x)),
+        plotting.Subplot(plotting.ImShow(x, axis_off=True)),
+        plotting.Subplot(plotting.ImShow(x, axis_off=False)),
+        plotting.Subplot(plotting.ImShow(x, axis_off=False, z=0)),
+        title="test_imshow_axis_off",
+        constrained_layout=True,
+    )
+    mp.save("test_imshow_axis_off", OUTPUT_DIR)

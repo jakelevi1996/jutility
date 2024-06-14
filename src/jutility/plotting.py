@@ -58,17 +58,15 @@ class _Plottable:
         return {"zorder": 10}
 
     def _expand_abbreviated_keys(self):
-        for k, k_full in self._get_abbreviated_keys_dict().items():
-            if k not in self._get_no_expand_keys_list():
-                self._rename_key(k, k_full)
-
-    def _get_abbreviated_keys_dict(self):
-        return {
+        abbreviated_keys_dict = {
             "c": "color",
             "z": "zorder",
             "a": "alpha",
             "m": "marker",
         }
+        for k, k_full in abbreviated_keys_dict.items():
+            if k not in self._get_no_expand_keys_list():
+                self._rename_key(k, k_full)
 
     def _get_no_expand_keys_list(self):
         return []

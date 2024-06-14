@@ -86,6 +86,13 @@ class _Plottable:
     def has_label(self):
         return ("label" in self._kwargs)
 
+class _Patch(_Plottable):
+    def get_handle(self):
+        self._store_kwargs("x", "y1", "y2")
+        handle = matplotlib.patches.Patch(**self._kwargs)
+        self._release_kwargs()
+        return handle
+
 class Line(_Plottable):
     """
     See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html
@@ -184,20 +191,6 @@ class Circle(Line):
         circle = matplotlib.patches.Circle(*self._args, **self._kwargs)
         axis.add_artist(circle)
 
-class FillBetween(Line):
-    """
-    See
-    https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.fill_between.html
-    """
-    def plot(self, axis):
-        axis.fill_between(*self._args, **self._kwargs)
-
-    def get_handle(self):
-        self._store_kwargs("x", "y1", "y2")
-        handle = matplotlib.patches.Patch(**self._kwargs)
-        self._release_kwargs()
-        return handle
-
 class Text(Line):
     """
     See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.text.html
@@ -217,7 +210,15 @@ class Text(Line):
     def plot(self, axis):
         axis.text(*self._args, **self._kwargs)
 
-class Bar(FillBetween):
+class FillBetween(_Patch):
+    """
+    See
+    https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.fill_between.html
+    """
+    def plot(self, axis):
+        axis.fill_between(*self._args, **self._kwargs)
+
+class Bar(_Patch):
     """
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.bar.html
@@ -225,7 +226,7 @@ class Bar(FillBetween):
     def plot(self, axis):
         axis.bar(*self._args, **self._kwargs)
 
-class Hist(FillBetween):
+class Hist(_Patch):
     """
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.hist.html
@@ -233,7 +234,7 @@ class Hist(FillBetween):
     def plot(self, axis):
         axis.hist(*self._args, **self._kwargs)
 
-class HSpan(FillBetween):
+class HSpan(_Patch):
     """
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.axhspan.html
@@ -241,7 +242,7 @@ class HSpan(FillBetween):
     def plot(self, axis):
         axis.axhspan(*self._args, **self._kwargs)
 
-class VSpan(FillBetween):
+class VSpan(_Patch):
     """
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.axvspan.html
@@ -249,7 +250,7 @@ class VSpan(FillBetween):
     def plot(self, axis):
         axis.axvspan(*self._args, **self._kwargs)
 
-class ColourMesh(FillBetween):
+class ColourMesh(_Patch):
     """
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.pcolormesh.html
@@ -257,7 +258,7 @@ class ColourMesh(FillBetween):
     def plot(self, axis):
         axis.pcolormesh(*self._args, **self._kwargs)
 
-class ContourFilled(FillBetween):
+class ContourFilled(_Patch):
     """
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.contourf.html
@@ -265,7 +266,7 @@ class ContourFilled(FillBetween):
     def plot(self, axis):
         axis.contourf(*self._args, **self._kwargs)
 
-class ImShow(FillBetween):
+class ImShow(_Patch):
     """
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.imshow.html

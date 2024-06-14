@@ -789,3 +789,35 @@ def test_progress():
         print_interval=util.Always(),
     ):
         pass
+
+def test_store_dict_context():
+    printer = util.Printer("test_store_dict_context", OUTPUT_DIR)
+
+    def g(**kwargs):
+        return {k: v+1 for k, v in kwargs.items()}
+
+    def f(d, secrets):
+        with util.StoreDictContext(d, *secrets):
+            return g(**d)
+
+    d = {"x_%i" % i: 10*i*i for i in range(10)}
+    secrets = ["secret_1", "secret_2"]
+    for s in secrets:
+        d[s] = 42
+
+    len_d = len(d)
+    assert len(d) == len_d
+    printer(d)
+
+    f_output = f(d, secrets)
+
+    assert len(d) == len_d
+    assert len(f_output) == len_d - len(secrets)
+    for s in secrets:
+        assert s in d
+        assert s not in f_output
+    for k in f_output:
+        assert f_output[k] == d[k] + 1
+
+    printer(f_output)
+    printer(d)

@@ -79,6 +79,24 @@ class ExceptionContext:
                 self._print("Suppressing exception and continuing...")
                 return True
 
+class StoreDictContext:
+    def __init__(self, input_dict, *keys):
+        self._input_dict = input_dict
+        self._keys = keys
+        self._stored_dict = dict()
+
+    def __enter__(self):
+        for k in self._keys:
+            if k in self._input_dict:
+                self._stored_dict[k] = self._input_dict.pop(k)
+
+    def __exit__(self, *args):
+        for k in self._keys:
+            if k in self._stored_dict:
+                self._input_dict[k] = self._stored_dict.pop(k)
+
+        assert len(self._stored_dict) == 0
+
 class Printer:
     def __init__(
         self,

@@ -544,3 +544,13 @@ def test_circle():
         plot_name="test_circle",
         dir_name=OUTPUT_DIR,
     )
+
+def test_scatter():
+    rng = util.Seeder().get_rng("test_scatter")
+    n = lambda s: rng.normal(size=s)
+    plotting.plot(
+        plotting.Scatter(n(50), n(50), c=n(50), cmap="binary"),
+        plotting.Scatter(n(20), n(20), c=n(20)),
+        plot_name="test_scatter",
+        dir_name=OUTPUT_DIR,
+    )

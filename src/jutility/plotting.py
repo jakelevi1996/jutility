@@ -116,6 +116,9 @@ class Scatter(Line):
         self._kwargs.setdefault("ls", "")
         return matplotlib.lines.Line2D(*self._args, **self._kwargs)
 
+    def _get_no_expand_keys_list(self):
+        return ["c"]
+
 class HLine(Line):
     """
     See

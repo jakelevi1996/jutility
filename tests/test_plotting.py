@@ -89,13 +89,13 @@ def test_legend():
             label="Patch",
         ),
     ]
-    axis_properties = plotting.AxisProperties(xlabel="x", ylabel="y")
     mp = plotting.plot(
         *line_list,
         plot_name="test_legend",
         dir_name=OUTPUT_DIR,
-        axis_properties=axis_properties,
-        legend=True,
+        xlabel="x",
+        ylabel="y",
+        legend_outside=True,
     )
     assert os.path.isfile(mp.filename)
 
@@ -107,11 +107,9 @@ def test_plot_bar():
         plotting.Bar(x2, 4.3, color="g", zorder=10, label="Bar 2"),
         plot_name="test_plot_bar",
         dir_name=OUTPUT_DIR,
-        axis_properties=plotting.AxisProperties(
-            xlabel="Category",
-            ylabel="Height",
-            rotate_xticklabels=True,
-        ),
+        xlabel="Category",
+        ylabel="Height",
+        rotate_xticklabels=True,
         legend=True,
     )
     assert os.path.isfile(mp.filename)
@@ -212,10 +210,8 @@ def test_title():
         ),
         plot_name=title,
         dir_name=OUTPUT_DIR,
-        axis_properties=plotting.AxisProperties(
-            xlabel="$x_1$",
-            ylabel="$x_2$",
-        ),
+        xlabel="$x_1$",
+        ylabel="$x_2$",
         legend=True,
     )
     assert os.path.isfile(mp.filename)
@@ -261,8 +257,8 @@ def test_gif_add_plot_frame(save_frames):
             plotting.Scatter(x, f(x), c="r", label="Red data"),
             plot_name="%s, frame %i" % (output_name, i),
             dir_name=OUTPUT_DIR,
-            axis_properties=plotting.AxisProperties(ylim=[-0.2, 1.2]),
-            legend=True,
+            ylim=[-0.2, 1.2],
+            legend_outside=True,
             save=save_frames,
         )
 
@@ -282,8 +278,8 @@ def test_gif_add_image_file_frame():
             plotting.Scatter(x, f(x), c="r", label="Red data"),
             plot_name="%s, frame %i" % (output_name, i),
             dir_name=OUTPUT_DIR,
-            axis_properties=plotting.AxisProperties(ylim=[-0.2, 1.2]),
-            legend=True,
+            ylim=[-0.2, 1.2],
+            legend_outside=True,
         )
         filename_list.append(mp.filename)
 
@@ -394,13 +390,11 @@ def test_set_latex_params(pdf):
                 zorder=10,
             ),
             plotting.Text(1, 6, "Example text", size=10),
-            axis_properties=plotting.AxisProperties(
-                grid=False,
-                xlabel="$x$ label",
-                ylabel="$\\mathcal{L}$",
-            ),
+            grid=False,
+            xlabel="$x$ label",
+            ylabel="$\\mathcal{L}$",
             figsize=[5, 3],
-            legend=True,
+            legend_outside=True,
             plot_name=plot_name,
             dir_name=OUTPUT_DIR,
             pdf=pdf,

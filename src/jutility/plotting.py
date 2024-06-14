@@ -631,7 +631,7 @@ class Empty(Subplot):
 def plot(
     *lines,
     axis_properties=None,
-    legend=False,
+    legend_outside=False,
     figsize=None,
     plot_name=None,
     dir_name=None,
@@ -642,11 +642,11 @@ def plot(
     if axis_properties is None:
         axis_properties = AxisProperties(**axis_kwargs)
     if figsize is None:
-        figsize = [10, 6] if legend else [8, 6]
+        figsize = [10, 6] if legend_outside else [8, 6]
     if plot_name is not None:
         axis_properties.set_default_title(plot_name)
 
-    if legend:
+    if legend_outside:
         wr =  [1, 0.2]
         fig_properties = FigureProperties(1, 2, figsize, width_ratios=wr)
         multi_plot = MultiPlot(

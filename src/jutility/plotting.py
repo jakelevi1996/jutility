@@ -37,7 +37,6 @@ class _Plottable:
     def __init__(self, *args, **kwargs):
         self._args = args
         self._kwargs = kwargs
-        self._stored_kwargs_dict = dict()
         self._expand_abbreviated_keys()
         for k, v in self._get_default_kwargs().items():
             self._kwargs.setdefault(k, v)

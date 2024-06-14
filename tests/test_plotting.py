@@ -551,6 +551,8 @@ def test_scatter():
     plotting.plot(
         plotting.Scatter(n(50), n(50), c=n(50), cmap="binary"),
         plotting.Scatter(n(20), n(20), c=n(20)),
+        plotting.Scatter(n(30), n(30), c="r", label="red"),
+        legend=True,
         plot_name="test_scatter",
         dir_name=OUTPUT_DIR,
     )

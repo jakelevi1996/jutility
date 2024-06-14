@@ -563,6 +563,9 @@ class FigureProperties:
             figure.subplots_adjust(top=(1 - self._top_space))
 
 class LegendProperties:
+    """
+    See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.legend.html
+    """
     def __init__(self, *args, **kwargs):
         self._args = args
         self._kwargs = kwargs
@@ -584,6 +587,9 @@ class Subplot:
         self._axis_properties.apply(axis)
 
 class Legend(Subplot):
+    """
+    See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.legend.html
+    """
     def __init__(self, *lines, **legend_kwargs):
         handles = [
             line.get_handle() for line in lines if line.has_label()

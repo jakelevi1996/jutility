@@ -34,6 +34,9 @@ import PIL.Image
 from jutility import util
 
 class Line:
+    """
+    See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html
+    """
     def __init__(self, x=None, y=None, batch_first=False, **kwargs):
         if (y is None) and (x is not None):
             y = x
@@ -68,6 +71,10 @@ class Line:
         return matplotlib.lines.Line2D([], [], **kwargs)
 
 class Scatter(Line):
+    """
+    See
+    https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.scatter.html
+    """
     def plot(self, axis):
         axis.scatter(self._x, self._y, **self._kwargs)
 
@@ -77,6 +84,12 @@ class Scatter(Line):
         return matplotlib.lines.Line2D([], [], **kwargs)
 
 class HVLine(Line):
+    """
+    See
+    https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.axhline.html
+    and
+    https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.axvline.html
+    """
     def __init__(self, h=None, v=None, **kwargs):
         self._h = h
         self._v = v
@@ -89,11 +102,10 @@ class HVLine(Line):
             axis.axvline(self._v, **self._kwargs)
 
 class AxLine(Line):
+    """
+    See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.axline.html
+    """
     def __init__(self, *args, **kwargs):
-        """
-        See
-        https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.axline.html
-        """
         self.args   = args
         self.kwargs = kwargs
 
@@ -101,6 +113,9 @@ class AxLine(Line):
         axis.axline(*self.args, **self.kwargs)
 
 class Quiver(Line):
+    """
+    See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.quiver.html
+    """
     def __init__(self, x, y, u, v, normalise=False, tol=1e-5, **kwargs):
         self._x = x
         self._y = y
@@ -120,10 +135,18 @@ class Quiver(Line):
         axis.quiver(self._x, self._y, self._u, self._v, **self._kwargs)
 
 class Step(Line):
+    """
+    See
+    https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.step.html
+    """
     def plot(self, axis):
         axis.step(self._x, self._y, **self._kwargs)
 
 class Contour(Line):
+    """
+    See
+    https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.contour.html
+    """
     def __init__(self, x, y, z, levels, **kwargs):
         self._x = x
         self._y = y
@@ -135,13 +158,13 @@ class Contour(Line):
         axis.contour(self._x, self._y, self._z, self._levels, **self._kwargs)
 
 class Circle(Line):
+    """
+    See
+    https://matplotlib.org/stable/api/_as_gen/matplotlib.patches.Circle.html
+    and
+    https://matplotlib.org/stable/gallery/shapes_and_collections/artist_reference.html
+    """
     def __init__(self, *args, **kwargs):
-        """
-        See
-        https://matplotlib.org/stable/api/_as_gen/matplotlib.patches.Circle.html
-        and
-        https://matplotlib.org/stable/gallery/shapes_and_collections/artist_reference.html
-        """
         c = kwargs.pop("c", None)
         if c is not None:
             kwargs["color"] = c
@@ -157,6 +180,10 @@ class Circle(Line):
         axis.add_artist(circle)
 
 class FillBetween(Line):
+    """
+    See
+    https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.fill_between.html
+    """
     def __init__(self, x, y1, y2, **kwargs):
         self._x = x
         self._y1 = y1
@@ -176,15 +203,14 @@ class FillBetween(Line):
             return matplotlib.patches.Patch(**self._kwargs)
 
 class Text(Line):
-    def __init__(self, *args, center_align=False, **kwargs):
-        """
-        See
-        https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.text.html
+    """
+    See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.text.html
 
-        Further examples:
-        https://matplotlib.org/stable/gallery/text_labels_and_annotations/fancytextbox_demo.html
-        https://matplotlib.org/stable/gallery/subplots_axes_and_figures/figure_size_units.html
-        """
+    Further examples:
+    https://matplotlib.org/stable/gallery/text_labels_and_annotations/fancytextbox_demo.html
+    https://matplotlib.org/stable/gallery/subplots_axes_and_figures/figure_size_units.html
+    """
+    def __init__(self, *args, center_align=False, **kwargs):
         if center_align:
             kwargs["horizontalalignment"]   = "center"
             kwargs["verticalalignment"]     = "center"
@@ -196,6 +222,10 @@ class Text(Line):
         axis.text(*self._args, **self._kwargs)
 
 class Bar(FillBetween):
+    """
+    See
+    https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.bar.html
+    """
     def __init__(self, x, height, **kwargs):
         self._x = x
         self._height = height
@@ -205,6 +235,10 @@ class Bar(FillBetween):
         axis.bar(self._x, self._height, **self._kwargs)
 
 class Hist(FillBetween):
+    """
+    See
+    https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.hist.html
+    """
     def __init__(self, *args, **kwargs):
         self._args = args
         self._kwargs = kwargs
@@ -213,6 +247,12 @@ class Hist(FillBetween):
         axis.hist(*self._args, **self._kwargs)
 
 class HVSpan(FillBetween):
+    """
+    See
+    https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.axhspan.html
+    and
+    https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.axvspan.html
+    """
     def __init__(self, xlims=None, ylims=None, **kwargs):
         self._xlims = xlims
         self._ylims = ylims
@@ -225,6 +265,10 @@ class HVSpan(FillBetween):
             axis.axhspan(*self._ylims, **self._kwargs)
 
 class ColourMesh(FillBetween):
+    """
+    See
+    https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.pcolormesh.html
+    """
     def __init__(self, x, y, c, **kwargs):
         self._x = x
         self._y = y
@@ -235,6 +279,10 @@ class ColourMesh(FillBetween):
         axis.pcolormesh(self._x, self._y, self._c, **self._kwargs)
 
 class ContourFilled(FillBetween):
+    """
+    See
+    https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.contourf.html
+    """
     def __init__(self, x, y, c, **kwargs):
         self._x = x
         self._y = y
@@ -245,6 +293,10 @@ class ContourFilled(FillBetween):
         axis.contourf(self._x, self._y, self._c, **self._kwargs)
 
 class ImShow(FillBetween):
+    """
+    See
+    https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.imshow.html
+    """
     def __init__(self, c, axis_off=True, **kwargs):
         self._c = c
         self._axis_off = axis_off
@@ -303,6 +355,9 @@ def get_noisy_data_lines(
     return line_list
 
 class ColourPicker:
+    """
+    See https://matplotlib.org/stable/users/explain/colors/colormaps.html
+    """
     def __init__(
         self,
         num_colours,
@@ -345,6 +400,10 @@ class ColourPicker:
         return self._cmap
 
     def get_colourbar(self, vmin=0, vmax=None, **kwargs):
+        """
+        See
+        https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.colorbar.html
+        """
         if vmax is None:
             vmax = len(self._colours)
 
@@ -563,6 +622,10 @@ class Legend(Subplot):
         axis.set_axis_off()
 
 class ColourBar(Subplot):
+    """
+    See
+    https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.colorbar.html
+    """
     def __init__(self, vmin, vmax, cmap=None, **kwargs):
         norm = matplotlib.colors.Normalize(vmin, vmax)
         self._sm = matplotlib.cm.ScalarMappable(norm, cmap=cmap)

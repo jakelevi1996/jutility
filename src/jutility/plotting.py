@@ -39,6 +39,8 @@ class _Plottable:
         self._kwargs = kwargs
         self._stored_kwargs_dict = dict()
         self._expand_abbreviated_keys()
+        for k, v in self._get_default_kwargs().items():
+            self._kwargs.setdefault(k, v)
 
     def plot(self, axis):
         raise NotImplementedError()
@@ -67,6 +69,9 @@ class _Plottable:
 
     def _get_no_expand_keys_list(self):
         return []
+
+    def _get_default_kwargs(self):
+        return {"zorder": 10}
 
     def _rename_key(self, k, k_new):
         if k in self._kwargs:
@@ -103,7 +108,10 @@ class Line(_Plottable):
     def get_handle(self):
         return matplotlib.lines.Line2D([], [], **self._kwargs)
 
-class Scatter(Line):
+    def _get_default_kwargs(self):
+        return {"zorder": 10, "color": "b"}
+
+class Scatter(_Plottable):
     """
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.scatter.html
@@ -172,7 +180,7 @@ class Step(Line):
     def plot(self, axis):
         axis.step(*self._args, **self._kwargs)
 
-class Contour(Line):
+class Contour(_Plottable):
     """
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.contour.html
@@ -194,7 +202,7 @@ class Circle(Line):
         circle = matplotlib.patches.Circle(*self._args, **self._kwargs)
         axis.add_artist(circle)
 
-class Text(Line):
+class Text(_Plottable):
     """
     See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.text.html
 
@@ -221,6 +229,9 @@ class FillBetween(_Patch):
     def plot(self, axis):
         axis.fill_between(*self._args, **self._kwargs)
 
+    def _get_default_kwargs(self):
+        return {"zorder": 10, "color": "b", "ec": None}
+
 class Bar(_Patch):
     """
     See
@@ -229,7 +240,10 @@ class Bar(_Patch):
     def plot(self, axis):
         axis.bar(*self._args, **self._kwargs)
 
-class Hist(_Patch):
+    def _get_default_kwargs(self):
+        return {"zorder": 10, "color": "b", "ec": "k"}
+
+class Hist(Bar):
     """
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.hist.html
@@ -237,7 +251,7 @@ class Hist(_Patch):
     def plot(self, axis):
         axis.hist(*self._args, **self._kwargs)
 
-class HSpan(_Patch):
+class HSpan(FillBetween):
     """
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.axhspan.html
@@ -245,7 +259,7 @@ class HSpan(_Patch):
     def plot(self, axis):
         axis.axhspan(*self._args, **self._kwargs)
 
-class VSpan(_Patch):
+class VSpan(FillBetween):
     """
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.axvspan.html
@@ -253,7 +267,7 @@ class VSpan(_Patch):
     def plot(self, axis):
         axis.axvspan(*self._args, **self._kwargs)
 
-class ColourMesh(_Patch):
+class ColourMesh(_Plottable):
     """
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.pcolormesh.html
@@ -261,7 +275,7 @@ class ColourMesh(_Patch):
     def plot(self, axis):
         axis.pcolormesh(*self._args, **self._kwargs)
 
-class ContourFilled(_Patch):
+class ContourFilled(_Plottable):
     """
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.contourf.html
@@ -269,7 +283,7 @@ class ContourFilled(_Patch):
     def plot(self, axis):
         axis.contourf(*self._args, **self._kwargs)
 
-class ImShow(_Patch):
+class ImShow(_Plottable):
     """
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.imshow.html

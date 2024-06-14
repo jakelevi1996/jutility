@@ -131,23 +131,17 @@ class Quiver(Line):
     """
     See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.quiver.html
     """
-    def __init__(self, x, y, u, v, normalise=False, tol=1e-5, **kwargs):
-        self._x = x
-        self._y = y
-
-        if normalise:
+    def plot(self, axis):
+        if self._kwargs.pop("normalise", False):
+            tol = self._kwargs.pop("tol", 1e-5)
+            x, y, u, v = self._args[:4]
             dr = np.sqrt(np.square(u) + np.square(v))
             dr_safe = np.maximum(dr, tol)
-            self._u = u / dr_safe
-            self._v = v / dr_safe
-        else:
-            self._u = u
-            self._v = v
+            u = u / dr_safe
+            v = v / dr_safe
+            self._args = (x, y, u, v) + self._args[4:]
 
-        self._kwargs = kwargs
-
-    def plot(self, axis):
-        axis.quiver(self._x, self._y, self._u, self._v, **self._kwargs)
+        axis.quiver(*self._args, **self._kwargs)
 
 class Step(Line):
     """
@@ -203,15 +197,11 @@ class Text(_Plottable):
     https://matplotlib.org/stable/gallery/text_labels_and_annotations/fancytextbox_demo.html
     https://matplotlib.org/stable/gallery/subplots_axes_and_figures/figure_size_units.html
     """
-    def __init__(self, *args, center_align=False, **kwargs):
-        if center_align:
-            kwargs["horizontalalignment"]   = "center"
-            kwargs["verticalalignment"]     = "center"
-
-        self._args = args
-        self._kwargs = kwargs
-
     def plot(self, axis):
+        if self._kwargs.pop("center_align", False):
+            self._kwargs["horizontalalignment"]   = "center"
+            self._kwargs["verticalalignment"]     = "center"
+
         axis.text(*self._args, **self._kwargs)
 
 class _Patch(_Plottable):
@@ -288,14 +278,10 @@ class ImShow(_Plottable):
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.imshow.html
     """
-    def __init__(self, c, axis_off=True, **kwargs):
-        self._c = c
-        self._axis_off = axis_off
-        self._kwargs = kwargs
-
     def plot(self, axis):
-        axis.imshow(self._c, **self._kwargs)
-        if self._axis_off:
+        axis_off = self._kwargs.pop("axis_off", True)
+        axis.imshow(*self._args, **self._kwargs)
+        if axis_off:
             axis.set_axis_off()
 
 def get_noisy_data_lines(

@@ -57,20 +57,18 @@ class _Plottable:
     def _get_default_kwargs(self):
         return {"zorder": 10}
 
-    def _expand_abbreviated_keys(self):
-        abbreviated_keys_dict = {
+    def _get_abbreviated_keys_dict(self):
+        return {
             "c": "color",
             "z": "zorder",
             "a": "alpha",
             "m": "marker",
         }
-        for k, k_full in abbreviated_keys_dict.items():
-            if k not in self._get_no_expand_keys_list():
-                if k in self._kwargs:
-                    self._kwargs[k_full] = self._kwargs.pop(k)
 
-    def _get_no_expand_keys_list(self):
-        return []
+    def _expand_abbreviated_keys(self):
+        for k, k_full in self._get_abbreviated_keys_dict().items():
+            if k in self._kwargs:
+                self._kwargs[k_full] = self._kwargs.pop(k)
 
     def has_label(self):
         return ("label" in self._kwargs)
@@ -162,8 +160,8 @@ class Scatter(_Plottable):
         self._kwargs.setdefault("ls", "")
         return matplotlib.lines.Line2D([], [], **self._kwargs)
 
-    def _get_no_expand_keys_list(self):
-        return ["c"]
+    def _get_abbreviated_keys_dict(self):
+        return {"z": "zorder", "a": "alpha", "m": "marker"}
 
 class Contour(_Plottable):
     """

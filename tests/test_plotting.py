@@ -117,38 +117,34 @@ def test_plot_bar():
 def test_log_axes():
     x1 = [1, 2, 3, 4, 5, 6]
     y1 = 1e-3 * np.array([1.2, 6, 120, 600, 1e4, 9e4])
-    mp = plotting.plot(
+    sp_list = []
+    sp = plotting.Subplot(
         plotting.Line(x1, y1, c="b", marker="o"),
-        plot_name="test_log_axes - log y axis",
-        dir_name=OUTPUT_DIR,
         axis_properties=plotting.AxisProperties("x", "y", log_yscale=True),
     )
-    assert os.path.isfile(mp.filename)
+    sp_list.append(sp)
 
     x2 = [0.1, 1, 10, 100, 1000]
     y2 = [3.8, 3.2, 1.8, 1.2, -1.2]
-    mp = plotting.plot(
+    sp = plotting.Subplot(
         plotting.Line(x2, y2, c="b", marker="o"),
-        plot_name="test_log_axes - log x axis",
-        dir_name=OUTPUT_DIR,
         axis_properties=plotting.AxisProperties("x", "y", log_xscale=True),
     )
-    assert os.path.isfile(mp.filename)
+    sp_list.append(sp)
 
     x3 = [1, 10, 100, 1000]
     noise = np.array([0.4, 1.8, 0.3, 2.2])
     y3 = 1e-4 * np.power(x3, 2.3) * noise
-    mp = plotting.plot(
+    sp = plotting.Subplot(
         plotting.Line(x3, y3, c="b", marker="o"),
-        plot_name="test_log_axes - log both axes",
-        dir_name=OUTPUT_DIR,
-        axis_properties=plotting.AxisProperties(
-            xlabel="x",
-            ylabel="y",
-            log_xscale=True,
-            log_yscale=True,
-        ),
+        xlabel="x",
+        ylabel="y",
+        log_xscale=True,
+        log_yscale=True,
     )
+    sp_list.append(sp)
+    mp = plotting.MultiPlot(*sp_list, num_rows=1)
+    mp.save("test_log_axes", OUTPUT_DIR)
     assert os.path.isfile(mp.filename)
 
 @pytest.mark.parametrize("num_colours, cyclic", [[5, True], [7, False]])

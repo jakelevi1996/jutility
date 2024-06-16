@@ -188,8 +188,11 @@ class Text(_Plottable):
 
 class _Patch(_Plottable):
     def get_handle(self):
-        with util.StoreDictContext(self._kwargs, "x", "y1", "y2"):
-            return matplotlib.patches.Patch(**self._kwargs)
+        patch_kwargs = {
+            k: v for k, v in self._kwargs.items()
+            if k not in ["x", "y1", "y2"]
+        }
+        return matplotlib.patches.Patch(**patch_kwargs)
 
 class FillBetween(_Patch):
     """

@@ -655,7 +655,6 @@ def plot(
 
     if save_close:
         multi_plot.save(plot_name, dir_name, pdf=pdf)
-        multi_plot.close()
 
     return multi_plot
 
@@ -683,6 +682,7 @@ class MultiPlot:
         verbose=True,
         file_ext=None,
         pdf=False,
+        close=True,
     ):
         if plot_name is None:
             plot_name = "Output"
@@ -695,8 +695,10 @@ class MultiPlot:
             file_ext=file_ext,
             verbose=verbose,
         )
-
         self._fig.savefig(self.filename)
+
+        if close:
+            self.close()
 
     def get_rgb_bytes(self):
         self._fig.canvas.draw()

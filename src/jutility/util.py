@@ -754,8 +754,8 @@ def progress(
             str_elements = [
                 "\r%s%s/%i"   % (prefix, i_str, total_len),
                 "%5.1f %%"  % percent,
-                "time taken = %8s"     % time_format(t_taken,  True),
-                "time remaining = %8s" % time_format(t_remain, True),
+                "time taken = %10s"     % time_format(t_taken,  True),
+                "time remaining = %10s" % time_format(t_remain, True),
             ]
             if bar_length is not None:
                 num_done_chars = int(fraction * bar_length)

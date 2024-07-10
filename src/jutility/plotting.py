@@ -274,6 +274,9 @@ class Legend(_Plottable):
     def plot(self, axis):
         axis.legend(*self._args, **self._kwargs)
 
+    def _get_default_kwargs(self):
+        return dict()
+
 def get_noisy_data_lines(
     noisy_data,
     n_sigma=1,

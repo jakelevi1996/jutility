@@ -681,17 +681,16 @@ def abbreviate_dictionary(
             "None":     "N",
         }
 
-    d_abbreviated = {
-        key_abbreviations[k]: v
+    s_sorted = sorted(
+        "%s: %s" % (key_abbreviations[k], v)
         for k, v in input_dict.items()
         if k in key_abbreviations
-    }
-    d_sorted = sorted(d_abbreviated.items())
-    s = clean_string(d_sorted)
+    )
+    s_clean = clean_string(s_sorted)
     for k, v in str_abbreviations.items():
-        s = s.replace(k, v)
+        s_clean = s_clean.replace(k, v)
 
-    return s
+    return s_clean
 
 def is_numeric(x):
     return any(isinstance(x, t) for t in [int, float, np.number])

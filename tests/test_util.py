@@ -183,13 +183,11 @@ def test_table_json():
         if i % 5 == 0:
             table.update(x=i, y=rng.normal(), level=1)
 
-    with pytest.raises(TypeError):
-        table.save_json("test_table_json", OUTPUT_DIR)
-        table.save_json("test_table_json", OUTPUT_DIR, ["z"])
+    table.save_json("test_table_json_all", OUTPUT_DIR)
+    table.save_json("test_table_json_z",   OUTPUT_DIR, ["z"])
+    table.save_json("test_table_json_xyt", OUTPUT_DIR, ["x", "y", "t"])
 
-    table.save_json("test_table_json", OUTPUT_DIR, ["x", "y", "t"])
-
-    full_path = util.get_full_path("test_table_json", OUTPUT_DIR, "json")
+    full_path = util.get_full_path("test_table_json_xyt", OUTPUT_DIR, "json")
     loaded_table = util.Table(printer=printer)
     loaded_table.load_json(full_path)
 

@@ -448,7 +448,13 @@ class Table:
             {name: data[i] for name, data in data_dict.items()}
             for i in range(len(self))
         ]
-        save_json(data_list, filename, dir_name)
+        save_json(
+            data_list,
+            filename,
+            dir_name,
+            default=lambda k: None,
+            indent=4,
+        )
 
     def load_json(self, full_path):
         old_print_interval = self._print_interval

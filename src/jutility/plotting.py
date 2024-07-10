@@ -267,6 +267,13 @@ class ImShow(_Plottable):
         if axis_off:
             axis.set_axis_off()
 
+class Legend(_Plottable):
+    """
+    See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.legend.html
+    """
+    def plot(self, axis):
+        axis.legend(*self._args, **self._kwargs)
+
 def get_noisy_data_lines(
     noisy_data,
     n_sigma=1,
@@ -402,8 +409,6 @@ class AxisProperties:
         title=None,
         wrap_title=True,
         colour=None,
-        legend=False,
-        legend_properties=None,
     ):
         self._xlabel = xlabel
         self._ylabel = ylabel
@@ -420,8 +425,6 @@ class AxisProperties:
         self._title = title
         self._wrap_title = wrap_title
         self._colour = colour
-        self._legend = legend
-        self._legend_properties = legend_properties
 
     def set_default_title(self, title):
         if self._title is None:
@@ -459,10 +462,6 @@ class AxisProperties:
             axis.set_title(self._title)
         if self._colour is not None:
             axis.set_facecolor(self._colour)
-        if self._legend or (self._legend_properties is not None):
-            if self._legend_properties is None:
-                self._legend_properties = LegendProperties()
-            self._legend_properties.apply(axis)
 
 class FigureProperties:
     def __init__(
@@ -548,17 +547,6 @@ class FigureProperties:
         if self._top_space is not None:
             figure.subplots_adjust(top=(1 - self._top_space))
 
-class LegendProperties:
-    """
-    See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.legend.html
-    """
-    def __init__(self, *args, **kwargs):
-        self._args = args
-        self._kwargs = kwargs
-
-    def apply(self, axis):
-        axis.legend(*self._args, **self._kwargs)
-
 class Subplot:
     def __init__(self, *lines, axis_properties=None, **axis_kwargs):
         self._lines = lines
@@ -572,7 +560,7 @@ class Subplot:
 
         self._axis_properties.apply(axis)
 
-class Legend(Subplot):
+class LegendSubplot(Subplot):
     """
     See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.legend.html
     """
@@ -580,14 +568,12 @@ class Legend(Subplot):
         handles = [
             line.get_handle() for line in lines if line.has_label()
         ]
-        self._legend_properties = LegendProperties(
-            handles=handles,
-            loc="center",
-            **legend_kwargs,
-        )
+        legend_kwargs.setdefault("handles", handles)
+        legend_kwargs.setdefault("loc", "center")
+        self._legend_properties = Legend(**legend_kwargs)
 
     def plot(self, axis):
-        self._legend_properties.apply(axis)
+        self._legend_properties.plot(axis)
         axis.set_axis_off()
 
 class ColourBar(Subplot):
@@ -623,7 +609,7 @@ class Empty(Subplot):
 def plot(
     *lines,
     axis_properties=None,
-    legend_outside=False,
+    legend=False,
     figsize=None,
     plot_name=None,
     dir_name=None,
@@ -634,16 +620,16 @@ def plot(
     if axis_properties is None:
         axis_properties = AxisProperties(**axis_kwargs)
     if figsize is None:
-        figsize = [10, 6] if legend_outside else [8, 6]
+        figsize = [10, 6] if legend else [8, 6]
     if plot_name is not None:
         axis_properties.set_default_title(plot_name)
 
-    if legend_outside:
+    if legend:
         wr =  [1, 0.2]
         fig_properties = FigureProperties(1, 2, figsize, width_ratios=wr)
         multi_plot = MultiPlot(
             Subplot(*lines, axis_properties=axis_properties),
-            Legend(*lines),
+            LegendSubplot(*lines),
             figure_properties=fig_properties,
         )
     else:

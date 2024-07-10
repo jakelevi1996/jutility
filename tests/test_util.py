@@ -109,15 +109,15 @@ def test_table_callback_level(print_level):
     )
     table = util.Table(
         util.Column("epoch", width=8),
-        util.Column("c0", ".3f", width=10).set_callback(
+        util.CallbackColumn("c0", ".3f", width=10).set_callback(
             lambda: 10 * timer.time_taken(),
             level=0,
         ),
-        util.Column("c1", ".3f", width=10).set_callback(
+        util.CallbackColumn("c1", ".3f", width=10).set_callback(
             lambda: 100 * timer.time_taken(),
             level=1,
         ),
-        util.Column("c2", ".3f", width=10).set_callback(
+        util.CallbackColumn("c2", ".3f", width=10).set_callback(
             lambda: 1000 * timer.time_taken(),
             level=2,
         ),
@@ -147,7 +147,7 @@ def test_table_json():
     table = util.Table(
         util.Column("x", "i",   width=8),
         util.Column("y", ".3f", width=8),
-        util.Column("z", "s",   width=40).set_callback(
+        util.CallbackColumn("z", "s",   width=40).set_callback(
             lambda: rng.normal(size=5),
             level=1,
         ),
@@ -186,14 +186,14 @@ def test_silent_column():
     table = util.Table(
         util.Column("epoch", width=8),
         util.Column("batch", width=8),
-        util.Column("mean_w", ".3f").set_callback(
+        util.CallbackColumn("mean_w", ".3f").set_callback(
             lambda: np.mean(w),
         ),
         util.Column("std_w", ".3f"),
-        util.Column("w", silent=True).set_callback(
+        util.CallbackColumn("w", silent=True).set_callback(
             lambda: w.copy(),
         ),
-        util.Column("w^2", silent=True).set_callback(
+        util.CallbackColumn("w^2", silent=True).set_callback(
             lambda: np.square(w),
             level=1,
         ),
@@ -437,14 +437,14 @@ def test_callback_interval():
     table = util.Table(
         util.CountColumn("c"),
         util.TimeColumn("t"),
-        util.Column("x1", ".3f", width=10).set_callback(
+        util.CallbackColumn("x1", ".3f", width=10).set_callback(
             lambda: rng.normal(loc=10),
         ),
-        util.Column("x2", ".3f", width=10).set_callback(
+        util.CallbackColumn("x2", ".3f", width=10).set_callback(
             lambda: rng.normal(loc=20),
             interval=util.CountInterval(5),
         ),
-        util.Column("x3", ".3f", width=10).set_callback(
+        util.CallbackColumn("x3", ".3f", width=10).set_callback(
             lambda: rng.normal(loc=30),
             interval=util.CountInterval(10),
         ),
@@ -765,7 +765,7 @@ def test_table_str():
 def test_table_remove_callbacks():
     test_name = "test_table_remove_callbacks"
     table = util.Table(
-        util.Column("c", "s", 10).set_callback(
+        util.CallbackColumn("c", "s", 10).set_callback(
             lambda: 42,
         ),
         util.Column("d", "s", 10),

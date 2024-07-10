@@ -285,7 +285,9 @@ class Column:
         self._format = "%%%i%s" % (self._width, value_format)
         self._data_list = []
         self._silent = silent
-        self.reset_callback()
+
+    def update(self, data, level):
+        self._data_list.append(data)
 
     def format_item(self, row_ind):
         data = self._data_list[row_ind]
@@ -294,26 +296,29 @@ class Column:
         else:
             return self._format % data
 
-    def update(self, data, level):
-        if (self._callback is not None) and (level >= self._callback_level):
-            if self._callback_interval.ready():
-                data = self._callback()
-                self._callback_interval.reset()
-        self._data_list.append(data)
-
     def get_data(self):
         return self._data_list
 
+    def reset_callback(self):
+        self._callback = None
+
+class CallbackColumn(Column):
     def set_callback(self, callback, level=0, interval=None):
         self._callback = callback
         self._callback_level = level
         if interval is None:
             interval = Always()
+
         self._callback_interval = interval
         return self
 
-    def reset_callback(self):
-        self._callback = None
+    def update(self, data, level):
+        if level >= self._callback_level:
+            if self._callback_interval.ready():
+                data = self._callback()
+                self._callback_interval.reset()
+
+        self._data_list.append(data)
 
 class TimeColumn(Column):
     def __init__(self, name, width=11):

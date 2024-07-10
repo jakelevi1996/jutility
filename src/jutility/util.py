@@ -265,7 +265,14 @@ class TimeInterval(_Interval):
             self._num_seconds_limit += self._num_seconds_interval
 
 class Column:
-    def __init__(self, name, value_format=None, width=None, title=None):
+    def __init__(
+        self,
+        name,
+        value_format=None,
+        width=None,
+        title=None,
+        silent=False,
+    ):
         if value_format is None:
             value_format = "s"
         if title is None:
@@ -277,13 +284,15 @@ class Column:
         self.title = title.ljust(self._width)
         self._format = "%%%i%s" % (self._width, value_format)
         self._data_list = []
+        self._silent = silent
         self.reset_callback()
 
     def format_item(self, row_ind):
-        if self._data_list[row_ind] is not None:
-            return self._format % self._data_list[row_ind]
-        else:
+        data = self._data_list[row_ind]
+        if (data is None) or self._silent:
             return "".rjust(self._width)
+        else:
+            return self._format % data
 
     def update(self, data, level):
         if (self._callback is not None) and (level >= self._callback_level):
@@ -305,10 +314,6 @@ class Column:
 
     def reset_callback(self):
         self._callback = None
-
-class SilentColumn(Column):
-    def format_item(self, row_ind):
-        return "".rjust(self._width)
 
 class TimeColumn(Column):
     def __init__(self, name, width=11):

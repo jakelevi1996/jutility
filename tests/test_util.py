@@ -56,7 +56,7 @@ def test_get_data():
         util.Column("a", width=5),
         util.Column("b", width=5),
         util.Column("c", width=5),
-        util.SilentColumn("d"),
+        util.Column("d", silent=True),
         printer=printer,
     )
     num_updates = [3, 4, 5]
@@ -190,10 +190,10 @@ def test_silent_column():
             lambda: np.mean(w),
         ),
         util.Column("std_w", ".3f"),
-        util.SilentColumn("w").set_callback(
+        util.Column("w", silent=True).set_callback(
             lambda: w.copy(),
         ),
-        util.SilentColumn("w^2").set_callback(
+        util.Column("w^2", silent=True).set_callback(
             lambda: np.square(w),
             level=1,
         ),

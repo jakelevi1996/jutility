@@ -272,10 +272,11 @@ class Legend(_Plottable):
     See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.legend.html
     """
     def plot(self, axis):
-        axis.legend(*self._args, **self._kwargs)
+        zorder = self._kwargs.pop("zorder", None)
+        legend = axis.legend(*self._args, **self._kwargs)
 
-    def _get_default_kwargs(self):
-        return dict()
+        if zorder is not None:
+            legend.set_zorder(zorder)
 
 def get_noisy_data_lines(
     noisy_data,

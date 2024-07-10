@@ -279,10 +279,11 @@ class Column:
             title = name.capitalize().replace("_", " ")
         if width is None:
             width = len(title)
+
         self.name = name
-        self._width = max(width, len(title))
-        self.title = title.ljust(self._width)
-        self._format = "%%%i%s" % (self._width, value_format)
+        self.title = title.ljust(abs(width))
+        self._width = width
+        self._format = "%%%i%s" % (width, value_format)
         self._data_list = []
         self._silent = silent
 
@@ -323,8 +324,8 @@ class CallbackColumn(Column):
 class TimeColumn(Column):
     def __init__(self, name, width=11):
         self.name = name
-        self.title = "Time".ljust(width)
-        self._width = width
+        self.title = "Time".ljust(abs(width))
+        self._format = "%%%is" % width
         self._data_list = []
         self._timer = Timer()
 
@@ -334,13 +335,13 @@ class TimeColumn(Column):
     def format_item(self, row_ind):
         t = self._data_list[row_ind]
         t_str = time_format(t, concise=True)
-        return t_str.rjust(self._width)
+        return self._format % t_str
 
 class CountColumn(Column):
     def __init__(self, name, width=5):
         self.name = name
-        self.title = "Count".ljust(width)
-        self._width = width
+        self.title = "Count".ljust(abs(width))
+        self._format = "%%%ii" % width
         self._data_list = []
         self._count = 0
 
@@ -350,7 +351,7 @@ class CountColumn(Column):
 
     def format_item(self, row_ind):
         count = self._data_list[row_ind]
-        return str(count).rjust(self._width)
+        return self._format % count
 
 class Table:
     def __init__(

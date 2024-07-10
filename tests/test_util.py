@@ -41,6 +41,30 @@ def test_table():
     assert all(isinstance(t, float) for t in table.get_data("t"))
     assert len(set(table.get_data("t"))) == num_updates
 
+def test_left_justified_columns():
+    printer = util.Printer("test_left_justified_columns", OUTPUT_DIR)
+    table = util.Table(
+        util.CountColumn("c", width=-11),
+        util.TimeColumn("t", width=-11),
+        util.Column("epoch", width=-10),
+        util.Column("train_loss", ".5f"),
+        util.Column("test_loss", ".5f", width=-12),
+        util.CallbackColumn("left",  width=-12).set_callback(lambda: 42),
+        util.CallbackColumn("right", width=+12).set_callback(lambda: 42),
+        print_interval=util.CountInterval(100),
+        printer=printer,
+    )
+    num_updates = 800
+    for i in range(num_updates):
+        train_loss = pow(2, -0.001 * i)
+        test_loss = np.sqrt(2) * train_loss
+        table.update(
+            epoch=i,
+            train_loss=train_loss,
+            test_loss=test_loss,
+        )
+    table.print_last()
+
 def test_column_width():
     printer = util.Printer("test_column_width", OUTPUT_DIR)
     table = util.Table(

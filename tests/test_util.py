@@ -845,3 +845,21 @@ def test_store_dict_context():
 
     printer(f_output)
     printer(d)
+
+def test_save_json():
+    data = {
+        "x": 23,
+        "y": 4.6,
+        "z": np.zeros([5, 5]),
+    }
+    with pytest.raises(TypeError):
+        util.save_json(data, "test_save_json", OUTPUT_DIR)
+
+    util.save_json(data, "test_save_json", OUTPUT_DIR, default=lambda k: None)
+    util.save_json(
+        data,
+        "test_save_json_indent",
+        OUTPUT_DIR,
+        default=lambda k: None,
+        indent=4,
+    )

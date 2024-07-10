@@ -95,7 +95,7 @@ def test_legend():
         dir_name=OUTPUT_DIR,
         xlabel="x",
         ylabel="y",
-        legend_outside=True,
+        legend=True,
     )
     assert os.path.isfile(mp.filename)
 
@@ -254,7 +254,7 @@ def test_gif_add_plot_frame(save_frames):
             plot_name="%s, frame %i" % (output_name, i),
             dir_name=OUTPUT_DIR,
             ylim=[-0.2, 1.2],
-            legend_outside=True,
+            legend=True,
             save=save_frames,
         )
 
@@ -275,7 +275,7 @@ def test_gif_add_image_file_frame():
             plot_name="%s, frame %i" % (output_name, i),
             dir_name=OUTPUT_DIR,
             ylim=[-0.2, 1.2],
-            legend_outside=True,
+            legend=True,
         )
         filename_list.append(mp.filename)
 
@@ -390,7 +390,7 @@ def test_set_latex_params(pdf):
             xlabel="$x$ label",
             ylabel="$\\mathcal{L}$",
             figsize=[5, 3],
-            legend_outside=True,
+            legend=True,
             plot_name=plot_name,
             dir_name=OUTPUT_DIR,
             pdf=pdf,
@@ -425,14 +425,14 @@ def test_legend_in_existing_subplot():
         plotting.Subplot(
             plotting.Line(x, [1, 3, 2], c="b", marker="o", label="Blue"),
             plotting.Line(x, [2, 1, 3], c="r", marker="o", label="Red"),
-            legend=True,
+            plotting.Legend(),
             grid=False,
             title="First plot",
         ),
         plotting.Subplot(
             plotting.Line(x, [3, 1, 2], c="g", marker="o", label="Green"),
             plotting.Line(x, [2, 3, 1], c="c", marker="o", label="Cyan"),
-            legend_properties=plotting.LegendProperties(loc="lower left"),
+            plotting.Legend(loc="lower left"),
             grid=False,
             title="Second plot",
         ),
@@ -607,8 +607,8 @@ def test_legend_labels():
         plotting.Line(                      c="g",  label="green"),
         plotting.Line([], [],               c="c",  label="cyan"),
         plotting.FillBetween([], [], a=0.5, c="m",  label="patch"),
+        plotting.Legend(),
         legend=True,
-        legend_outside=True,
         grid=False,
         figsize=[6, 4],
         plot_name="test_legend_labels",

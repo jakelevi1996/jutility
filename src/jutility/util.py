@@ -224,7 +224,7 @@ class _Interval:
     def reset(self):
         return
 
-    def init(self):
+    def full_reset(self):
         return
 
 class Always(_Interval):
@@ -238,7 +238,7 @@ class Never(_Interval):
 class CountInterval(_Interval):
     def __init__(self, max_count):
         self._max_count = max_count
-        self.init()
+        self.full_reset()
 
     def ready(self):
         self._count += 1
@@ -247,7 +247,7 @@ class CountInterval(_Interval):
     def reset(self):
         self._count = 0
 
-    def init(self):
+    def full_reset(self):
         self._count = self._max_count
 
 class TimeInterval(_Interval):
@@ -392,7 +392,7 @@ class Table:
 
         if level > self._print_level:
             self.print_last()
-            self._print_interval.init()
+            self._print_interval.full_reset()
 
         if level == self._print_level:
             if self._print_interval.ready():

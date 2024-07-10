@@ -639,10 +639,10 @@ def load_text(full_path):
 
     return s
 
-def save_pickle(data, filename, dir_name=None, verbose=True):
+def save_pickle(data, filename, dir_name=None, verbose=True, **kwargs):
     full_path = get_full_path(filename, dir_name, "pkl", verbose=verbose)
     with open(full_path, "wb") as f:
-        pickle.dump(data, f)
+        pickle.dump(data, f, **kwargs)
 
     return full_path
 
@@ -652,10 +652,10 @@ def load_pickle(full_path):
 
     return data
 
-def save_json(data, filename, dir_name=None, verbose=True):
+def save_json(data, filename, dir_name=None, verbose=True, **kwargs):
     full_path = get_full_path(filename, dir_name, "json", verbose=verbose)
     with open(full_path, "w") as f:
-        json.dump(data, f)
+        json.dump(data, f, **kwargs)
 
     return full_path
 

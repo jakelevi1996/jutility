@@ -855,3 +855,26 @@ def test_save_json():
 
     util.save_json(data, "test_save_json", OUTPUT_DIR)
     util.save_json(data, "test_save_json_no_indent", OUTPUT_DIR, indent=None)
+
+def test_repr_table_columns():
+    printer = util.Printer("test_repr_table_columns", OUTPUT_DIR)
+    rng = util.Seeder().get_rng("test_repr_table_columns")
+
+    columns = [
+        util.CountColumn("c", -5),
+        util.TimeColumn("t"),
+        util.Column("x", "s", 10),
+        util.Column("y", "s", 10),
+        util.CallbackColumn("cb", "s", 10).set_callback(
+            lambda: rng.integers(1000)
+        ),
+    ]
+    table = util.Table(*columns)
+
+    for _ in range(10):
+        table.update(
+            x=rng.integers(0, 10),
+            y=rng.integers(0, 100),
+        )
+
+    printer(table, repr(table), *columns, sep="\n\n")

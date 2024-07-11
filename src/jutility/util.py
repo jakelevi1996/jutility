@@ -303,6 +303,9 @@ class Column:
     def reset_callback(self):
         self._callback = None
 
+    def __repr__(self):
+        return "%s(name=\"%s\")" % (type(self).__name__, self.name)
+
 class CallbackColumn(Column):
     def set_callback(self, callback, level=0, interval=None):
         self._callback = callback
@@ -475,6 +478,9 @@ class Table:
         row_list = [self.format_row(i) for i in range(self._num_updates)]
         table_str = "\n".join([header_str] + row_list)
         return table_str
+
+    def __repr__(self):
+        return "%s(columns=%s)" % (type(self).__name__, self._column_list)
 
     def latex(self):
         raise NotImplementedError()

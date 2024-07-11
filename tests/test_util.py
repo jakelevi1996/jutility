@@ -851,13 +851,7 @@ def test_save_json():
         "z": np.zeros([5, 5]),
     }
     with pytest.raises(TypeError):
-        util.save_json(data, "test_save_json", OUTPUT_DIR)
+        util.save_json(data, "test_save_json", OUTPUT_DIR, default=None)
 
-    util.save_json(data, "test_save_json", OUTPUT_DIR, default=lambda k: None)
-    util.save_json(
-        data,
-        "test_save_json_indent",
-        OUTPUT_DIR,
-        default=lambda k: None,
-        indent=4,
-    )
+    util.save_json(data, "test_save_json", OUTPUT_DIR)
+    util.save_json(data, "test_save_json_no_indent", OUTPUT_DIR, indent=None)

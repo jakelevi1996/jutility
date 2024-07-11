@@ -448,13 +448,7 @@ class Table:
             {name: data[i] for name, data in data_dict.items()}
             for i in range(len(self))
         ]
-        save_json(
-            data_list,
-            filename,
-            dir_name,
-            default=lambda k: None,
-            indent=4,
-        )
+        save_json(data_list, filename, dir_name)
 
     def load_json(self, full_path):
         old_print_interval = self._print_interval
@@ -660,6 +654,8 @@ def load_pickle(full_path):
 
 def save_json(data, filename, dir_name=None, verbose=True, **kwargs):
     full_path = get_full_path(filename, dir_name, "json", verbose=verbose)
+    kwargs.setdefault("indent", 4)
+    kwargs.setdefault("default", lambda k: None)
     with open(full_path, "w") as f:
         json.dump(data, f, **kwargs)
 

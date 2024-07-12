@@ -408,6 +408,7 @@ class AxisProperties:
         symlogy=False,
         rotate_xticklabels=False,
         axis_equal=False,
+        axis_square=False,
         axis_off=False,
         grid=True,
         title=None,
@@ -424,6 +425,7 @@ class AxisProperties:
         self._symlogy = symlogy
         self._rotate_xticklabels = rotate_xticklabels
         self._axis_equal = axis_equal
+        self._axis_square = axis_square
         self._axis_off = axis_off
         self._grid = grid
         self._title = title
@@ -443,6 +445,8 @@ class AxisProperties:
             axis.set_xlim(self._xlim)
         if self._axis_equal:
             axis.axis("equal")
+        if self._axis_square:
+            axis.axis("square")
         if self._axis_off:
             axis.set_axis_off()
         if self._ylim is not None:

@@ -15,6 +15,7 @@ def time_sweep(
     n_list=None,
     num_repeats=5,
     printer=None,
+    n_sigma=1,
 ):
     if n_list is None:
         n_list = util.log_range(10, 1000, 10)
@@ -53,9 +54,20 @@ def time_sweep(
     cp = plotting.ColourPicker(len(experiments))
     plotting.plot(
         *[
-            plotting.Scatter(x, y, color=cp(i), label=exp_name)
+            plotting.Scatter(x, y, color=cp(i), label=exp_name, a=0.5, z=20)
             for i, exp_name in enumerate(sorted(exp_dict.keys()))
             for x, y in [data_dict[exp_name].get_all_data()]
+        ],
+        *[
+            line
+            for i, exp_name in enumerate(sorted(exp_dict.keys()))
+            for x, mean, ucb, lcb in [
+                data_dict[exp_name].get_statistics(n_sigma=n_sigma)
+            ]
+            for line in [
+                plotting.Line(x, mean, c=cp(i), z=30),
+                plotting.FillBetween(x, lcb, ucb, c=cp(i), a=0.2, z=10),
+            ]
         ],
         xlabel="n",
         ylabel="Time (seconds)",

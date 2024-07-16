@@ -282,7 +282,7 @@ class Column:
 
         self.name = name
         self.title = title.ljust(abs(width))
-        self._blank = "".rjust(abs(width))
+        self._blank = "".ljust(abs(width))
         self._format = "%%%i%s" % (width, value_format)
         self._data_list = []
         self._silent = silent

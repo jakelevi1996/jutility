@@ -56,19 +56,16 @@ def time_sweep(
     cp = plotting.ColourPicker(len(experiments))
     plotting.plot(
         *[
-            plotting.Scatter(x, y, color=cp(i), label=exp_name, a=0.5, z=20)
-            for i, exp_name in enumerate(sorted(exp_dict.keys()))
-            for x, y in [data_dict[exp_name].get_all_data()]
-        ],
-        *[
             line
             for i, exp_name in enumerate(sorted(exp_dict.keys()))
-            for x, mean, ucb, lcb in [
+            for x1, y in [data_dict[exp_name].get_all_data()]
+            for x2, mean, ucb, lcb in [
                 data_dict[exp_name].get_statistics(n_sigma=n_sigma)
             ]
             for line in [
-                plotting.Line(x, mean, c=cp(i), z=30),
-                plotting.FillBetween(x, lcb, ucb, c=cp(i), a=0.2, z=10),
+                plotting.Scatter(x1, y, c=cp(i), label=exp_name, a=0.5, z=20),
+                plotting.Line(x2, mean, c=cp(i), z=30),
+                plotting.FillBetween(x2, lcb, ucb, c=cp(i), a=0.2, z=10),
             ]
         ],
         xlabel="n",

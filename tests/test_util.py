@@ -878,3 +878,18 @@ def test_repr_table_columns():
         )
 
     printer(table, repr(table), *columns, sep="\n\n")
+
+def test_negative_column_width():
+    printer = util.Printer("test_negative_column_width", OUTPUT_DIR)
+
+    table = util.Table(
+        util.Column("a", "s", -10),
+        util.Column("b", "s", -10),
+        util.Column("c", "s", 10),
+        util.Column("d", "s", 10),
+        printer=printer,
+    )
+    table.update()
+    table.update(a=1, b="frog")
+    table.update(c=2, d="dog")
+    table.update()

@@ -282,7 +282,7 @@ class Column:
 
         self.name = name
         self.title = title.ljust(abs(width))
-        self._width = width
+        self._blank = "".rjust(abs(width))
         self._format = "%%%i%s" % (width, value_format)
         self._data_list = []
         self._silent = silent
@@ -293,7 +293,7 @@ class Column:
     def format_item(self, row_ind):
         data = self._data_list[row_ind]
         if (data is None) or self._silent:
-            return "".rjust(self._width)
+            return self._blank
         else:
             return self._format % data
 

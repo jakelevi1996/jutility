@@ -57,15 +57,15 @@ def time_sweep(
     plotting.plot(
         *[
             line
-            for i, exp_name in enumerate(sorted(exp_dict.keys()))
-            for x1, y in [data_dict[exp_name].get_all_data()]
+            for i, name in enumerate(sorted(exp_dict.keys()))
+            for x1, y in [data_dict[name].get_all_data()]
             for x2, mean, ucb, lcb in [
-                data_dict[exp_name].get_statistics(n_sigma=n_sigma)
+                data_dict[name].get_statistics(n_sigma=n_sigma)
             ]
             for line in [
-                plotting.Scatter(x1, y, label=exp_name, a=0.5, z=20, c=cp(i)),
-                plotting.Line(x2, mean,                 a=1.0, z=30, c=cp(i)),
-                plotting.FillBetween(x2, lcb, ucb,      a=0.2, z=10, c=cp(i)),
+                plotting.Scatter(x1, y, label=name, a=0.5, z=20, color=cp(i)),
+                plotting.Line(x2, mean,             a=1.0, z=30, c=cp(i)),
+                plotting.FillBetween(x2, lcb, ucb,  a=0.2, z=10, c=cp(i)),
             ]
         ],
         xlabel="n",

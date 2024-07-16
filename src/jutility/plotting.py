@@ -160,6 +160,9 @@ class Scatter(_Plottable):
         self._kwargs.setdefault("ls", "")
         return matplotlib.lines.Line2D([], [], **self._kwargs)
 
+    def _get_abbreviated_keys_dict(self):
+        return {"z": "zorder", "a": "alpha", "m": "marker"}
+
 class Contour(_Plottable):
     """
     See

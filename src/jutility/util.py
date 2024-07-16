@@ -267,7 +267,7 @@ class TimeInterval(_Interval):
 class Column:
     def __init__(
         self,
-        name,
+        name: str,
         value_format=None,
         width=None,
         title=None,
@@ -369,8 +369,8 @@ class Table:
         if printer is None:
             printer = Printer()
 
-        self._column_list = []
-        self._column_dict = dict()
+        self._column_list: list[Column] = []
+        self._column_dict: dict[str, Column] = dict()
         for column in columns:
             self.add_column(column)
 
@@ -381,7 +381,7 @@ class Table:
         if len(columns) > 0:
             self._print(self.format_header())
 
-    def add_column(self, column):
+    def add_column(self, column: Column):
         if column.name in self._column_dict:
             raise ValueError(
                 "Column with name %s already in table"

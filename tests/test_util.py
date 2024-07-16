@@ -893,3 +893,10 @@ def test_negative_column_width():
     table.update(a=1, b="frog")
     table.update(c=2, d="dog")
     table.update()
+
+def test_repeated_column_names():
+    with pytest.raises(ValueError):
+        table = util.Table(
+            util.Column("a"),
+            util.Column("a"),
+        )

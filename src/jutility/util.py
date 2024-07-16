@@ -325,7 +325,7 @@ class CallbackColumn(Column):
         self._data_list.append(data)
 
 class TimeColumn(Column):
-    def __init__(self, name, width=11):
+    def __init__(self, name="t", width=11):
         self.name = name
         self.title = "Time".ljust(abs(width))
         self._format = "%%%is" % width
@@ -341,7 +341,7 @@ class TimeColumn(Column):
         return self._format % t_str
 
 class CountColumn(Column):
-    def __init__(self, name, width=5):
+    def __init__(self, name="c", width=5):
         self.name = name
         self.title = "Count".ljust(abs(width))
         self._format = "%%%ii" % width
@@ -384,8 +384,8 @@ class Table:
     def add_column(self, column: Column):
         if column.name in self._column_dict:
             raise ValueError(
-                "Column with name %s already in table"
-                % column.name
+                "Column %s with name %s already in table"
+                % (self._column_dict[column.name], column.name)
             )
         self._column_list.append(column)
         self._column_dict[column.name] = column

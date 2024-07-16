@@ -16,6 +16,8 @@ def time_sweep(
     num_repeats=5,
     printer=None,
     n_sigma=1,
+    plot_name="Time complexity",
+    dir_name=None,
 ):
     if n_list is None:
         n_list = util.log_range(10, 1000, 10)
@@ -74,6 +76,8 @@ def time_sweep(
         log_xscale=True,
         log_yscale=True,
         legend=True,
+        plot_name=plot_name,
+        dir_name=dir_name,
     )
 
     return data_dict

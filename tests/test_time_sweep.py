@@ -9,6 +9,7 @@ OUTPUT_DIR = tests.get_output_dir("test_time_sweep")
 
 def test_time_sweep():
     rng = util.Seeder().get_rng("test_time_sweep")
+    printer = util.Printer("table", OUTPUT_DIR)
 
     class Matmul(time_sweep.Experiment):
         def __init__(self, rng):
@@ -56,6 +57,7 @@ def test_time_sweep():
     time_sweep.time_sweep(
         *[t(rng) for t in [Matmul, Solve, LstSq, Eig]],
         n_list=util.log_range(10, 100, 10),
+        printer=printer,
         dir_name=OUTPUT_DIR,
     )
 

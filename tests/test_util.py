@@ -767,6 +767,15 @@ def test_abbreviate_dictionary():
     s = util.abbreviate_dictionary(d, key_abbreviations)
     assert s == "buFhd200lr0.001ls-4ne10tdT"
 
+    d["model_type"] = "VeryLongModelName"
+    key_abbreviations["model_type"] = "mt"
+    s2 = util.abbreviate_dictionary(
+        input_dict=d,
+        key_abbreviations=key_abbreviations,
+        extra_abbreviations={"VeryLongModelName": "VLMN"},
+    )
+    assert s2 == "buFhd200lr0.001ls-4mtVLMNne10tdT"
+
 def test_table_str():
     rng = util.Seeder().get_rng("test_table_str")
 

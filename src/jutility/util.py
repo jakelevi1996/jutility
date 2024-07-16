@@ -687,9 +687,10 @@ def extract_substring(s, prefix, suffix, offset=None, strip=True):
     return s_substring
 
 def abbreviate_dictionary(
-    input_dict,
-    key_abbreviations,
-    str_abbreviations=None,
+    input_dict: dict,
+    key_abbreviations: dict,
+    str_abbreviations: dict=None,
+    extra_abbreviations: dict=None,
 ):
     if str_abbreviations is None:
         str_abbreviations = {
@@ -699,6 +700,9 @@ def abbreviate_dictionary(
             "True":     "T",
             "None":     "N",
         }
+    if extra_abbreviations is not None:
+        for k, v in extra_abbreviations.items():
+            str_abbreviations[k] = v
 
     s_sorted = sorted(
         "%s: %s" % (key_abbreviations[k], v)

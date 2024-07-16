@@ -53,11 +53,15 @@ def time_sweep(
     cp = plotting.ColourPicker(len(experiments))
     plotting.plot(
         *[
-            plotting.Scatter(*data_dict[exp_name].get_all_data(), color=cp(i))
+            plotting.Scatter(x, y, color=cp(i), label=exp_name)
             for i, exp_name in enumerate(sorted(exp_dict.keys()))
+            for x, y in [data_dict[exp_name].get_all_data()]
         ],
+        xlabel="n",
+        ylabel="Time (seconds)",
         log_xscale=True,
         log_yscale=True,
+        legend=True,
     )
 
     return data_dict

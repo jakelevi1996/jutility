@@ -63,9 +63,9 @@ def time_sweep(
                 data_dict[exp_name].get_statistics(n_sigma=n_sigma)
             ]
             for line in [
-                plotting.Scatter(x1, y, c=cp(i), label=exp_name, a=0.5, z=20),
-                plotting.Line(x2, mean, c=cp(i), z=30),
-                plotting.FillBetween(x2, lcb, ucb, c=cp(i), a=0.2, z=10),
+                plotting.Scatter(x1, y, label=exp_name, a=0.5, z=20, c=cp(i)),
+                plotting.Line(x2, mean,                 a=1.0, z=30, c=cp(i)),
+                plotting.FillBetween(x2, lcb, ucb,      a=0.2, z=10, c=cp(i)),
             ]
         ],
         xlabel="n",

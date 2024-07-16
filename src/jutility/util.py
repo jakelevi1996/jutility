@@ -689,17 +689,15 @@ def extract_substring(s, prefix, suffix, offset=None, strip=True):
 def abbreviate_dictionary(
     input_dict: dict,
     key_abbreviations: dict,
-    str_abbreviations: dict=None,
     extra_abbreviations: dict=None,
 ):
-    if str_abbreviations is None:
-        str_abbreviations = {
-            "_":        "",
-            ",":        "",
-            "False":    "F",
-            "True":     "T",
-            "None":     "N",
-        }
+    str_abbreviations = {
+        "_":        "",
+        ",":        "",
+        "False":    "F",
+        "True":     "T",
+        "None":     "N",
+    }
     if extra_abbreviations is not None:
         for k, v in extra_abbreviations.items():
             str_abbreviations[k] = v

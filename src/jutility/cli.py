@@ -24,11 +24,6 @@ class Arg:
         self.name               = name
         self.tag                = abbreviation
         self.argparse_kwargs    = argparse_kwargs
-        self.set_full_names()
-
-    def set_full_names(self, name_prefix="", tag_prefix=""):
-        self.full_name = join_non_empty(".", [name_prefix, self.name])
-        self.full_tag  = join_non_empty(".", [tag_prefix , self.tag ])
 
     def register_names(self, arg_dict, parent=None):
         if parent is None:
@@ -45,10 +40,6 @@ class Arg:
 
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         parser.add_argument("--" + self.full_name, **self.argparse_kwargs)
-
-    def set_key_abbreviations(self, abbreviation_dict, prefix=None):
-        if self.tag is not None:
-            abbreviation_dict[self.full_name] = self.full_tag
 
     def __repr__(self):
         return (
@@ -73,13 +64,6 @@ class ObjectArg(Arg):
         self.tag            = abbreviation
         self.args           = args
         self.init_requires  = init_requires
-        self.set_full_names()
-
-    def set_full_names(self, name_prefix="", tag_prefix=""):
-        self.full_name = join_non_empty(".", [name_prefix, self.name])
-        self.full_tag  = join_non_empty(".", [tag_prefix , self.tag ])
-        for arg in self.args:
-            arg.set_full_names(self.full_name, self.full_tag)
 
     def register_names(self, arg_dict, parent=None):
         super().register_names(arg_dict, parent)
@@ -89,11 +73,6 @@ class ObjectArg(Arg):
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         for arg in self.args:
             arg.add_argparse_arguments(parser)
-
-    def set_key_abbreviations(self, abbreviation_dict, prefix=None):
-        if self.tag is not None:
-            for arg in self.args:
-                arg.set_key_abbreviations(abbreviation_dict)
 
     def init_object(self, parsed_kwargs, extra_kwargs):
         input_keys = set(parsed_kwargs) | set(extra_kwargs)
@@ -127,7 +106,7 @@ class ObjectParser:
         self.arg_list = args
         self._parser_kwargs = parser_kwargs
         self._parsed_args = None
-        self._arg_dict = dict()
+        self._arg_dict: dict[str, Arg] = dict()
         for arg in self.arg_list:
             arg.register_names(self._arg_dict)
 
@@ -160,9 +139,11 @@ class ObjectParser:
 
     def get_args_summary(self, replaces=None):
         self.check_parsed()
-        key_abbreviations = dict()
-        for arg in self.arg_list:
-            arg.set_key_abbreviations(key_abbreviations)
+        key_abbreviations = {
+            name: arg.full_tag
+            for name, arg in self._arg_dict.items()
+            if arg.full_tag is not None
+        }
 
         return util.abbreviate_dictionary(
             vars(self._parsed_args),

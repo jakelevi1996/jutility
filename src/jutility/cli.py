@@ -38,7 +38,7 @@ class ObjectParser:
         """
         self.arg_list = args
         self._parsed_args = None
-        self._parser = argparse.ArgumentParser(*args, **parser_kwargs)
+        self._parser = argparse.ArgumentParser(**parser_kwargs)
 
     def parse_args(self, *args, **kwargs):
         """

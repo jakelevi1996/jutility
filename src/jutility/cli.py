@@ -28,6 +28,9 @@ class Arg:
     ):
         parser.add_argument("--" + self.full_name, **self.argparse_kwargs)
 
+    def set_key_abbreviations(self, abbreviation_dict, prefix=None):
+        if self.tag is not None:
+            abbreviation_dict[self.full_name] = self.full_tag
 
 class ObjectArg(Arg):
     def __init__(
@@ -63,6 +66,11 @@ class ObjectArg(Arg):
         for arg in self.args:
             arg.add_argparse_arguments(parser, prefix)
 
+    def set_key_abbreviations(self, abbreviation_dict, prefix=None):
+        if self.tag is not None:
+            for arg in self.args:
+                arg.set_key_abbreviations(abbreviation_dict)
+
 class ObjectParser:
     def __init__(
         self,
@@ -96,13 +104,13 @@ class ObjectParser:
                 "Must call `parse_args` before `get_args_summary`"
             )
 
+        key_abbreviations = dict()
+        for arg in self.arg_list:
+            arg.set_key_abbreviations(key_abbreviations)
+
         return util.abbreviate_dictionary(
             vars(self._parsed_args),
-            key_abbreviations={
-                arg.name: arg.abbreviation
-                for arg in self.arg_list
-                if arg.abbreviation is not None
-            },
+            key_abbreviations=key_abbreviations,
             replaces=replaces,
         )
 

@@ -16,15 +16,8 @@ class Arg:
         self.abbreviation       = abbreviation
         self.argparse_kwargs    = argparse_kwargs
 
-    def get_name(self):
-        start_ind = 0
-        while self.name[start_ind] == "-":
-            start_ind += 1
-
-        return self.name[start_ind:]
-
     def add_argparse_argument(self, parser: argparse.ArgumentParser):
-        parser.add_argument(self.name, **self.argparse_kwargs)
+        parser.add_argument("--" + self.name, **self.argparse_kwargs)
 
 class ObjectParser:
     def __init__(
@@ -62,7 +55,7 @@ class ObjectParser:
         return util.abbreviate_dictionary(
             vars(self._parsed_args),
             key_abbreviations={
-                arg.get_name(): arg.abbreviation
+                arg.name: arg.abbreviation
                 for arg in self.arg_list
                 if arg.abbreviation is not None
             },

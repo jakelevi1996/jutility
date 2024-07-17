@@ -1,4 +1,5 @@
 import argparse
+import textwrap
 from jutility import util
 
 def get_args_summary(args, replaces=None):
@@ -101,7 +102,12 @@ class ObjectArg(Arg):
         return self.object_type(**parsed_kwargs, **extra_kwargs)
 
     def __repr__(self):
-        return "%s(args=%s)" % (type(self).__name__, self.args)
+        description = ",\n".join(
+            [   "full_name=\"%s\"" % self.full_name]
+            + [ "full_tag=\"%s\""  % self.full_tag]
+            + [ repr(arg) for arg in self.args]
+        )
+        return "%s(\n%s,\n)" % (type(self).__name__, indent(description))
 
 class ObjectParser:
     def __init__(
@@ -178,8 +184,11 @@ class ObjectParser:
         return object_arg.init_object(relevant_kwargs, extra_kwargs)
 
     def __repr__(self):
-        arg_list_str = "\n".join("    %s," % arg for arg in self.arg_list)
-        return "%s(\n%s\n)" % (type(self).__name__, arg_list_str)
+        description = ",\n".join(repr(arg) for arg in self.arg_list)
+        return "%s(\n%s,\n)" % (type(self).__name__, indent(description))
 
 def join_non_empty(sep: str, input_list):
     return sep.join(s for s in input_list if s is not None and len(s) > 0)
+
+def indent(input_str, num_spaces=4):
+    return textwrap.indent(input_str, " " * num_spaces)

@@ -16,8 +16,44 @@ class Arg:
         self.abbreviation       = abbreviation
         self.argparse_kwargs    = argparse_kwargs
 
-    def add_argparse_argument(self, parser: argparse.ArgumentParser):
-        parser.add_argument("--" + self.name, **self.argparse_kwargs)
+    def add_argparse_arguments(
+        self,
+        parser: argparse.ArgumentParser,
+        prefix: str=None,
+    ):
+        if prefix is None:
+            argparse_name = "--%s" % self.name
+        else:
+            argparse_name = "--%s.%s" % (prefix, self.name)
+
+        parser.add_argument(argparse_name, **self.argparse_kwargs)
+
+class ObjectArg(Arg):
+    def __init__(
+        self,
+        object_type,
+        *args: Arg,
+        abbreviation=None,
+        init_requires: list[str]=None,
+    ):
+        self.object_type    = object_type
+        self.name           = object_type.__name__
+        self.abbreviation   = abbreviation
+        self.args           = args
+        self.init_requires  = init_requires
+
+    def add_argparse_arguments(
+        self,
+        parser: argparse.ArgumentParser,
+        prefix: str=None,
+    ):
+        if prefix is None:
+            prefix = self.name
+        else:
+            prefix = "%s.%s" % (prefix, self.name)
+
+        for arg in self.args:
+            arg.add_argparse_arguments(parser, prefix)
 
 class ObjectParser:
     def __init__(
@@ -39,7 +75,7 @@ class ObjectParser:
         https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.parse_args
         """
         for arg in self.arg_list:
-            arg.add_argparse_argument(self._parser)
+            arg.add_argparse_arguments(self._parser)
 
         args = self._parser.parse_args(*args, **kwargs)
         args.object_parser = self

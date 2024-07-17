@@ -77,6 +77,17 @@ class ObjectArg(Arg):
             for arg in self.args:
                 arg.set_key_abbreviations(abbreviation_dict)
 
+    def init_object(self, parsed_kwargs, extra_kwargs):
+        input_keys = set(parsed_kwargs) | set(extra_kwargs)
+        missing_keys = set(self.init_requires) - input_keys
+        if len(missing_keys) > 0:
+            raise ValueError(
+                "Please provide values for the following keys: %s"
+                % sorted(missing_keys)
+            )
+
+        return self.object_type(**parsed_kwargs, **extra_kwargs)
+
     def __repr__(self):
         return "%s(args=%s)" % (type(self).__name__, self.args)
 
@@ -93,6 +104,10 @@ class ObjectParser:
         self.arg_list = args
         self._parsed_args = None
         self._parser = argparse.ArgumentParser(**parser_kwargs)
+        self._arg_dict = {
+            arg.full_name: arg
+            for arg in self.arg_list
+        }
 
     def parse_args(self, *args, **kwargs):
         """
@@ -107,12 +122,14 @@ class ObjectParser:
         self._parsed_args = args
         return args
 
-    def get_args_summary(self, replaces=None):
+    def check_parsed(self):
         if self._parsed_args is None:
             raise RuntimeError(
-                "Must call `parse_args` before `get_args_summary`"
+                "Must call `parse_args` before calling this method"
             )
 
+    def get_args_summary(self, replaces=None):
+        self.check_parsed()
         key_abbreviations = dict()
         for arg in self.arg_list:
             arg.set_key_abbreviations(key_abbreviations)
@@ -126,6 +143,23 @@ class ObjectParser:
     def __repr__(self):
         arg_list_str = "\n".join("    %s," % arg for arg in self.arg_list)
         return "%s(\n%s\n)" % (type(self).__name__, arg_list_str)
+
+    def init_object(self, full_name, **extra_kwargs):
+        if full_name not in self._arg_dict:
+            raise ValueError("\"%s\" not in %s" % (full_name, self._arg_dict))
+
+        object_arg: ObjectArg = self._arg_dict[full_name]
+        util.check_type(object_arg, ObjectArg)
+
+        self.check_parsed()
+        prefix = object_arg.full_name + "."
+        n = len(prefix)
+        relevant_kwargs = {
+            k[n:]: v
+            for k, v in vars(self._parsed_args).items()
+            if k[:n] == prefix
+        }
+        return object_arg.init_object(relevant_kwargs, extra_kwargs)
 
 def join_non_empty(sep: str, input_list):
     return sep.join(s for s in input_list if s is not None and len(s) > 0)

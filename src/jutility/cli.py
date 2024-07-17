@@ -58,6 +58,8 @@ class ObjectArg(Arg):
     ):
         if name is None:
             name = object_type.__name__
+        if init_requires is None:
+            init_requires = []
 
         self.object_type    = object_type
         self.name           = name

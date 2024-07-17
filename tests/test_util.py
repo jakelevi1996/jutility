@@ -748,12 +748,13 @@ def test_save_load_text():
 def test_abbreviate_dictionary():
     d = {
         "num_epochs":   10,
-        "hidden_dim":   200,
+        "hidden_dim":   [30, 20, 10],
         "lr":           1e-3,
         "log_std":      -4,
         "model_name":   None,
         "top_down":     True,
         "bottom_up":    False,
+        "model_type":   "VeryLongModelName",
     }
     key_abbreviations = {
         "num_epochs":   "ne",
@@ -762,34 +763,12 @@ def test_abbreviate_dictionary():
         "log_std":      "ls",
         "top_down":     "td",
         "bottom_up":    "bu",
+        "model_type":   "mt",
     }
+    replaces = {"VeryLongModelName": "VLMN"}
 
-    s = util.abbreviate_dictionary(d, key_abbreviations)
-    assert s == "buFhd200lr0.001ls-4ne10tdT"
-
-    d["model_type"] = "VeryLongModelName"
-    key_abbreviations["model_type"] = "mt"
-    s2 = util.abbreviate_dictionary(
-        input_dict=d,
-        key_abbreviations=key_abbreviations,
-        replaces={"VeryLongModelName": "VLMN"},
-    )
-    assert s2 == "buFhd200lr0.001ls-4mtVLMNne10tdT"
-
-def test_abbreviate_dictionary_commas():
-    d = {
-        "num_epochs":   10,
-        "hidden_dim":   [10, 20, 20, 10],
-    }
-    key_abbreviations = {
-        "num_epochs":   "ne",
-        "hidden_dim":   "hd",
-    }
-    s = util.abbreviate_dictionary(
-        input_dict=d,
-        key_abbreviations=key_abbreviations,
-    )
-    assert s == "hd10,20,20,10ne10"
+    s = util.abbreviate_dictionary(d, key_abbreviations, replaces)
+    assert s == "buFhd30,20,10lr0.001ls-4mtVLMNne10tdT"
 
 def test_table_str():
     rng = util.Seeder().get_rng("test_table_str")

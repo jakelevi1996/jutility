@@ -69,8 +69,28 @@ def test_get_args_summary():
 
     printer(s, s2, s3, s4, s5, sep="\n")
 
+def test_init_object():
+    printer = util.Printer("test_init_object", OUTPUT_DIR)
+
+    parser = get_parser()
+    parser.parse_args([])
+    optimiser = parser.init_object("Adam", params=[1, 2, 3])
+
+    printer(optimiser, vars(optimiser))
+    assert isinstance(optimiser, Adam)
+    assert optimiser.lr == 1e-3
+    assert optimiser.inner_params == [1, 2, 3]
+
+    parser.parse_args(["--Adam.lr=3e-3"])
+    optimiser: Adam = parser.init_object("Adam", params=[1, 2, 3])
+    assert optimiser.lr == 3e-3
+
+    parser.parse_args([])
+    optimiser: Adam = parser.init_object("Adam", params=[20, 30])
+    assert optimiser.inner_params == [20, 30]
+
 class Adam:
     def __init__(self, params, lr=1e-3, beta=None):
-        self.params = params
-        self.lr     = lr
-        self.beta   = beta
+        self.inner_params   = params
+        self.lr             = lr
+        self.beta           = beta

@@ -117,15 +117,22 @@ class ObjectParser:
             for arg in self.arg_list
         }
 
+    def _get_argparse_parser(self):
+        parser = argparse.ArgumentParser(**self._parser_kwargs)
+        for arg in self.arg_list:
+            arg.add_argparse_arguments(parser)
+
+        return parser
+
+    def print_help(self, file=None):
+        self._get_argparse_parser().print_help(file)
+
     def parse_args(self, *args, **kwargs):
         """
         See
         https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.parse_args
         """
-        parser = argparse.ArgumentParser(**self._parser_kwargs)
-        for arg in self.arg_list:
-            arg.add_argparse_arguments(parser)
-
+        parser = self._get_argparse_parser()
         args = parser.parse_args(*args, **kwargs)
         args.object_parser = self
         self._parsed_args = args

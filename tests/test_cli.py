@@ -40,6 +40,12 @@ def test_parse():
     assert parser.parse_args(["--int=-3"]).int == -3
     assert parser.parse_args(["--list", "3", "4", "5"]).list == [3, 4, 5]
 
+def test_print_help():
+    printer = util.Printer("test_print_help", OUTPUT_DIR)
+
+    parser = get_parser()
+    parser.print_help(printer._file)
+
 class Adam:
     def __init__(self, params, lr=1e-3, beta=None):
         self.params = params

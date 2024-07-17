@@ -17,15 +17,9 @@ class Arg:
         self.argparse_kwargs    = argparse_kwargs
         self.set_full_names()
 
-    def set_full_names(self, name_prefix=None, tag_prefix=None):
-        if name_prefix is None:
-            self.full_name = self.name
-        else:
-            self.full_name = "%s.%s" % (name_prefix, self.name)
-        if tag_prefix is None:
-            self.full_tag = self.tag
-        else:
-            self.full_tag = "%s.%s" % (tag_prefix, self.tag)
+    def set_full_names(self, name_prefix="", tag_prefix=""):
+        self.full_name = join_non_empty(".", [name_prefix, self.name])
+        self.full_tag  = join_non_empty(".", [tag_prefix , self.tag ])
 
     def add_argparse_arguments(
         self,
@@ -50,8 +44,9 @@ class ObjectArg(Arg):
         self.init_requires  = init_requires
         self.set_full_names()
 
-    def set_full_names(self, name_prefix=None, tag_prefix=None):
-        super().set_full_names(name_prefix, tag_prefix)
+    def set_full_names(self, name_prefix="", tag_prefix=""):
+        self.full_name = join_non_empty(".", [name_prefix, self.name])
+        self.full_tag  = join_non_empty(".", [tag_prefix , self.tag ])
         for arg in self.args:
             arg.set_full_names(self.full_name, self.full_tag)
 
@@ -110,3 +105,6 @@ class ObjectParser:
             },
             replaces=replaces,
         )
+
+def join_non_empty(sep: str, input_list):
+    return sep.join(str(s) for s in input_list if len(s) > 0)

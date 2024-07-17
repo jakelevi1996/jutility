@@ -180,7 +180,9 @@ class ObjectParser:
         for k, v in object_arg.init_const_kwargs.items():
             relevant_kwargs[k] = v
 
-        return object_arg.init_object(relevant_kwargs, extra_kwargs)
+        object_value = object_arg.init_object(relevant_kwargs, extra_kwargs)
+        self._parsed_args.__setattr__(object_arg.full_name, object_value)
+        return object_value
 
     def __repr__(self):
         description = ",\n".join(repr(arg) for arg in self.arg_list)

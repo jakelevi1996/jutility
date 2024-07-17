@@ -163,9 +163,10 @@ class ObjectParser:
         self.check_parsed()
         arg_dict = {arg.full_name: arg for arg in object_arg.args}
         relevant_kwargs = {
-            arg_dict[k].name: v
-            for k, v in vars(self._parsed_args).items()
-            if k in arg_dict
+            v.name: vars(self._parsed_args)[k]
+            if k in vars(self._parsed_args)
+            else self.init_object(k)
+            for k, v in arg_dict.items()
         }
         return object_arg.init_object(relevant_kwargs, extra_kwargs)
 

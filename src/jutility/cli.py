@@ -30,20 +30,25 @@ class ObjectParser:
     def __init__(
         self,
         *args: Arg,
+        **parser_kwargs,
     ):
-        self.arg_list = args
-        self._parsed_args = None
-
-    def parse_args(self, *args, **kwargs):
         """
         See
         https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser
         """
-        parser = argparse.ArgumentParser(*args, **kwargs)
-        for arg in self.arg_list:
-            arg.add_argparse_argument(parser)
+        self.arg_list = args
+        self._parsed_args = None
+        self._parser = argparse.ArgumentParser(*args, **parser_kwargs)
 
-        args = parser.parse_args()
+    def parse_args(self, *args, **kwargs):
+        """
+        See
+        https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.parse_args
+        """
+        for arg in self.arg_list:
+            arg.add_argparse_argument(self._parser)
+
+        args = self._parser.parse_args(*args, **kwargs)
         args.object_parser = self
         self._parsed_args = args
         return args

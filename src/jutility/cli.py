@@ -30,7 +30,17 @@ class Arg:
         self.full_name = join_non_empty(".", [name_prefix, self.name])
         self.full_tag  = join_non_empty(".", [tag_prefix , self.tag ])
 
-    def register_names(self, arg_dict):
+    def register_names(self, arg_dict, parent=None):
+        if parent is None:
+            self.full_name = self.name
+            self.full_tag = self.tag
+        else:
+            self.full_name = "%s.%s" % (parent.full_name, self.name)
+            if (parent.full_tag is not None) and (self.tag is not None):
+                self.full_tag = "%s.%s" % (parent.full_tag, self.tag)
+            else:
+                self.full_tag = None
+
         arg_dict[self.full_name] = self
 
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
@@ -71,10 +81,10 @@ class ObjectArg(Arg):
         for arg in self.args:
             arg.set_full_names(self.full_name, self.full_tag)
 
-    def register_names(self, arg_dict):
-        arg_dict[self.full_name] = self
+    def register_names(self, arg_dict, parent=None):
+        super().register_names(arg_dict, parent)
         for arg in self.args:
-            arg.register_names(arg_dict)
+            arg.register_names(arg_dict, self)
 
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         for arg in self.args:

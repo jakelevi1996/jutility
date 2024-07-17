@@ -51,11 +51,15 @@ class ObjectArg(Arg):
         self,
         object_type,
         *args: Arg,
+        name=None,
         abbreviation=None,
         init_requires: list[str]=None,
     ):
+        if name is None:
+            name = object_type.__name__
+
         self.object_type    = object_type
-        self.name           = object_type.__name__
+        self.name           = name
         self.tag            = abbreviation
         self.args           = args
         self.init_requires  = init_requires

@@ -13,20 +13,27 @@ class Arg:
         https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.add_argument
         """
         self.name               = name
-        self.abbreviation       = abbreviation
+        self.tag                = abbreviation
         self.argparse_kwargs    = argparse_kwargs
+        self.set_full_names()
+
+    def set_full_names(self, name_prefix=None, tag_prefix=None):
+        if name_prefix is None:
+            self.full_name = self.name
+        else:
+            self.full_name = "%s.%s" % (name_prefix, self.name)
+        if tag_prefix is None:
+            self.full_tag = self.tag
+        else:
+            self.full_tag = "%s.%s" % (tag_prefix, self.tag)
 
     def add_argparse_arguments(
         self,
         parser: argparse.ArgumentParser,
         prefix: str=None,
     ):
-        if prefix is None:
-            argparse_name = "--%s" % self.name
-        else:
-            argparse_name = "--%s.%s" % (prefix, self.name)
+        parser.add_argument("--" + self.full_name, **self.argparse_kwargs)
 
-        parser.add_argument(argparse_name, **self.argparse_kwargs)
 
 class ObjectArg(Arg):
     def __init__(
@@ -38,9 +45,15 @@ class ObjectArg(Arg):
     ):
         self.object_type    = object_type
         self.name           = object_type.__name__
-        self.abbreviation   = abbreviation
+        self.tag            = abbreviation
         self.args           = args
         self.init_requires  = init_requires
+        self.set_full_names()
+
+    def set_full_names(self, name_prefix=None, tag_prefix=None):
+        super().set_full_names(name_prefix, tag_prefix)
+        for arg in self.args:
+            arg.set_full_names(self.full_name, self.full_tag)
 
     def add_argparse_arguments(
         self,

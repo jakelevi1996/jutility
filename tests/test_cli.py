@@ -1,8 +1,5 @@
-import os
-import time
-import numpy as np
 import pytest
-from jutility import util, plotting, cli
+from jutility import util, cli
 import tests
 
 OUTPUT_DIR = tests.get_output_dir("test_cli")

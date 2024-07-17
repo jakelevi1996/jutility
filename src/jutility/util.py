@@ -693,7 +693,6 @@ def abbreviate_dictionary(
 ):
     replaces_defaults = {
         "_":        "",
-        ",":        "",
         "False":    "F",
         "True":     "T",
         "None":     "N",
@@ -708,7 +707,7 @@ def abbreviate_dictionary(
         for k, v in input_dict.items()
         if k in key_abbreviations
     )
-    s_clean = clean_string(s_sorted)
+    s_clean = clean_string("".join(s_sorted))
     for k, v in replaces.items():
         s_clean = s_clean.replace(k, v)
 

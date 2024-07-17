@@ -776,6 +776,21 @@ def test_abbreviate_dictionary():
     )
     assert s2 == "buFhd200lr0.001ls-4mtVLMNne10tdT"
 
+def test_abbreviate_dictionary_commas():
+    d = {
+        "num_epochs":   10,
+        "hidden_dim":   [10, 20, 20, 10],
+    }
+    key_abbreviations = {
+        "num_epochs":   "ne",
+        "hidden_dim":   "hd",
+    }
+    s = util.abbreviate_dictionary(
+        input_dict=d,
+        key_abbreviations=key_abbreviations,
+    )
+    assert s == "hd10,20,20,10ne10"
+
 def test_table_str():
     rng = util.Seeder().get_rng("test_table_str")
 

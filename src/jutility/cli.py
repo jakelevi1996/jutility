@@ -32,6 +32,12 @@ class Arg:
         if self.tag is not None:
             abbreviation_dict[self.full_name] = self.full_tag
 
+    def __repr__(self):
+        return (
+            "%s(full_name=\"%s\", full_tag=\"%s\")"
+            % (type(self).__name__, self.full_name, self.full_tag)
+        )
+
 class ObjectArg(Arg):
     def __init__(
         self,
@@ -70,6 +76,9 @@ class ObjectArg(Arg):
         if self.tag is not None:
             for arg in self.args:
                 arg.set_key_abbreviations(abbreviation_dict)
+
+    def __repr__(self):
+        return "%s(args=%s)" % (type(self).__name__, self.args)
 
 class ObjectParser:
     def __init__(
@@ -113,6 +122,10 @@ class ObjectParser:
             key_abbreviations=key_abbreviations,
             replaces=replaces,
         )
+
+    def __repr__(self):
+        arg_list_str = "\n".join("    %s," % arg for arg in self.arg_list)
+        return "%s(\n%s\n)" % (type(self).__name__, arg_list_str)
 
 def join_non_empty(sep: str, input_list):
     return sep.join(s for s in input_list if s is not None and len(s) > 0)

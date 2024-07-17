@@ -30,11 +30,7 @@ class Arg:
         self.full_name = join_non_empty(".", [name_prefix, self.name])
         self.full_tag  = join_non_empty(".", [tag_prefix , self.tag ])
 
-    def add_argparse_arguments(
-        self,
-        parser: argparse.ArgumentParser,
-        prefix: str=None,
-    ):
+    def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         parser.add_argument("--" + self.full_name, **self.argparse_kwargs)
 
     def set_key_abbreviations(self, abbreviation_dict, prefix=None):
@@ -72,18 +68,9 @@ class ObjectArg(Arg):
         for arg in self.args:
             arg.set_full_names(self.full_name, self.full_tag)
 
-    def add_argparse_arguments(
-        self,
-        parser: argparse.ArgumentParser,
-        prefix: str=None,
-    ):
-        if prefix is None:
-            prefix = self.name
-        else:
-            prefix = "%s.%s" % (prefix, self.name)
-
+    def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         for arg in self.args:
-            arg.add_argparse_arguments(parser, prefix)
+            arg.add_argparse_arguments(parser)
 
     def set_key_abbreviations(self, abbreviation_dict, prefix=None):
         if self.tag is not None:

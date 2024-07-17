@@ -30,6 +30,9 @@ class Arg:
         self.full_name = join_non_empty(".", [name_prefix, self.name])
         self.full_tag  = join_non_empty(".", [tag_prefix , self.tag ])
 
+    def register_names(self, arg_dict):
+        arg_dict[self.full_name] = self
+
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         parser.add_argument("--" + self.full_name, **self.argparse_kwargs)
 
@@ -67,6 +70,11 @@ class ObjectArg(Arg):
         self.full_tag  = join_non_empty(".", [tag_prefix , self.tag ])
         for arg in self.args:
             arg.set_full_names(self.full_name, self.full_tag)
+
+    def register_names(self, arg_dict):
+        arg_dict[self.full_name] = self
+        for arg in self.args:
+            arg.register_names(arg_dict)
 
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         for arg in self.args:
@@ -109,10 +117,9 @@ class ObjectParser:
         self.arg_list = args
         self._parser_kwargs = parser_kwargs
         self._parsed_args = None
-        self._arg_dict = {
-            arg.full_name: arg
-            for arg in self.arg_list
-        }
+        self._arg_dict = dict()
+        for arg in self.arg_list:
+            arg.register_names(self._arg_dict)
 
     def _get_argparse_parser(self):
         parser = argparse.ArgumentParser(**self._parser_kwargs)

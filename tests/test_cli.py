@@ -46,6 +46,29 @@ def test_print_help():
     parser = get_parser()
     parser.print_help(printer._file)
 
+def test_get_args_summary():
+    printer = util.Printer("test_get_args_summary", OUTPUT_DIR)
+
+    parser = get_parser()
+    args = parser.parse_args([])
+    s = cli.get_args_summary(args)
+
+    assert s == "faFfl-4.7in10li30,20,10noNop.be0.9,0.999op.lr0.001trT"
+
+    s2 = cli.get_args_summary(parser.parse_args(["--no_abbrev=123"]))
+    assert s2 == s
+
+    s3 = cli.get_args_summary(parser.parse_args(["--no_abbrev=4567"]))
+    assert (s3 == s2) and (s3 == s)
+
+    s4 = cli.get_args_summary(parser.parse_args(["--int=20"]))
+    assert s4 != s
+
+    s5 = cli.get_args_summary(parser.parse_args(["--Adam.lr=3e-3"]))
+    assert s5 != s
+
+    printer(s, s2, s3, s4, s5, sep="\n")
+
 class Adam:
     def __init__(self, params, lr=1e-3, beta=None):
         self.params = params

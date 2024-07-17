@@ -772,7 +772,7 @@ def test_abbreviate_dictionary():
     s2 = util.abbreviate_dictionary(
         input_dict=d,
         key_abbreviations=key_abbreviations,
-        extra_abbreviations={"VeryLongModelName": "VLMN"},
+        replaces={"VeryLongModelName": "VLMN"},
     )
     assert s2 == "buFhd200lr0.001ls-4mtVLMNne10tdT"
 

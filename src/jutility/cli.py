@@ -55,17 +55,25 @@ class ObjectArg(Arg):
         name=None,
         abbreviation=None,
         init_requires: list[str]=None,
+        init_parsed_kwargs=None,
+        init_const_kwargs=None,
     ):
         if name is None:
             name = object_type.__name__
         if init_requires is None:
             init_requires = []
+        if init_parsed_kwargs is None:
+            init_parsed_kwargs = dict()
+        if init_const_kwargs is None:
+            init_const_kwargs = dict()
 
-        self.object_type    = object_type
-        self.name           = name
-        self.tag            = abbreviation
-        self.args           = args
-        self.init_requires  = init_requires
+        self.object_type        = object_type
+        self.name               = name
+        self.tag                = abbreviation
+        self.args               = args
+        self.init_requires      = init_requires
+        self.init_parsed_kwargs = init_parsed_kwargs
+        self.init_const_kwargs  = init_const_kwargs
 
     def register_names(self, arg_dict, parent=None):
         super().register_names(arg_dict, parent)
@@ -167,6 +175,11 @@ class ObjectParser:
             else self.init_object(arg.full_name)
             for arg in object_arg.args
         }
+        for k, v in object_arg.init_parsed_kwargs.items():
+            relevant_kwargs[k] = vars(self._parsed_args)[v]
+        for k, v in object_arg.init_const_kwargs.items():
+            relevant_kwargs[k] = v
+
         return object_arg.init_object(relevant_kwargs, extra_kwargs)
 
     def __repr__(self):

@@ -110,8 +110,8 @@ class ObjectParser:
         https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser
         """
         self.arg_list = args
+        self._parser_kwargs = parser_kwargs
         self._parsed_args = None
-        self._parser = argparse.ArgumentParser(**parser_kwargs)
         self._arg_dict = {
             arg.full_name: arg
             for arg in self.arg_list
@@ -122,10 +122,11 @@ class ObjectParser:
         See
         https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.parse_args
         """
+        parser = argparse.ArgumentParser(**self._parser_kwargs)
         for arg in self.arg_list:
-            arg.add_argparse_arguments(self._parser)
+            arg.add_argparse_arguments(parser)
 
-        args = self._parser.parse_args(*args, **kwargs)
+        args = parser.parse_args(*args, **kwargs)
         args.object_parser = self
         self._parsed_args = args
         return args

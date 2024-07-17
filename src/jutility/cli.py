@@ -107,4 +107,4 @@ class ObjectParser:
         )
 
 def join_non_empty(sep: str, input_list):
-    return sep.join(str(s) for s in input_list if len(s) > 0)
+    return sep.join(s for s in input_list if s is not None and len(s) > 0)

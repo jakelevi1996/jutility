@@ -153,6 +153,7 @@ class ObjectParser:
             name: arg.full_tag
             for name, arg in self._arg_dict.items()
             if arg.full_tag is not None
+            if not isinstance(arg, ObjectArg)
         }
 
         return util.abbreviate_dictionary(

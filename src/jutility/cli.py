@@ -1,6 +1,14 @@
 import argparse
 from jutility import util
 
+def get_args_summary(args, replaces=None):
+    object_parser: ObjectParser = args.object_parser
+    return object_parser.get_args_summary(replaces)
+
+def init_object(args, full_name, **extra_kwargs):
+    object_parser: ObjectParser = args.object_parser
+    return object_parser.init_object(full_name, **extra_kwargs)
+
 class Arg:
     def __init__(
         self,

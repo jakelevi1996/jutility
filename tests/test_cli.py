@@ -26,6 +26,12 @@ def get_parser():
     )
     return parser
 
+def test_print_help():
+    printer = util.Printer("test_print_help", OUTPUT_DIR)
+
+    parser = get_parser()
+    parser.print_help(printer._file)
+
 def test_parse():
     printer = util.Printer("test_parse", OUTPUT_DIR)
 
@@ -39,12 +45,6 @@ def test_parse():
     assert parser.parse_args([]).list == [30, 20, 10]
     assert parser.parse_args(["--int=-3"]).int == -3
     assert parser.parse_args(["--list", "3", "4", "5"]).list == [3, 4, 5]
-
-def test_print_help():
-    printer = util.Printer("test_print_help", OUTPUT_DIR)
-
-    parser = get_parser()
-    parser.print_help(printer._file)
 
 def test_get_args_summary():
     printer = util.Printer("test_get_args_summary", OUTPUT_DIR)

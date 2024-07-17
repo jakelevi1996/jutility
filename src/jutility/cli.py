@@ -156,10 +156,6 @@ class ObjectParser:
             replaces=replaces,
         )
 
-    def __repr__(self):
-        arg_list_str = "\n".join("    %s," % arg for arg in self.arg_list)
-        return "%s(\n%s\n)" % (type(self).__name__, arg_list_str)
-
     def init_object(self, full_name, **extra_kwargs):
         if full_name not in self._arg_dict:
             raise ValueError("\"%s\" not in %s" % (full_name, self._arg_dict))
@@ -176,6 +172,10 @@ class ObjectParser:
             if k[:n] == prefix
         }
         return object_arg.init_object(relevant_kwargs, extra_kwargs)
+
+    def __repr__(self):
+        arg_list_str = "\n".join("    %s," % arg for arg in self.arg_list)
+        return "%s(\n%s\n)" % (type(self).__name__, arg_list_str)
 
 def join_non_empty(sep: str, input_list):
     return sep.join(s for s in input_list if s is not None and len(s) > 0)

@@ -84,16 +84,15 @@ class ObjectArg(Arg):
         for arg in self.args:
             arg.add_argparse_arguments(parser)
 
-    def init_object(self, parsed_kwargs, extra_kwargs):
-        input_keys = set(parsed_kwargs) | set(extra_kwargs)
-        missing_keys = set(self.init_requires) - input_keys
+    def init_object(self, kwargs):
+        missing_keys = set(self.init_requires) - set(kwargs)
         if len(missing_keys) > 0:
             raise ValueError(
                 "Please provide values for the following keys: %s"
                 % sorted(missing_keys)
             )
 
-        return self.object_type(**parsed_kwargs, **extra_kwargs)
+        return self.object_type(**kwargs)
 
     def __repr__(self):
         description = ",\n".join(
@@ -172,18 +171,20 @@ class ObjectParser:
         util.check_type(object_arg, ObjectArg)
 
         self.check_parsed()
-        relevant_kwargs = {
+        kwargs = {
             arg.name: self._parsed_args_dict[arg.full_name]
             if arg.full_name in self._parsed_args_dict
             else self.init_object(arg.full_name)
             for arg in object_arg.args
         }
         for k, v in object_arg.init_parsed_kwargs.items():
-            relevant_kwargs[k] = self._parsed_args_dict[v]
+            kwargs[k] = self._parsed_args_dict[v]
         for k, v in object_arg.init_const_kwargs.items():
-            relevant_kwargs[k] = v
+            kwargs[k] = v
+        for k, v in extra_kwargs.items():
+            kwargs[k] = v
 
-        object_value = object_arg.init_object(relevant_kwargs, extra_kwargs)
+        object_value = object_arg.init_object(kwargs)
         self._parsed_args_dict[object_arg.full_name] = object_value
         return object_value
 

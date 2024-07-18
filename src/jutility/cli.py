@@ -111,19 +111,25 @@ class ObjectParser:
         See
         https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser
         """
-        self.arg_list = args
+        self._arg_list = args
         self._parser_kwargs = parser_kwargs
         self._parsed_args_dict = None
         self._arg_dict: dict[str, Arg] = dict()
-        for arg in self.arg_list:
+        for arg in self._arg_list:
             arg.register_names(self._arg_dict)
 
     def _get_argparse_parser(self):
         parser = argparse.ArgumentParser(**self._parser_kwargs)
-        for arg in self.arg_list:
+        for arg in self._arg_list:
             arg.add_argparse_arguments(parser)
 
         return parser
+
+    def _check_parsed(self):
+        if self._parsed_args_dict is None:
+            raise RuntimeError(
+                "Must call `parse_args` before calling this method"
+            )
 
     def print_help(self, file=None):
         self._get_argparse_parser().print_help(file)
@@ -139,14 +145,8 @@ class ObjectParser:
         self._parsed_args_dict = vars(args)
         return args
 
-    def check_parsed(self):
-        if self._parsed_args_dict is None:
-            raise RuntimeError(
-                "Must call `parse_args` before calling this method"
-            )
-
     def get_args_summary(self, replaces=None):
-        self.check_parsed()
+        self._check_parsed()
         key_abbreviations = {
             arg.full_name: arg.full_tag
             for arg in self._arg_dict.values()
@@ -169,7 +169,7 @@ class ObjectParser:
         object_arg: ObjectArg = self._arg_dict[full_name]
         util.check_type(object_arg, ObjectArg)
 
-        self.check_parsed()
+        self._check_parsed()
         for arg in object_arg.args:
             if arg.full_name not in self._parsed_args_dict:
                 self.init_object(arg.full_name)
@@ -190,7 +190,7 @@ class ObjectParser:
         return object_value
 
     def __repr__(self):
-        description = ",\n".join(repr(arg) for arg in self.arg_list)
+        description = ",\n".join(repr(arg) for arg in self._arg_list)
         return "%s(\n%s,\n)" % (type(self).__name__, indent(description))
 
 def join_non_empty(sep: str, input_list):

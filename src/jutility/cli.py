@@ -149,8 +149,8 @@ class ObjectParser:
     def get_args_summary(self, replaces=None):
         self.check_parsed()
         key_abbreviations = {
-            name: arg.full_tag
-            for name, arg in self._arg_dict.items()
+            arg.full_name: arg.full_tag
+            for arg in self._arg_dict.values()
             if arg.full_tag is not None
             and not isinstance(arg, ObjectArg)
         }

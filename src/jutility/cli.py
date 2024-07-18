@@ -115,7 +115,7 @@ class ObjectParser:
         """
         self.arg_list = args
         self._parser_kwargs = parser_kwargs
-        self._parsed_args = None
+        self._parsed_args_dict = None
         self._arg_dict: dict[str, Arg] = dict()
         for arg in self.arg_list:
             arg.register_names(self._arg_dict)
@@ -138,11 +138,11 @@ class ObjectParser:
         parser = self._get_argparse_parser()
         args = parser.parse_args(*args, **kwargs)
         args.object_parser = self
-        self._parsed_args = args
+        self._parsed_args_dict = vars(args)
         return args
 
     def check_parsed(self):
-        if self._parsed_args is None:
+        if self._parsed_args_dict is None:
             raise RuntimeError(
                 "Must call `parse_args` before calling this method"
             )
@@ -153,11 +153,10 @@ class ObjectParser:
             name: arg.full_tag
             for name, arg in self._arg_dict.items()
             if arg.full_tag is not None
-            if not isinstance(arg, ObjectArg)
+            and not isinstance(arg, ObjectArg)
         }
-
         return util.abbreviate_dictionary(
-            vars(self._parsed_args),
+            self._parsed_args_dict,
             key_abbreviations=key_abbreviations,
             replaces=replaces,
         )
@@ -171,18 +170,18 @@ class ObjectParser:
 
         self.check_parsed()
         relevant_kwargs = {
-            arg.name: vars(self._parsed_args)[arg.full_name]
-            if arg.full_name in vars(self._parsed_args)
+            arg.name: self._parsed_args_dict[arg.full_name]
+            if arg.full_name in self._parsed_args_dict
             else self.init_object(arg.full_name)
             for arg in object_arg.args
         }
         for k, v in object_arg.init_parsed_kwargs.items():
-            relevant_kwargs[k] = vars(self._parsed_args)[v]
+            relevant_kwargs[k] = self._parsed_args_dict[v]
         for k, v in object_arg.init_const_kwargs.items():
             relevant_kwargs[k] = v
 
         object_value = object_arg.init_object(relevant_kwargs, extra_kwargs)
-        self._parsed_args.__setattr__(object_arg.full_name, object_value)
+        self._parsed_args_dict[object_arg.full_name] = object_value
         return object_value
 
     def __repr__(self):

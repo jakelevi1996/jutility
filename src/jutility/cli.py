@@ -193,8 +193,5 @@ class ObjectParser:
         description = ",\n".join(repr(arg) for arg in self._arg_list)
         return "%s(\n%s,\n)" % (type(self).__name__, indent(description))
 
-def join_non_empty(sep: str, input_list):
-    return sep.join(s for s in input_list if s is not None and len(s) > 0)
-
 def indent(input_str, num_spaces=4):
     return textwrap.indent(input_str, " " * num_spaces)

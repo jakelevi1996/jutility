@@ -98,7 +98,19 @@ class ObjectArg(Arg):
         self.init_parsed_kwargs = init_parsed_kwargs
         self.init_const_kwargs  = init_const_kwargs
 
-    def check_missing_kwargs(self, kwargs):
+    def update_kwargs(
+        self,
+        kwargs: dict,
+        parsed_args_dict: dict,
+        extra_kwargs: dict,
+    ):
+        for k, v in self.init_parsed_kwargs.items():
+            kwargs[k] = parsed_args_dict[v]
+        for k, v in self.init_const_kwargs.items():
+            kwargs[k] = v
+        for k, v in extra_kwargs.items():
+            kwargs[k] = v
+
         missing_keys = set(self.init_requires) - set(kwargs)
         if len(missing_keys) > 0:
             raise ValueError(
@@ -124,14 +136,7 @@ class ObjectArg(Arg):
             arg.name: parsed_args_dict[arg.full_name]
             for arg in self.args
         }
-        for k, v in self.init_parsed_kwargs.items():
-            kwargs[k] = parsed_args_dict[v]
-        for k, v in self.init_const_kwargs.items():
-            kwargs[k] = v
-        for k, v in extra_kwargs.items():
-            kwargs[k] = v
-
-        self.check_missing_kwargs(kwargs)
+        self.update_kwargs(kwargs, parsed_args_dict, extra_kwargs)
         return self.object_type(**kwargs)
 
     def __repr__(self):

@@ -70,6 +70,23 @@ class ObjectArg(Arg):
     ):
         if name is None:
             name = object_type.__name__
+
+        self.object_type = object_type
+        self.name        = name
+        self.tag         = abbreviation
+        self.args        = args
+        self.set_init_attributes(
+            init_requires,
+            init_parsed_kwargs,
+            init_const_kwargs,
+        )
+
+    def set_init_attributes(
+        self,
+        init_requires,
+        init_parsed_kwargs,
+        init_const_kwargs,
+    ):
         if init_requires is None:
             init_requires = []
         if init_parsed_kwargs is None:
@@ -77,10 +94,6 @@ class ObjectArg(Arg):
         if init_const_kwargs is None:
             init_const_kwargs = dict()
 
-        self.object_type        = object_type
-        self.name               = name
-        self.tag                = abbreviation
-        self.args               = args
         self.init_requires      = init_requires
         self.init_parsed_kwargs = init_parsed_kwargs
         self.init_const_kwargs  = init_const_kwargs

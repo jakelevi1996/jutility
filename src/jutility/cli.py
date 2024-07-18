@@ -183,6 +183,17 @@ class ObjectChoice(ObjectArg):
                 % (type(self).__name__, name, default, valid_names)
             )
 
+    def _get_relevant_shared_args(self, object_arg):
+        protected_args = (
+            set(arg.name for arg in object_arg.args)
+            | set(object_arg.init_parsed_kwargs.keys())
+            | set(object_arg.init_const_kwargs.keys())
+        )
+        return [
+            arg for arg in self.shared_args
+            if arg.name not in protected_args
+        ]
+
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         parser.add_argument(
             "--" + self.full_name,
@@ -201,15 +212,7 @@ class ObjectChoice(ObjectArg):
     ):
         object_name = parsed_args_dict[self.full_name]
         object_arg = self.choice_dict[object_name]
-        protected_args = (
-            set(arg.name for arg in object_arg.args)
-            | set(object_arg.init_parsed_kwargs.keys())
-            | set(object_arg.init_const_kwargs.keys())
-        )
-        relevant_shared_args = [
-            arg for arg in self.shared_args
-            if arg.name not in protected_args
-        ]
+        relevant_shared_args = self._get_relevant_shared_args(object_arg)
         for arg in relevant_shared_args:
             if arg.full_name not in parsed_args_dict:
                 parser.init_object(arg.full_name)
@@ -226,7 +229,13 @@ class ObjectChoice(ObjectArg):
         object_name = parsed_args_dict[self.full_name]
         object_arg = self.choice_dict[object_name]
         return (
-            [self.full_name] + object_arg.get_arg_dict_keys(parsed_args_dict)
+            [self.full_name]
+            + object_arg.get_arg_dict_keys(parsed_args_dict)
+            + [
+                name
+                for arg in self._get_relevant_shared_args(object_arg)
+                for name in arg.get_arg_dict_keys(parsed_args_dict)
+            ]
         )
 
 class ObjectParser:

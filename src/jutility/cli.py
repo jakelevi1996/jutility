@@ -317,6 +317,9 @@ class ObjectParser:
             for key in arg_dict_keys
         }
 
+    def set_arg_dict(self, arg_dict):
+        self._parsed_args_dict = arg_dict
+
     def get_args_summary(self, replaces=None):
         self._check_parsed()
         arg_names = self.get_arg_dict().keys()

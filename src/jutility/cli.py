@@ -282,20 +282,6 @@ class ObjectParser:
         self._parsed_args_dict = vars(args)
         return args
 
-    def get_args_summary(self, replaces=None):
-        self._check_parsed()
-        key_abbreviations = {
-            arg.full_name: arg.full_tag
-            for arg in self._arg_dict.values()
-            if arg.full_tag is not None
-            and not isinstance(arg, ObjectArg)
-        }
-        return util.abbreviate_dictionary(
-            self._parsed_args_dict,
-            key_abbreviations=key_abbreviations,
-            replaces=replaces,
-        )
-
     def init_object(self, full_name, **extra_kwargs):
         self._check_parsed()
         if full_name not in self._arg_dict:
@@ -323,6 +309,20 @@ class ObjectParser:
             key: self._parsed_args_dict[key]
             for key in arg_dict_keys
         }
+
+    def get_args_summary(self, replaces=None):
+        self._check_parsed()
+        arg_names = self.get_arg_dict().keys()
+        arg_list = [self._arg_dict[arg_name] for arg_name in arg_names]
+        key_abbreviations = {
+            arg.full_name: arg.full_tag
+            for arg in arg_list
+        }
+        return util.abbreviate_dictionary(
+            self._parsed_args_dict,
+            key_abbreviations=key_abbreviations,
+            replaces=replaces,
+        )
 
     def __repr__(self):
         description = ",\n".join(repr(arg) for arg in self._arg_dict.values())

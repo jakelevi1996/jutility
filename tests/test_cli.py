@@ -168,6 +168,23 @@ def test_init_nested_objects():
 
     util.save_json(arg_dict, "test_init_nested_objects", OUTPUT_DIR)
 
+def test_init_object_override_kwargs():
+    printer = util.Printer("test_init_object_override_kwargs", OUTPUT_DIR)
+
+    parser = get_nested_object_parser()
+    args = parser.parse_args([])
+
+    encoder = cli.init_object(args, "model.encoder")
+    assert isinstance(encoder, DeepSet)
+    assert encoder.hidden_dim == 20
+    assert encoder.num_hidden_layers == 2
+
+    overrides = {"hidden_dim": 25, "num_hidden_layers": 3}
+    encoder = cli.init_object(args, "model.encoder", **overrides)
+    assert isinstance(encoder, DeepSet)
+    assert encoder.hidden_dim == 25
+    assert encoder.num_hidden_layers == 3
+
 class Adam:
     def __init__(self, params, lr=1e-3, beta=None):
         self.inner_params   = params

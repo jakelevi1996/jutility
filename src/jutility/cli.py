@@ -163,7 +163,10 @@ class ObjectParser:
 
     def init_object(self, full_name, **extra_kwargs):
         if full_name not in self._arg_dict:
-            raise ValueError("\"%s\" not in %s" % (full_name, self._arg_dict))
+            raise ValueError(
+                "\"%s\" not in %s"
+                % (full_name, sorted(self._arg_dict.keys()))
+            )
 
         object_arg: ObjectArg = self._arg_dict[full_name]
         util.check_type(object_arg, ObjectArg)

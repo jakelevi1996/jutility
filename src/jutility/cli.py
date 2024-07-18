@@ -171,10 +171,12 @@ class ObjectParser:
         util.check_type(object_arg, ObjectArg)
 
         self.check_parsed()
+        for arg in object_arg.args:
+            if arg.full_name not in self._parsed_args_dict:
+                self.init_object(arg.full_name)
+
         kwargs = {
             arg.name: self._parsed_args_dict[arg.full_name]
-            if arg.full_name in self._parsed_args_dict
-            else self.init_object(arg.full_name)
             for arg in object_arg.args
         }
         for k, v in object_arg.init_parsed_kwargs.items():

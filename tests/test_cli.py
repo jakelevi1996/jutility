@@ -64,6 +64,11 @@ def test_get_args_summary():
     s5 = cli.get_args_summary(parser.parse_args(["--Adam.lr=3e-3"]))
     assert s5 != s
 
+    args = parser.parse_args([])
+    cli.init_object(args, "Adam", params=[1, 2, 3])
+    s6 = cli.get_args_summary(args)
+    assert s6 == s
+
     printer(s, s2, s3, s4, s5, sep="\n")
 
 def test_init_object():

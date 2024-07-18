@@ -2,6 +2,10 @@ import argparse
 import textwrap
 from jutility import util
 
+def get_arg_dict(args):
+    object_parser: ObjectParser = args.object_parser
+    return object_parser.get_arg_dict()
+
 def get_args_summary(args, replaces=None):
     object_parser: ObjectParser = args.object_parser
     return object_parser.get_args_summary(replaces)

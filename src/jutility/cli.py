@@ -95,9 +95,9 @@ class ObjectArg(Arg):
 
     def __repr__(self):
         description = ",\n".join(
-            [   "full_name=\"%s\"" % self.full_name]
-            + [ "full_tag=\"%s\""  % self.full_tag]
-            + [ repr(arg) for arg in self.args]
+            ["full_name=\"%s\"" % self.full_name]
+            + ["full_tag=\"%s\"" % self.full_tag]
+            + [repr(arg) for arg in self.args]
         )
         return "%s(\n%s,\n)" % (type(self).__name__, indent(description))
 

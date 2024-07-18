@@ -139,14 +139,6 @@ class ObjectArg(Arg):
         self.update_kwargs(kwargs, parsed_args_dict, extra_kwargs)
         return self.object_type(**kwargs)
 
-    def __repr__(self):
-        description = ",\n".join(
-            ["full_name=\"%s\"" % self.full_name]
-            + ["full_tag=\"%s\"" % self.full_tag]
-            + [repr(arg) for arg in self.args]
-        )
-        return "%s(\n%s,\n)" % (type(self).__name__, indent(description))
-
 class ObjectChoice(ObjectArg):
     def __init__(
         self,
@@ -294,7 +286,7 @@ class ObjectParser:
         return object_value
 
     def __repr__(self):
-        description = ",\n".join(repr(arg) for arg in self._arg_list)
+        description = ",\n".join(repr(arg) for arg in self._arg_dict.values())
         return "%s(\n%s,\n)" % (type(self).__name__, indent(description))
 
 def indent(input_str, num_spaces=4):

@@ -24,6 +24,7 @@ class Arg:
         self.name               = name
         self.tag                = abbreviation
         self.argparse_kwargs    = argparse_kwargs
+        self.args: list[Arg]    = []
 
     def register_names(self, arg_dict, parent=None):
         if parent is None:
@@ -37,6 +38,9 @@ class Arg:
                 self.full_tag = None
 
         arg_dict[self.full_name] = self
+
+        for arg in self.args:
+            arg.register_names(arg_dict, self)
 
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         parser.add_argument("--" + self.full_name, **self.argparse_kwargs)
@@ -74,11 +78,6 @@ class ObjectArg(Arg):
         self.init_requires      = init_requires
         self.init_parsed_kwargs = init_parsed_kwargs
         self.init_const_kwargs  = init_const_kwargs
-
-    def register_names(self, arg_dict, parent=None):
-        super().register_names(arg_dict, parent)
-        for arg in self.args:
-            arg.register_names(arg_dict, self)
 
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         for arg in self.args:

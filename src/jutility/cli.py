@@ -45,6 +45,12 @@ class Arg:
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         parser.add_argument("--" + self.full_name, **self.argparse_kwargs)
 
+    def init_object(self, *args):
+        raise TypeError(
+            "Cannot call `init_object` on an instance of `%s`"
+            % type(self).__name__
+        )
+
     def __repr__(self):
         return (
             "%s(full_name=\"%s\", full_tag=\"%s\")"
@@ -79,11 +85,7 @@ class ObjectArg(Arg):
         self.init_parsed_kwargs = init_parsed_kwargs
         self.init_const_kwargs  = init_const_kwargs
 
-    def add_argparse_arguments(self, parser: argparse.ArgumentParser):
-        for arg in self.args:
-            arg.add_argparse_arguments(parser)
-
-    def init_object(self, kwargs):
+    def check_missing_kwargs(self, kwargs):
         missing_keys = set(self.init_requires) - set(kwargs)
         if len(missing_keys) > 0:
             raise ValueError(
@@ -91,6 +93,32 @@ class ObjectArg(Arg):
                 % (sorted(missing_keys), self.full_name)
             )
 
+    def add_argparse_arguments(self, parser: argparse.ArgumentParser):
+        for arg in self.args:
+            arg.add_argparse_arguments(parser)
+
+    def init_object(
+        self,
+        parser: "ObjectParser",
+        parsed_args_dict: dict,
+        extra_kwargs: dict,
+    ):
+        for arg in self.args:
+            if arg.full_name not in parsed_args_dict:
+                parser.init_object(arg.full_name)
+
+        kwargs = {
+            arg.name: parsed_args_dict[arg.full_name]
+            for arg in self.args
+        }
+        for k, v in self.init_parsed_kwargs.items():
+            kwargs[k] = parsed_args_dict[v]
+        for k, v in self.init_const_kwargs.items():
+            kwargs[k] = v
+        for k, v in extra_kwargs.items():
+            kwargs[k] = v
+
+        self.check_missing_kwargs(kwargs)
         return self.object_type(**kwargs)
 
     def __repr__(self):
@@ -160,6 +188,7 @@ class ObjectParser:
         )
 
     def init_object(self, full_name, **extra_kwargs):
+        self._check_parsed()
         if full_name not in self._arg_dict:
             raise ValueError(
                 "\"%s\" not in %s"
@@ -167,25 +196,11 @@ class ObjectParser:
             )
 
         object_arg: ObjectArg = self._arg_dict[full_name]
-        util.check_type(object_arg, ObjectArg)
-
-        self._check_parsed()
-        for arg in object_arg.args:
-            if arg.full_name not in self._parsed_args_dict:
-                self.init_object(arg.full_name)
-
-        kwargs = {
-            arg.name: self._parsed_args_dict[arg.full_name]
-            for arg in object_arg.args
-        }
-        for k, v in object_arg.init_parsed_kwargs.items():
-            kwargs[k] = self._parsed_args_dict[v]
-        for k, v in object_arg.init_const_kwargs.items():
-            kwargs[k] = v
-        for k, v in extra_kwargs.items():
-            kwargs[k] = v
-
-        object_value = object_arg.init_object(kwargs)
+        object_value = object_arg.init_object(
+            self,
+            self._parsed_args_dict,
+            extra_kwargs,
+        )
         self._parsed_args_dict[object_arg.full_name] = object_value
         return object_value
 

@@ -147,6 +147,77 @@ class ObjectArg(Arg):
         )
         return "%s(\n%s,\n)" % (type(self).__name__, indent(description))
 
+class ObjectChoice(ObjectArg):
+    def __init__(
+        self,
+        name,
+        *choices: ObjectArg,
+        shared_args: list[Arg]=None,
+        default=None,
+        abbreviation: str=None,
+        init_requires: list[str]=None,
+        init_parsed_kwargs: dict[str, str]=None,
+        init_const_kwargs:  dict[str, str]=None,
+    ):
+        self.name           = name
+        self.choices        = choices
+        self.shared_args    = shared_args
+        self.default        = default
+        self.tag            = abbreviation
+        self.set_init_attributes(
+            init_requires,
+            init_parsed_kwargs,
+            init_const_kwargs,
+        )
+
+        self.args = tuple(choices) + tuple(shared_args)
+        self.choice_dict = {arg.name: arg for arg in choices}
+        if (default is not None) and (default not in self.choice_dict):
+            valid_names = [arg.name for arg in choices]
+            raise ValueError(
+                "%s(\"%s\") received `default=\"%s\"`, please choose from %s"
+                % (type(self).__name__, name, default, valid_names)
+            )
+
+    def add_argparse_arguments(self, parser: argparse.ArgumentParser):
+        parser.add_argument(
+            "--" + self.full_name,
+            choices=[arg.name for arg in self.choices],
+            default=self.default,
+            required=(True if (self.default is None) else False),
+        )
+        for arg in self.args:
+            arg.add_argparse_arguments(parser)
+
+    def init_object(
+        self,
+        parser: "ObjectParser",
+        parsed_args_dict: dict,
+        extra_kwargs: dict,
+    ):
+        object_name = parsed_args_dict[self.full_name]
+        object_arg = self.choice_dict[object_name]
+        protected_args = (
+            set(arg.name for arg in object_arg.args)
+            | set(object_arg.init_parsed_kwargs.keys())
+            | set(object_arg.init_const_kwargs.keys())
+        )
+        relevant_shared_args = [
+            arg for arg in self.shared_args
+            if arg.name not in protected_args
+        ]
+        for arg in relevant_shared_args:
+            if arg.full_name not in parsed_args_dict:
+                parser.init_object(arg.full_name)
+
+        kwargs = {
+            arg.name: parsed_args_dict[arg.full_name]
+            for arg in relevant_shared_args
+        }
+        self.update_kwargs(kwargs, parsed_args_dict, extra_kwargs)
+        object_value  = parser.init_object(object_arg.full_name, **kwargs)
+        return object_value
+
 class ObjectParser:
     def __init__(
         self,

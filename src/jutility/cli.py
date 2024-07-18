@@ -88,8 +88,8 @@ class ObjectArg(Arg):
         missing_keys = set(self.init_requires) - set(kwargs)
         if len(missing_keys) > 0:
             raise ValueError(
-                "Please provide values for the following keys: %s"
-                % sorted(missing_keys)
+                "Please provide values for the following keys %s for \"%s\""
+                % (sorted(missing_keys), self.full_name)
             )
 
         return self.object_type(**kwargs)

@@ -137,7 +137,9 @@ class ObjectArg(Arg):
             for arg in self.args
         }
         self.update_kwargs(kwargs, parsed_args_dict, extra_kwargs)
-        return self.object_type(**kwargs)
+        object_value = self.object_type(**kwargs)
+        parsed_args_dict[self.full_name] = object_value
+        return object_value
 
 class ObjectChoice(ObjectArg):
     def __init__(
@@ -282,7 +284,6 @@ class ObjectParser:
             self._parsed_args_dict,
             extra_kwargs,
         )
-        self._parsed_args_dict[object_arg.full_name] = object_value
         return object_value
 
     def __repr__(self):

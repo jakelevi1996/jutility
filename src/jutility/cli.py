@@ -163,6 +163,9 @@ class ObjectChoice(ObjectArg):
         init_parsed_kwargs: dict[str, str]=None,
         init_const_kwargs:  dict[str, str]=None,
     ):
+        if shared_args is None:
+            shared_args = []
+
         self.name           = name
         self.choices        = choices
         self.shared_args    = shared_args

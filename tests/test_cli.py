@@ -196,6 +196,23 @@ def test_init_object_override_kwargs():
     assert encoder.output_dim == 90
     printer(*vars(args).items(), "-"*100, sep="\n")
 
+def test_init_parsed_kwargs():
+    printer = util.Printer("test_init_parsed_kwargs", OUTPUT_DIR)
+
+    parser = get_nested_object_parser()
+
+    args = parser.parse_args([])
+    encoder = cli.init_object(args, "model.encoder")
+    assert isinstance(encoder, DeepSet)
+    assert encoder.output_dim == 100
+    printer(*vars(args).items(), "-"*100, sep="\n")
+
+    args = parser.parse_args(["--model.hidden_dim=50"])
+    encoder = cli.init_object(args, "model.encoder")
+    assert isinstance(encoder, DeepSet)
+    assert encoder.output_dim == 50
+    printer(*vars(args).items(), "-"*100, sep="\n")
+
 class Adam:
     def __init__(self, params, lr=1e-3, beta=None):
         self.inner_params   = params

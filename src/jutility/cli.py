@@ -327,6 +327,7 @@ class ObjectParser:
         key_abbreviations = {
             arg.full_name: arg.full_tag
             for arg in arg_list
+            if arg.full_tag is not None
         }
         return util.abbreviate_dictionary(
             self._parsed_args_dict,

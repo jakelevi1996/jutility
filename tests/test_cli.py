@@ -178,12 +178,23 @@ def test_init_object_override_kwargs():
     assert isinstance(encoder, DeepSet)
     assert encoder.hidden_dim == 20
     assert encoder.num_hidden_layers == 2
+    assert encoder.input_dim == 4
+    assert encoder.output_dim == 100
+    printer(*vars(args).items(), "-"*100, sep="\n")
 
-    overrides = {"hidden_dim": 25, "num_hidden_layers": 3}
+    overrides = {
+        "hidden_dim": 25,
+        "num_hidden_layers": 3,
+        "input_dim": 5,
+        "output_dim": 90,
+    }
     encoder = cli.init_object(args, "model.encoder", **overrides)
     assert isinstance(encoder, DeepSet)
     assert encoder.hidden_dim == 25
     assert encoder.num_hidden_layers == 3
+    assert encoder.input_dim == 5
+    assert encoder.output_dim == 90
+    printer(*vars(args).items(), "-"*100, sep="\n")
 
 class Adam:
     def __init__(self, params, lr=1e-3, beta=None):
@@ -205,6 +216,9 @@ class _Model:
         self.hidden_dim         = hidden_dim
         self.num_hidden_layers  = num_hidden_layers
         self.encoder            = encoder
+
+    def __repr__(self):
+        return "%s(%s)" % (type(self).__name__, vars(self))
 
 class Mlp(_Model):
     pass

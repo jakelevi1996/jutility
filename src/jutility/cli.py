@@ -26,7 +26,7 @@ class Arg:
         self.argparse_kwargs    = argparse_kwargs
         self.args: list[Arg]    = []
 
-    def register_names(self, arg_dict, parent=None):
+    def register_names(self, arg_dict, parent: "Arg"=None):
         if parent is None:
             self.full_name = self.name
             self.full_tag = self.tag

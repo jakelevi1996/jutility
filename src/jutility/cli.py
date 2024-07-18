@@ -62,11 +62,11 @@ class ObjectArg(Arg):
         self,
         object_type,
         *args: Arg,
-        name=None,
-        abbreviation=None,
+        name: str=None,
+        abbreviation: str=None,
         init_requires: list[str]=None,
-        init_parsed_kwargs=None,
-        init_const_kwargs=None,
+        init_parsed_kwargs: dict[str, str]=None,
+        init_const_kwargs:  dict[str, str]=None,
     ):
         if name is None:
             name = object_type.__name__

@@ -18,7 +18,7 @@ class Arg:
     def __init__(
         self,
         name,
-        abbreviation=None,
+        tag=None,
         **argparse_kwargs,
     ):
         """
@@ -26,7 +26,7 @@ class Arg:
         https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.add_argument
         """
         self.name               = name
-        self.tag                = abbreviation
+        self.tag                = tag
         self.argparse_kwargs    = argparse_kwargs
         self.args: list[Arg]    = []
 
@@ -70,7 +70,7 @@ class ObjectArg(Arg):
         object_type,
         *args: Arg,
         name: str=None,
-        abbreviation: str=None,
+        tag: str=None,
         init_requires: list[str]=None,
         init_parsed_kwargs: dict[str, str]=None,
         init_const_kwargs:  dict[str, str]=None,
@@ -80,7 +80,7 @@ class ObjectArg(Arg):
 
         self.object_type = object_type
         self.name        = name
-        self.tag         = abbreviation
+        self.tag         = tag
         self.args        = args
         self.set_init_attributes(
             init_requires,
@@ -162,7 +162,7 @@ class ObjectChoice(ObjectArg):
         *choices: ObjectArg,
         shared_args: list[Arg]=None,
         default=None,
-        abbreviation: str=None,
+        tag: str=None,
         init_requires: list[str]=None,
         init_parsed_kwargs: dict[str, str]=None,
         init_const_kwargs:  dict[str, str]=None,
@@ -174,7 +174,7 @@ class ObjectChoice(ObjectArg):
         self.choices        = choices
         self.shared_args    = shared_args
         self.default        = default
-        self.tag            = abbreviation
+        self.tag            = tag
         self.set_init_attributes(
             init_requires,
             init_parsed_kwargs,

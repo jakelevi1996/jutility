@@ -51,6 +51,9 @@ class Arg:
             % type(self).__name__
         )
 
+    def get_arg_dict_keys(self, parsed_args_dict):
+        return [self.full_name]
+
     def __repr__(self):
         return (
             "%s(full_name=\"%s\", full_tag=\"%s\")"
@@ -141,6 +144,13 @@ class ObjectArg(Arg):
         parsed_args_dict[self.full_name] = object_value
         return object_value
 
+    def get_arg_dict_keys(self, parsed_args_dict):
+        return [
+            name
+            for arg in self.args
+            for name in arg.get_arg_dict_keys(parsed_args_dict)
+        ]
+
 class ObjectChoice(ObjectArg):
     def __init__(
         self,
@@ -211,6 +221,13 @@ class ObjectChoice(ObjectArg):
         self.update_kwargs(kwargs, parsed_args_dict, extra_kwargs)
         object_value  = parser.init_object(object_arg.full_name, **kwargs)
         return object_value
+
+    def get_arg_dict_keys(self, parsed_args_dict):
+        object_name = parsed_args_dict[self.full_name]
+        object_arg = self.choice_dict[object_name]
+        return (
+            [self.full_name] + object_arg.get_arg_dict_keys(parsed_args_dict)
+        )
 
 class ObjectParser:
     def __init__(
@@ -285,6 +302,18 @@ class ObjectParser:
             extra_kwargs,
         )
         return object_value
+
+    def get_arg_dict(self):
+        self._check_parsed()
+        arg_dict_keys = [
+            key
+            for arg in self._arg_list
+            for key in arg.get_arg_dict_keys(self._parsed_args_dict)
+        ]
+        return {
+            key: self._parsed_args_dict[key]
+            for key in arg_dict_keys
+        }
 
     def __repr__(self):
         description = ",\n".join(repr(arg) for arg in self._arg_dict.values())

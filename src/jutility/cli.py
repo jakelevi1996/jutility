@@ -48,12 +48,7 @@ class Arg:
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         parser.add_argument("--" + self.full_name, **self.argparse_kwargs)
 
-    def init_object(
-        self,
-        parser: "ObjectParser",
-        parsed_args_dict: dict,
-        extra_kwargs: dict,
-    ):
+    def init_object(self, parsed_args_dict):
         return parsed_args_dict[self.full_name]
 
     def get_arg_dict_keys(self, parsed_args_dict):
@@ -130,17 +125,12 @@ class ObjectArg(Arg):
         for arg in self.args:
             arg.add_argparse_arguments(parser)
 
-    def init_object(
-        self,
-        parser: "ObjectParser",
-        parsed_args_dict: dict,
-        extra_kwargs: dict,
-    ):
+    def init_object(self, parsed_args_dict, **extra_kwargs):
         if self.full_name in parsed_args_dict:
             return parsed_args_dict[self.full_name]
 
         kwargs = {
-            arg.name: parser.init_object(arg.full_name)
+            arg.name: arg.init_object(parsed_args_dict)
             for arg in self.args
         }
         self.update_kwargs(kwargs, parsed_args_dict, extra_kwargs)
@@ -211,12 +201,7 @@ class ObjectChoice(ObjectArg):
         for arg in self.args:
             arg.add_argparse_arguments(parser)
 
-    def init_object(
-        self,
-        parser: "ObjectParser",
-        parsed_args_dict: dict,
-        extra_kwargs: dict,
-    ):
+    def init_object(self, parsed_args_dict, **extra_kwargs):
         object_name = parsed_args_dict[self.full_name]
         object_arg = self.choice_dict[object_name]
         if object_arg.full_name in parsed_args_dict:
@@ -224,12 +209,11 @@ class ObjectChoice(ObjectArg):
 
         relevant_shared_args = self.get_relevant_shared_args(object_arg)
         kwargs = {
-            arg.name: parser.init_object(arg.full_name)
+            arg.name: arg.init_object(parsed_args_dict)
             for arg in relevant_shared_args
         }
         self.update_kwargs(kwargs, parsed_args_dict, extra_kwargs)
-        object_value  = parser.init_object(object_arg.full_name, **kwargs)
-        return object_value
+        return object_arg.init_object(parsed_args_dict, **kwargs)
 
     def get_arg_dict_keys(self, parsed_args_dict):
         object_name = parsed_args_dict[self.full_name]
@@ -297,12 +281,7 @@ class ObjectParser:
             )
 
         object_arg: ObjectArg = self._arg_dict[full_name]
-        object_value = object_arg.init_object(
-            self,
-            self._parsed_args_dict,
-            extra_kwargs,
-        )
-        return object_value
+        return object_arg.init_object(self._parsed_args_dict, **extra_kwargs)
 
     def get_arg_dict(self):
         self._check_parsed()

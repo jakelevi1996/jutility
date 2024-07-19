@@ -303,6 +303,11 @@ def test_object_choice():
     args = parser.parse_args([])
     optimiser = cli.init_object(args, "optimiser", params=[1, 2, 3])
     printer(cli.get_args_summary(args))
+    util.save_json(
+        cli.get_arg_dict(args),
+        "test_object_choice_adam",
+        OUTPUT_DIR,
+    )
     assert isinstance(optimiser, Adam)
     assert optimiser.lr == 1e-3
     assert optimiser.beta == [0.9, 0.999]
@@ -336,6 +341,11 @@ def test_object_choice():
     args = parser.parse_args(["--optimiser=Sgd"])
     optimiser = cli.init_object(args, "optimiser", params=[1, 2, 3])
     printer(cli.get_args_summary(args))
+    util.save_json(
+        cli.get_arg_dict(args),
+        "test_object_choice_sgd",
+        OUTPUT_DIR,
+    )
     assert isinstance(optimiser, Sgd)
     assert optimiser.lr == 1e-2
     assert (

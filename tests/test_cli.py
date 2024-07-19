@@ -370,28 +370,44 @@ def test_object_choice_init():
         def __init__(self, **kwargs):
             self.kwargs = kwargs
 
-    class B(A):
-        pass
+    class B:
+        def __init__(self, **kwargs):
+            self.kwargs = kwargs
 
     parser = cli.ObjectParser(
         cli.ObjectChoice(
             "top",
             cli.ObjectArg(
                 A,
-                init_const_kwargs={"x": 10},
+                cli.Arg("z", type=int, default=10),
+                init_const_kwargs={"x": 20},
             ),
             cli.ObjectArg(
                 B,
                 init_const_kwargs={"y": 30},
             ),
-            init_const_kwargs={"x": 20},
+            init_const_kwargs={"x": 40},
             init_requires=["y"],
         ),
     )
     args = parser.parse_args(["--top=A"])
-    a = cli.init_object(args, "top")
+    a = cli.init_object(args, "top", y=50)
     assert isinstance(a, A)
-    assert a.kwargs["x"] == 10
+    assert a.kwargs == {"x": 20, "y": 50, "z": 10}
+
+    args = parser.parse_args(["--top=A"])
+    with pytest.raises(ValueError):
+        a = cli.init_object(args, "top")
+
+    args = parser.parse_args(["--top=A", "--top.A.z=70"])
+    a = cli.init_object(args, "top", y=50, x=60)
+    assert isinstance(a, A)
+    assert a.kwargs == {"x": 60, "y": 50, "z": 70}
+
+    args = parser.parse_args(["--top=B"])
+    b = cli.init_object(args, "top")
+    assert isinstance(b, B)
+    assert b.kwargs == {"x": 40, "y": 30}
 
 def get_nested_object_choice_parser():
     parser = cli.ObjectParser(

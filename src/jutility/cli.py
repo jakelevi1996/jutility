@@ -1,5 +1,4 @@
 import argparse
-import textwrap
 from jutility import util
 
 def init_object(args, full_name, **extra_kwargs):
@@ -337,7 +336,4 @@ class ObjectParser:
 
     def __repr__(self):
         description = ",\n".join(repr(arg) for arg in self._arg_dict.values())
-        return "%s(\n%s,\n)" % (type(self).__name__, indent(description))
-
-def indent(input_str, num_spaces=4):
-    return textwrap.indent(input_str, " " * num_spaces)
+        return "%s(\n%s,\n)" % (type(self).__name__, util.indent(description))

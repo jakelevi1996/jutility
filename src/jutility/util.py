@@ -589,6 +589,9 @@ def wrap_string(s, max_len=80, wrap_len=60):
         s = textwrap.fill(s, width=wrap_len, break_long_words=False)
     return s
 
+def indent(input_str, num_spaces=4):
+    return textwrap.indent(input_str, " " * num_spaces)
+
 def time_format(t, concise=False):
     if concise:
         h_str = "h"

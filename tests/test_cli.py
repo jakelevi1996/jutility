@@ -78,6 +78,14 @@ def test_init_object():
     parser.parse_args([])
 
     with pytest.raises(ValueError):
+        optimiser = parser.init_object("not.an.arg")
+    with pytest.raises(TypeError):
+        optimiser = parser.init_object("list")
+    with pytest.raises(TypeError):
+        optimiser = parser.init_object("Adam.lr")
+    with pytest.raises(TypeError):
+        optimiser = parser.init_object("Adam.lr", params=[1, 2, 3])
+    with pytest.raises(ValueError):
         optimiser = parser.init_object("Adam")
 
     optimiser = parser.init_object("Adam", params=[1, 2, 3])

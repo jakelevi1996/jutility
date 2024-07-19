@@ -191,7 +191,7 @@ class ObjectChoice(ObjectArg):
                 % (type(self).__name__, name, default, valid_names)
             )
 
-    def _get_relevant_shared_args(self, object_arg):
+    def get_relevant_shared_args(self, object_arg: ObjectArg):
         protected_args = (
             set(arg.name for arg in object_arg.args)
             | set(object_arg.init_parsed_kwargs.keys())
@@ -223,7 +223,7 @@ class ObjectChoice(ObjectArg):
         if object_arg.full_name in parsed_args_dict:
             return parsed_args_dict[object_arg.full_name]
 
-        relevant_shared_args = self._get_relevant_shared_args(object_arg)
+        relevant_shared_args = self.get_relevant_shared_args(object_arg)
         kwargs = {
             arg.name: parser.init_object(arg.full_name)
             for arg in relevant_shared_args
@@ -240,7 +240,7 @@ class ObjectChoice(ObjectArg):
             + object_arg.get_arg_dict_keys(parsed_args_dict)
             + [
                 name
-                for arg in self._get_relevant_shared_args(object_arg)
+                for arg in self.get_relevant_shared_args(object_arg)
                 for name in arg.get_arg_dict_keys(parsed_args_dict)
             ]
         )

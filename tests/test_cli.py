@@ -218,6 +218,38 @@ def test_init_parsed_kwargs():
     assert encoder.output_dim == 50
     printer(*vars(args).items(), "-"*100, sep="\n")
 
+def test_get_set_arg_dict():
+    printer = util.Printer("test_get_set_arg_dict", OUTPUT_DIR)
+
+    parser = get_nested_object_parser()
+    args = parser.parse_args(["--model.hidden_dim=99", "--num_epochs=9"])
+    arg_dict_pre_init  = cli.get_arg_dict(args)
+    model: Mlp         = cli.init_object( args, "model", output_dim=19)
+    arg_dict_post_init = cli.get_arg_dict(args)
+    printer(model)
+    assert model.hidden_dim == 99
+    assert model.output_dim == 19
+    assert arg_dict_pre_init == arg_dict_post_init
+    assert cli.get_arg_dict(args) == parser.get_arg_dict()
+    arg_dict = cli.get_arg_dict(args)
+    full_path = util.save_json(arg_dict, "test_get_set_arg_dict", OUTPUT_DIR)
+
+    new_parser = get_nested_object_parser()
+    new_parser.set_arg_dict(util.load_json(full_path))
+    new_model: Mlp = new_parser.init_object("model", output_dim=19)
+    printer(new_model)
+    assert new_model.hidden_dim == 99
+    assert new_model.output_dim == 19
+    assert parser.get_arg_dict() == new_parser.get_arg_dict()
+
+    default_args = get_nested_object_parser().parse_args([])
+    default_model: Mlp = cli.init_object(default_args, "model", output_dim=19)
+    printer(default_model)
+    printer(cli.get_arg_dict(args))
+    printer(cli.get_arg_dict(default_args))
+    assert default_model.hidden_dim == 100
+    assert cli.get_arg_dict(args) != cli.get_arg_dict(default_args)
+
 class Adam:
     def __init__(self, params, lr=1e-3, beta=None):
         self.inner_params   = params

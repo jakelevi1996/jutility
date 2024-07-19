@@ -128,6 +128,12 @@ class Printer:
     def timestamp(self):
         self(datetime.datetime.now())
 
+    def hline(self, line_len=100):
+        self("-" * line_len)
+
+    def get_file(self):
+        return self._file
+
     def get_filename(self):
         if self._file is not None:
             return self._file.name

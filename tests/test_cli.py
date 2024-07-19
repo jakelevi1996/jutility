@@ -27,7 +27,7 @@ def test_print_help():
     printer = util.Printer("test_print_help", OUTPUT_DIR)
 
     parser = get_parser()
-    parser.print_help(printer._file)
+    parser.print_help(printer.get_file())
 
 def test_parse():
     printer = util.Printer("test_parse", OUTPUT_DIR)
@@ -297,8 +297,8 @@ def test_object_choice():
     printer = util.Printer("test_object_choice", OUTPUT_DIR)
 
     parser = get_object_choice_parser()
-    parser.print_help(printer._file)
-    printer("-"*100)
+    parser.print_help(printer.get_file())
+    printer.hline()
 
     args = parser.parse_args([])
     optimiser = cli.init_object(args, "optimiser", params=[1, 2, 3])

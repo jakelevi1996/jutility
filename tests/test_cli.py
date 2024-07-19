@@ -499,6 +499,7 @@ def test_nested_object_choice_parser():
     assert isinstance(model.encoder, Mlp)
     assert model.output_dim == 27
     assert model.encoder.output_dim == 16
+    assert model.encoder.hidden_dim == 100
 
 class _Optimiser:
     def __repr__(self):

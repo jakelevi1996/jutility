@@ -368,6 +368,64 @@ def test_object_choice():
     with pytest.raises(SystemExit):
         parser.parse_args(["--optimiser=not_an_optimiser"])
 
+def get_nested_object_choice_parser():
+    parser = cli.ObjectParser(
+        cli.Arg("seed",         "se", type=int, default=0),
+        cli.Arg("num_epochs",   "ne", type=int, default=10),
+        cli.ObjectChoice(
+            "model",
+            cli.ObjectArg(Mlp,      tag="mp"),
+            cli.ObjectArg(DeepSet,  tag="ds"),
+            shared_args=[
+                cli.ObjectChoice(
+                    "encoder",
+                    cli.ObjectArg(Mlp, tag="mp"),
+                    cli.ObjectArg(
+                        DeepSet,
+                        tag="ds",
+                        init_requires=["hidden_dim"],
+                    ),
+                    shared_args=[
+                        cli.Arg("hidden_dim", "hd", type=int, default=100),
+                        cli.Arg(
+                            "num_hidden_layers",
+                            "nl",
+                            type=int,
+                            default=3,
+                        ),
+                    ],
+                    default="DeepSet",
+                    tag="en",
+                    init_const_kwargs={"output_dim": 10},
+                ),
+                cli.Arg("hidden_dim",           "hd", type=int, default=100),
+                cli.Arg("num_hidden_layers",    "nl", type=int, default=3),
+            ],
+            init_requires=["output_dim"],
+            tag="mo",
+        ),
+    )
+    return parser
+
+def test_nested_object_choice_parser():
+    printer = util.Printer("test_nested_object_choice_parser", OUTPUT_DIR)
+
+    parser = get_nested_object_choice_parser()
+    parser.print_help(printer.get_file())
+    printer.hline()
+
+    with pytest.raises(SystemExit):
+        args = parser.parse_args([])
+
+    args = parser.parse_args(["--model=Mlp"])
+    printer(cli.get_args_summary(args))
+    with pytest.raises(ValueError):
+        model = cli.init_object(args, "model")
+
+    model = cli.init_object(args, "model", output_dim=23)
+    assert isinstance(model, Mlp)
+    assert isinstance(model.encoder, DeepSet)
+
 class _Optimiser:
     def __repr__(self):
         return "%s(%s)" % (type(self).__name__, vars(self))

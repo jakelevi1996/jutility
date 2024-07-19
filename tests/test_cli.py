@@ -416,11 +416,19 @@ def get_nested_object_choice_parser():
         cli.ObjectChoice(
             "model",
             cli.ObjectArg(Mlp,      tag="mp"),
-            cli.ObjectArg(DeepSet,  tag="ds"),
+            cli.ObjectArg(
+                DeepSet,
+                tag="ds",
+                init_const_kwargs={"output_dim": 27},
+            ),
             shared_args=[
                 cli.ObjectChoice(
                     "encoder",
-                    cli.ObjectArg(Mlp, tag="mp"),
+                    cli.ObjectArg(
+                        Mlp,
+                        init_const_kwargs={"output_dim": 15},
+                        tag="mp",
+                    ),
                     cli.ObjectArg(
                         DeepSet,
                         tag="ds",
@@ -466,6 +474,31 @@ def test_nested_object_choice_parser():
     model = cli.init_object(args, "model", output_dim=23)
     assert isinstance(model, Mlp)
     assert isinstance(model.encoder, DeepSet)
+    assert model.output_dim == 23
+    assert model.encoder.output_dim == 10
+
+    args = parser.parse_args(["--model=DeepSet"])
+    printer(cli.get_args_summary(args))
+    model = cli.init_object(args, "model")
+    assert isinstance(model, DeepSet)
+    assert isinstance(model.encoder, DeepSet)
+    assert model.output_dim == 27
+
+    args = parser.parse_args(["--model=DeepSet", "--model.encoder=Mlp"])
+    printer(cli.get_args_summary(args))
+    model = cli.init_object(args, "model")
+    assert isinstance(model, DeepSet)
+    assert isinstance(model.encoder, Mlp)
+    assert model.output_dim == 27
+    assert model.encoder.output_dim == 15
+
+    args = parser.parse_args(["--model=DeepSet", "--model.encoder=Mlp"])
+    cli.init_object(args, "model.encoder", output_dim=16)
+    model = cli.init_object(args, "model")
+    assert isinstance(model, DeepSet)
+    assert isinstance(model.encoder, Mlp)
+    assert model.output_dim == 27
+    assert model.encoder.output_dim == 16
 
 class _Optimiser:
     def __repr__(self):

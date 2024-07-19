@@ -75,16 +75,10 @@ def test_init_object():
     printer = util.Printer("test_init_object", OUTPUT_DIR)
 
     parser = get_parser()
-    parser.parse_args([])
+    args = parser.parse_args([])
 
     with pytest.raises(ValueError):
         optimiser = parser.init_object("not.an.arg")
-    with pytest.raises(TypeError):
-        optimiser = parser.init_object("list")
-    with pytest.raises(TypeError):
-        optimiser = parser.init_object("Adam.lr")
-    with pytest.raises(TypeError):
-        optimiser = parser.init_object("Adam.lr", params=[1, 2, 3])
     with pytest.raises(ValueError):
         optimiser = parser.init_object("Adam")
 
@@ -94,6 +88,8 @@ def test_init_object():
     assert isinstance(optimiser, Adam)
     assert optimiser.lr == 1e-3
     assert optimiser.inner_params == [1, 2, 3]
+    assert cli.init_object(args, "list") == args.list
+    assert cli.init_object(args, "Adam.lr") == optimiser.lr
 
     parser.parse_args(["--Adam.lr=3e-3"])
     optimiser: Adam = parser.init_object("Adam", params=[1, 2, 3])
@@ -201,13 +197,14 @@ def test_init_object_override_kwargs():
         "input_dim": 5,
         "output_dim": 90,
     }
-    encoder = cli.init_object(args, "model.encoder", **overrides)
+    new_args = parser.parse_args([])
+    encoder = cli.init_object(new_args, "model.encoder", **overrides)
     assert isinstance(encoder, DeepSet)
     assert encoder.hidden_dim == 25
     assert encoder.num_hidden_layers == 3
     assert encoder.input_dim == 5
     assert encoder.output_dim == 90
-    printer(*vars(args).items(), "-"*100, sep="\n")
+    printer(*vars(new_args).items(), "-"*100, sep="\n")
 
 def test_init_parsed_kwargs():
     printer = util.Printer("test_init_parsed_kwargs", OUTPUT_DIR)

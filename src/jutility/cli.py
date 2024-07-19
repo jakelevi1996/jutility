@@ -49,11 +49,13 @@ class Arg:
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         parser.add_argument("--" + self.full_name, **self.argparse_kwargs)
 
-    def init_object(self, *args):
-        raise TypeError(
-            "Cannot call `init_object` on an instance of `%s`"
-            % type(self).__name__
-        )
+    def init_object(
+        self,
+        parser: "ObjectParser",
+        parsed_args_dict: dict,
+        extra_kwargs: dict,
+    ):
+        return parsed_args_dict[self.full_name]
 
     def get_arg_dict_keys(self, parsed_args_dict):
         return [self.full_name]
@@ -135,12 +137,11 @@ class ObjectArg(Arg):
         parsed_args_dict: dict,
         extra_kwargs: dict,
     ):
-        for arg in self.args:
-            if arg.full_name not in parsed_args_dict:
-                parser.init_object(arg.full_name)
+        if self.full_name in parsed_args_dict:
+            return parsed_args_dict[self.full_name]
 
         kwargs = {
-            arg.name: parsed_args_dict[arg.full_name]
+            arg.name: parser.init_object(arg.full_name)
             for arg in self.args
         }
         self.update_kwargs(kwargs, parsed_args_dict, extra_kwargs)
@@ -219,13 +220,12 @@ class ObjectChoice(ObjectArg):
     ):
         object_name = parsed_args_dict[self.full_name]
         object_arg = self.choice_dict[object_name]
-        relevant_shared_args = self._get_relevant_shared_args(object_arg)
-        for arg in relevant_shared_args:
-            if arg.full_name not in parsed_args_dict:
-                parser.init_object(arg.full_name)
+        if object_arg.full_name in parsed_args_dict:
+            return parsed_args_dict[object_arg.full_name]
 
+        relevant_shared_args = self._get_relevant_shared_args(object_arg)
         kwargs = {
-            arg.name: parsed_args_dict[arg.full_name]
+            arg.name: parser.init_object(arg.full_name)
             for arg in relevant_shared_args
         }
         self.update_kwargs(kwargs, parsed_args_dict, extra_kwargs)

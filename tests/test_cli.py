@@ -258,11 +258,113 @@ def test_get_set_arg_dict():
     assert default_model.hidden_dim == 100
     assert cli.get_arg_dict(args) != cli.get_arg_dict(default_args)
 
-class Adam:
-    def __init__(self, params, lr=1e-3, beta=None):
+def get_object_choice_parser():
+    parser = cli.ObjectParser(
+        cli.Arg("seed",         "se", type=int, default=0),
+        cli.Arg("num_epochs",   "ne", type=int, default=10),
+        cli.ObjectChoice(
+            "optimiser",
+            cli.ObjectArg(
+                Adam,
+                cli.Arg(
+                    "beta",
+                    "be",
+                    default=[0.9, 0.999],
+                    type=float,
+                    nargs=2,
+                ),
+                cli.Arg("weight_decay", "wd", default=0.1,  type=float),
+                cli.Arg("lr",           "lr", default=1e-3, type=float),
+                name="adam",
+                tag="ad",
+            ),
+            cli.ObjectArg(
+                Sgd,
+                tag="sg",
+            ),
+            shared_args=[
+                cli.Arg("lr",           "lr", default=1e-2, type=float),
+                cli.Arg("weight_decay", "wd", default=0,    type=float),
+            ],
+            default="adam",
+            tag="op",
+            init_requires=["params"],
+        ),
+    )
+    return parser
+
+def test_object_choice():
+    printer = util.Printer("test_object_choice", OUTPUT_DIR)
+
+    parser = get_object_choice_parser()
+    parser.print_help(printer._file)
+    printer("-"*100)
+
+    args = parser.parse_args([])
+    optimiser = cli.init_object(args, "optimiser", params=[1, 2, 3])
+    printer(cli.get_args_summary(args))
+    assert isinstance(optimiser, Adam)
+    assert optimiser.lr == 1e-3
+    assert (
+        cli.get_args_summary(args)
+        == "ne10op.ad.be0.9,0.999op.ad.lr0.001op.ad.wd0.1opadamse0"
+    )
+
+    args = parser.parse_args(["--optimiser=adam"])
+    optimiser = cli.init_object(args, "optimiser", params=[1, 2, 3])
+    assert isinstance(optimiser, Adam)
+
+    args = parser.parse_args(["--optimiser.adam.lr=1e-2"])
+    optimiser = cli.init_object(args, "optimiser", params=[1, 2, 3])
+    assert isinstance(optimiser, Adam)
+    assert optimiser.lr == 1e-2
+
+    args = parser.parse_args(["--optimiser.lr=1e-2"])
+    optimiser = cli.init_object(args, "optimiser", params=[1, 2, 3])
+    assert isinstance(optimiser, Adam)
+    assert optimiser.lr == 1e-3
+
+    args = parser.parse_args(["--optimiser=Sgd"])
+    optimiser = cli.init_object(args, "optimiser", params=[1, 2, 3])
+    printer(cli.get_args_summary(args))
+    assert isinstance(optimiser, Sgd)
+    assert optimiser.lr == 1e-2
+    assert (
+        cli.get_args_summary(args)
+        == "ne10op.lr0.01op.wd0opSgdse0"
+    )
+
+    args = parser.parse_args(["--optimiser=Sgd", "--optimiser.lr=1e-3"])
+    optimiser = cli.init_object(args, "optimiser", params=[1, 2, 3])
+    assert isinstance(optimiser, Sgd)
+    assert optimiser.lr == 1e-3
+
+    args = parser.parse_args(["--optimiser=Sgd", "--optimiser.adam.lr=1e-2"])
+    optimiser = cli.init_object(args, "optimiser", params=[1, 2, 3])
+    assert isinstance(optimiser, Sgd)
+    assert optimiser.lr == 1e-2
+
+    with pytest.raises(SystemExit):
+        parser.parse_args(["--optimiser=Adam"])
+    with pytest.raises(SystemExit):
+        parser.parse_args(["--optimiser=not_an_optimiser"])
+
+class _Optimiser:
+    def __repr__(self):
+        return "%s(%s)" % (type(self).__name__, vars(self))
+
+class Sgd(_Optimiser):
+    def __init__(self, params, lr=1e-3, weight_decay=None):
         self.inner_params   = params
         self.lr             = lr
+        self.weight_decay   = weight_decay
+
+class Adam(_Optimiser):
+    def __init__(self, params, lr=1e-3, beta=None, weight_decay=None):
+        self.inner_params = params
+        self.lr             = lr
         self.beta           = beta
+        self.weight_decay   = weight_decay
 
 class _Model:
     def __init__(

@@ -365,6 +365,34 @@ def test_object_choice():
     with pytest.raises(SystemExit):
         parser.parse_args(["--optimiser=not_an_optimiser"])
 
+def test_object_choice_init():
+    class A:
+        def __init__(self, **kwargs):
+            self.kwargs = kwargs
+
+    class B(A):
+        pass
+
+    parser = cli.ObjectParser(
+        cli.ObjectChoice(
+            "top",
+            cli.ObjectArg(
+                A,
+                init_const_kwargs={"x": 10},
+            ),
+            cli.ObjectArg(
+                B,
+                init_const_kwargs={"y": 30},
+            ),
+            init_const_kwargs={"x": 20},
+            init_requires=["y"],
+        ),
+    )
+    args = parser.parse_args(["--top=A"])
+    a = cli.init_object(args, "top")
+    assert isinstance(a, A)
+    assert a.kwargs["x"] == 10
+
 def get_nested_object_choice_parser():
     parser = cli.ObjectParser(
         cli.Arg("seed",         "se", type=int, default=0),

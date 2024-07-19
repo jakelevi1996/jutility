@@ -106,15 +106,20 @@ class ObjectArg(Arg):
         kwargs: dict,
         parsed_args_dict: dict,
         extra_kwargs: dict,
+        protected: set=None,
     ):
+        if protected is None:
+            protected = set()
         for k, v in self.init_parsed_kwargs.items():
-            kwargs[k] = parsed_args_dict[v]
+            if k not in protected:
+                kwargs[k] = parsed_args_dict[v]
         for k, v in self.init_const_kwargs.items():
-            kwargs[k] = v
+            if k not in protected:
+                kwargs[k] = v
         for k, v in extra_kwargs.items():
             kwargs[k] = v
 
-        missing_keys = set(self.init_requires) - set(kwargs)
+        missing_keys = (set(self.init_requires) - set(kwargs)) - protected
         if len(missing_keys) > 0:
             raise ValueError(
                 "Please provide values for the following keys %s for \"%s\""
@@ -180,16 +185,12 @@ class ObjectChoice(ObjectArg):
                 % (type(self).__name__, name, default, valid_names)
             )
 
-    def get_relevant_shared_args(self, object_arg: ObjectArg):
-        protected_args = (
+    def get_protected_args(self, object_arg: ObjectArg):
+        return (
             set(arg.name for arg in object_arg.args)
             | set(object_arg.init_parsed_kwargs.keys())
             | set(object_arg.init_const_kwargs.keys())
         )
-        return [
-            arg for arg in self.shared_args
-            if arg.name not in protected_args
-        ]
 
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         parser.add_argument(
@@ -207,23 +208,26 @@ class ObjectChoice(ObjectArg):
         if object_arg.full_name in parsed_args_dict:
             return parsed_args_dict[object_arg.full_name]
 
-        relevant_shared_args = self.get_relevant_shared_args(object_arg)
+        protected = self.get_protected_args(object_arg)
         kwargs = {
             arg.name: arg.init_object(parsed_args_dict)
-            for arg in relevant_shared_args
+            for arg in self.shared_args
+            if arg.name not in protected
         }
-        self.update_kwargs(kwargs, parsed_args_dict, extra_kwargs)
+        self.update_kwargs(kwargs, parsed_args_dict, extra_kwargs, protected)
         return object_arg.init_object(parsed_args_dict, **kwargs)
 
     def get_arg_dict_keys(self, parsed_args_dict):
         object_name = parsed_args_dict[self.full_name]
         object_arg = self.choice_dict[object_name]
+        protected = self.get_protected_args(object_arg)
         return (
             [self.full_name]
             + object_arg.get_arg_dict_keys(parsed_args_dict)
             + [
                 name
-                for arg in self.get_relevant_shared_args(object_arg)
+                for arg in self.shared_args
+                if  arg.name not in protected
                 for name in arg.get_arg_dict_keys(parsed_args_dict)
             ]
         )

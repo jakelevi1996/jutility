@@ -305,6 +305,7 @@ def test_object_choice():
     printer(cli.get_args_summary(args))
     assert isinstance(optimiser, Adam)
     assert optimiser.lr == 1e-3
+    assert optimiser.beta == [0.9, 0.999]
     assert (
         cli.get_args_summary(args)
         == "ne10op.ad.be0.9,0.999op.ad.lr0.001op.ad.wd0.1opadamse0"
@@ -323,6 +324,14 @@ def test_object_choice():
     optimiser = cli.init_object(args, "optimiser", params=[1, 2, 3])
     assert isinstance(optimiser, Adam)
     assert optimiser.lr == 1e-3
+
+    args = parser.parse_args(["--optimiser.adam.beta", "0.7", "0.8"])
+    optimiser = cli.init_object(args, "optimiser", params=[1, 2, 3])
+    assert isinstance(optimiser, Adam)
+    assert optimiser.beta == [0.7, 0.8]
+
+    with pytest.raises(SystemExit):
+        parser.parse_args(["--optimiser.beta", "0.7", "0.8"])
 
     args = parser.parse_args(["--optimiser=Sgd"])
     optimiser = cli.init_object(args, "optimiser", params=[1, 2, 3])

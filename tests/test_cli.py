@@ -467,7 +467,16 @@ def test_nested_object_choice_parser():
         args = parser.parse_args([])
 
     args = parser.parse_args(["--model=Mlp"])
+    util.save_json(
+        cli.get_arg_dict(args),
+        "test_nested_object_choice_parser",
+        OUTPUT_DIR,
+    )
     printer(cli.get_args_summary(args))
+    assert (
+        cli.get_args_summary(args)
+        == "mo.en.hd100mo.en.nl3mo.enDeepSetmo.hd100mo.nl3moMlpne10se0"
+    )
     with pytest.raises(ValueError):
         model = cli.init_object(args, "model")
 

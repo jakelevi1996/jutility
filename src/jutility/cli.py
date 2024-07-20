@@ -107,6 +107,13 @@ class ObjectArg(Arg):
         self.init_parsed_kwargs = init_parsed_kwargs
         self.init_const_kwargs  = init_const_kwargs
 
+    def get_protected_args(self):
+        return (
+            set(arg.name for arg in self.args)
+            | set(self.init_parsed_kwargs.keys())
+            | set(self.init_const_kwargs.keys())
+        )
+
     def update_kwargs(
         self,
         kwargs: dict,
@@ -191,13 +198,6 @@ class ObjectChoice(ObjectArg):
                 % (type(self).__name__, name, default, valid_names)
             )
 
-    def get_protected_args(self, object_arg: ObjectArg):
-        return (
-            set(arg.name for arg in object_arg.args)
-            | set(object_arg.init_parsed_kwargs.keys())
-            | set(object_arg.init_const_kwargs.keys())
-        )
-
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         parser.add_argument(
             "--" + self.full_name,
@@ -214,7 +214,7 @@ class ObjectChoice(ObjectArg):
         if object_arg.full_name in parsed_args_dict:
             return parsed_args_dict[object_arg.full_name]
 
-        protected = self.get_protected_args(object_arg)
+        protected = object_arg.get_protected_args()
         kwargs = {
             arg.name: arg.init_object(parsed_args_dict)
             for arg in self.shared_args
@@ -226,7 +226,7 @@ class ObjectChoice(ObjectArg):
     def get_arg_dict_keys(self, parsed_args_dict):
         object_name = parsed_args_dict[self.full_name]
         object_arg = self.choice_dict[object_name]
-        protected = self.get_protected_args(object_arg)
+        protected = object_arg.get_protected_args()
         return (
             [self.full_name]
             + object_arg.get_arg_dict_keys(parsed_args_dict)

@@ -596,6 +596,7 @@ def test_cli_verbose():
     printer.flush()
     assert "cli: A(a=3, b='abc')"   in util.load_text(printer.get_filename())
     assert "cli: Adam(params=[89])" in util.load_text(printer.get_filename())
+    assert cli.verbose.printer.get_filename() is None
 
 class _Optimiser:
     def __repr__(self):

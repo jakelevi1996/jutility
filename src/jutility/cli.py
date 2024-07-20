@@ -338,6 +338,7 @@ class _Verbose:
     def __init__(self):
         self.is_verbose = False
         self.printer = util.Printer()
+        self._old_printer = self.printer
 
     def __call__(self, printer: util.Printer=None):
         if printer is not None:
@@ -350,5 +351,6 @@ class _Verbose:
 
     def __exit__(self, *args):
         self.is_verbose = False
+        self.printer = self._old_printer
 
 verbose = _Verbose()

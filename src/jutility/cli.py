@@ -152,6 +152,13 @@ class ObjectArg(Arg):
             for arg in self.args
         }
         self.update_kwargs(kwargs, parsed_args_dict, extra_kwargs)
+
+        if verbose.is_verbose:
+            arg_str = ", ".join("%s=%s" % (k, v) for k, v in kwargs.items())
+            verbose.printer(
+                "cli: %s(%s)" % (self.object_type.__name__, arg_str)
+            )
+
         object_value = self.object_type(**kwargs)
         parsed_args_dict[self.full_name] = object_value
         return object_value
@@ -326,3 +333,22 @@ class ObjectParser:
     def __repr__(self):
         description = ",\n".join(repr(arg) for arg in self._arg_dict.values())
         return "%s(\n%s,\n)" % (type(self).__name__, util.indent(description))
+
+class _Verbose:
+    def __init__(self):
+        self.is_verbose = False
+        self.printer = util.Printer()
+
+    def __call__(self, printer: util.Printer=None):
+        if printer is not None:
+            self.printer = printer
+
+        return self
+
+    def __enter__(self):
+        self.is_verbose = True
+
+    def __exit__(self, *args):
+        self.is_verbose = False
+
+verbose = _Verbose()

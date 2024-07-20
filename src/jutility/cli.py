@@ -154,7 +154,7 @@ class ObjectArg(Arg):
         self.update_kwargs(kwargs, parsed_args_dict, extra_kwargs)
 
         if verbose.is_verbose:
-            arg_str = ", ".join("%s=%s" % (k, v) for k, v in kwargs.items())
+            arg_str = ", ".join("%s=%r" % (k, v) for k, v in kwargs.items())
             verbose.printer(
                 "cli: %s(%s)" % (self.object_type.__name__, arg_str)
             )

@@ -209,27 +209,27 @@ class ObjectChoice(ObjectArg):
             arg.add_argparse_arguments(parser)
 
     def init_object(self, parsed_args_dict, **extra_kwargs):
-        object_name = parsed_args_dict[self.full_name]
-        object_arg = self.choice_dict[object_name]
-        if object_arg.full_name in parsed_args_dict:
-            return parsed_args_dict[object_arg.full_name]
+        chosen_name = parsed_args_dict[self.full_name]
+        chosen_arg = self.choice_dict[chosen_name]
+        if chosen_arg.full_name in parsed_args_dict:
+            return parsed_args_dict[chosen_arg.full_name]
 
-        protected = object_arg.get_protected_args()
+        protected = chosen_arg.get_protected_args()
         kwargs = {
             arg.name: arg.init_object(parsed_args_dict)
             for arg in self.shared_args
             if arg.name not in protected
         }
         self.update_kwargs(kwargs, parsed_args_dict, extra_kwargs, protected)
-        return object_arg.init_object(parsed_args_dict, **kwargs)
+        return chosen_arg.init_object(parsed_args_dict, **kwargs)
 
     def get_arg_dict_keys(self, parsed_args_dict):
-        object_name = parsed_args_dict[self.full_name]
-        object_arg = self.choice_dict[object_name]
-        protected = object_arg.get_protected_args()
+        chosen_name = parsed_args_dict[self.full_name]
+        chosen_arg = self.choice_dict[chosen_name]
+        protected = chosen_arg.get_protected_args()
         return (
             [self.full_name]
-            + object_arg.get_arg_dict_keys(parsed_args_dict)
+            + chosen_arg.get_arg_dict_keys(parsed_args_dict)
             + [
                 name
                 for arg in self.shared_args

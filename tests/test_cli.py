@@ -561,6 +561,7 @@ def test_cli_verbose():
             cli.Arg("a", default=3),
             init_const_kwargs={"b": 4},
         ),
+        cli.ObjectArg(Adam),
     )
     args = parser.parse_args([])
     cli.init_object(args, "A")
@@ -590,9 +591,11 @@ def test_cli_verbose():
     args = parser.parse_args([])
     with cli.verbose(printer):
         cli.init_object(args, "A", b=567)
+        cli.init_object(args, "Adam", params=[89])
 
     printer.flush()
-    assert "cli: A(a=3, b=567)" in util.load_text(printer.get_filename())
+    assert "cli: A(a=3, b=567)"     in util.load_text(printer.get_filename())
+    assert "cli: Adam(params=[89])" in util.load_text(printer.get_filename())
 
 class _Optimiser:
     def __repr__(self):

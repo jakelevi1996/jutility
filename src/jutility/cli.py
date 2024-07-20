@@ -81,9 +81,9 @@ class ObjectArg(Arg):
             name = object_type.__name__
 
         self.object_type = object_type
+        self.args        = args
         self.name        = name
         self.tag         = tag
-        self.args        = args
         self.set_init_attributes(
             init_requires,
             init_parsed_kwargs,

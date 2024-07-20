@@ -548,6 +548,52 @@ def test_duplicate_names():
             ),
         )
 
+def test_cli_verbose():
+    printer = util.Printer("test_cli_verbose", OUTPUT_DIR)
+
+    class A:
+        def __init__(self, a, b):
+            self.data = [a, b]
+
+    parser = cli.ObjectParser(
+        cli.ObjectArg(
+            A,
+            cli.Arg("a", default=3),
+            init_const_kwargs={"b": 4},
+        ),
+    )
+    args = parser.parse_args([])
+    cli.init_object(args, "A")
+
+    args = parser.parse_args([])
+    with cli.verbose:
+        cli.init_object(args, "A")
+
+    args = parser.parse_args([])
+    with cli.verbose():
+        cli.init_object(args, "A")
+
+    args = parser.parse_args([])
+    with cli.verbose(printer):
+        cli.init_object(args, "A")
+
+    printer.flush()
+    assert util.load_text(printer.get_filename()) == "cli: A(a=3, b=4)\n"
+
+    args = parser.parse_args(["--A.a=34"])
+    with cli.verbose(printer):
+        cli.init_object(args, "A")
+
+    printer.flush()
+    assert "cli: A(a=34, b=4)" in util.load_text(printer.get_filename())
+
+    args = parser.parse_args([])
+    with cli.verbose(printer):
+        cli.init_object(args, "A", b=567)
+
+    printer.flush()
+    assert "cli: A(a=3, b=567)" in util.load_text(printer.get_filename())
+
 class _Optimiser:
     def __repr__(self):
         return "%s(%s)" % (type(self).__name__, vars(self))

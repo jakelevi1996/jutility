@@ -40,6 +40,12 @@ class Arg:
             else:
                 self.full_tag = None
 
+        if self.full_name in arg_dict:
+            raise ValueError(
+                "Found duplicates %s and %s"
+                % (self, arg_dict[self.full_name])
+            )
+
         arg_dict[self.full_name] = self
 
         for arg in self.args:

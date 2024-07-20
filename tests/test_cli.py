@@ -510,6 +510,44 @@ def test_nested_object_choice_parser():
     assert model.encoder.output_dim == 16
     assert model.encoder.hidden_dim == 100
 
+def test_duplicate_names():
+    with pytest.raises(ValueError):
+        cli.ObjectParser(
+            cli.Arg("arg_name", type=int),
+            cli.Arg("arg_name", type=float),
+        )
+    with pytest.raises(ValueError):
+        cli.ObjectParser(
+            cli.ObjectArg(
+                Mlp,
+                cli.Arg("arg_name"),
+                cli.ObjectArg(
+                    Sgd,
+                    cli.Arg("lr"),
+                    name="arg_name",
+                ),
+                name="model",
+            ),
+        )
+    with pytest.raises(ValueError):
+        cli.ObjectParser(
+            cli.ObjectChoice(
+                "model",
+                cli.ObjectArg(Mlp),
+                cli.ObjectArg(Mlp),
+            ),
+        )
+    with pytest.raises(ValueError):
+        cli.ObjectParser(
+            cli.ObjectChoice(
+                "model",
+                cli.ObjectArg(Mlp, name="arg_name"),
+                shared_args=[
+                    cli.Arg(name="arg_name"),
+                ],
+            ),
+        )
+
 class _Optimiser:
     def __repr__(self):
         return "%s(%s)" % (type(self).__name__, vars(self))

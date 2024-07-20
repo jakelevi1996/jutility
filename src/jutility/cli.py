@@ -132,7 +132,7 @@ class ObjectArg(Arg):
         for k, v in extra_kwargs.items():
             kwargs[k] = v
 
-        missing_keys = (set(self.init_requires) - set(kwargs)) - protected
+        missing_keys = set(self.init_requires) - (set(kwargs) | protected)
         if len(missing_keys) > 0:
             raise ValueError(
                 "Please provide values for the following keys %s for \"%s\""

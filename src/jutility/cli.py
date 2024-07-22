@@ -7,6 +7,9 @@ def init_object(args: "Namespace", full_name, **extra_kwargs):
 def get_arg_dict(args: "Namespace"):
     return args.get_parser().get_arg_dict()
 
+def set_arg_dict(args: "Namespace", arg_dict: dict):
+    return args.get_parser().set_arg_dict(arg_dict)
+
 def get_args_summary(args: "Namespace", replaces=None):
     return args.get_parser().get_args_summary(replaces)
 

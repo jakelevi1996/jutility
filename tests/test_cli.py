@@ -240,7 +240,8 @@ def test_get_set_arg_dict():
     full_path = util.save_json(arg_dict, "test_get_set_arg_dict", OUTPUT_DIR)
 
     new_parser = get_nested_object_parser()
-    new_parser.set_arg_dict(util.load_json(full_path))
+    new_args = new_parser.parse_args([])
+    cli.set_arg_dict(new_args, util.load_json(full_path))
     new_model: Mlp = new_parser.init_object("model", output_dim=19)
     printer(new_model)
     assert new_model.hidden_dim == 99

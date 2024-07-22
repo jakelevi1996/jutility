@@ -346,7 +346,6 @@ class _Verbose:
     def __init__(self):
         self.is_verbose = False
         self._printer = util.Printer()
-        self._old_printer = self._printer
 
     def display(self, object_type, kwargs: dict):
         arg_str = ", ".join("%s=%r" % (k, v) for k, v in kwargs.items())
@@ -361,6 +360,5 @@ class _Verbose:
 
     def __exit__(self, *args):
         self.is_verbose = False
-        self._printer = self._old_printer
 
 verbose = _Verbose()

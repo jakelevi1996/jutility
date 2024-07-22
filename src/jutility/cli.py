@@ -352,10 +352,8 @@ class _Verbose:
         arg_str = ", ".join("%s=%r" % (k, v) for k, v in kwargs.items())
         self._printer("cli: %s(%s)" % (object_type.__name__, arg_str))
 
-    def __call__(self, printer: util.Printer=None):
-        if printer is not None:
-            self._printer = printer
-
+    def __call__(self, printer: util.Printer):
+        self._printer = printer
         return self
 
     def __enter__(self):

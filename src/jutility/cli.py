@@ -1,17 +1,14 @@
 import argparse
 from jutility import util
 
-def init_object(args, full_name, **extra_kwargs):
-    object_parser: ObjectParser = args.object_parser
-    return object_parser.init_object(full_name, **extra_kwargs)
+def init_object(args: "Namespace", full_name, **extra_kwargs):
+    return args.get_parser().init_object(full_name, **extra_kwargs)
 
-def get_arg_dict(args):
-    object_parser: ObjectParser = args.object_parser
-    return object_parser.get_arg_dict()
+def get_arg_dict(args: "Namespace"):
+    return args.get_parser().get_arg_dict()
 
-def get_args_summary(args, replaces=None):
-    object_parser: ObjectParser = args.object_parser
-    return object_parser.get_args_summary(replaces)
+def get_args_summary(args: "Namespace", replaces=None):
+    return args.get_parser().get_args_summary(replaces)
 
 class Arg:
     def __init__(
@@ -284,8 +281,9 @@ class ObjectParser:
         https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.parse_args
         """
         parser = self._get_argparse_parser()
-        args = parser.parse_args(*args, **kwargs)
-        args.object_parser = self
+        kwargs.setdefault("namespace", Namespace())
+        args: Namespace = parser.parse_args(*args, **kwargs)
+        args.set_parser(self)
         self._parsed_args_dict = vars(args)
         return args
 
@@ -333,6 +331,19 @@ class ObjectParser:
     def __repr__(self):
         description = ",\n".join(repr(arg) for arg in self._arg_dict.values())
         return "%s(\n%s,\n)" % (type(self).__name__, util.indent(description))
+
+class Namespace(argparse.Namespace):
+    def __init__(self):
+        self._parser = None
+
+    def set_parser(self, parser: ObjectParser):
+        if self._parser is not None:
+            raise RuntimeError("This Namespace already has a parser")
+
+        self._parser = parser
+
+    def get_parser(self):
+        return self._parser
 
 class _Verbose:
     def __init__(self):

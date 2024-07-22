@@ -252,11 +252,15 @@ class ObjectParser:
         See
         https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser
         """
-        self._arg_list = args
         self._parser_kwargs = parser_kwargs
-        self._parsed_args_dict = None
+        self._arg_list: list[Arg] = []
         self._arg_dict: dict[str, Arg] = dict()
-        for arg in self._arg_list:
+        self._parsed_args_dict: dict = None
+        self.add_arguments(*args)
+
+    def add_arguments(self, *args: Arg):
+        for arg in args:
+            self._arg_list.append(arg)
             arg.register_names(self._arg_dict)
 
     def _get_argparse_parser(self):

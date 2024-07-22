@@ -151,10 +151,7 @@ class ObjectArg(Arg):
         self.update_kwargs(kwargs, parsed_args_dict, extra_kwargs)
 
         if verbose.is_verbose:
-            arg_str = ", ".join("%s=%r" % (k, v) for k, v in kwargs.items())
-            verbose.printer(
-                "cli: %s(%s)" % (self.object_type.__name__, arg_str)
-            )
+            verbose.display(self.object_type, kwargs)
 
         object_value = self.object_type(**kwargs)
         parsed_args_dict[self.full_name] = object_value
@@ -348,12 +345,16 @@ class Namespace(argparse.Namespace):
 class _Verbose:
     def __init__(self):
         self.is_verbose = False
-        self.printer = util.Printer()
-        self._old_printer = self.printer
+        self._printer = util.Printer()
+        self._old_printer = self._printer
+
+    def display(self, object_type, kwargs: dict):
+        arg_str = ", ".join("%s=%r" % (k, v) for k, v in kwargs.items())
+        self._printer("cli: %s(%s)" % (object_type.__name__, arg_str))
 
     def __call__(self, printer: util.Printer=None):
         if printer is not None:
-            self.printer = printer
+            self._printer = printer
 
         return self
 
@@ -362,6 +363,6 @@ class _Verbose:
 
     def __exit__(self, *args):
         self.is_verbose = False
-        self.printer = self._old_printer
+        self._printer = self._old_printer
 
 verbose = _Verbose()

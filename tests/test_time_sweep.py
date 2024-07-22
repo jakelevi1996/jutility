@@ -56,7 +56,7 @@ def test_time_sweep():
 
     time_sweep.time_sweep(
         *[t(rng) for t in [Matmul, Solve, LstSq, Eig]],
-        n_list=util.log_range(10, 100, 10),
+        n_list=util.log_range(10, 100, 10, unique_integers=True),
         printer=printer,
         dir_name=OUTPUT_DIR,
     )

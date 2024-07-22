@@ -20,7 +20,7 @@ def time_sweep(
     dir_name=None,
 ):
     if n_list is None:
-        n_list = util.log_range(10, 1000, 10)
+        n_list = util.log_range(10, 1000, 10, unique_integers=True)
 
     exp_dict = {
         repr(exp): exp
@@ -35,7 +35,7 @@ def time_sweep(
         util.CountColumn("c", -5),
         util.TimeColumn("t"),
         util.Column("name", "s", max(len(s) for s in exp_dict.keys())),
-        util.Column("n",    "s", len(str(int(max(n_list))))),
+        util.Column("n",    "s", len(str(max(n_list)))),
         util.Column("repeat"),
         util.Column("time_taken", "s", 11),
         printer=printer,
@@ -43,7 +43,7 @@ def time_sweep(
     for exp_name in sorted(exp_dict.keys()):
         exp  = exp_dict[ exp_name]
         data = data_dict[exp_name]
-        for n in sorted(set(int(n) for n in n_list)):
+        for n in n_list:
             for i in range(num_repeats):
                 exp.setup(n)
                 with timer:

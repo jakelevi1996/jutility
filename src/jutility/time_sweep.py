@@ -37,7 +37,7 @@ def time_sweep(
         util.Column("name", "s", max(len(s) for s in exp_dict.keys())),
         util.Column("n",    "s", len(str(int(max(n_list))))),
         util.Column("repeat"),
-        util.Column("time_measured", "s", 11),
+        util.Column("time_taken", "s", 11),
         printer=printer,
     )
     for exp_name in sorted(exp_dict.keys()):
@@ -49,9 +49,9 @@ def time_sweep(
                 with timer:
                     exp.run()
 
-                data.update(n, timer.time_measured)
-                t = util.time_format(timer.time_measured, concise=True)
-                table.update(name=exp_name, n=n, repeat=i, time_measured=t)
+                data.update(n, timer.time_taken)
+                t = util.time_format(timer.time_taken, concise=True)
+                table.update(name=exp_name, n=n, repeat=i, time_taken=t)
 
     cp = plotting.ColourPicker(len(experiments))
     plotting.plot(

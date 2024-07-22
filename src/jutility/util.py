@@ -168,13 +168,13 @@ class Timer:
         self,
         name=None,
         printer=None,
-        verbose_entry=False,
+        verbose_enter=False,
         verbose_exit=True,
     ):
         if printer is None:
             printer = Printer()
         self._print         = printer
-        self._verbose_entry = verbose_entry
+        self._verbose_enter = verbose_enter
         self._verbose_exit  = verbose_exit
         self.reset()
         self.set_name(name)
@@ -185,13 +185,13 @@ class Timer:
     def set_name(self, name):
         self._name = str(name) if (name is not None) else None
 
-    def time_taken(self):
+    def get_time_taken(self):
         t1 = time.perf_counter()
         return t1 - self._t0
 
     def display(self, t=None):
         if t is None:
-            t = self.time_taken()
+            t = self.get_time_taken()
 
         t_str = time_format(t)
         self._print("Time taken%s = %s" % (self._get_name_str(), t_str))
@@ -200,16 +200,16 @@ class Timer:
         return (" for `%s`" % self._name) if (self._name is not None) else ""
 
     def __enter__(self):
-        if self._verbose_entry:
+        if self._verbose_enter:
             self._print("Starting timer%s..." % self._get_name_str())
 
         self.reset()
         return self
 
     def __exit__(self, *args):
-        self.time_measured = self.time_taken()
+        self.time_taken = self.get_time_taken()
         if self._verbose_exit:
-            self.display(self.time_measured)
+            self.display(self.time_taken)
 
 class Counter:
     def __init__(self, init_count=0):
@@ -263,10 +263,10 @@ class TimeInterval(_Interval):
         self._timer = Timer()
 
     def ready(self):
-        return self._timer.time_taken() >= self._num_seconds_limit
+        return self._timer.get_time_taken() >= self._num_seconds_limit
 
     def reset(self):
-        t = self._timer.time_taken()
+        t = self._timer.get_time_taken()
         while self._num_seconds_limit < t:
             self._num_seconds_limit += self._num_seconds_interval
 
@@ -339,7 +339,7 @@ class TimeColumn(Column):
         self._timer = Timer()
 
     def update(self, data, level):
-        self._data_list.append(self._timer.time_taken())
+        self._data_list.append(self._timer.get_time_taken())
 
     def format_item(self, row_ind):
         t = self._data_list[row_ind]
@@ -782,7 +782,7 @@ def progress(
             i_str = str(i).rjust(i_str_len)
             fraction = i / total_len
             percent  = 100 * fraction
-            t_taken  = timer.time_taken()
+            t_taken  = timer.get_time_taken()
             t_total  = total_len * (t_taken / i)
             t_remain = t_total - t_taken
             str_elements = [

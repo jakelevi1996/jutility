@@ -134,15 +134,15 @@ def test_table_callback_level(print_level):
     table = util.Table(
         util.Column("epoch", width=8),
         util.CallbackColumn("c0", ".3f", width=10).set_callback(
-            lambda: 10 * timer.time_taken(),
+            lambda: 10 * timer.get_time_taken(),
             level=0,
         ),
         util.CallbackColumn("c1", ".3f", width=10).set_callback(
-            lambda: 100 * timer.time_taken(),
+            lambda: 100 * timer.get_time_taken(),
             level=1,
         ),
         util.CallbackColumn("c2", ".3f", width=10).set_callback(
-            lambda: 1000 * timer.time_taken(),
+            lambda: 1000 * timer.get_time_taken(),
             level=2,
         ),
         printer=printer,
@@ -393,17 +393,17 @@ def test_timer_context():
     with util.Timer("sleep", printer) as t:
         time.sleep(sleep_interval)
 
-    assert t.time_measured >= sleep_interval
+    assert t.time_taken >= sleep_interval
 
     with util.Timer(printer=printer) as t:
         time.sleep(sleep_interval)
 
-    assert t.time_measured >= sleep_interval
+    assert t.time_taken >= sleep_interval
 
-    with util.Timer("sleep 2", printer, verbose_entry=True) as t:
+    with util.Timer("sleep 2", printer, verbose_enter=True) as t:
         time.sleep(sleep_interval)
 
-    assert t.time_measured >= sleep_interval
+    assert t.time_taken >= sleep_interval
 
     with util.Timer("name 1", printer) as t:
         time.sleep(sleep_interval)

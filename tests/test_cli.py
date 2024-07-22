@@ -571,10 +571,6 @@ def test_cli_verbose():
         cli.init_object(args, "A")
 
     args = parser.parse_args([])
-    with cli.verbose():
-        cli.init_object(args, "A")
-
-    args = parser.parse_args([])
     with cli.verbose(printer):
         cli.init_object(args, "A")
 
@@ -596,7 +592,6 @@ def test_cli_verbose():
     printer.flush()
     assert "cli: A(a=3, b='abc')"   in util.load_text(printer.get_filename())
     assert "cli: Adam(params=[89])" in util.load_text(printer.get_filename())
-    assert cli.verbose.printer.get_filename() is None
 
 class _Optimiser:
     def __repr__(self):

@@ -35,6 +35,9 @@ class Arg:
         self.full_tag:  str = None
 
     def register_names(self, arg_dict, parent: "Arg"=None):
+        if self.full_name is not None:
+            raise RuntimeError("%s is already registered" % self)
+
         if parent is None:
             self.full_name = self.name
             self.full_tag = self.tag

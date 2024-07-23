@@ -16,8 +16,8 @@ def get_args_summary(args: "Namespace", replaces=None):
 class Arg:
     def __init__(
         self,
-        name,
-        tag=None,
+        name: str,
+        tag: str=None,
         **argparse_kwargs,
     ):
         """
@@ -69,7 +69,7 @@ class Arg:
 class ObjectArg(Arg):
     def __init__(
         self,
-        object_type,
+        object_type: type,
         *args: Arg,
         name: str=None,
         tag: str=None,
@@ -170,10 +170,10 @@ class ObjectArg(Arg):
 class ObjectChoice(ObjectArg):
     def __init__(
         self,
-        name,
+        name: str,
         *choices: ObjectArg,
         shared_args: list[Arg]=None,
-        default=None,
+        default: str=None,
         tag: str=None,
         init_requires: list[str]=None,
         init_parsed_kwargs: dict[str, str]=None,

@@ -528,7 +528,7 @@ def test_reset_object_cache():
         ),
         cli.Arg("y", default=4),
     )
-    with cli.verbose:
+    with cli.verbose(printer):
         args = parser.parse_args([])
         assert "y" in vars(args)
         assert args.y == 4

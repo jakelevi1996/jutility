@@ -554,6 +554,54 @@ def test_reset_object_cache():
         assert c3 is not c
         assert c3 is not c2
 
+def test_reset_object_cache_nested():
+    printer = util.Printer("test_reset_object_cache_nested", OUTPUT_DIR)
+
+    parser = get_nested_object_choice_parser()
+    parser.print_help(printer.get_file())
+    printer.hline()
+
+    with cli.verbose(printer):
+        argv = [
+            "--model=DeepSet",
+            "--model.encoder=Mlp",
+            "--seed=1234",
+        ]
+        args = parser.parse_args(argv)
+        assert "seed" in vars(args)
+        assert args.seed == 1234
+        assert "model.DeepSet" not in vars(args)
+        assert "model.encoder.Mlp" not in vars(args)
+
+        model = cli.init_object(args, "model")
+        assert "model.DeepSet" in vars(args)
+        assert "model.encoder.Mlp" in vars(args)
+        assert isinstance(model, DeepSet)
+        assert isinstance(model.encoder, Mlp)
+
+        model2 = cli.init_object(args, "model")
+        assert isinstance(model2, DeepSet)
+        assert model is model2
+        assert model.encoder is model2.encoder
+
+        args.reset_object_cache()
+        assert "seed" in vars(args)
+        assert args.seed == 1234
+        assert "model.DeepSet" not in vars(args)
+        assert "model.encoder.Mlp" not in vars(args)
+
+        model3 = cli.init_object(args, "model")
+        assert "model.DeepSet" in vars(args)
+        assert "model.encoder.Mlp" in vars(args)
+        assert isinstance(model3, DeepSet)
+        assert isinstance(model3.encoder, Mlp)
+        assert model is model2
+        assert model3 is not model
+        assert model3 is not model2
+        assert model.encoder is model2.encoder
+        assert model3.encoder is not model.encoder
+        assert model3.encoder is not model2.encoder
+
 def test_duplicate_names():
     with pytest.raises(ValueError):
         cli.ObjectParser(

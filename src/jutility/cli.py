@@ -288,6 +288,7 @@ class ObjectParser:
         args: Namespace = parser.parse_args(*args, **kwargs)
         args.set_parser(self)
         self._parsed_args_dict = vars(args)
+        self._initial_args_cache = set(self._parsed_args_dict.keys())
         return args
 
     def init_object(self, full_name, **extra_kwargs):
@@ -331,6 +332,11 @@ class ObjectParser:
             replaces=replaces,
         )
 
+    def reset_object_cache(self):
+        current_args_cache = set(self._parsed_args_dict.keys())
+        for k in (current_args_cache - self._initial_args_cache):
+            self._parsed_args_dict.pop(k)
+
     def __repr__(self):
         description = ",\n".join(repr(arg) for arg in self._arg_dict.values())
         return "%s(\n%s,\n)" % (type(self).__name__, util.indent(description))
@@ -347,6 +353,9 @@ class Namespace(argparse.Namespace):
 
     def get_parser(self):
         return self._parser
+
+    def reset_object_cache(self):
+        self._parser.reset_object_cache()
 
 class _Verbose:
     def __init__(self):

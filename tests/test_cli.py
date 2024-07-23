@@ -511,6 +511,49 @@ def test_nested_object_choice_parser():
     assert model.encoder.output_dim == 16
     assert model.encoder.hidden_dim == 100
 
+def test_reset_object_cache():
+    printer = util.Printer("test_init_object_cache", OUTPUT_DIR)
+
+    class C:
+        def __init__(self, x):
+            self.x = x
+
+        def __repr__(self):
+            return "C(x=%s)" % self.x
+
+    parser = cli.ObjectParser(
+        cli.ObjectArg(
+            C,
+            cli.Arg("x", default=3),
+        ),
+        cli.Arg("y", default=4),
+    )
+    with cli.verbose:
+        args = parser.parse_args([])
+        assert "y" in vars(args)
+        assert args.y == 4
+        assert "C.x" in vars(args)
+        assert "C" not in vars(args)
+
+        c: C = cli.init_object(args, "C")
+        assert "C" in vars(args)
+        assert c.x == 3
+
+        c2 = cli.init_object(args, "C")
+        assert c2 is c
+
+        args.reset_object_cache()
+        assert "y" in vars(args)
+        assert args.y == 4
+        assert "C.x" in vars(args)
+        assert "C" not in vars(args)
+
+        c3: C = cli.init_object(args, "C")
+        assert "C" in vars(args)
+        assert c2 is c
+        assert c3 is not c
+        assert c3 is not c2
+
 def test_duplicate_names():
     with pytest.raises(ValueError):
         cli.ObjectParser(

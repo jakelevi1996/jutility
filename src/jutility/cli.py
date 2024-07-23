@@ -183,7 +183,6 @@ class ObjectChoice(ObjectArg):
             shared_args = []
 
         self.name           = name
-        self.choices        = choices
         self.shared_args    = shared_args
         self.default        = default
         self.tag            = tag
@@ -205,7 +204,7 @@ class ObjectChoice(ObjectArg):
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         parser.add_argument(
             "--" + self.full_name,
-            choices=[arg.name for arg in self.choices],
+            choices=list(self.choice_dict.keys()),
             default=self.default,
             required=(True if (self.default is None) else False),
         )

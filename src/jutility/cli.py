@@ -70,8 +70,8 @@ class Arg:
 
     def __repr__(self):
         return (
-            "%s(full_name=\"%s\", full_tag=\"%s\")"
-            % (type(self).__name__, self.full_name, self.full_tag)
+            "%s(name=\"%s\", full_name=\"%s\", full_tag=\"%s\")"
+            % (type(self).__name__, self.name, self.full_name, self.full_tag)
         )
 
 class ObjectArg(Arg):

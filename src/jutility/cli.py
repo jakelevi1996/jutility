@@ -298,7 +298,7 @@ class ObjectParser:
                 % (full_name, sorted(self._arg_dict.keys()))
             )
 
-        object_arg: ObjectArg = self._arg_dict[full_name]
+        object_arg = self._arg_dict[full_name]
         return object_arg.init_object(self._parsed_args_dict, **extra_kwargs)
 
     def get_arg_dict(self):

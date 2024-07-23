@@ -24,10 +24,15 @@ class Arg:
         See
         https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.add_argument
         """
-        self.name               = name
-        self.tag                = tag
-        self.argparse_kwargs    = argparse_kwargs
-        self.args: list[Arg]    = []
+        self.argparse_kwargs = argparse_kwargs
+        self.args: list[Arg] = []
+        self.init_names(name, tag)
+
+    def init_names(self, name: str, tag: str):
+        self.name = name
+        self.tag  = tag
+        self.full_name: str = None
+        self.full_tag:  str = None
 
     def register_names(self, arg_dict, parent: "Arg"=None):
         if parent is None:
@@ -82,8 +87,7 @@ class ObjectArg(Arg):
 
         self.object_type = object_type
         self.args        = args
-        self.name        = name
-        self.tag         = tag
+        self.init_names(name, tag)
         self.set_init_attributes(
             init_requires,
             init_parsed_kwargs,
@@ -182,10 +186,9 @@ class ObjectChoice(ObjectArg):
         if shared_args is None:
             shared_args = []
 
-        self.name           = name
         self.shared_args    = shared_args
         self.default        = default
-        self.tag            = tag
+        self.init_names(name, tag)
         self.set_init_attributes(
             init_requires,
             init_parsed_kwargs,

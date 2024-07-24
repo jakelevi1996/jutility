@@ -769,6 +769,11 @@ def check_equal(value, expected_value, name=None):
         )
         raise RuntimeError(error_msg)
 
+def circular_iterator(input_iter):
+    while True:
+        for i in input_iter:
+            yield i
+
 def progress(
     input_iter,
     prefix="",

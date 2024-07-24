@@ -903,3 +903,13 @@ def test_repeated_column_names():
             util.Column("a"),
             util.Column("a"),
         )
+
+def test_circular_iterator():
+    printer = util.Printer("test_circular_iterator", OUTPUT_DIR)
+    rng = util.Seeder().get_rng("test_circular_iterator")
+
+    x = rng.integers(0, 100, 7)
+    x_iter = util.circular_iterator(x)
+
+    for i in range(50):
+        printer(i, next(x_iter))

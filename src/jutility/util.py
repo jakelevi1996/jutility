@@ -670,7 +670,10 @@ def load_pickle(full_path):
 def save_json(data, filename, dir_name=None, verbose=True, **kwargs):
     full_path = get_full_path(filename, dir_name, "json", verbose=verbose)
     kwargs.setdefault("indent", 4)
-    kwargs.setdefault("default", lambda k: None)
+    kwargs.setdefault(
+        "default",
+        (lambda x: list(x.flat) if isinstance(x, np.ndarray) else None),
+    )
     with open(full_path, "w") as f:
         json.dump(data, f, **kwargs)
 

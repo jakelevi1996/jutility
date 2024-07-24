@@ -536,7 +536,7 @@ class NoisyData:
 
         return all_x.flatten(), all_y.flatten()
 
-    def get_statistics(self, n_sigma):
+    def get_statistics(self, n_sigma=1):
         x = sorted(
             x_i for x_i in self._results_list_dict.keys()
             if len(self._results_list_dict[x_i]) > 0

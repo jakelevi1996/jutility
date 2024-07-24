@@ -685,6 +685,14 @@ def test_cli_verbose():
     assert "cli: A(a=3, b='abc')"   in util.load_text(printer.get_filename())
     assert "cli: Adam(params=[89])" in util.load_text(printer.get_filename())
 
+    cache_msg = "retrieving \"A\" from cache"
+    assert cache_msg not in util.load_text(printer.get_filename())
+    with cli.verbose(printer):
+        cli.init_object(args, "A", b="abc")
+
+    printer.flush()
+    assert cache_msg in util.load_text(printer.get_filename())
+
 class _Optimiser:
     def __repr__(self):
         return "%s(%s)" % (type(self).__name__, vars(self))

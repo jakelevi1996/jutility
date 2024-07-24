@@ -152,6 +152,9 @@ class ObjectArg(Arg):
 
     def init_object(self, parsed_args_dict, **extra_kwargs):
         if self.full_name in parsed_args_dict:
+            if verbose.is_verbose:
+                verbose.display_retrieve(self.full_name)
+
             return parsed_args_dict[self.full_name]
 
         kwargs = {
@@ -161,7 +164,7 @@ class ObjectArg(Arg):
         self.update_kwargs(kwargs, parsed_args_dict, extra_kwargs)
 
         if verbose.is_verbose:
-            verbose.display(self.object_type, kwargs)
+            verbose.display_init(self.object_type, kwargs)
 
         object_value = self.object_type(**kwargs)
         parsed_args_dict[self.full_name] = object_value
@@ -369,9 +372,12 @@ class _Verbose:
         self._printer = util.Printer()
         self._old_printer = self._printer
 
-    def display(self, object_type, kwargs: dict):
+    def display_init(self, object_type, kwargs: dict):
         arg_str = ", ".join("%s=%r" % (k, v) for k, v in kwargs.items())
         self._printer("cli: %s(%s)" % (object_type.__name__, arg_str))
+
+    def display_retrieve(self, full_name):
+        self._printer("cli: retrieving \"%s\" from cache" % full_name)
 
     def __call__(self, printer: util.Printer):
         self._printer = printer

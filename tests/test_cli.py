@@ -651,6 +651,16 @@ def test_arg_registered_twice():
             ),
         )
 
+    arg = cli.Arg("learning_rate", "lr", type=float, default=1e-3)
+    with pytest.raises(RuntimeError):
+        parser = cli.ObjectParser(
+            arg,
+            cli.ObjectArg(
+                Adam,
+                arg,
+            ),
+        )
+
 def test_cli_verbose():
     printer = util.Printer("test_cli_verbose", OUTPUT_DIR)
 

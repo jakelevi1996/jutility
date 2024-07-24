@@ -530,7 +530,7 @@ class NoisyData:
             for x, result_list in self._results_list_dict.items()
             for y in result_list
         ]
-        all_x, all_y = zip(*all_results_pairs)
+        all_x, all_y = np.split(np.array(all_results_pairs), 2, axis=1)
         if self._log_space_data:
             all_y = np.exp(all_y)
 
@@ -546,7 +546,7 @@ class NoisyData:
         if self._log_space_data:
             mean, ucb, lcb = np.exp([mean, ucb, lcb])
 
-        return x, mean, ucb, lcb
+        return np.array(x), mean, ucb, lcb
 
 class FunctionList:
     def __init__(self, *functions):

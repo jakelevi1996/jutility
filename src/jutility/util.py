@@ -538,8 +538,8 @@ class NoisyData:
 
     def get_statistics(self, n_sigma=1):
         x = sorted(
-            x_i for x_i in self._results_list_dict.keys()
-            if len(self._results_list_dict[x_i]) > 0
+            x_i for x_i, results_list in self._results_list_dict.items()
+            if len(results_list) > 0
         )
         results_list_list = [self._results_list_dict[x_i] for x_i in x]
         mean, ucb, lcb = confidence_bounds(results_list_list, n_sigma)

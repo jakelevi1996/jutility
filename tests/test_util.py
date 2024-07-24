@@ -596,37 +596,39 @@ def test_confidence_bounds():
     mp = plotting.MultiPlot(*subplots)
     mp.save("test_confidence_bounds", OUTPUT_DIR)
 
-@pytest.mark.parametrize("data_len", [23, 25])
-def test_confidence_bounds_downsample(data_len):
-    test_name = "test_confidence_bounds_downsample_%s" % data_len
-    printer = util.Printer(test_name, dir_name=OUTPUT_DIR)
+def test_confidence_bounds_split_dim():
+    num_split = 5
+    sp_list = []
+    for n in [3, 456]:
+        x = np.linspace(0, 5, n)
+        y = np.tile(np.exp(x), [3, 1])
+        assert list(x.shape) == [n]
+        assert list(y.shape) == [3, n]
 
-    x = list(range(data_len))
-
-    subplots = []
-    for ds in [1, 3, 5]:
         mean, ucb, lcb = util.confidence_bounds(
+            y,
+            split_dim=1,
+            num_split=num_split,
+        )
+        x_ds, _, _ = util.confidence_bounds(
             x,
             split_dim=0,
-            downsample_ratio=ds,
+            num_split=num_split,
         )
-        printer(mean, ucb, lcb, sep="\n", end="\n"+"*"*50+"\n")
-        sp = plotting.Subplot(
-            plotting.Line(x[::ds], mean, c="b", marker="o"),
-            plotting.FillBetween(x[::ds], ucb, lcb, c="b", alpha=0.3),
-            axis_properties=plotting.AxisProperties(title="ds = %s" % ds)
-        )
-        subplots.append(sp)
+        for i in [x_ds, mean, ucb, lcb]:
+            assert isinstance(i, np.ndarray)
+            assert list(i.shape) == [min(n, num_split)]
 
-    mp = plotting.MultiPlot(
-        *subplots,
-        figure_properties=plotting.FigureProperties(
-            num_rows=1,
-            title=test_name,
-            constrained_layout=True,
-        ),
-    )
-    mp.save(test_name, OUTPUT_DIR)
+        sp = plotting.Subplot(
+            plotting.Line(x, y[0], c="r", ls="--", z=40),
+            plotting.Line(x_ds, mean, a=1.0, z=30, c="b", marker="o"),
+            plotting.FillBetween(x_ds, lcb, ucb, a=0.2, z=10, c="b"),
+            title="n = %i" % n,
+        )
+        sp_list.append(sp)
+
+    mp = plotting.MultiPlot(*sp_list)
+    mp.save("test_confidence_bounds_split_dim", OUTPUT_DIR)
 
 def test_noisy_data():
     printer = util.Printer("test_noisy_data", OUTPUT_DIR)

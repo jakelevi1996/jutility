@@ -495,16 +495,13 @@ def confidence_bounds(
     data_list,
     n_sigma=1,
     split_dim=None,
-    downsample_ratio=1,
+    num_split=100,
 ):
     if split_dim is not None:
-        data_list = np.array(data_list)
-        num_split = int(data_list.shape[split_dim] / downsample_ratio)
-        split_len = num_split * downsample_ratio
-        new_data_list = np.split(data_list[:split_len], num_split, split_dim)
-        if len(data_list[split_len:]) > 0:
-            new_data_list.append(data_list[split_len:])
-        data_list = new_data_list
+        data_array = np.array(data_list)
+        num_split = min(num_split, data_array.shape[split_dim])
+        data_list = np.array_split(data_array, num_split, split_dim)
+
     mean = np.array([np.mean(x) for x in data_list])
     std  = np.array([np.std( x) for x in data_list])
     ucb = mean + (n_sigma * std)

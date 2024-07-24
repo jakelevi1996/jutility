@@ -672,7 +672,7 @@ def save_json(data, filename, dir_name=None, verbose=True, **kwargs):
     kwargs.setdefault("indent", 4)
     kwargs.setdefault(
         "default",
-        (lambda x: list(x.flat) if isinstance(x, np.ndarray) else None),
+        (lambda x: x.tolist() if isinstance(x, np.ndarray) else None),
     )
     with open(full_path, "w") as f:
         json.dump(data, f, **kwargs)

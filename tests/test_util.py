@@ -628,38 +628,37 @@ def test_confidence_bounds_downsample(data_len):
     )
     mp.save(test_name, OUTPUT_DIR)
 
-@pytest.mark.parametrize("plot_all_data", [True, False])
-def test_noisy_data(plot_all_data):
-    rng = util.Seeder().get_rng("test_noisy_data", plot_all_data)
-    noisy_data_blue = util.NoisyData()
-    noisy_data_red  = util.NoisyData()
-    x_list = np.linspace(0, 1)
+def test_noisy_data():
+    printer = util.Printer("test_noisy_data", OUTPUT_DIR)
+    rng = util.Seeder().get_rng("test_noisy_data")
+    noisy_data = util.NoisyData()
+    x_list = sorted(rng.uniform(-3, 3, size=20))
 
     for x in x_list:
         for num_repeats in range(rng.integers(10)):
-            noisy_data_blue.update(x, x + 0.04 * rng.normal())
-        for num_repeats in range(rng.integers(10)):
-            noisy_data_red.update(x, 0.3 + (0.3 * x) + (0.04 * rng.normal()))
+            noisy_data.update(x, x + 0.3 * rng.normal())
 
-    mp = plotting.plot(
-        *plotting.get_noisy_data_lines(
-            noisy_data_blue,
-            colour="b",
-            name="Blue data",
-            plot_all_data=plot_all_data,
-        ),
-        *plotting.get_noisy_data_lines(
-            noisy_data_red,
-            colour="r",
-            name="Red data",
-            plot_all_data=plot_all_data,
-        ),
-        plot_name="test_noisy_data, plot_all_data = %s" % plot_all_data,
+    printer(*noisy_data.get_all_data(), sep="\n")
+    printer.hline()
+    printer(*noisy_data.get_statistics(), sep="\n")
+    printer.hline()
+    printer(*noisy_data.get_statistics(1.5), sep="\n")
+
+    all_x, all_y = noisy_data.get_all_data()
+    x, mean, ucb, lcb = noisy_data.get_statistics()
+
+    for i in [all_x, all_y, x, mean, ucb, lcb]:
+        assert isinstance(i, np.ndarray)
+        assert len(i.shape) == 1
+
+    plotting.plot(
+        plotting.Scatter(all_x, all_y, label="Data", a=0.5, z=20, color="b"),
+        plotting.Line(x, mean, a=1.0, z=30, c="b"),
+        plotting.FillBetween(x, lcb, ucb, a=0.2, z=10, c="b"),
+        plotting.Legend(),
+        plot_name="test_noisy_data",
         dir_name=OUTPUT_DIR,
-        axis_properties=plotting.AxisProperties("x", "y", ylim=[-0.2, 1.2]),
-        legend=True,
     )
-    assert os.path.isfile(mp.filename)
 
 def test_noisy_log_data():
     rng = util.Seeder().get_rng("test_noisy_log_data")

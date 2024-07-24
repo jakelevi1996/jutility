@@ -534,7 +534,7 @@ class NoisyData:
         if self._log_space_data:
             all_y = np.exp(all_y)
 
-        return all_x, all_y
+        return all_x.flatten(), all_y.flatten()
 
     def get_statistics(self, n_sigma):
         x = sorted(

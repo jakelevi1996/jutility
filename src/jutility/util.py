@@ -213,7 +213,8 @@ class Timer:
 
 class Counter:
     def __init__(self, init_count=0):
-        self._count = init_count
+        self._init_count = init_count
+        self.reset()
 
     def __call__(self):
         count = self._count
@@ -222,6 +223,9 @@ class Counter:
 
     def get_value(self):
         return self._count
+
+    def reset(self):
+        self._count = self._init_count
 
 class _Interval:
     def ready(self):

@@ -785,7 +785,7 @@ def progress(
     if printer is None:
         printer = Printer()
     if print_interval is None:
-        print_interval = TimeInterval(0.5)
+        print_interval = TimeInterval(1)
 
     total_len = len(input_iter)
     i_str_len = len(str(total_len))

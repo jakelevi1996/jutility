@@ -221,8 +221,7 @@ class ObjectChoice(ObjectArg):
             arg.add_argparse_arguments(parser)
 
     def init_object(self, parsed_args_dict, **extra_kwargs):
-        chosen_name = parsed_args_dict[self.full_name]
-        chosen_arg = self.choice_dict[chosen_name]
+        chosen_arg = self.choice_dict[parsed_args_dict[self.full_name]]
         if chosen_arg.full_name in parsed_args_dict:
             return parsed_args_dict[chosen_arg.full_name]
 
@@ -236,8 +235,7 @@ class ObjectChoice(ObjectArg):
         return chosen_arg.init_object(parsed_args_dict, **kwargs)
 
     def get_arg_dict_keys(self, parsed_args_dict):
-        chosen_name = parsed_args_dict[self.full_name]
-        chosen_arg = self.choice_dict[chosen_name]
+        chosen_arg = self.choice_dict[parsed_args_dict[self.full_name]]
         protected = chosen_arg.get_protected_args()
         return (
             [self.full_name]

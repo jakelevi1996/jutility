@@ -311,14 +311,10 @@ class ObjectParser:
 
     def get_arg_dict(self):
         self._check_parsed()
-        arg_dict_keys = [
-            key
-            for arg in self._arg_list
-            for key in arg.get_arg_dict_keys(self._parsed_args_dict)
-        ]
         return {
             key: self._parsed_args_dict[key]
-            for key in arg_dict_keys
+            for arg in self._arg_list
+            for key in arg.get_arg_dict_keys(self._parsed_args_dict)
         }
 
     def set_arg_dict(self, arg_dict):

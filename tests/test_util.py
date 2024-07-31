@@ -788,23 +788,34 @@ def test_table_str():
 
     util.save_text(table, "test_table_str", OUTPUT_DIR)
 
-def test_table_remove_callbacks():
-    test_name = "test_table_remove_callbacks"
+def test_table_save_pickle():
+    test_name = "test_table_save_pickle"
+    printer = util.Printer(test_name, OUTPUT_DIR)
     table = util.Table(
         util.CallbackColumn("c", "s", 10).set_callback(
             lambda: 42,
         ),
         util.Column("d", "s", 10),
+        printer=printer,
     )
-    for _ in range(3):
-        table.update()
+    for i in range(3):
+        table.update(d=3*i+4)
 
     util.save_text(table, test_name, OUTPUT_DIR)
     with pytest.raises(AttributeError):
         util.save_pickle(table, test_name, OUTPUT_DIR)
 
-    table.remove_callbacks()
-    util.save_pickle(table, test_name, OUTPUT_DIR)
+    full_path = table.save_pickle(test_name, OUTPUT_DIR)
+
+    loaded_table = util.load_pickle(full_path)
+
+    assert isinstance(loaded_table, util.Table)
+    assert loaded_table is not table
+    assert loaded_table.get_data("c", "d") == table.get_data("c", "d")
+    assert str(loaded_table) == str(table)
+
+    printer.hline()
+    printer(str(loaded_table))
 
 def test_progress():
     printer = util.Printer("test_progress", OUTPUT_DIR)

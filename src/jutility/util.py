@@ -450,6 +450,13 @@ class Table:
             [data_table] = data_table
         return data_table
 
+    def save_pickle(self, filename, dir_name=None):
+        self._print = None
+        for column in self._column_list:
+            column.reset_callback()
+
+        return save_pickle(self, filename, dir_name)
+
     def save_json(self, filename, dir_name=None, name_list=None):
         if name_list is None:
             name_list = [column.name for column in self._column_list]
@@ -475,10 +482,6 @@ class Table:
 
         self._print_interval = old_print_interval
         return self
-
-    def remove_callbacks(self):
-        for column in self._column_list:
-            column.reset_callback()
 
     def __len__(self):
         return self._num_updates

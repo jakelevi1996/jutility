@@ -311,7 +311,7 @@ def test_object_choice():
     assert optimiser.beta == [0.9, 0.999]
     assert (
         cli.get_args_summary(args)
-        == "ne10op.ad.be0.9,0.999op.ad.lr0.001op.ad.wd0.1opadamse0"
+        == "ne10op.ad.be0.9,0.999op.ad.lr0.001op.ad.wd0.1opADAMse0"
     )
 
     args = parser.parse_args(["--optimiser=adam"])
@@ -348,7 +348,7 @@ def test_object_choice():
     assert optimiser.lr == 1e-2
     assert (
         cli.get_args_summary(args)
-        == "ne10op.lr0.01op.wd0opSgdse0"
+        == "ne10op.lr0.01op.wd0opSGDse0"
     )
 
     args = parser.parse_args(["--optimiser=Sgd", "--optimiser.lr=1e-3"])
@@ -476,7 +476,7 @@ def test_nested_object_choice_parser():
     printer(cli.get_args_summary(args))
     assert (
         cli.get_args_summary(args)
-        == "mo.en.hd100mo.en.nl3mo.enDeepSetmo.hd100mo.nl3moMlpne10se0"
+        == "mo.en.hd100mo.en.nl3mo.enDEEPSETmo.hd100mo.nl3moMLPne10se0"
     )
     with pytest.raises(ValueError):
         model = cli.init_object(args, "model")

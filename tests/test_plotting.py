@@ -614,3 +614,23 @@ def test_legend_labels():
         plot_name="test_legend_labels",
         dir_name=OUTPUT_DIR,
     )
+
+def test_axis_title_colour():
+    rng = util.Seeder().get_rng("test_axis_title_colour")
+
+    n = 25
+    x = np.linspace(0, 1, n)
+    f = lambda x: x + rng.normal(0, 0.1, n)
+
+    mp = plotting.MultiPlot(
+        *[
+            plotting.Subplot(
+                plotting.Line(x, f(x), c=c, marker="o"),
+                title="Plot title %i" % i,
+                title_colour=c,
+            )
+            for i, c in enumerate(["k", "r", "g", "b"])
+        ],
+        figsize=[8, 6],
+    )
+    mp.save("test_axis_title_colour", OUTPUT_DIR)

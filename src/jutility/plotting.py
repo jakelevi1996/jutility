@@ -412,6 +412,7 @@ class AxisProperties:
         axis_off=False,
         grid=True,
         title=None,
+        title_colour=None,
         wrap_title=True,
         colour=None,
     ):
@@ -429,6 +430,7 @@ class AxisProperties:
         self._axis_off = axis_off
         self._grid = grid
         self._title = title
+        self._title_colour = title_colour
         self._wrap_title = wrap_title
         self._colour = colour
 
@@ -465,9 +467,12 @@ class AxisProperties:
             for xtl in axis.get_xticklabels():
                 xtl.set(rotation=-45, ha="left")
         if self._title is not None:
+            colour_dict = dict()
+            if self._title_colour is not None:
+                colour_dict["color"] = self._title_colour
             if self._wrap_title:
                 self._title = util.wrap_string(self._title)
-            axis.set_title(self._title)
+            axis.set_title(self._title, **colour_dict)
         if self._colour is not None:
             axis.set_facecolor(self._colour)
 

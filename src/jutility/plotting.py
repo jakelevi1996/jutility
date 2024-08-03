@@ -25,6 +25,8 @@ SOFTWARE.
 import os
 import math
 import matplotlib.pyplot as plt
+import matplotlib.axes
+import matplotlib.figure
 import matplotlib.lines
 import matplotlib.patches
 import matplotlib.colors
@@ -41,7 +43,7 @@ class _Plottable:
         for k, v in self._get_default_kwargs().items():
             self._kwargs.setdefault(k, v)
 
-    def plot(self, axis):
+    def plot(self, axis: matplotlib.axes.Axes):
         raise NotImplementedError()
 
     def get_handle(self):
@@ -77,7 +79,7 @@ class Line(_Plottable):
     """
     See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html
     """
-    def plot(self, axis):
+    def plot(self, axis: matplotlib.axes.Axes):
         axis.plot(*self._args, **self._kwargs)
 
     def get_handle(self):
@@ -91,7 +93,7 @@ class HLine(Line):
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.axhline.html
     """
-    def plot(self, axis):
+    def plot(self, axis: matplotlib.axes.Axes):
         axis.axhline(*self._args, **self._kwargs)
 
 class VLine(Line):
@@ -99,21 +101,21 @@ class VLine(Line):
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.axvline.html
     """
-    def plot(self, axis):
+    def plot(self, axis: matplotlib.axes.Axes):
         axis.axvline(*self._args, **self._kwargs)
 
 class AxLine(Line):
     """
     See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.axline.html
     """
-    def plot(self, axis):
+    def plot(self, axis: matplotlib.axes.Axes):
         axis.axline(*self._args, **self._kwargs)
 
 class Quiver(Line):
     """
     See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.quiver.html
     """
-    def plot(self, axis):
+    def plot(self, axis: matplotlib.axes.Axes):
         if self._kwargs.pop("normalise", False):
             tol = self._kwargs.pop("tol", 1e-5)
             x, y, u, v = self._args[:4]
@@ -130,7 +132,7 @@ class Step(Line):
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.step.html
     """
-    def plot(self, axis):
+    def plot(self, axis: matplotlib.axes.Axes):
         axis.step(*self._args, **self._kwargs)
 
 class Circle(Line):
@@ -140,7 +142,7 @@ class Circle(Line):
     and
     https://matplotlib.org/stable/gallery/shapes_and_collections/artist_reference.html
     """
-    def plot(self, axis):
+    def plot(self, axis: matplotlib.axes.Axes):
         default_lw = matplotlib.rcParams["lines.linewidth"]
         self._kwargs.setdefault("lw", default_lw)
         self._kwargs.setdefault("fill", False)
@@ -152,7 +154,7 @@ class Scatter(_Plottable):
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.scatter.html
     """
-    def plot(self, axis):
+    def plot(self, axis: matplotlib.axes.Axes):
         axis.scatter(*self._args, **self._kwargs)
 
     def get_handle(self):
@@ -168,7 +170,7 @@ class Contour(_Plottable):
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.contour.html
     """
-    def plot(self, axis):
+    def plot(self, axis: matplotlib.axes.Axes):
         axis.contour(*self._args, **self._kwargs)
 
 class Text(_Plottable):
@@ -179,7 +181,7 @@ class Text(_Plottable):
     https://matplotlib.org/stable/gallery/text_labels_and_annotations/fancytextbox_demo.html
     https://matplotlib.org/stable/gallery/subplots_axes_and_figures/figure_size_units.html
     """
-    def plot(self, axis):
+    def plot(self, axis: matplotlib.axes.Axes):
         if self._kwargs.pop("center_align", False):
             self._kwargs["horizontalalignment"]   = "center"
             self._kwargs["verticalalignment"]     = "center"
@@ -199,7 +201,7 @@ class FillBetween(_Patch):
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.fill_between.html
     """
-    def plot(self, axis):
+    def plot(self, axis: matplotlib.axes.Axes):
         axis.fill_between(*self._args, **self._kwargs)
 
     def _get_default_kwargs(self):
@@ -210,7 +212,7 @@ class HSpan(FillBetween):
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.axhspan.html
     """
-    def plot(self, axis):
+    def plot(self, axis: matplotlib.axes.Axes):
         axis.axhspan(*self._args, **self._kwargs)
 
 class VSpan(FillBetween):
@@ -218,7 +220,7 @@ class VSpan(FillBetween):
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.axvspan.html
     """
-    def plot(self, axis):
+    def plot(self, axis: matplotlib.axes.Axes):
         axis.axvspan(*self._args, **self._kwargs)
 
 class Bar(_Patch):
@@ -226,7 +228,7 @@ class Bar(_Patch):
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.bar.html
     """
-    def plot(self, axis):
+    def plot(self, axis: matplotlib.axes.Axes):
         axis.bar(*self._args, **self._kwargs)
 
     def _get_default_kwargs(self):
@@ -237,7 +239,7 @@ class Hist(Bar):
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.hist.html
     """
-    def plot(self, axis):
+    def plot(self, axis: matplotlib.axes.Axes):
         axis.hist(*self._args, **self._kwargs)
 
 class ColourMesh(_Plottable):
@@ -245,7 +247,7 @@ class ColourMesh(_Plottable):
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.pcolormesh.html
     """
-    def plot(self, axis):
+    def plot(self, axis: matplotlib.axes.Axes):
         axis.pcolormesh(*self._args, **self._kwargs)
 
 class ContourFilled(_Plottable):
@@ -253,7 +255,7 @@ class ContourFilled(_Plottable):
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.contourf.html
     """
-    def plot(self, axis):
+    def plot(self, axis: matplotlib.axes.Axes):
         axis.contourf(*self._args, **self._kwargs)
 
 class ImShow(_Plottable):
@@ -261,7 +263,7 @@ class ImShow(_Plottable):
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.imshow.html
     """
-    def plot(self, axis):
+    def plot(self, axis: matplotlib.axes.Axes):
         axis_off = self._kwargs.pop("axis_off", True)
         axis.imshow(*self._args, **self._kwargs)
         if axis_off:
@@ -271,7 +273,7 @@ class Legend(_Plottable):
     """
     See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.legend.html
     """
-    def plot(self, axis):
+    def plot(self, axis: matplotlib.axes.Axes):
         zorder = self._kwargs.pop("zorder", None)
         legend = axis.legend(*self._args, **self._kwargs)
 
@@ -279,7 +281,7 @@ class Legend(_Plottable):
             legend.set_zorder(zorder)
 
 def get_noisy_data_lines(
-    noisy_data,
+    noisy_data: util.NoisyData,
     n_sigma=1,
     colour="b",
     name="Result",
@@ -438,7 +440,7 @@ class AxisProperties:
         if self._title is None:
             self._title = title
 
-    def apply(self, axis):
+    def apply(self, axis: matplotlib.axes.Axes):
         if self._xlabel is not None:
             axis.set_xlabel(self._xlabel)
         if self._ylabel is not None:
@@ -544,7 +546,7 @@ class FigureProperties:
         )
         return figure, axes.flat
 
-    def apply(self, figure):
+    def apply(self, figure: matplotlib.figure.Figure):
         if self._tight_layout:
             figure.tight_layout()
         if self._colour is not None:
@@ -561,13 +563,18 @@ class FigureProperties:
             figure.subplots_adjust(top=(1 - self._top_space))
 
 class Subplot:
-    def __init__(self, *lines, axis_properties=None, **axis_kwargs):
+    def __init__(
+        self,
+        *lines: _Plottable,
+        axis_properties=None,
+        **axis_kwargs,
+    ):
         self._lines = lines
         if axis_properties is None:
             axis_properties = AxisProperties(**axis_kwargs)
         self._axis_properties = axis_properties
 
-    def plot(self, axis):
+    def plot(self, axis: matplotlib.axes.Axes):
         for line in self._lines:
             line.plot(axis)
 
@@ -577,7 +584,7 @@ class LegendSubplot(Subplot):
     """
     See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.legend.html
     """
-    def __init__(self, *lines, **legend_kwargs):
+    def __init__(self, *lines: _Plottable, **legend_kwargs):
         handles = [
             line.get_handle() for line in lines if line.has_label()
         ]
@@ -585,7 +592,7 @@ class LegendSubplot(Subplot):
         legend_kwargs.setdefault("loc", "center")
         self._legend_properties = Legend(**legend_kwargs)
 
-    def plot(self, axis):
+    def plot(self, axis: matplotlib.axes.Axes):
         self._legend_properties.plot(axis)
         axis.set_axis_off()
 
@@ -601,7 +608,7 @@ class ColourBar(Subplot):
         self._colourbar = None
         self._kwargs = kwargs
 
-    def plot(self, axis):
+    def plot(self, axis: matplotlib.axes.Axes):
         if self._colourbar is not None:
             self._colourbar.remove()
 
@@ -616,11 +623,11 @@ class ColourBar(Subplot):
         )
 
 class Empty(Subplot):
-    def plot(self, axis):
+    def plot(self, axis: matplotlib.axes.Axes):
         axis.set_axis_off()
 
 def plot(
-    *lines,
+    *lines: _Plottable,
     axis_properties=None,
     legend=False,
     figsize=None,
@@ -658,7 +665,12 @@ def plot(
     return multi_plot
 
 class MultiPlot:
-    def __init__(self, *subplots, figure_properties=None, **figure_kwargs):
+    def __init__(
+        self,
+        *subplots: Subplot,
+        figure_properties=None,
+        **figure_kwargs,
+    ):
         if figure_properties is None:
             figure_properties = FigureProperties(**figure_kwargs)
 
@@ -749,7 +761,7 @@ class Gif:
         )
         self.add_pil_image_frame(pil_image)
 
-    def add_multiplot_frame(self, multi_plot):
+    def add_multiplot_frame(self, multi_plot: MultiPlot):
         self.add_pil_image_frame(multi_plot.get_pil_image())
 
     def add_plot_frame(self, *lines, save=False, **plot_kwargs):

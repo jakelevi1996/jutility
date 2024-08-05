@@ -517,7 +517,7 @@ def confidence_bounds(
 
 class NoisyData:
     def __init__(self, log_space_data=False):
-        self._results_list_dict = dict()
+        self._results_list_dict: dict[float, list] = dict()
         self._log_space_data = log_space_data
 
     def update(self, x, y):

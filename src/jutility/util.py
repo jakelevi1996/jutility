@@ -498,60 +498,6 @@ class Table:
     def latex(self):
         raise NotImplementedError()
 
-def confidence_bounds(
-    data_list,
-    n_sigma=1,
-    split_dim=None,
-    num_split=100,
-):
-    if split_dim is not None:
-        data_array = np.array(data_list)
-        num_split = min(num_split, data_array.shape[split_dim])
-        data_list = np.array_split(data_array, num_split, split_dim)
-
-    mean = np.array([np.mean(x) for x in data_list])
-    std  = np.array([np.std( x) for x in data_list])
-    ucb = mean + (n_sigma * std)
-    lcb = mean - (n_sigma * std)
-    return mean, ucb, lcb
-
-class NoisyData:
-    def __init__(self, log_space_data=False):
-        self._results_list_dict: dict[float, list] = dict()
-        self._log_space_data = log_space_data
-
-    def update(self, x, y):
-        if self._log_space_data:
-            y = np.log(y)
-        if x in self._results_list_dict:
-            self._results_list_dict[x].append(y)
-        else:
-            self._results_list_dict[x] = [y]
-
-    def get_all_data(self):
-        all_results_pairs = [
-            [x, y]
-            for x, result_list in self._results_list_dict.items()
-            for y in result_list
-        ]
-        all_x, all_y = np.split(np.array(all_results_pairs), 2, axis=1)
-        if self._log_space_data:
-            all_y = np.exp(all_y)
-
-        return all_x.flatten(), all_y.flatten()
-
-    def get_statistics(self, n_sigma=1):
-        x = sorted(
-            x_i for x_i, results_list in self._results_list_dict.items()
-            if len(results_list) > 0
-        )
-        results_list_list = [self._results_list_dict[x_i] for x_i in x]
-        mean, ucb, lcb = confidence_bounds(results_list_list, n_sigma)
-        if self._log_space_data:
-            mean, ucb, lcb = np.exp([mean, ucb, lcb])
-
-        return np.array(x), mean, ucb, lcb
-
 class FunctionList:
     def __init__(self, *functions):
         self._function_list = []

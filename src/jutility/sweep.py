@@ -178,7 +178,7 @@ class ParamSweeper:
     ):
         filename_list = []
         for parameter in self._param_list:
-            noisy_data = util.NoisyData()
+            noisy_data = plotting.NoisyData()
             param_dict = self._get_default_param_dict()
 
             for val in parameter.val_range:
@@ -205,10 +205,7 @@ class ParamSweeper:
                 param_default_str = str(parameter.default)
 
             plot_filename = plotting.plot(
-                *plotting.get_noisy_data_lines(
-                    noisy_data,
-                    n_sigma=self._n_sigma,
-                ),
+                *noisy_data.plot(n_sigma=self._n_sigma),
                 plotting.VLine(
                     parameter.default,
                     c="r",

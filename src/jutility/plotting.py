@@ -280,52 +280,68 @@ class Legend(_Plottable):
         if zorder is not None:
             legend.set_zorder(zorder)
 
-def get_noisy_data_lines(
-    noisy_data: util.NoisyData,
+def confidence_bounds(
+    data_list,
     n_sigma=1,
-    colour="b",
-    name="Result",
-    result_alpha=0.3,
-    results_line_kwargs=None,
-    mean_line_kwargs=None,
-    std_line_kwargs=None,
-    plot_all_data=True,
-    mean_std_labels=True,
+    split_dim=None,
+    num_split=100,
 ):
-    line_list = []
-    if plot_all_data:
-        all_x, all_y = noisy_data.get_all_data()
-        if results_line_kwargs is None:
-            results_line_kwargs = {
-                "color":    colour,
-                "label":    name,
-                "alpha":    result_alpha,
-                "zorder":   20,
-            }
-        results_line = Scatter(all_x, all_y, **results_line_kwargs)
-        line_list.append(results_line)
+    if split_dim is not None:
+        data_array = np.array(data_list)
+        num_split = min(num_split, data_array.shape[split_dim])
+        data_list = np.array_split(data_array, num_split, split_dim)
 
-    x, mean, ucb, lcb = noisy_data.get_statistics(n_sigma)
-    if mean_line_kwargs is None:
-        mean_line_kwargs = {
-            "color":    colour,
-            "zorder":   30,
-        }
-        if mean_std_labels:
-            mean_line_kwargs["label"] = "Mean"
-    if std_line_kwargs is None:
-        std_line_kwargs = {
-            "color":    colour,
-            "alpha":    0.3,
-            "zorder":   10,
-        }
-        if mean_std_labels:
-            std_line_kwargs["label"] = "$\\pm %s \\sigma$" % n_sigma
-    mean_line = Line(x, mean, **mean_line_kwargs)
-    std_line = FillBetween(x, ucb, lcb, **std_line_kwargs)
-    line_list.append(mean_line)
-    line_list.append(std_line)
-    return line_list
+    mean = np.array([np.mean(x) for x in data_list])
+    std  = np.array([np.std( x) for x in data_list])
+    ucb = mean + (n_sigma * std)
+    lcb = mean - (n_sigma * std)
+    return mean, ucb, lcb
+
+class NoisyData:
+    def __init__(self, log_space_data=False):
+        self._results_list_dict: dict[float, list] = dict()
+        self._log_space_data = log_space_data
+
+    def update(self, x, y):
+        if self._log_space_data:
+            y = np.log(y)
+        if x in self._results_list_dict:
+            self._results_list_dict[x].append(y)
+        else:
+            self._results_list_dict[x] = [y]
+
+    def get_all_data(self):
+        all_results_pairs = [
+            [x, y]
+            for x, result_list in self._results_list_dict.items()
+            for y in result_list
+        ]
+        all_x, all_y = np.split(np.array(all_results_pairs), 2, axis=1)
+        if self._log_space_data:
+            all_y = np.exp(all_y)
+
+        return all_x.flatten(), all_y.flatten()
+
+    def get_statistics(self, n_sigma=1):
+        x = sorted(
+            x_i for x_i, results_list in self._results_list_dict.items()
+            if len(results_list) > 0
+        )
+        results_list_list = [self._results_list_dict[x_i] for x_i in x]
+        mean, ucb, lcb = confidence_bounds(results_list_list, n_sigma)
+        if self._log_space_data:
+            mean, ucb, lcb = np.exp([mean, ucb, lcb])
+
+        return np.array(x), mean, ucb, lcb
+
+    def plot(self, c="b", label=None, n_sigma=1):
+        x, mean, ucb, lcb = self.get_statistics(n_sigma)
+        return (
+            Scatter([], [], label=label, color=c),
+            Scatter(*self.get_all_data(),   a=0.5, z=20, color=c),
+            Line(x, mean,                   a=1.0, z=30, c=c),
+            FillBetween(x, lcb, ucb,        a=0.2, z=10, c=c),
+        )
 
 class ColourPicker:
     """

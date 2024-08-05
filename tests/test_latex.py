@@ -190,8 +190,8 @@ def test_log_axes(log_x, log_y):
 @pytest.mark.parametrize("plot_all_data", [True, False])
 def test_noisy_data(plot_all_data):
     rng = util.Seeder().get_rng("test_noisy_data", plot_all_data)
-    noisy_data_blue = util.NoisyData()
-    noisy_data_red  = util.NoisyData()
+    noisy_data_blue = plotting.NoisyData()
+    noisy_data_red  = plotting.NoisyData()
     x_list = np.linspace(0, 1)
 
     for x in x_list:

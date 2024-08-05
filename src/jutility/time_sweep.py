@@ -27,7 +27,7 @@ def time_sweep(
         for exp in experiments
     }
     data_dict = {
-        repr(exp): util.NoisyData(log_space_data=True)
+        repr(exp): plotting.NoisyData(log_space_data=True)
         for exp in experiments
     }
     timer = util.Timer(verbose_exit=False)

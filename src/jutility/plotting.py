@@ -73,7 +73,7 @@ class _Plottable:
                 self._kwargs[k_full] = self._kwargs.pop(k)
 
     def has_label(self):
-        return ("label" in self._kwargs)
+        return (self._kwargs.get("label") is not None)
 
 class Line(_Plottable):
     """

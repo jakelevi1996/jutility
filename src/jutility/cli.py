@@ -292,7 +292,8 @@ class ObjectParser:
         """
         parser = self._get_argparse_parser()
         kwargs.setdefault("namespace", Namespace())
-        args: Namespace = parser.parse_args(*args, **kwargs)
+        args = parser.parse_args(*args, **kwargs)
+        assert isinstance(args, Namespace)
         args.set_parser(self)
         self._parsed_args_dict = vars(args)
         self._initial_args_cache = set(self._parsed_args_dict.keys())

@@ -675,6 +675,38 @@ def abbreviate_dictionary(
 
     return s_clean
 
+def combine_abbreviations(input_list: list[str]):
+    output_str = ""
+    while len(input_list) > 0:
+        next_char_set = set(s[0] for s in input_list)
+        if len(next_char_set) == 1:
+            [c] = next_char_set
+            output_str += c
+            input_list = [s[1:] for s in input_list]
+        else:
+            remaining_chars = set(c for s in input_list for c in s)
+            valid_next_chars = [
+                c for c in remaining_chars
+                if all((c in s) for s in input_list)
+            ]
+            if len(valid_next_chars) > 0:
+                max_ind_dict = {
+                    c: max(s.index(c) for s in input_list)
+                    for c in valid_next_chars
+                }
+                next_char = min(max_ind_dict, key=lambda c: max_ind_dict[c])
+                prefix_dict = {s: s.index(next_char) for s in input_list}
+            else:
+                prefix_dict = {s: len(s) for s in input_list}
+
+            prefix_list = [s[:n] for s, n in prefix_dict.items()]
+            input_list  = [s[n:] for s, n in prefix_dict.items()]
+            output_str += str(sorted(prefix_list))
+
+        input_list = [s for s in input_list if len(s) > 0]
+
+    return output_str
+
 def is_numeric(x):
     return any(isinstance(x, t) for t in [int, float, np.number])
 

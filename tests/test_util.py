@@ -806,3 +806,50 @@ def test_circular_iterator():
 
     for i in range(50):
         printer(i, next(x_iter))
+
+def test_combine_abbreviations():
+    printer = util.Printer("test_combine_abbreviations", OUTPUT_DIR)
+
+    input_lists = [
+        [
+            "abc1def9gh",
+            "abc22def88gh",
+            "abc333def777gh",
+        ],
+        [
+            "abc1def9gh",
+            "abc22def88gh22ij",
+            "abc333def777gh1ijkl",
+        ],
+        [
+            "abc1def9gh!",
+            "abc22def88gh22ij",
+            "abc333def777gh1ijkl",
+        ],
+        [
+            "abc1def9ghi",
+            "abc22def88gh22ij",
+            "abc333def777gh1ijkl",
+        ],
+        [
+            "Xabc1",
+            "YYabc22",
+            "ZZZabc333",
+        ],
+    ]
+    expected_outputs = [
+        "abc['1', '22', '333']def['777', '88', '9']gh",
+        "abc['1', '22', '333']def['777', '88', '9']gh['1', '22']ijkl",
+        "abc['1', '22', '333']def['777', '88', '9']gh['!', '1ijkl', '22ij']",
+        "abc['1', '22', '333']def['777', '88', '9']gh['', '1', '22']ijkl",
+        "['X', 'YY', 'ZZZ']abc['1', '22', '333']",
+    ]
+
+    assert len(input_lists) == len(expected_outputs)
+
+    for i, o in zip(input_lists, expected_outputs):
+        assert util.combine_abbreviations(i) == o
+
+        o_clean = util.clean_string(o).replace("_", "")
+        printer(*i, o, o_clean, sep="\n")
+        printer.hline()

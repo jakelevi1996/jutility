@@ -636,10 +636,12 @@ class FigureLegend(Subplot):
             line.get_handle() for line in lines if line.has_label()
         ]
         self._kwargs = {
-            "handles":  handles,
             "ncols":    ncols,
             "loc":      loc,
         }
+        if len(handles) > 0:
+            self._kwargs["handles"] = handles
+
         self._kwargs.update(legend_kwargs)
 
     def plot(self, figure: matplotlib.figure.Figure):

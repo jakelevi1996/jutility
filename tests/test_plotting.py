@@ -753,3 +753,24 @@ def test_noisy_log_data():
         ),
     )
     mp.save("test_noisy_log_data", OUTPUT_DIR)
+
+def test_figure_legend():
+    rng = util.Seeder().get_rng("test_figure_legend")
+
+    x = np.linspace(0, 1)
+    y1 = rng.normal(x,      0.1)
+    y2 = rng.normal(1 - x,  0.1)
+
+    mp = plotting.MultiPlot(
+        plotting.Subplot(plotting.Line(x, y1, c="b", label="y1")),
+        plotting.Subplot(plotting.Line(x, y2, c="r", label="y2")),
+        legend=plotting.FigureLegend(
+            plotting.Line(c="b", label="y1"),
+            plotting.Line(c="r", label="y2"),
+            ncols=2,
+        ),
+        title="Title",
+        bottom_space=0.2,
+        top_space=0.15,
+    )
+    mp.save("test_figure_legend", OUTPUT_DIR)

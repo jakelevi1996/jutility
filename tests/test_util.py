@@ -848,8 +848,7 @@ def test_combine_abbreviations():
     assert len(input_lists) == len(expected_outputs)
 
     for i, o in zip(input_lists, expected_outputs):
-        assert util.combine_abbreviations(i) == o
+        assert util.combine_abbreviations(i, clean=False) == o
 
-        o_clean = util.clean_string(o).replace("_", "")
-        printer(*i, o, o_clean, sep="\n")
+        printer(*i, o, util.combine_abbreviations(i), sep="\n")
         printer.hline()

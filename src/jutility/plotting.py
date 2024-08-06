@@ -512,6 +512,8 @@ class FigureProperties:
         title_colour=None,
         wrap_title=True,
         top_space=None,
+        bottom_space=None,
+        legend: "FigureLegend"=None
     ):
         self._num_rows = num_rows
         self._num_cols = num_cols
@@ -534,6 +536,8 @@ class FigureProperties:
         self._title_colour = title_colour
         self._wrap_title = wrap_title
         self._top_space = top_space
+        self._bottom_space = bottom_space
+        self._legend = legend
 
     def get_figure_and_axes(self, num_subplots):
         if self._num_rows is None:
@@ -577,6 +581,10 @@ class FigureProperties:
             )
         if self._top_space is not None:
             figure.subplots_adjust(top=(1 - self._top_space))
+        if self._bottom_space is not None:
+            figure.subplots_adjust(bottom=self._bottom_space)
+        if self._legend is not None:
+            self._legend.plot(figure)
 
 class Subplot:
     def __init__(
@@ -611,6 +619,31 @@ class LegendSubplot(Subplot):
     def plot(self, axis: matplotlib.axes.Axes):
         self._legend_properties.plot(axis)
         axis.set_axis_off()
+
+class FigureLegend(Subplot):
+    """
+    See
+    https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.legend.html
+    """
+    def __init__(
+        self,
+        *lines: _Plottable,
+        ncols=1,
+        loc="outside lower center",
+        **legend_kwargs,
+    ):
+        handles = [
+            line.get_handle() for line in lines if line.has_label()
+        ]
+        self._kwargs = {
+            "handles":  handles,
+            "ncols":    ncols,
+            "loc":      loc,
+        }
+        self._kwargs.update(legend_kwargs)
+
+    def plot(self, figure: matplotlib.figure.Figure):
+        figure.legend(**self._kwargs)
 
 class ColourBar(Subplot):
     """

@@ -846,6 +846,7 @@ def test_combine_abbreviations():
             "abcdef",
             "abc22def",
         ],
+        ["abcdef(g=h)"] * 5,
     ]
     expected_outputs = [
         "abc['1', '22', '333']def['777', '88', '9']gh",
@@ -854,7 +855,8 @@ def test_combine_abbreviations():
         "abc['1', '22', '333']def['777', '88', '9']gh['', '1', '22']ijkl",
         "['X', 'YY', 'ZZZ']abc['1', '22', '333']",
         "abc['', '1', '22', '3']d['', '33d']ef",
-        "abc['', '22']def"
+        "abc['', '22']def",
+        "abcdef(g=h)",
     ]
 
     assert len(input_lists) == len(expected_outputs)

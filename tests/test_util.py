@@ -807,8 +807,8 @@ def test_circular_iterator():
     for i in range(50):
         printer(i, next(x_iter))
 
-def test_combine_abbreviations():
-    printer = util.Printer("test_combine_abbreviations", OUTPUT_DIR)
+def test_merge_strings():
+    printer = util.Printer("test_merge_strings", OUTPUT_DIR)
 
     input_lists = [
         [
@@ -871,7 +871,7 @@ def test_combine_abbreviations():
     assert len(input_lists) == len(expected_outputs)
 
     for i, o in zip(input_lists, expected_outputs):
-        assert util.combine_abbreviations(i, clean=False) == o
+        assert util.merge_strings(i, clean=False) == o
 
-        printer(*i, o, util.combine_abbreviations(i), sep="\n")
+        printer(*i, o, util.merge_strings(i), sep="\n")
         printer.hline()

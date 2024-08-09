@@ -675,7 +675,7 @@ def abbreviate_dictionary(
 
     return s_clean
 
-def combine_abbreviations(input_list: list[str], clean=True):
+def merge_strings(input_list: list[str], clean=True):
     output_str = ""
     while len(input_list) > 0:
         next_char_set = set(s[0] for s in input_list)

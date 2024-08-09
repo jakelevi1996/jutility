@@ -701,7 +701,7 @@ def combine_abbreviations(input_list: list[str], clean=True):
 
             prefix_list = [s[:n] for s, n in prefix_dict.items()]
             input_list  = [s[n:] for s, n in prefix_dict.items()]
-            output_str += str(sorted(prefix_list))
+            output_str += str(sorted(set(prefix_list)))
 
         input_list = [s for s in input_list if len(s) > 0]
 

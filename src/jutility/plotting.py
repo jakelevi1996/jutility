@@ -378,11 +378,8 @@ class ColourPicker:
         return self._colours[colour_ind]
 
     def next(self):
-        c = self._colours[self._index]
+        c = self._colours[self._index % len(self._colours)]
         self._index += 1
-        if self._index >= len(self._colours):
-            self.reset()
-
         return c
 
     def reset(self):

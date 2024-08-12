@@ -729,7 +729,7 @@ def numpy_set_print_options(
 def log_range(start, stop, num=50, unique_integers=False, min_num=None):
     x = np.exp(np.linspace(np.log(start), np.log(stop), num))
     if unique_integers:
-        x = np.unique(np.array(np.round(x), int))
+        x = np.unique(np.int64(np.round(x)))
         max_num = x.max() - x.min() + 1
         if min_num is None:
             min_num = num

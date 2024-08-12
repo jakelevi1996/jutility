@@ -726,11 +726,15 @@ def numpy_set_print_options(
         threshold=threshold,
     )
 
-def log_range(x_lo, x_hi, num_x=50, unique_integers=False):
+def log_range(x_lo, x_hi, num_x=50, unique_integers=False, min_num_x=None):
     log_x_lo, log_x_hi = np.log([x_lo, x_hi])
     y = np.exp(np.linspace(log_x_lo, log_x_hi, num_x))
     if unique_integers:
         y = np.unique(np.array(y, int))
+    if min_num_x is None:
+        min_num_x = num_x
+    if (len(y) < min_num_x) and (num_x < x_hi - x_lo):
+        y = log_range(x_lo, x_hi, num_x + 1, unique_integers, min_num_x)
 
     return y
 

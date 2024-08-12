@@ -728,15 +728,15 @@ def numpy_set_print_options(
 
 def log_range(x_lo, x_hi, num_x=50, unique_integers=False, min_num_x=None):
     log_x_lo, log_x_hi = np.log([x_lo, x_hi])
-    y = np.exp(np.linspace(log_x_lo, log_x_hi, num_x))
+    x = np.exp(np.linspace(log_x_lo, log_x_hi, num_x))
     if unique_integers:
-        y = np.unique(np.array(y, int))
+        x = np.unique(np.array(x, int))
     if min_num_x is None:
         min_num_x = num_x
-    if (len(y) < min_num_x) and (num_x < x_hi - x_lo):
-        y = log_range(x_lo, x_hi, num_x + 1, unique_integers, min_num_x)
+    if (len(x) < min_num_x) and (num_x < x_hi - x_lo):
+        x = log_range(x_lo, x_hi, num_x + 1, unique_integers, min_num_x)
 
-    return y
+    return x
 
 def check_type(instance, expected_type, name=None):
     if not isinstance(instance, expected_type):

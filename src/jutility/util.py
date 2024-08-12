@@ -765,6 +765,7 @@ def progress(
     printer=None,
     print_interval=None,
     bar_length=25,
+    end="",
 ):
     if printer is None:
         printer = Printer()
@@ -794,7 +795,7 @@ def progress(
                 bar = ("*" * num_done_chars) + ("-" * num_remain_chars)
                 str_elements.append(bar)
 
-            printer(" | ".join(str_elements), end="")
+            printer(" | ".join(str_elements), end=end)
             print_interval.reset()
         if i == total_len:
             printer()

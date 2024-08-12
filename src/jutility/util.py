@@ -797,7 +797,7 @@ def progress(
 
             printer(" | ".join(str_elements), end=end)
             print_interval.reset()
-        if i == total_len:
+        if (i == total_len) and (end == ""):
             printer()
 
         yield element

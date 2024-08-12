@@ -730,7 +730,7 @@ def log_range(x_lo, x_hi, num_x=50, unique_integers=False, min_num_x=None):
     log_x_lo, log_x_hi = np.log([x_lo, x_hi])
     x = np.exp(np.linspace(log_x_lo, log_x_hi, num_x))
     if unique_integers:
-        x = np.unique(np.array(x, int))
+        x = np.unique(np.array(np.round(x), int))
     if min_num_x is None:
         min_num_x = num_x
     if (len(x) < min_num_x) and (num_x < x_hi - x_lo):

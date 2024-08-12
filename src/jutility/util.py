@@ -727,8 +727,7 @@ def numpy_set_print_options(
     )
 
 def log_range(x_lo, x_hi, num_x=50, unique_integers=False, min_num_x=None):
-    log_x_lo, log_x_hi = np.log([x_lo, x_hi])
-    x = np.exp(np.linspace(log_x_lo, log_x_hi, num_x))
+    x = np.exp(np.linspace(np.log(x_lo), np.log(x_hi), num_x))
     if unique_integers:
         x = np.unique(np.array(np.round(x), int))
     if min_num_x is None:

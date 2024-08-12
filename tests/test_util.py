@@ -518,6 +518,9 @@ def test_log_range():
     assert len(util.log_range(10, 100, 50, True)) == 50
     assert len(util.log_range(10, 100, 50, True, 0)) == 45
     assert len(util.log_range(10, 12, 10, True)) == 3
+    assert len(util.log_range(10.1, 12.2, 10, True)) == 3
+    assert len(util.log_range(10.2, 12.1, 10, True)) == 3
+    assert len(util.log_range(10.2, 12.9, 10, True)) == 4
     assert util.log_range(10, 12, 10, True).dtype == np.int64
     assert util.log_range(10, 12, 10, False).dtype == np.float64
 

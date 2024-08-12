@@ -730,10 +730,11 @@ def log_range(start, stop, num=50, unique_integers=False, min_num=None):
     x = np.exp(np.linspace(np.log(start), np.log(stop), num))
     if unique_integers:
         x = np.unique(np.array(np.round(x), int))
-    if min_num is None:
-        min_num = num
-    if (len(x) < min_num) and (num < stop - start):
-        x = log_range(start, stop, num + 1, unique_integers, min_num)
+        max_num = x.max() - x.min() + 1
+        if min_num is None:
+            min_num = num
+        if (len(x) < min_num) and (len(x) < max_num):
+            x = log_range(start, stop, num + 1, unique_integers, min_num)
 
     return x
 

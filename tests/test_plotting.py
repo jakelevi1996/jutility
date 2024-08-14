@@ -714,10 +714,12 @@ def test_noisy_data():
         assert isinstance(i, np.ndarray)
         assert len(i.shape) == 1
 
+    x = np.array([0, 5])
+    y = noisy_data.predict(x)
+
     plotting.plot(
-        plotting.Scatter(all_x, all_y, label="Data", a=0.5, z=20, color="b"),
-        plotting.Line(x, mean, a=1.0, z=30, c="b"),
-        plotting.FillBetween(x, lcb, ucb, a=0.2, z=10, c="b"),
+        *noisy_data.plot("b", "Data"),
+        plotting.AxLine([x[0], y[0]], [x[1], y[1]], ls="--"),
         plotting.Legend(),
         plot_name="test_noisy_data",
         dir_name=OUTPUT_DIR,

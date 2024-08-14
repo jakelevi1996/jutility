@@ -343,6 +343,20 @@ class NoisyData:
             FillBetween(x, lcb, ucb,        a=0.2, z=10, c=c),
         )
 
+    def predict(self, x_pred: np.ndarray, eps=1e-5):
+        x, y = self.get_all_data()
+
+        xm = x.mean()
+        ym = y.mean()
+        xc = x - xm
+        yc = y - ym
+
+        w = np.sum(yc * xc) / (np.sum(xc * xc) + eps)
+        b = ym - w * xm
+        y_pred = w * x_pred + b
+
+        return y_pred
+
 class ColourPicker:
     """
     See https://matplotlib.org/stable/users/explain/colors/colormaps.html

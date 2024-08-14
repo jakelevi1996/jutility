@@ -782,7 +782,7 @@ def test_noisy_data_predict_log():
 
             sp = plotting.Subplot(
                 *data.plot("b", "Data"),
-                plotting.AxLine([x[0], y[0]], [x[1], y[1]], ls="--"),
+                plotting.AxLine(*zip(x, y), ls="--"),
                 log_xscale=logx,
                 log_yscale=logy,
                 title="logx=%s, logy=%s" % (logx, logy),

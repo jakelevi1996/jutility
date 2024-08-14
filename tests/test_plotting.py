@@ -756,6 +756,42 @@ def test_noisy_log_data():
     )
     mp.save("test_noisy_log_data", OUTPUT_DIR)
 
+def test_noisy_data_predict_log():
+    rng = util.Seeder().get_rng("test_noisy_data_predict_log")
+    printer = util.Printer("test_noisy_data_predict_log", OUTPUT_DIR)
+    subplots = []
+    for logx in [False, True]:
+        for logy in [False, True]:
+            data = plotting.NoisyData(logy)
+
+            for x in np.linspace(0, 3, 20):
+                for _ in range(rng.integers(2, 10)):
+                    x_data = x
+                    y_data = 0.3 + 2.1*x + 0.1*rng.normal()
+                    if logx:
+                        x_data = np.exp(x_data)
+                    if logy:
+                        y_data = np.exp(y_data)
+
+                    data.update(x_data, y_data)
+
+            x = np.array([1, 6])
+            y = data.predict(x, logx, logy)
+            printer(logx, logy, *data.get_all_data(), sep="\n")
+            printer.hline()
+
+            sp = plotting.Subplot(
+                *data.plot("b", "Data"),
+                plotting.AxLine([x[0], y[0]], [x[1], y[1]], ls="--"),
+                log_xscale=logx,
+                log_yscale=logy,
+                title="logx=%s, logy=%s" % (logx, logy),
+            )
+            subplots.append(sp)
+
+    mp = plotting.MultiPlot(*subplots)
+    mp.save("test_noisy_data_predict_log", OUTPUT_DIR)
+
 @pytest.mark.parametrize("handles", [True, False])
 def test_figure_legend(handles):
     test_name = "test_figure_legend, handles=%s" % handles

@@ -343,8 +343,13 @@ class NoisyData:
             FillBetween(x, lcb, ucb,        a=0.2, z=10, c=c),
         )
 
-    def predict(self, x_pred: np.ndarray, eps=1e-5):
+    def predict(self, x_pred: np.ndarray, logx=False, logy=False, eps=1e-5):
         x, y = self.get_all_data()
+        if logx:
+            x_pred = np.log(x_pred)
+            x = np.log(x)
+        if logy:
+            y = np.log(y)
 
         xm = x.mean()
         ym = y.mean()
@@ -354,6 +359,9 @@ class NoisyData:
         w = np.sum(yc * xc) / (np.sum(xc * xc) + eps)
         b = ym - w * xm
         y_pred = w * x_pred + b
+
+        if logy:
+            y_pred = np.exp(y_pred)
 
         return y_pred
 

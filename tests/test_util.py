@@ -388,7 +388,7 @@ def test_time_format():
 
 def test_timer_context():
     printer = util.Printer("test_timer", dir_name=OUTPUT_DIR)
-    sleep_interval = 0.1
+    sleep_interval = 0.01
 
     with util.Timer("sleep", printer) as t:
         time.sleep(sleep_interval)
@@ -407,7 +407,6 @@ def test_timer_context():
 
     with util.Timer("name 1", printer) as t:
         time.sleep(sleep_interval)
-        t.display()
         t.set_name("name 2")
 
 def test_intervals():

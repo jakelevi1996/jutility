@@ -405,6 +405,12 @@ def test_timer_context():
 
     assert t.time_taken >= sleep_interval
 
+    with util.Timer("hline", printer, hline=True) as t:
+        printer("In Timer context")
+        time.sleep(sleep_interval)
+
+    assert t.time_taken >= sleep_interval
+
     with util.Timer("name 1", printer) as t:
         time.sleep(sleep_interval)
         t.set_name("name 2")

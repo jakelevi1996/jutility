@@ -406,12 +406,12 @@ class Table:
             column.update(kwargs.get(name), level)
 
         if level > self._print_level:
-            self.print_last(force_print=True)
+            self.print_last(level)
             self._print_interval.full_reset()
 
         if level == self._print_level:
             if self._print_interval.ready():
-                self.print_last(force_print=True)
+                self.print_last(level)
                 self._print_interval.reset()
 
         self._num_updates += 1
@@ -430,8 +430,8 @@ class Table:
         row_str = " | ".join(value_list)
         return row_str
 
-    def print_last(self, level=0, force_print=False):
-        if (level >= self._print_level) or force_print:
+    def print_last(self, level=0):
+        if level >= self._print_level:
             self._print(self.format_row(-1))
 
     def get_data(self, *names, filter_none=True, unpack_single=True):

@@ -940,5 +940,3 @@ def test_force_print_table(print_level):
     check_num_lines(17, 5)
     table.print_last(level=-1)
     check_num_lines(17, 5)
-    table.print_last(force_print=True)
-    check_num_lines(18, 6)

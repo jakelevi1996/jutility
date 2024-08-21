@@ -1,8 +1,8 @@
 import pytest
 from jutility import util, cli
-import tests
+import test_utils
 
-OUTPUT_DIR = tests.get_output_dir("test_cli")
+OUTPUT_DIR = test_utils.get_output_dir("test_cli")
 
 def get_parser():
     parser = cli.ObjectParser(

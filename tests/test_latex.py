@@ -2,9 +2,9 @@ import os
 import numpy as np
 import pytest
 from jutility import latex, plotting, util
-import tests
+import test_utils
 
-OUTPUT_DIR = tests.get_output_dir("test_latex")
+OUTPUT_DIR = test_utils.get_output_dir("test_latex")
 
 @pytest.mark.parametrize("indent_str", [None, "+ "])
 @pytest.mark.parametrize("initial_indent", range(3))

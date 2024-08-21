@@ -2,9 +2,9 @@ import os
 import numpy as np
 import pytest
 from jutility import plotting, util
-import tests
+import test_utils
 
-OUTPUT_DIR = tests.get_output_dir("test_plotting")
+OUTPUT_DIR = test_utils.get_output_dir("test_plotting")
 
 def test_plot_lines():
     line_list = [

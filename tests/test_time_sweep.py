@@ -3,9 +3,9 @@ import time
 import numpy as np
 import pytest
 from jutility import util, plotting, time_sweep
-import tests
+import test_utils
 
-OUTPUT_DIR = tests.get_output_dir("test_time_sweep")
+OUTPUT_DIR = test_utils.get_output_dir("test_time_sweep")
 
 def test_time_sweep():
     rng = util.Seeder().get_rng("test_time_sweep")

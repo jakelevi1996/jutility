@@ -2,9 +2,9 @@ import os
 import numpy as np
 import pytest
 from jutility import transform, plotting, util
-import tests
+import test_utils
 
-OUTPUT_DIR = tests.get_output_dir("test_transform")
+OUTPUT_DIR = test_utils.get_output_dir("test_transform")
 
 TOL = 1e-8
 

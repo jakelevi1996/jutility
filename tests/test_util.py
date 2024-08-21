@@ -292,6 +292,16 @@ def test_printer():
 
     assert os.path.isfile(os.path.join(OUTPUT_DIR, "test_printer.txt"))
 
+def test_printer_read():
+    printer = util.Printer(filename="test_printer_read", dir_name=OUTPUT_DIR)
+
+    printer(123)
+    printer("Hello", "world")
+    printer("x", "y", "z", sep="\n---\n", end="\nend")
+    printer()
+
+    assert printer.read() == "123\nHello world\nx\n---\ny\n---\nz\nend\n"
+
 def test_seeder():
     assert util.Seeder().get_seed("123") == util.Seeder().get_seed("123")
     assert util.Seeder().get_seed("123") != util.Seeder().get_seed("321")

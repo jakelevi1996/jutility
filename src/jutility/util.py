@@ -143,8 +143,9 @@ class Printer:
             self._file.flush()
 
     def read(self):
-        self.flush()
-        return load_text(self.get_filename())
+        if self._file is not None:
+            self.flush()
+            return load_text(self.get_filename())
 
     def close(self):
         if self._file is not None:

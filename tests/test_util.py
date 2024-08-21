@@ -293,6 +293,11 @@ def test_printer():
     assert os.path.isfile(os.path.join(OUTPUT_DIR, "test_printer.txt"))
 
 def test_printer_read():
+    printer = util.Printer()
+    assert printer.read() is None
+    printer = util.Printer(filename="test_printer_read", dir_name=OUTPUT_DIR)
+    assert printer.read() == ""
+
     printer = util.Printer(filename="test_printer_read", dir_name=OUTPUT_DIR)
 
     printer(123)

@@ -900,3 +900,45 @@ def test_merge_strings():
 
         printer(*i, o, util.merge_strings(i), sep="\n")
         printer.hline()
+
+@pytest.mark.parametrize("print_level", [0, 1])
+def test_force_print_table(print_level):
+    test_name = "test_force_print_table, print_level = %i" % print_level
+    printer = util.Printer(test_name, OUTPUT_DIR)
+    rng = util.Seeder().get_rng(test_name)
+
+    table = util.Table(
+        util.Column("x", width=-5),
+        util.Column("y", width=-5),
+        util.Column("z", width=-5),
+        printer=printer,
+        print_level=print_level,
+    )
+
+    for _ in range(10):
+        table.update(
+            x=rng.integers(10),
+            y=rng.integers(10),
+            z=rng.integers(10),
+        )
+
+    def check_num_lines(nl0, nl1):
+        num_lines = len(printer.read().split("\n"))
+        if print_level == 0:
+            assert num_lines == nl0
+        if print_level == 1:
+            assert num_lines == nl1
+
+    check_num_lines(13, 3)
+    table.print_last()
+    check_num_lines(14, 3)
+    table.print_last(level=1)
+    check_num_lines(15, 4)
+    table.print_last(level=2)
+    check_num_lines(16, 5)
+    table.print_last(level=0)
+    check_num_lines(17, 5)
+    table.print_last(level=-1)
+    check_num_lines(17, 5)
+    table.print_last(force_print=True)
+    check_num_lines(18, 6)

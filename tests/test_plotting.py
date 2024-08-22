@@ -20,7 +20,7 @@ def test_plot_lines():
         dir_name=OUTPUT_DIR,
         axis_properties=plotting.AxisProperties(xlabel="x", ylabel="y"),
     )
-    assert os.path.isfile(mp.filename)
+    assert os.path.isfile(mp.full_path)
 
 def test_line_shapes_defaults():
     nx = 150
@@ -72,7 +72,7 @@ def test_plot_fill():
         dir_name=OUTPUT_DIR,
         axis_properties=plotting.AxisProperties(xlabel="x", ylabel="y"),
     )
-    assert os.path.isfile(mp.filename)
+    assert os.path.isfile(mp.full_path)
 
 def test_legend():
     line_list = [
@@ -97,7 +97,7 @@ def test_legend():
         ylabel="y",
         legend=True,
     )
-    assert os.path.isfile(mp.filename)
+    assert os.path.isfile(mp.full_path)
 
 def test_plot_bar():
     x1 = "Red" * 10
@@ -112,7 +112,7 @@ def test_plot_bar():
         rotate_xticklabels=True,
         legend=True,
     )
-    assert os.path.isfile(mp.filename)
+    assert os.path.isfile(mp.full_path)
 
 def test_log_axes():
     x1 = [1, 2, 3, 4, 5, 6]
@@ -145,7 +145,7 @@ def test_log_axes():
     sp_list.append(sp)
     mp = plotting.MultiPlot(*sp_list, num_rows=1)
     mp.save("test_log_axes", OUTPUT_DIR)
-    assert os.path.isfile(mp.filename)
+    assert os.path.isfile(mp.full_path)
 
 @pytest.mark.parametrize("num_colours, cyclic", [[5, True], [7, False]])
 def test_colour_picker(num_colours, cyclic):
@@ -166,7 +166,7 @@ def test_colour_picker(num_colours, cyclic):
         dir_name=OUTPUT_DIR,
         legend=True,
     )
-    assert os.path.isfile(mp.filename)
+    assert os.path.isfile(mp.full_path)
 
 def test_colour_picker_next():
     num_colours = 5
@@ -187,7 +187,7 @@ def test_colour_picker_next():
         dir_name=OUTPUT_DIR,
         legend=True,
     )
-    assert os.path.isfile(mp.filename)
+    assert os.path.isfile(mp.full_path)
 
 def test_title():
     title = (
@@ -210,7 +210,7 @@ def test_title():
         ylabel="$x_2$",
         legend=True,
     )
-    assert os.path.isfile(mp.filename)
+    assert os.path.isfile(mp.full_path)
 
 @pytest.mark.parametrize("num_subplots", range(1, 9))
 def test_multiplot(num_subplots):
@@ -237,7 +237,7 @@ def test_multiplot(num_subplots):
         ),
     )
     mp.save(plot_name, OUTPUT_DIR)
-    assert os.path.isfile(mp.filename)
+    assert os.path.isfile(mp.full_path)
 
 @pytest.mark.parametrize("save_frames", [True, False])
 def test_gif_add_plot_frame(save_frames):
@@ -259,7 +259,7 @@ def test_gif_add_plot_frame(save_frames):
         )
 
     gif.save(output_name, OUTPUT_DIR, frame_duration_ms=500)
-    assert os.path.isfile(gif.filename)
+    assert os.path.isfile(gif.full_path)
 
 def test_gif_add_image_file_frame():
     rng = util.Seeder().get_rng("test_gif_add_image_file_frame")
@@ -277,13 +277,13 @@ def test_gif_add_image_file_frame():
             ylim=[-0.2, 1.2],
             legend=True,
         )
-        filename_list.append(mp.filename)
+        filename_list.append(mp.full_path)
 
     gif = plotting.Gif()
     for f in filename_list:
         gif.add_image_file_frame(os.path.basename(f), os.path.dirname(f))
     gif.save(output_name, OUTPUT_DIR, frame_duration_ms=500)
-    assert os.path.isfile(gif.filename)
+    assert os.path.isfile(gif.full_path)
 
 @pytest.mark.parametrize("constrained_layout", [True, False])
 def test_colourbar(constrained_layout):
@@ -311,7 +311,7 @@ def test_colourbar(constrained_layout):
         ),
     )
     mp.save(plot_name, OUTPUT_DIR)
-    assert os.path.isfile(mp.filename)
+    assert os.path.isfile(mp.full_path)
 
 def test_quiver():
     n = 25
@@ -331,7 +331,7 @@ def test_quiver():
         figure_properties=plotting.FigureProperties(figsize=[10, 4])
     )
     mp.save(plot_name="test_quiver", dir_name=OUTPUT_DIR)
-    assert os.path.isfile(mp.filename)
+    assert os.path.isfile(mp.full_path)
 
 def test_text():
     plotting.plot(

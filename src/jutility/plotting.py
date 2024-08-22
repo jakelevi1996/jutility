@@ -754,7 +754,7 @@ class MultiPlot:
 
         figure_properties.apply(self._fig)
 
-        self.filename = None
+        self.full_path = None
 
     def save(
         self,
@@ -770,13 +770,13 @@ class MultiPlot:
         if file_ext is None:
             file_ext = "pdf" if pdf else "png"
 
-        self.filename = util.get_full_path(
+        self.full_path = util.get_full_path(
             plot_name,
             dir_name,
             file_ext=file_ext,
             verbose=verbose,
         )
-        self._fig.savefig(self.filename)
+        self._fig.savefig(self.full_path)
 
         if close:
             self.close()
@@ -911,7 +911,7 @@ class Gif:
         if output_name is None:
             output_name = "Output"
 
-        self.filename = util.get_full_path(
+        self.full_path = util.get_full_path(
             output_name,
             dir_name,
             file_ext="gif",
@@ -922,7 +922,7 @@ class Gif:
             n_loops = 0
 
         self._frame_list[0].save(
-            self.filename,
+            self.full_path,
             format="gif",
             save_all=True,
             append_images=self._frame_list[1:],

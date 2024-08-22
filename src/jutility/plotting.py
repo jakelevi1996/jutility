@@ -781,6 +781,8 @@ class MultiPlot:
         if close:
             self.close()
 
+        return self.full_path
+
     def get_rgb_bytes(self):
         self._fig.canvas.draw()
         rgb_bytes       = self._fig.canvas.tostring_rgb()
@@ -930,6 +932,8 @@ class Gif:
             optimise=optimise,
             loop=n_loops,
         )
+
+        return self.full_path
 
 def set_latex_params(use_tex=True):
     latex_params_dict = {

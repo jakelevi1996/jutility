@@ -717,6 +717,67 @@ def test_cli_verbose():
     printer.flush()
     assert cache_msg in util.load_text(printer.get_filename())
 
+def test_object_choice_nested_tags():
+    printer = util.Printer("test_object_choice_nested_tags", OUTPUT_DIR)
+    cli.verbose.set_printer(printer)
+
+    class C:
+        def __init__(self, a, b, s):
+            self.a = a
+            self.b = b
+            self.s = s
+
+    class D:
+        def __init__(self, e, f, s):
+            self.e = e
+            self.f = f
+            self.s = s
+
+    class F:
+        def __init__(self, g):
+            self.g = g
+
+        def __repr__(self):
+            return "F(g=%r)" % self.g
+
+    parser = cli.ObjectParser(
+        cli.ObjectChoice(
+            "model",
+            cli.ObjectArg(
+                C,
+                cli.Arg("a", "a", default=1),
+                cli.Arg("b", "b", default=2),
+                tag="c",
+            ),
+            cli.ObjectArg(
+                D,
+                cli.Arg("e", "e", default=3),
+                cli.ObjectArg(
+                    F,
+                    cli.Arg("g", "g", default=4),
+                    name="f",
+                    tag="f",
+                ),
+                cli.Arg("s", "s", default=5),
+                tag="d",
+            ),
+            shared_args=[cli.Arg("s", "s", default=6)],
+            tag="m",
+        ),
+    )
+
+    args = parser.parse_args(["--model=C"])
+    printer(cli.get_arg_dict(args))
+    printer(cli.get_args_summary(args))
+    with cli.verbose:
+        cli.init_object(args, "model")
+
+    args = parser.parse_args(["--model=D"])
+    printer(cli.get_arg_dict(args))
+    printer(cli.get_args_summary(args))
+    with cli.verbose:
+        cli.init_object(args, "model")
+
 class _Optimiser:
     def __repr__(self):
         return "%s(%s)" % (type(self).__name__, vars(self))

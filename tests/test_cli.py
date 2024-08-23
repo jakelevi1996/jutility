@@ -772,11 +772,17 @@ def test_object_choice_nested_tags():
     with cli.verbose:
         cli.init_object(args, "model")
 
+    assert cli.get_args_summary(args) == "m.c.a1m.c.b2m.s6mC"
+    # assert cli.get_args_summary(args) == "m.a1m.b2m.s6mC"
+
     args = parser.parse_args(["--model=D"])
     printer(cli.get_arg_dict(args))
     printer(cli.get_args_summary(args))
     with cli.verbose:
         cli.init_object(args, "model")
+
+    assert cli.get_args_summary(args) == "m.d.e3m.d.f.g4m.d.s5mD"
+    # assert cli.get_args_summary(args) == "m.e3m.f.g4m.s5mD"
 
 class _Optimiser:
     def __repr__(self):

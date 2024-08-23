@@ -719,7 +719,8 @@ def test_noisy_data():
 
     plotting.plot(
         *noisy_data.plot("b", "Data"),
-        plotting.AxLine([x[0], y[0]], [x[1], y[1]], ls="--"),
+        noisy_data.predict_line(0, 5, z=40, c="r", ls="-", a=0.2, lw=10),
+        plotting.AxLine([x[0], y[0]], [x[1], y[1]], ls="--", z=50),
         plotting.Legend(),
         plot_name="test_noisy_data",
         dir_name=OUTPUT_DIR,

@@ -365,6 +365,19 @@ class NoisyData:
 
         return y_pred
 
+    def predict_line(
+        self,
+        x0: float,
+        x1: float,
+        logx=False,
+        logy=False,
+        eps=1e-5,
+        **line_kwargs,
+    ):
+        y0, y1 = self.predict(np.array([x0, x1]), logx, logy, eps)
+        line_kwargs.setdefault("ls", "--")
+        return AxLine([x0, y0], [x1, y1], **line_kwargs)
+
 class ColourPicker:
     """
     See https://matplotlib.org/stable/users/explain/colors/colormaps.html

@@ -528,7 +528,8 @@ def test_reset_object_cache():
         ),
         cli.Arg("y", default=4),
     )
-    with cli.verbose(printer):
+    cli.verbose.set_printer(printer)
+    with cli.verbose:
         args = parser.parse_args([])
         assert "y" in vars(args)
         assert args.y == 4
@@ -561,7 +562,8 @@ def test_reset_object_cache_nested():
     parser.print_help(printer.get_file())
     printer.hline()
 
-    with cli.verbose(printer):
+    cli.verbose.set_printer(printer)
+    with cli.verbose:
         argv = [
             "--model=DeepSet",
             "--model.encoder=Mlp",
@@ -684,21 +686,22 @@ def test_cli_verbose():
         cli.init_object(args, "A")
 
     args = parser.parse_args([])
-    with cli.verbose(printer):
+    cli.verbose.set_printer(printer)
+    with cli.verbose:
         cli.init_object(args, "A")
 
     printer.flush()
     assert util.load_text(printer.get_filename()) == "cli: A(a=3, b=4)\n"
 
     args = parser.parse_args(["--A.a=34"])
-    with cli.verbose(printer):
+    with cli.verbose:
         cli.init_object(args, "A")
 
     printer.flush()
     assert "cli: A(a=34, b=4)" in util.load_text(printer.get_filename())
 
     args = parser.parse_args([])
-    with cli.verbose(printer):
+    with cli.verbose:
         cli.init_object(args, "A", b="abc")
         cli.init_object(args, "Adam", params=[89])
 
@@ -708,7 +711,7 @@ def test_cli_verbose():
 
     cache_msg = "retrieving \"A\" from cache"
     assert cache_msg not in util.load_text(printer.get_filename())
-    with cli.verbose(printer):
+    with cli.verbose:
         cli.init_object(args, "A", b="abc")
 
     printer.flush()

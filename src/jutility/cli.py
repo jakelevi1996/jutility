@@ -365,7 +365,6 @@ class _Verbose:
     def __init__(self):
         self.is_verbose = False
         self._printer = util.Printer()
-        self._old_printer = self._printer
 
     def display_init(self, object_type, kwargs: dict):
         arg_str = ", ".join("%s=%r" % (k, v) for k, v in kwargs.items())
@@ -374,15 +373,13 @@ class _Verbose:
     def display_retrieve(self, full_name):
         self._printer("cli: retrieving \"%s\" from cache" % full_name)
 
-    def __call__(self, printer: util.Printer):
+    def set_printer(self, printer: util.Printer):
         self._printer = printer
-        return self
 
     def __enter__(self):
         self.is_verbose = True
 
     def __exit__(self, *args):
         self.is_verbose = False
-        self._printer = self._old_printer
 
 verbose = _Verbose()

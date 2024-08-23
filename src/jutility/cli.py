@@ -48,10 +48,6 @@ class Arg:
                     self.full_tag = parent.full_tag
                 elif self.tag is not None:
                     self.full_tag = "%s.%s" % (parent.full_tag, self.tag)
-                else:
-                    self.full_tag = None
-            else:
-                self.full_tag = None
 
         if self.full_name in arg_dict:
             raise ValueError(

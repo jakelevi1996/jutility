@@ -43,8 +43,13 @@ class Arg:
             self.full_tag = self.tag
         else:
             self.full_name = "%s.%s" % (parent.full_name, self.name)
-            if (parent.full_tag is not None) and (self.tag is not None):
-                self.full_tag = "%s.%s" % (parent.full_tag, self.tag)
+            if parent.full_tag is not None:
+                if parent.hide_tag(self):
+                    self.full_tag = parent.full_tag
+                elif self.tag is not None:
+                    self.full_tag = "%s.%s" % (parent.full_tag, self.tag)
+                else:
+                    self.full_tag = None
             else:
                 self.full_tag = None
 
@@ -58,6 +63,9 @@ class Arg:
 
         for arg in self.args:
             arg.register_names(arg_dict, self)
+
+    def hide_tag(self, arg: "Arg"):
+        return False
 
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         parser.add_argument("--" + self.full_name, **self.argparse_kwargs)
@@ -209,6 +217,9 @@ class ObjectChoice(ObjectArg):
                 "%s(\"%s\") received `default=\"%s\"`, please choose from %s"
                 % (type(self).__name__, name, default, valid_names)
             )
+
+    def hide_tag(self, arg: Arg):
+        return (arg.name in self.choice_dict)
 
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         parser.add_argument(

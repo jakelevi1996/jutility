@@ -274,11 +274,9 @@ def get_object_choice_parser():
                 cli.Arg("weight_decay", "wd", default=0.1,  type=float),
                 cli.Arg("lr",           "lr", default=1e-3, type=float),
                 name="adam",
-                tag="ad",
             ),
             cli.ObjectArg(
                 Sgd,
-                tag="sg",
             ),
             shared_args=[
                 cli.Arg("lr",           "lr", default=1e-2, type=float),
@@ -311,7 +309,7 @@ def test_object_choice():
     assert optimiser.beta == [0.9, 0.999]
     assert (
         cli.get_args_summary(args)
-        == "ne10op.ad.be0.9,0.999op.ad.lr0.001op.ad.wd0.1opADAMse0"
+        == "ne10op.be0.9,0.999op.lr0.001op.wd0.1opADAMse0"
     )
 
     args = parser.parse_args(["--optimiser=adam"])
@@ -416,10 +414,9 @@ def get_nested_object_choice_parser():
         cli.Arg("num_epochs",   "ne", type=int, default=10),
         cli.ObjectChoice(
             "model",
-            cli.ObjectArg(Mlp,      tag="mp"),
+            cli.ObjectArg(Mlp),
             cli.ObjectArg(
                 DeepSet,
-                tag="ds",
                 init_const_kwargs={"output_dim": 27},
             ),
             shared_args=[
@@ -428,11 +425,9 @@ def get_nested_object_choice_parser():
                     cli.ObjectArg(
                         Mlp,
                         init_const_kwargs={"output_dim": 15},
-                        tag="mp",
                     ),
                     cli.ObjectArg(
                         DeepSet,
-                        tag="ds",
                         init_requires=["hidden_dim"],
                     ),
                     shared_args=[
@@ -747,7 +742,6 @@ def test_object_choice_nested_tags():
                 C,
                 cli.Arg("a", "a", default=1),
                 cli.Arg("b", "b", default=2),
-                tag="c",
             ),
             cli.ObjectArg(
                 D,
@@ -759,7 +753,6 @@ def test_object_choice_nested_tags():
                     tag="f",
                 ),
                 cli.Arg("s", "s", default=5),
-                tag="d",
             ),
             shared_args=[cli.Arg("s", "s", default=6)],
             tag="m",
@@ -772,8 +765,7 @@ def test_object_choice_nested_tags():
     with cli.verbose:
         cli.init_object(args, "model")
 
-    assert cli.get_args_summary(args) == "m.c.a1m.c.b2m.s6mC"
-    # assert cli.get_args_summary(args) == "m.a1m.b2m.s6mC"
+    assert cli.get_args_summary(args) == "m.a1m.b2m.s6mC"
 
     args = parser.parse_args(["--model=D"])
     printer(cli.get_arg_dict(args))
@@ -781,8 +773,7 @@ def test_object_choice_nested_tags():
     with cli.verbose:
         cli.init_object(args, "model")
 
-    assert cli.get_args_summary(args) == "m.d.e3m.d.f.g4m.d.s5mD"
-    # assert cli.get_args_summary(args) == "m.e3m.f.g4m.s5mD"
+    assert cli.get_args_summary(args) == "m.e3m.f.g4m.s5mD"
 
 class _Optimiser:
     def __repr__(self):

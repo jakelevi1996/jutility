@@ -223,8 +223,8 @@ def test_init_parsed_kwargs():
     assert encoder.output_dim == 50
     printer(*vars(args).items(), "-"*100, sep="\n")
 
-def test_get_set_arg_dict():
-    printer = util.Printer("test_get_set_arg_dict", OUTPUT_DIR)
+def test_get_update_args():
+    printer = util.Printer("test_get_update_args", OUTPUT_DIR)
 
     parser = get_nested_object_parser()
     args = parser.parse_args(["--model.hidden_dim=99", "--num_epochs=9"])
@@ -237,11 +237,11 @@ def test_get_set_arg_dict():
     assert arg_dict_pre_init == arg_dict_post_init
     assert cli.get_arg_dict(args) == parser.get_arg_dict()
     arg_dict = cli.get_arg_dict(args)
-    full_path = util.save_json(arg_dict, "test_get_set_arg_dict", OUTPUT_DIR)
+    full_path = util.save_json(arg_dict, "test_get_update_args", OUTPUT_DIR)
 
     new_parser = get_nested_object_parser()
     new_args = new_parser.parse_args([])
-    cli.set_arg_dict(new_args, util.load_json(full_path))
+    cli.update_args(new_args, util.load_json(full_path))
     new_model: Mlp = new_parser.init_object("model", output_dim=19)
     printer(new_model)
     assert new_model.hidden_dim == 99

@@ -775,6 +775,27 @@ def test_object_choice_nested_tags():
 
     assert cli.get_args_summary(args) == "m.e3m.f.g4m.s5mD"
 
+def test_namespace_repr():
+    printer = util.Printer("test_namespace_repr", OUTPUT_DIR)
+
+    parser = get_nested_object_choice_parser()
+    cli.verbose.set_printer(printer)
+    with cli.verbose:
+        argv = [
+            "--model=DeepSet",
+            "--model.encoder=Mlp",
+            "--seed=1234",
+        ]
+        args = parser.parse_args(argv)
+
+    printer(args)
+    assert repr(args) == (
+        "Namespace(model='DeepSet', model.encoder='Mlp', "
+        "model.encoder.hidden_dim=100, model.encoder.num_hidden_layers=3, "
+        "model.hidden_dim=100, model.num_hidden_layers=3, num_epochs=10, "
+        "seed=1234)"
+    )
+
 class _Optimiser:
     def __repr__(self):
         return "%s(%s)" % (type(self).__name__, vars(self))

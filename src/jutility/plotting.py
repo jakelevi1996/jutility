@@ -35,7 +35,7 @@ import numpy as np
 import PIL.Image
 from jutility import util
 
-class _Plottable:
+class Plottable:
     def __init__(self, *args, **kwargs):
         self._args = args
         self._kwargs = kwargs
@@ -75,7 +75,7 @@ class _Plottable:
     def has_label(self):
         return (self._kwargs.get("label") is not None)
 
-class Line(_Plottable):
+class Line(Plottable):
     """
     See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html
     """
@@ -149,7 +149,7 @@ class Circle(Line):
         circle = matplotlib.patches.Circle(*self._args, **self._kwargs)
         axis.add_artist(circle)
 
-class Scatter(_Plottable):
+class Scatter(Plottable):
     """
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.scatter.html
@@ -165,7 +165,7 @@ class Scatter(_Plottable):
     def _get_abbreviated_keys_dict(self):
         return {"z": "zorder", "a": "alpha", "m": "marker"}
 
-class Contour(_Plottable):
+class Contour(Plottable):
     """
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.contour.html
@@ -173,7 +173,7 @@ class Contour(_Plottable):
     def plot(self, axis: matplotlib.axes.Axes):
         axis.contour(*self._args, **self._kwargs)
 
-class Text(_Plottable):
+class Text(Plottable):
     """
     See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.text.html
 
@@ -188,7 +188,7 @@ class Text(_Plottable):
 
         axis.text(*self._args, **self._kwargs)
 
-class _Patch(_Plottable):
+class _Patch(Plottable):
     def get_handle(self):
         patch_kwargs = {
             k: v for k, v in self._kwargs.items()
@@ -242,7 +242,7 @@ class Hist(Bar):
     def plot(self, axis: matplotlib.axes.Axes):
         axis.hist(*self._args, **self._kwargs)
 
-class ColourMesh(_Plottable):
+class ColourMesh(Plottable):
     """
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.pcolormesh.html
@@ -250,7 +250,7 @@ class ColourMesh(_Plottable):
     def plot(self, axis: matplotlib.axes.Axes):
         axis.pcolormesh(*self._args, **self._kwargs)
 
-class ContourFilled(_Plottable):
+class ContourFilled(Plottable):
     """
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.contourf.html
@@ -258,7 +258,7 @@ class ContourFilled(_Plottable):
     def plot(self, axis: matplotlib.axes.Axes):
         axis.contourf(*self._args, **self._kwargs)
 
-class ImShow(_Plottable):
+class ImShow(Plottable):
     """
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.imshow.html
@@ -269,7 +269,7 @@ class ImShow(_Plottable):
         if axis_off:
             axis.set_axis_off()
 
-class Legend(_Plottable):
+class Legend(Plottable):
     """
     See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.legend.html
     """
@@ -621,7 +621,7 @@ class FigureProperties:
 class Subplot:
     def __init__(
         self,
-        *lines: _Plottable,
+        *lines: Plottable,
         axis_properties=None,
         **axis_kwargs,
     ):
@@ -640,7 +640,7 @@ class LegendSubplot(Subplot):
     """
     See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.legend.html
     """
-    def __init__(self, *lines: _Plottable, **legend_kwargs):
+    def __init__(self, *lines: Plottable, **legend_kwargs):
         handles = [
             line.get_handle() for line in lines if line.has_label()
         ]
@@ -659,7 +659,7 @@ class FigureLegend(Subplot):
     """
     def __init__(
         self,
-        *lines: _Plottable,
+        *lines: Plottable,
         ncols=1,
         loc="outside lower center",
         **legend_kwargs,
@@ -710,7 +710,7 @@ class Empty(Subplot):
         axis.set_axis_off()
 
 def plot(
-    *lines: _Plottable,
+    *lines: Plottable,
     axis_properties=None,
     legend=False,
     figsize=None,

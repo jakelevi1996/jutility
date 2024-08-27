@@ -368,6 +368,12 @@ class Namespace(argparse.Namespace):
     def reset_object_cache(self):
         self._parser.reset_object_cache()
 
+    def __str__(self):
+        return " ".join(
+            "--%s %r" % (k, v)
+            for k, v in sorted(self._parser.get_arg_dict().items())
+        )
+
     def __repr__(self):
         arg_str = ", ".join(
             "%s=%r" % (k, v)

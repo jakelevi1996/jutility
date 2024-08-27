@@ -7,11 +7,11 @@ def init_object(args: "Namespace", full_name, **extra_kwargs):
 def get_arg_dict(args: "Namespace"):
     return args.get_parser().get_arg_dict()
 
-def update_args(args: "Namespace", arg_dict: dict):
-    return args.get_parser().update_args(arg_dict)
-
 def get_args_summary(args: "Namespace", replaces=None):
     return args.get_parser().get_args_summary(replaces)
+
+def update_args(args: "Namespace", arg_dict: dict):
+    args.update(arg_dict)
 
 class Arg:
     def __init__(
@@ -324,9 +324,6 @@ class ObjectParser:
             for arg in self._arg_list
             for key in arg.get_arg_dict_keys(self._parsed_args_dict)
         }
-
-    def update_args(self, arg_dict):
-        self._parsed_args_dict.update(arg_dict)
 
     def get_args_summary(self, replaces=None):
         self._check_parsed()

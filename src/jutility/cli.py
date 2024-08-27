@@ -14,7 +14,7 @@ def get_args_summary(args: "Namespace", replaces=None):
     return args.get_parser().get_args_summary(replaces)
 
 def update_args(args: "Namespace", arg_dict: dict):
-    args.update(arg_dict)
+    return args.update(arg_dict)
 
 class Arg:
     def __init__(
@@ -370,7 +370,7 @@ class Namespace(argparse.Namespace):
         return vars(self).get(key)
 
     def update(self, arg_dict):
-        vars(self).update(arg_dict)
+        return vars(self).update(arg_dict)
 
     def __str__(self):
         return " ".join(

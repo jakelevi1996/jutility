@@ -543,7 +543,7 @@ def test_reset_object_cache():
         c2 = cli.init_object(args, "C")
         assert c2 is c
 
-        args.reset_object_cache()
+        cli.reset_object_cache(args)
         assert "y" in vars(args)
         assert args.y == 4
         assert "C.x" in vars(args)
@@ -586,7 +586,7 @@ def test_reset_object_cache_nested():
         assert model is model2
         assert model.encoder is model2.encoder
 
-        args.reset_object_cache()
+        cli.reset_object_cache(args)
         assert "seed" in vars(args)
         assert args.seed == 1234
         assert "model.DeepSet" not in vars(args)

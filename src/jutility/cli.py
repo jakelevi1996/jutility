@@ -4,6 +4,9 @@ from jutility import util
 def init_object(args: "Namespace", full_name, **extra_kwargs):
     return args.get_parser().init_object(full_name, **extra_kwargs)
 
+def reset_object_cache(args: "Namespace"):
+    return args.get_parser().reset_object_cache()
+
 def get_arg_dict(args: "Namespace"):
     return args.get_parser().get_arg_dict()
 
@@ -367,9 +370,6 @@ class Namespace(argparse.Namespace):
 
     def update(self, arg_dict):
         vars(self).update(arg_dict)
-
-    def reset_object_cache(self):
-        self._parser.reset_object_cache()
 
     def __str__(self):
         return " ".join(

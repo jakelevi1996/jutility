@@ -327,16 +327,17 @@ class ObjectParser:
 
     def get_args_summary(self, replaces=None):
         self._check_parsed()
-        arg_names = self.get_arg_dict().keys()
-        arg_list = [self._arg_dict[arg_name] for arg_name in arg_names]
-        key_abbreviations = {
-            arg.full_name: arg.full_tag
-            for arg in arg_list
-            if arg.full_tag is not None
-        }
+        arg_list = [
+            self._arg_dict[arg_name]
+            for arg_name in self.get_arg_dict().keys()
+        ]
         return util.abbreviate_dictionary(
             self._parsed_args_dict,
-            key_abbreviations=key_abbreviations,
+            key_abbreviations={
+                arg.full_name: arg.full_tag
+                for arg in arg_list
+                if arg.full_tag is not None
+            },
             replaces=replaces,
         )
 

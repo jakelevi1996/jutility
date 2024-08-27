@@ -241,7 +241,7 @@ def test_get_update_args():
 
     new_parser = get_nested_object_parser()
     new_args = new_parser.parse_args([])
-    cli.update_args(new_args, util.load_json(full_path))
+    new_args.update(util.load_json(full_path))
     new_model: Mlp = new_parser.init_object("model", output_dim=19)
     printer(new_model)
     assert new_model.hidden_dim == 99

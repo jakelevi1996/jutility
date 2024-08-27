@@ -13,9 +13,6 @@ def get_arg_dict(args: "Namespace"):
 def get_args_summary(args: "Namespace", replaces=None):
     return args.get_parser().get_args_summary(replaces)
 
-def update_args(args: "Namespace", arg_dict: dict):
-    return args.update(arg_dict)
-
 class Arg:
     def __init__(
         self,

@@ -256,6 +256,11 @@ def test_get_update_args():
     assert default_model.hidden_dim == 100
     assert cli.get_arg_dict(args) != cli.get_arg_dict(default_args)
 
+    assert isinstance(default_args, cli.Namespace)
+    assert default_args.get("model.hidden_dim") == 100
+    default_args.update({"model.hidden_dim": 234})
+    assert default_args.get("model.hidden_dim") == 234
+
 def get_object_choice_parser():
     parser = cli.ObjectParser(
         cli.Arg("seed",         "se", type=int, default=0),

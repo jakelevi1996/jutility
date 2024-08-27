@@ -365,6 +365,12 @@ class Namespace(argparse.Namespace):
     def get_parser(self):
         return self._parser
 
+    def get(self, key):
+        return vars(self).get(key)
+
+    def update(self, arg_dict):
+        vars(self).update(arg_dict)
+
     def reset_object_cache(self):
         self._parser.reset_object_cache()
 

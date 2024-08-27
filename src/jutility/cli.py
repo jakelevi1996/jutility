@@ -344,6 +344,7 @@ class ObjectParser:
         )
 
     def reset_object_cache(self):
+        self._check_parsed()
         current_args_cache = set(self._parsed_args_dict.keys())
         for k in (current_args_cache - self._initial_args_cache):
             self._parsed_args_dict.pop(k)

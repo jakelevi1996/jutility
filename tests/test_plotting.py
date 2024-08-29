@@ -832,3 +832,20 @@ def test_figure_legend(handles):
         top_space=0.15,
     )
     mp.save(test_name, OUTPUT_DIR)
+
+def test_polygon():
+    plotting.plot(
+        plotting.Polygon(
+            [-1, 1, 0],
+            [0, 0, 2],
+        ),
+        plotting.Polygon(
+            [3, 6, 2, 7],
+            [7, 2, 6, 6],
+            fc="r",
+            ec="g",
+            lw=10,
+        ),
+        plot_name="test_polygon",
+        dir_name=OUTPUT_DIR,
+    )

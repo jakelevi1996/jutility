@@ -250,6 +250,17 @@ class Hist(Bar):
     def plot(self, axis: matplotlib.axes.Axes):
         axis.hist(*self._args, **self._kwargs)
 
+class Polygon(Plottable):
+    """
+    See
+    https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.fill.html
+    """
+    def plot(self, axis: matplotlib.axes.Axes):
+        axis.fill(*self._args, **self._kwargs)
+
+    def _get_default_kwargs(self):
+        return {"zorder": 10, "fc": "b", "ec": "k", "lw": 5}
+
 class ColourMesh(Plottable):
     """
     See

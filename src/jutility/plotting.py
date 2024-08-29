@@ -75,6 +75,14 @@ class Plottable:
     def has_label(self):
         return (self._kwargs.get("label") is not None)
 
+    def __repr__(self):
+        args_str   = ", ".join(repr(a) for a in self._args)
+        kwargs_str = ", ".join(
+            "%s=%r" % (k, v)
+            for k, v in self._kwargs.items()
+        )
+        return ("%s(%s, %s)" % (type(self).__name__, args_str, kwargs_str))
+
 class Line(Plottable):
     """
     See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html

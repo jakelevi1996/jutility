@@ -22,6 +22,16 @@ def test_plot_lines():
     )
     assert os.path.isfile(mp.full_path)
 
+def test_plottable_repr():
+    line = plotting.Line([1, 2], [3, 4], c="g", z=23, a=0.8, ls="--")
+    scatter = plotting.Scatter([5, 6, 7], [8, 9, 10], color="r")
+    assert repr(line) == (
+        "Line([1, 2], [3, 4], ls='--', color='g', zorder=23, alpha=0.8)"
+    )
+    assert repr(scatter) == (
+        "Scatter([5, 6, 7], [8, 9, 10], color='r', zorder=10)"
+    )
+
 def test_line_shapes_defaults():
     nx = 150
     nf = 3

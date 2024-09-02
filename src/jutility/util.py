@@ -31,6 +31,7 @@ import traceback
 import datetime
 import time
 import numpy as np
+import PIL.Image
 
 CURRENT_DIR = os.path.abspath(os.getcwd())
 RESULTS_DIR = os.path.join(CURRENT_DIR, "results")
@@ -637,6 +638,21 @@ def load_json(full_path):
         data = json.load(f)
 
     return data
+
+def save_image(
+    image_uint8: np.ndarray,
+    filename: str,
+    dir_name: str=None,
+    verbose: bool=True,
+):
+    pil_image = PIL.Image.fromarray(image_uint8, mode="L")
+    full_path = get_full_path(filename, dir_name, "png", verbose=verbose)
+    pil_image.save(full_path)
+    return full_path
+
+def load_image(full_path) -> np.ndarray:
+    image_uint8 = np.array(PIL.Image.open(full_path))
+    return image_uint8
 
 def get_program_command():
     return " ".join([sys.executable] + sys.argv)

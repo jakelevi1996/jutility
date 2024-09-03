@@ -849,3 +849,23 @@ def test_polygon():
         plot_name="test_polygon",
         dir_name=OUTPUT_DIR,
     )
+
+def test_random_polygon():
+    rng = util.Seeder().get_rng("test_random_polygon")
+    num_polygons = 7
+    num_vertices = 5
+    cp = plotting.ColourPicker(num_polygons)
+    plotting.plot(
+        *[
+            plotting.Polygon(
+                rng.uniform(0, 1, num_vertices),
+                rng.uniform(0, 1, num_vertices),
+                fc=cp.next(),
+            )
+            for _ in range(num_polygons)
+        ],
+        axis_off=True,
+        title="",
+        plot_name="test_random_polygon",
+        dir_name=OUTPUT_DIR,
+    )

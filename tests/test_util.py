@@ -967,3 +967,28 @@ def test_save_image_load_image():
     assert y.dtype != np.float32
 
     assert np.all(y == x)
+
+def test_save_image_load_image_rgba():
+    test_name = "test_save_image_load_image_rgba"
+    rng = util.Seeder().get_rng(test_name)
+
+    shape = (100, 150, 4)
+    x = rng.integers(0, 256, shape).astype(np.uint8)
+    with pytest.raises(ValueError):
+        util.save_image(x, test_name, OUTPUT_DIR)
+
+    util.save_image(x, test_name, OUTPUT_DIR, rgba=True)
+    full_path = util.get_full_path(test_name, OUTPUT_DIR, "png")
+    y = util.load_image(full_path)
+
+    assert isinstance(x, np.ndarray)
+    assert x.shape == shape
+    assert x.dtype == np.uint8
+    assert x.dtype != np.float32
+
+    assert isinstance(y, np.ndarray)
+    assert y.shape == shape
+    assert y.dtype == np.uint8
+    assert y.dtype != np.float32
+
+    assert np.all(y == x)

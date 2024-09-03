@@ -644,8 +644,10 @@ def save_image(
     filename: str,
     dir_name: str=None,
     verbose: bool=True,
+    rgba=False,
 ):
-    pil_image = PIL.Image.fromarray(image_uint8, mode="L")
+    mode = "RGBA" if rgba else "L"
+    pil_image = PIL.Image.fromarray(image_uint8, mode=mode)
     full_path = get_full_path(filename, dir_name, "png", verbose=verbose)
     pil_image.save(full_path)
     return full_path

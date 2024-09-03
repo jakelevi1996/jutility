@@ -652,6 +652,21 @@ def save_image(
     pil_image.save(full_path)
     return full_path
 
+def save_image_diff(
+    x_uint8: np.ndarray,
+    y_uint8: np.ndarray,
+    filename: str,
+    dir_name: str=None,
+    verbose: bool=True,
+    rgba=False,
+):
+    z = np.abs(x_uint8.astype(float) - y_uint8.astype(float))
+    z_uint8 = z.astype(np.uint8)
+    if rgba:
+        z_uint8[:, :, 3] = 255
+
+    return save_image(z_uint8, filename, dir_name, verbose, rgba)
+
 def load_image(full_path) -> np.ndarray:
     image_uint8 = np.array(PIL.Image.open(full_path))
     return image_uint8

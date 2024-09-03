@@ -992,3 +992,37 @@ def test_save_image_load_image_rgba():
     assert y.dtype != np.float32
 
     assert np.all(y == x)
+
+def test_save_image_diff():
+    rng = util.Seeder().get_rng("test_save_image_diff")
+    mp1 = plotting.plot(
+        plotting.Polygon(rng.uniform(0, 1, 3), rng.uniform(0, 1, 3), fc="b"),
+        xlim=[0, 1],
+        ylim=[0, 1],
+        grid=False,
+        plot_name="test_save_image_diff_input_1",
+        dir_name=OUTPUT_DIR,
+    )
+    mp2 = plotting.plot(
+        plotting.Polygon(rng.uniform(0, 1, 5), rng.uniform(0, 1, 5), fc="r"),
+        xlim=[0, 1],
+        ylim=[0, 1],
+        grid=False,
+        plot_name="test_save_image_diff_input_2",
+        dir_name=OUTPUT_DIR,
+    )
+    im1 = util.load_image(mp1.full_path)
+    im2 = util.load_image(mp2.full_path)
+    util.save_image_diff(
+        im1,
+        im2,
+        "test_save_image_diff rgba=True",
+        OUTPUT_DIR,
+        rgba=True,
+    )
+    util.save_image_diff(
+        im1.mean(axis=2),
+        im2.mean(axis=2),
+        "test_save_image_diff rgba=False",
+        OUTPUT_DIR,
+    )

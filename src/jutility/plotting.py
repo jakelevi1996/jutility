@@ -844,7 +844,7 @@ class MultiPlot:
 
 class Gif:
     def __init__(self):
-        self._frame_list = []
+        self._frame_list: list[PIL.Image.Image] = []
 
     def add_pil_image_frame(self, pil_image):
         self._frame_list.append(pil_image)

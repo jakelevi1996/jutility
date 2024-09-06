@@ -86,8 +86,8 @@ class ObjectArg(Arg):
         name: str=None,
         tag: str=None,
         init_requires: list[str]=None,
-        init_parsed_kwargs: dict[str, str]=None,
-        init_const_kwargs:  dict[str, str]=None,
+        init_parsed_kwargs: dict=None,
+        init_const_kwargs: dict=None,
         init_ignores: list[str]=None,
     ):
         if name is None:
@@ -197,8 +197,8 @@ class ObjectChoice(ObjectArg):
         default: str=None,
         tag: str=None,
         init_requires: list[str]=None,
-        init_parsed_kwargs: dict[str, str]=None,
-        init_const_kwargs:  dict[str, str]=None,
+        init_parsed_kwargs: dict=None,
+        init_const_kwargs: dict=None,
         init_ignores: list[str]=None,
     ):
         if shared_args is None:

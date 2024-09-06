@@ -88,6 +88,7 @@ class ObjectArg(Arg):
         init_requires: list[str]=None,
         init_parsed_kwargs: dict[str, str]=None,
         init_const_kwargs:  dict[str, str]=None,
+        init_ignores: list[str]=None,
     ):
         if name is None:
             name = object_type.__name__
@@ -99,6 +100,7 @@ class ObjectArg(Arg):
             init_requires,
             init_parsed_kwargs,
             init_const_kwargs,
+            init_ignores,
         )
 
     def set_init_attributes(
@@ -106,6 +108,7 @@ class ObjectArg(Arg):
         init_requires,
         init_parsed_kwargs,
         init_const_kwargs,
+        init_ignores,
     ):
         if init_requires is None:
             init_requires = []
@@ -113,16 +116,20 @@ class ObjectArg(Arg):
             init_parsed_kwargs = dict()
         if init_const_kwargs is None:
             init_const_kwargs = dict()
+        if init_ignores is None:
+            init_ignores = []
 
         self.init_requires      = init_requires
         self.init_parsed_kwargs = init_parsed_kwargs
         self.init_const_kwargs  = init_const_kwargs
+        self.init_ignores  = init_ignores
 
     def get_protected_args(self):
         return (
             set(arg.name for arg in self.args)
             | set(self.init_parsed_kwargs.keys())
             | set(self.init_const_kwargs.keys())
+            | set(self.init_ignores)
         )
 
     def update_kwargs(
@@ -192,6 +199,7 @@ class ObjectChoice(ObjectArg):
         init_requires: list[str]=None,
         init_parsed_kwargs: dict[str, str]=None,
         init_const_kwargs:  dict[str, str]=None,
+        init_ignores: list[str]=None,
     ):
         if shared_args is None:
             shared_args = []
@@ -203,6 +211,7 @@ class ObjectChoice(ObjectArg):
             init_requires,
             init_parsed_kwargs,
             init_const_kwargs,
+            init_ignores,
         )
 
         self.args = tuple(choices) + tuple(shared_args)

@@ -809,6 +809,68 @@ def test_namespace_str_repr():
         "seed=1234)"
     )
 
+def test_init_ignores():
+    printer = util.Printer("test_init_ignores", OUTPUT_DIR)
+
+    class C:
+        def __init__(self, x, y, z):
+            self.x = x
+            self.y = y
+            self.z = z
+
+        def forward(self):
+            return self.x + self.y + self.z
+
+    class D(C):
+        def forward(self):
+            return self.x + 2 * self.y + 3 * self.z
+
+    class E(C):
+        def __init__(self, x):
+            self.x = x
+
+        def forward(self):
+            return self.x
+
+    parser = cli.ObjectParser(
+        cli.ObjectChoice(
+            "model",
+            cli.ObjectArg(C),
+            cli.ObjectArg(D),
+            cli.ObjectArg(E, init_ignores=["y", "z"]),
+            shared_args=[
+                cli.Arg("x", "x", default=1),
+                cli.Arg("y", "y", default=2),
+            ],
+            tag="m",
+            init_const_kwargs={"z": 3},
+        ),
+    )
+    args = parser.parse_args(["--model", "C"])
+    cli.verbose.set_printer(printer)
+    with cli.verbose:
+        m = cli.init_object(args, "model")
+        assert isinstance(m, C)
+        assert m.forward() == 6
+        assert cli.get_args_summary(args) == "m.x1m.y2mC"
+        assert printer.read() == "cli: C(x=1, y=2, z=3)\n"
+
+    args = parser.parse_args(["--model", "D"])
+    with cli.verbose:
+        m = cli.init_object(args, "model")
+        assert isinstance(m, C)
+        assert m.forward() == 14
+        assert cli.get_args_summary(args) == "m.x1m.y2mD"
+        assert "cli: D(x=1, y=2, z=3)" in printer.read()
+
+    args = parser.parse_args(["--model", "E"])
+    with cli.verbose:
+        m = cli.init_object(args, "model")
+        assert isinstance(m, C)
+        assert m.forward() == 1
+        assert cli.get_args_summary(args) == "m.x1mE"
+        assert "cli: E(x=1)" in printer.read()
+
 class _Optimiser:
     def __repr__(self):
         return "%s(%s)" % (type(self).__name__, vars(self))

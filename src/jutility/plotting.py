@@ -166,9 +166,13 @@ class Scatter(Plottable):
         axis.scatter(*self._args, **self._kwargs)
 
     def get_handle(self):
-        self._kwargs.setdefault("marker", "o")
-        self._kwargs.setdefault("ls", "")
-        return matplotlib.lines.Line2D([], [], **self._kwargs)
+        line_kwargs = self._kwargs.copy()
+        line_kwargs.setdefault("marker", "o")
+        line_kwargs.setdefault("ls", "")
+        if "s" in line_kwargs:
+            line_kwargs.setdefault("ms", np.sqrt(line_kwargs.pop("s")))
+
+        return matplotlib.lines.Line2D([], [], **line_kwargs)
 
     def _get_abbreviated_keys_dict(self):
         return {"z": "zorder", "a": "alpha", "m": "marker"}
@@ -665,10 +669,10 @@ class LegendSubplot(Subplot):
         ]
         legend_kwargs.setdefault("handles", handles)
         legend_kwargs.setdefault("loc", "center")
-        self._legend_properties = Legend(**legend_kwargs)
+        self._legend_plottable = Legend(**legend_kwargs)
 
     def plot(self, axis: matplotlib.axes.Axes):
-        self._legend_properties.plot(axis)
+        self._legend_plottable.plot(axis)
         axis.set_axis_off()
 
 class FigureLegend(Subplot):

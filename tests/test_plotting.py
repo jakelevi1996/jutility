@@ -869,3 +869,19 @@ def test_random_polygon():
         plot_name="test_random_polygon",
         dir_name=OUTPUT_DIR,
     )
+
+def test_scatter_legend():
+    rng = util.Seeder().get_rng("test_scatter_legend")
+    x = lambda: rng.uniform(0, 1, 10)
+    cp = plotting.ColourPicker(6)
+    plotting.plot(
+        plotting.Line(x(), x(), marker="o", c=cp.next(), label="line"),
+        plotting.Line(x(), x(), marker="o", c=cp.next(), label="line", ms=6),
+        plotting.Line(x(), x(), marker="o", c=cp.next(), label="line", ms=15),
+        plotting.Scatter(x(), x(), color=cp.next(), label="scatter"),
+        plotting.Scatter(x(), x(), color=cp.next(), label="scatter", s=36),
+        plotting.Scatter(x(), x(), color=cp.next(), label="scatter", s=225),
+        legend=True,
+        plot_name="test_scatter_legend",
+        dir_name=OUTPUT_DIR,
+    )

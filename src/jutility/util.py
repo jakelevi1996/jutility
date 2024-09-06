@@ -644,9 +644,11 @@ def save_image(
     filename: str,
     dir_name: str=None,
     verbose: bool=True,
+    mode="L",
     rgba=False,
 ):
-    mode = "RGBA" if rgba else "L"
+    if rgba:
+        mode = "RGBA"
     pil_image = PIL.Image.fromarray(image_uint8, mode=mode)
     full_path = get_full_path(filename, dir_name, "png", verbose=verbose)
     pil_image.save(full_path)
@@ -658,14 +660,17 @@ def save_image_diff(
     filename: str,
     dir_name: str=None,
     verbose: bool=True,
+    mode="L",
     rgba=False,
 ):
     z = np.abs(x_uint8.astype(float) - y_uint8.astype(float))
     z_uint8 = z.astype(np.uint8)
     if rgba:
+        mode = "RGBA"
+    if mode == "RGBA":
         z_uint8[:, :, 3] = 255
 
-    return save_image(z_uint8, filename, dir_name, verbose, rgba)
+    return save_image(z_uint8, filename, dir_name, verbose, mode)
 
 def load_image(full_path) -> np.ndarray:
     image_uint8 = np.array(PIL.Image.open(full_path))

@@ -917,3 +917,55 @@ class Cnn(_Model):
 
 class DeepSet(_Model):
     pass
+
+def test_cache_object_choice():
+    printer = util.Printer("test_cache_object_choice", OUTPUT_DIR)
+
+    class C:
+        def __init__(self, x: int):
+            self.x = x
+
+        def __repr__(self):
+            return "C(x=%i)" % self.x
+
+    class D:
+        def __init__(self, c: C, y: int):
+            self.c = c
+            self.y = y
+
+        def __repr__(self):
+            return "C(c=%r, y=%i)" % (self.c, self.y)
+
+    parser = cli.ObjectParser(
+        cli.ObjectArg(C, cli.Arg("x", type=int)),
+        cli.ObjectChoice(
+            "model",
+            cli.ObjectArg(C, cli.Arg("x", type=int)),
+            cli.ObjectArg(
+                D,
+                cli.ObjectArg(C, cli.Arg("x", type=int)),
+                cli.Arg("x", type=int),
+            ),
+        ),
+    )
+    args = parser.parse_args(
+        ["--C.x", "2", "--model", "C", "--model.C.x", "3"],
+    )
+    printer(args)
+    cli.verbose.set_printer(printer)
+
+    with cli.verbose:
+        model = cli.init_object(args, "model")
+
+    assert printer.read().count("cli: C(x=3)") == 1
+    assert printer.read().count("cli: retrieving \"model.C\" from cache") == 0
+    assert isinstance(model, C)
+    assert model.x == 3
+
+    with cli.verbose:
+        model = cli.init_object(args, "model")
+
+    assert printer.read().count("cli: C(x=3)") == 1
+    assert printer.read().count("cli: retrieving \"model.C\" from cache") == 1
+    assert isinstance(model, C)
+    assert model.x == 3

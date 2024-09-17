@@ -238,9 +238,6 @@ class ObjectChoice(ObjectArg):
 
     def init_object(self, parsed_args_dict, **extra_kwargs):
         chosen_arg = self.choice_dict[parsed_args_dict[self.full_name]]
-        if chosen_arg.full_name in parsed_args_dict:
-            return parsed_args_dict[chosen_arg.full_name]
-
         protected = chosen_arg.get_protected_args()
         kwargs = {
             arg.name: arg.init_object(parsed_args_dict)

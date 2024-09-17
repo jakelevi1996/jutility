@@ -886,6 +886,30 @@ def test_scatter_legend():
         dir_name=OUTPUT_DIR,
     )
 
+def test_xticks():
+    rng = util.Seeder().get_rng("test_xticks")
+
+    line = plotting.Line(np.linspace(0, 1, 20), rng.normal(0, 1, 20))
+    mp = plotting.MultiPlot(
+        plotting.Subplot(
+            line,
+        ),
+        plotting.Subplot(
+            line,
+            xticks=np.linspace(-1, 2, 11),
+        ),
+        plotting.Subplot(
+            line,
+            xlim=[0, 1],
+        ),
+        plotting.Subplot(
+            line,
+            xticks=np.linspace(-1, 2, 11),
+            xlim=[0, 1],
+        ),
+    )
+    mp.save("test_xticks", OUTPUT_DIR)
+
 def test_xticklabels():
     rng = util.Seeder().get_rng("test_xticklabels")
 

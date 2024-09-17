@@ -536,16 +536,18 @@ class AxisProperties:
             axis.set_xlabel(self._xlabel)
         if self._ylabel is not None:
             axis.set_ylabel(self._ylabel)
+        if self._xticks is not None:
+            axis.set_xticks(self._xticks, self._xticklabels)
         if self._xlim is not None:
             axis.set_xlim(self._xlim)
+        if self._ylim is not None:
+            axis.set_ylim(self._ylim)
         if self._axis_equal:
             axis.axis("equal")
         if self._axis_square:
             axis.axis("square")
         if self._axis_off:
             axis.set_axis_off()
-        if self._ylim is not None:
-            axis.set_ylim(self._ylim)
         if self._log_xscale:
             axis.set_xscale("log")
         if self._log_yscale:
@@ -554,8 +556,6 @@ class AxisProperties:
             axis.set_xscale("symlog")
         if self._symlogy:
             axis.set_yscale("symlog")
-        if self._xticks is not None:
-            axis.set_xticks(self._xticks, self._xticklabels)
         if self._grid:
             axis.grid(True, which="both")
         if self._rotate_xticklabels:

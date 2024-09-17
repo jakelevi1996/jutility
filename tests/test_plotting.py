@@ -907,3 +907,32 @@ def test_xticklabels():
         plot_name="test_xticklabels",
         dir_name=OUTPUT_DIR,
     )
+
+def test_noisydata_x_index():
+    rng = util.Seeder().get_rng("test_noisydata_x_index")
+
+    means = {
+        "relu": 4,
+        "sigmoid": 10,
+        "ite": 6,
+    }
+
+    results = plotting.NoisyData()
+    results_index = plotting.NoisyData(x_index=True)
+    for _ in range(5):
+        for i, name in enumerate(sorted(means.keys())):
+            y = means[name] + rng.normal()
+            results.update(i, y)
+            results_index.update(name, y)
+
+    mp = plotting.MultiPlot(
+        plotting.Subplot(
+            *results.plot(),
+            **results.get_xtick_kwargs(),
+        ),
+        plotting.Subplot(
+            *results_index.plot(),
+            **results_index.get_xtick_kwargs(),
+        ),
+    )
+    mp.save("test_noisydata_x_index", OUTPUT_DIR)

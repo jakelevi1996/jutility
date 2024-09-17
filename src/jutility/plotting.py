@@ -321,11 +321,19 @@ def confidence_bounds(
     return mean, ucb, lcb
 
 class NoisyData:
-    def __init__(self, log_space_data=False):
+    def __init__(self, log_space_data=False, x_index=False):
         self._results_list_dict: dict[float, list] = dict()
         self._log_space_data = log_space_data
+        self._x_index = x_index
+        self._x_index_list = []
 
     def update(self, x, y):
+        if self._x_index:
+            if x not in self._x_index_list:
+                self._x_index_list.append(x)
+
+            x = self._x_index_list.index(x)
+
         if self._log_space_data:
             y = np.log(y)
         if x in self._results_list_dict:
@@ -365,6 +373,14 @@ class NoisyData:
             Line(x, mean,                   a=1.0, z=30, c=c),
             FillBetween(x, lcb, ucb,        a=0.2, z=10, c=c),
         )
+
+    def get_xtick_kwargs(self):
+        xtick_kwargs = dict()
+        if self._x_index:
+            xtick_kwargs["xticks"] = list(range(len(self._x_index_list)))
+            xtick_kwargs["xticklabels"] = self._x_index_list
+
+        return xtick_kwargs
 
     def predict(self, x_pred: np.ndarray, logx=False, logy=False, eps=1e-5):
         x, y = self.get_all_data()

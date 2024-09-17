@@ -374,6 +374,7 @@ class Namespace(argparse.Namespace):
         return vars(self).get(key)
 
     def update(self, arg_dict):
+        self._parser.reset_object_cache()
         return vars(self).update(arg_dict)
 
     def __str__(self):

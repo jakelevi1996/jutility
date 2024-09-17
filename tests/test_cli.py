@@ -995,3 +995,68 @@ def test_cache_object_choice():
     assert c2 is c
     assert isinstance(c2, C)
     assert c2.x == 2
+
+def test_update_args_reset_cache():
+    printer = util.Printer("test_update_args_reset_cache", OUTPUT_DIR)
+
+    class C:
+        def __init__(self, x: int):
+            self.x = x
+
+        def __repr__(self):
+            return "C(x=%i)" % self.x
+
+    parser = cli.ObjectParser(
+        cli.ObjectArg(C, cli.Arg("x", type=int)),
+    )
+    args = parser.parse_args(["--C.x", "2"])
+
+    cli.verbose.set_printer(printer)
+
+    with cli.verbose:
+        c = cli.init_object(args, "C")
+
+    assert printer.read().count("cli: C(x=2)") == 1
+    assert printer.read().count("cli: retrieving \"C\" from cache") == 0
+    assert printer.read().count("cli: C(x=3)") == 0
+
+    assert isinstance(c, C)
+    assert c.x == 2
+
+    with cli.verbose:
+        c2 = cli.init_object(args, "C")
+
+    assert printer.read().count("cli: C(x=2)") == 1
+    assert printer.read().count("cli: retrieving \"C\" from cache") == 1
+    assert printer.read().count("cli: C(x=3)") == 0
+
+    assert c2 is c
+    assert isinstance(c2, C)
+    assert c2.x == 2
+
+    args.update({"C.x": 3})
+
+    with cli.verbose:
+        c3 = cli.init_object(args, "C")
+
+    assert printer.read().count("cli: C(x=2)") == 1
+    assert printer.read().count("cli: retrieving \"C\" from cache") == 1
+    assert printer.read().count("cli: C(x=3)") == 1
+
+    assert c3 is not c
+    assert c3 is not c2
+    assert isinstance(c3, C)
+    assert c3.x == 3
+
+    with cli.verbose:
+        c4 = cli.init_object(args, "C")
+
+    assert printer.read().count("cli: C(x=2)") == 1
+    assert printer.read().count("cli: retrieving \"C\" from cache") == 2
+    assert printer.read().count("cli: C(x=3)") == 1
+
+    assert c4 is not c
+    assert c4 is not c2
+    assert c4 is c3
+    assert isinstance(c4, C)
+    assert c4.x == 3

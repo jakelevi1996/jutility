@@ -885,3 +885,25 @@ def test_scatter_legend():
         plot_name="test_scatter_legend",
         dir_name=OUTPUT_DIR,
     )
+
+def test_xticklabels():
+    rng = util.Seeder().get_rng("test_xticklabels")
+
+    means = {
+        "relu": 4,
+        "sigmoid": 10,
+        "ite": 6,
+    }
+
+    results = plotting.NoisyData()
+    for _ in range(5):
+        for i, name in enumerate(sorted(means.keys())):
+            results.update(i, means[name] + rng.normal())
+
+    plotting.plot(
+        *results.plot(),
+        xticks=[0, 1, 2],
+        xticklabels=sorted(means.keys()),
+        plot_name="test_xticklabels",
+        dir_name=OUTPUT_DIR,
+    )

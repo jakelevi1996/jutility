@@ -479,6 +479,8 @@ class AxisProperties:
         log_yscale=False,
         symlogx=False,
         symlogy=False,
+        xticks=None,
+        xticklabels=None,
         rotate_xticklabels=False,
         axis_equal=False,
         axis_square=False,
@@ -497,6 +499,8 @@ class AxisProperties:
         self._log_yscale = log_yscale
         self._symlogx = symlogx
         self._symlogy = symlogy
+        self._xticks = xticks
+        self._xticklabels = xticklabels
         self._rotate_xticklabels = rotate_xticklabels
         self._axis_equal = axis_equal
         self._axis_square = axis_square
@@ -534,6 +538,8 @@ class AxisProperties:
             axis.set_xscale("symlog")
         if self._symlogy:
             axis.set_yscale("symlog")
+        if self._xticks is not None:
+            axis.set_xticks(self._xticks, self._xticklabels)
         if self._grid:
             axis.grid(True, which="both")
         if self._rotate_xticklabels:

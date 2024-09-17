@@ -958,14 +958,40 @@ def test_cache_object_choice():
         model = cli.init_object(args, "model")
 
     assert printer.read().count("cli: C(x=3)") == 1
+    assert printer.read().count("cli: C(x=2)") == 0
     assert printer.read().count("cli: retrieving \"model.C\" from cache") == 0
+    assert printer.read().count("cli: retrieving \"C\" from cache") == 0
     assert isinstance(model, C)
     assert model.x == 3
 
     with cli.verbose:
-        model = cli.init_object(args, "model")
+        c = cli.init_object(args, "C")
 
     assert printer.read().count("cli: C(x=3)") == 1
+    assert printer.read().count("cli: C(x=2)") == 1
+    assert printer.read().count("cli: retrieving \"model.C\" from cache") == 0
+    assert printer.read().count("cli: retrieving \"C\" from cache") == 0
+    assert isinstance(c, C)
+    assert c.x == 2
+
+    with cli.verbose:
+        model2 = cli.init_object(args, "model")
+
+    assert printer.read().count("cli: C(x=3)") == 1
+    assert printer.read().count("cli: C(x=2)") == 1
     assert printer.read().count("cli: retrieving \"model.C\" from cache") == 1
-    assert isinstance(model, C)
-    assert model.x == 3
+    assert printer.read().count("cli: retrieving \"C\" from cache") == 0
+    assert model2 is model
+    assert isinstance(model2, C)
+    assert model2.x == 3
+
+    with cli.verbose:
+        c2 = cli.init_object(args, "C")
+
+    assert printer.read().count("cli: C(x=3)") == 1
+    assert printer.read().count("cli: C(x=2)") == 1
+    assert printer.read().count("cli: retrieving \"model.C\" from cache") == 1
+    assert printer.read().count("cli: retrieving \"C\" from cache") == 1
+    assert c2 is c
+    assert isinstance(c2, C)
+    assert c2.x == 2

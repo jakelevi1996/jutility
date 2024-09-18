@@ -321,8 +321,9 @@ def confidence_bounds(
     return mean, ucb, lcb
 
 class NoisyData:
-    def __init__(self, log_y=False, x_index=False):
+    def __init__(self, log_x=False, log_y=False, x_index=False):
         self._results_list_dict: dict[float, list] = dict()
+        self._log_x = log_x
         self._log_y = log_y
         self._x_index = x_index
         self._x_index_list = []
@@ -382,12 +383,12 @@ class NoisyData:
 
         return xtick_kwargs
 
-    def predict(self, x_pred: np.ndarray, log_x=False, log_y=False, eps=1e-5):
+    def predict(self, x_pred: np.ndarray, eps=1e-5):
         x, y = self.get_all_data()
-        if log_x:
+        if self._log_x:
             x_pred = np.log(x_pred)
             x = np.log(x)
-        if log_y:
+        if self._log_y:
             y = np.log(y)
 
         xm = x.mean()
@@ -399,21 +400,13 @@ class NoisyData:
         b = ym - w * xm
         y_pred = w * x_pred + b
 
-        if log_y:
+        if self._log_y:
             y_pred = np.exp(y_pred)
 
         return y_pred
 
-    def predict_line(
-        self,
-        x0: float,
-        x1: float,
-        log_x=False,
-        log_y=False,
-        eps=1e-5,
-        **line_kwargs,
-    ):
-        y0, y1 = self.predict(np.array([x0, x1]), log_x, log_y, eps)
+    def predict_line(self, x0: float, x1: float, eps=1e-5, **line_kwargs):
+        y0, y1 = self.predict(np.array([x0, x1]), eps)
         line_kwargs.setdefault("ls", "--")
         return AxLine([x0, y0], [x1, y1], **line_kwargs)
 

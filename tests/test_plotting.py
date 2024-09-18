@@ -773,7 +773,7 @@ def test_noisy_data_predict_log():
     subplots = []
     for log_x in [False, True]:
         for log_y in [False, True]:
-            data = plotting.NoisyData(log_y)
+            data = plotting.NoisyData(log_x=log_x, log_y=log_y)
 
             for x in np.linspace(0, 3, 20):
                 for _ in range(rng.integers(2, 10)):
@@ -787,7 +787,7 @@ def test_noisy_data_predict_log():
                     data.update(x_data, y_data)
 
             x = np.array([1, 6])
-            y = data.predict(x, log_x, log_y)
+            y = data.predict(x)
             printer(log_x, log_y, *data.get_all_data(), sep="\n")
             printer.hline()
 

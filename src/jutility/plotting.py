@@ -321,9 +321,9 @@ def confidence_bounds(
     return mean, ucb, lcb
 
 class NoisyData:
-    def __init__(self, log_space_data=False, x_index=False):
+    def __init__(self, log_y=False, x_index=False):
         self._results_list_dict: dict[float, list] = dict()
-        self._log_space_data = log_space_data
+        self._log_y = log_y
         self._x_index = x_index
         self._x_index_list = []
 
@@ -334,7 +334,7 @@ class NoisyData:
 
             x = self._x_index_list.index(x)
 
-        if self._log_space_data:
+        if self._log_y:
             y = np.log(y)
         if x in self._results_list_dict:
             self._results_list_dict[x].append(y)
@@ -348,7 +348,7 @@ class NoisyData:
             for y in result_list
         ]
         all_x, all_y = np.split(np.array(all_results_pairs), 2, axis=1)
-        if self._log_space_data:
+        if self._log_y:
             all_y = np.exp(all_y)
 
         return all_x.flatten(), all_y.flatten()
@@ -360,7 +360,7 @@ class NoisyData:
         )
         results_list_list = [self._results_list_dict[x_i] for x_i in x]
         mean, ucb, lcb = confidence_bounds(results_list_list, n_sigma)
-        if self._log_space_data:
+        if self._log_y:
             mean, ucb, lcb = np.exp([mean, ucb, lcb])
 
         return np.array(x), mean, ucb, lcb
@@ -382,12 +382,12 @@ class NoisyData:
 
         return xtick_kwargs
 
-    def predict(self, x_pred: np.ndarray, logx=False, logy=False, eps=1e-5):
+    def predict(self, x_pred: np.ndarray, log_x=False, log_y=False, eps=1e-5):
         x, y = self.get_all_data()
-        if logx:
+        if log_x:
             x_pred = np.log(x_pred)
             x = np.log(x)
-        if logy:
+        if log_y:
             y = np.log(y)
 
         xm = x.mean()
@@ -399,7 +399,7 @@ class NoisyData:
         b = ym - w * xm
         y_pred = w * x_pred + b
 
-        if logy:
+        if log_y:
             y_pred = np.exp(y_pred)
 
         return y_pred
@@ -408,12 +408,12 @@ class NoisyData:
         self,
         x0: float,
         x1: float,
-        logx=False,
-        logy=False,
+        log_x=False,
+        log_y=False,
         eps=1e-5,
         **line_kwargs,
     ):
-        y0, y1 = self.predict(np.array([x0, x1]), logx, logy, eps)
+        y0, y1 = self.predict(np.array([x0, x1]), log_x, log_y, eps)
         line_kwargs.setdefault("ls", "--")
         return AxLine([x0, y0], [x1, y1], **line_kwargs)
 
@@ -491,10 +491,10 @@ class AxisProperties:
         ylabel=None,
         xlim=None,
         ylim=None,
-        log_xscale=False,
-        log_yscale=False,
-        symlogx=False,
-        symlogy=False,
+        log_x=False,
+        log_y=False,
+        symlog_x=False,
+        symlog_y=False,
         xticks=None,
         xticklabels=None,
         rotate_xticklabels=False,
@@ -511,10 +511,10 @@ class AxisProperties:
         self._ylabel = ylabel
         self._xlim = xlim
         self._ylim = ylim
-        self._log_xscale = log_xscale
-        self._log_yscale = log_yscale
-        self._symlogx = symlogx
-        self._symlogy = symlogy
+        self._log_x = log_x
+        self._log_y = log_y
+        self._symlog_x = symlog_x
+        self._symlog_y = symlog_y
         self._xticks = xticks
         self._xticklabels = xticklabels
         self._rotate_xticklabels = rotate_xticklabels
@@ -548,13 +548,13 @@ class AxisProperties:
             axis.axis("square")
         if self._axis_off:
             axis.set_axis_off()
-        if self._log_xscale:
+        if self._log_x:
             axis.set_xscale("log")
-        if self._log_yscale:
+        if self._log_y:
             axis.set_yscale("log")
-        if self._symlogx:
+        if self._symlog_x:
             axis.set_xscale("symlog")
-        if self._symlogy:
+        if self._symlog_y:
             axis.set_yscale("symlog")
         if self._grid:
             axis.grid(True, which="both")

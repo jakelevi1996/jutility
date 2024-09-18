@@ -518,17 +518,17 @@ def test_log_range():
         plotting.Subplot(*lines),
         plotting.Subplot(
             *lines,
-            axis_properties=plotting.AxisProperties(log_xscale=True),
+            axis_properties=plotting.AxisProperties(log_x=True),
         ),
         plotting.Subplot(
             *lines,
-            axis_properties=plotting.AxisProperties(log_yscale=True),
+            axis_properties=plotting.AxisProperties(log_y=True),
         ),
         plotting.Subplot(
             *lines,
             axis_properties=plotting.AxisProperties(
-                log_xscale=True,
-                log_yscale=True,
+                log_x=True,
+                log_y=True,
             ),
         ),
     )

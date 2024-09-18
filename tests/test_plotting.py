@@ -130,7 +130,7 @@ def test_log_axes():
     sp_list = []
     sp = plotting.Subplot(
         plotting.Line(x1, y1, c="b", marker="o"),
-        axis_properties=plotting.AxisProperties("x", "y", log_yscale=True),
+        axis_properties=plotting.AxisProperties("x", "y", log_y=True),
     )
     sp_list.append(sp)
 
@@ -138,7 +138,7 @@ def test_log_axes():
     y2 = [3.8, 3.2, 1.8, 1.2, -1.2]
     sp = plotting.Subplot(
         plotting.Line(x2, y2, c="b", marker="o"),
-        axis_properties=plotting.AxisProperties("x", "y", log_xscale=True),
+        axis_properties=plotting.AxisProperties("x", "y", log_x=True),
     )
     sp_list.append(sp)
 
@@ -149,8 +149,8 @@ def test_log_axes():
         plotting.Line(x3, y3, c="b", marker="o"),
         xlabel="x",
         ylabel="y",
-        log_xscale=True,
-        log_yscale=True,
+        log_x=True,
+        log_y=True,
     )
     sp_list.append(sp)
     mp = plotting.MultiPlot(*sp_list, num_rows=1)
@@ -738,7 +738,7 @@ def test_noisy_data():
 
 def test_noisy_log_data():
     rng = util.Seeder().get_rng("test_noisy_log_data")
-    noisy_log_data = plotting.NoisyData(log_space_data=True)
+    noisy_log_data = plotting.NoisyData(log_y=True)
     noisy_data = plotting.NoisyData()
     x_list = util.log_range(0.01, 10, 50)
     for x in x_list:
@@ -751,17 +751,17 @@ def test_noisy_log_data():
         plotting.Subplot(
             *noisy_log_data.plot(),
             axis_properties=plotting.AxisProperties(
-                title="noisy_log_data, log_space_data=True",
-                log_xscale=True,
-                log_yscale=True,
+                title="noisy_log_data, log_y=True",
+                log_x=True,
+                log_y=True,
             ),
         ),
         plotting.Subplot(
             *noisy_data.plot(),
             axis_properties=plotting.AxisProperties(
-                title="noisy_data, log_space_data=False",
-                log_xscale=True,
-                log_yscale=True,
+                title="noisy_data, log_y=False",
+                log_x=True,
+                log_y=True,
             ),
         ),
     )
@@ -771,32 +771,32 @@ def test_noisy_data_predict_log():
     rng = util.Seeder().get_rng("test_noisy_data_predict_log")
     printer = util.Printer("test_noisy_data_predict_log", OUTPUT_DIR)
     subplots = []
-    for logx in [False, True]:
-        for logy in [False, True]:
-            data = plotting.NoisyData(logy)
+    for log_x in [False, True]:
+        for log_y in [False, True]:
+            data = plotting.NoisyData(log_y)
 
             for x in np.linspace(0, 3, 20):
                 for _ in range(rng.integers(2, 10)):
                     x_data = x
                     y_data = 0.3 + 2.1*x + 0.1*rng.normal()
-                    if logx:
+                    if log_x:
                         x_data = np.exp(x_data)
-                    if logy:
+                    if log_y:
                         y_data = np.exp(y_data)
 
                     data.update(x_data, y_data)
 
             x = np.array([1, 6])
-            y = data.predict(x, logx, logy)
-            printer(logx, logy, *data.get_all_data(), sep="\n")
+            y = data.predict(x, log_x, log_y)
+            printer(log_x, log_y, *data.get_all_data(), sep="\n")
             printer.hline()
 
             sp = plotting.Subplot(
                 *data.plot("b", "Data"),
                 plotting.AxLine(*zip(x, y), ls="--"),
-                log_xscale=logx,
-                log_yscale=logy,
-                title="logx=%s, logy=%s" % (logx, logy),
+                log_x=log_x,
+                log_y=log_y,
+                title="log_x=%s, log_y=%s" % (log_x, log_y),
             )
             subplots.append(sp)
 

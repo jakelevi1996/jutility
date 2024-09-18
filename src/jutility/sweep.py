@@ -53,7 +53,7 @@ class Parameter:
             plot_axis_properties = plotting.AxisProperties(
                 xlabel=name,
                 ylabel="Result",
-                log_xscale=log_x_axis,
+                log_x=log_x_axis,
             )
 
         self.plot_axis_properties = plot_axis_properties

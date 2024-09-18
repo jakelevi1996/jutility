@@ -671,7 +671,8 @@ def save_image_diff(
     if mode == "RGBA":
         z[:, :, 3] = 255
 
-    return save_image(z, output_name, dir_name, verbose, mode)
+    full_path = save_image(z, output_name, dir_name, verbose, mode)
+    return z, full_path
 
 def load_image(full_path) -> np.ndarray:
     image_uint8 = np.array(PIL.Image.open(full_path))

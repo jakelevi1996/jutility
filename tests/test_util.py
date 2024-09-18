@@ -1011,18 +1011,26 @@ def test_save_image_diff():
         plot_name="test_save_image_diff_input_2",
         dir_name=OUTPUT_DIR,
     )
-    im1 = util.load_image(mp1.full_path)
-    im2 = util.load_image(mp2.full_path)
+    bw_fp1 = util.save_image(
+        util.load_image(mp1.full_path).mean(axis=2).astype(np.uint8),
+        "test_save_image_diff_input_1_bw",
+        OUTPUT_DIR,
+    )
+    bw_fp2 = util.save_image(
+        util.load_image(mp2.full_path).mean(axis=2).astype(np.uint8),
+        "test_save_image_diff_input_2_bw",
+        OUTPUT_DIR,
+    )
     util.save_image_diff(
-        im1,
-        im2,
-        "test_save_image_diff rgba=True",
+        mp1.full_path,
+        mp2.full_path,
+        "test_save_image_diff_rgba_True",
         OUTPUT_DIR,
         rgba=True,
     )
     util.save_image_diff(
-        im1.mean(axis=2),
-        im2.mean(axis=2),
-        "test_save_image_diff rgba=False",
+        bw_fp1,
+        bw_fp2,
+        "test_save_image_diff_rgba_False",
         OUTPUT_DIR,
     )

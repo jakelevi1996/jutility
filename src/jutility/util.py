@@ -657,7 +657,7 @@ def save_image(
 def save_image_diff(
     full_path_1: str,
     full_path_2: str,
-    output_name: str,
+    output_name: str="diff",
     dir_name: str=None,
     verbose: bool=True,
     mode="L",

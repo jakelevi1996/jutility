@@ -666,13 +666,17 @@ def save_image_diff(
     x = load_image(full_path_1).astype(float)
     y = load_image(full_path_2).astype(float)
     z = np.abs(x - y).astype(np.uint8)
+    z_min = int(z.min())
+    z_max = int(z.max())
+    if verbose:
+        print("Max difference = %i, min difference = %i" % (z_max, z_min))
     if rgba:
         mode = "RGBA"
     if mode == "RGBA":
         z[:, :, 3] = 255
 
     full_path = save_image(z, output_name, dir_name, verbose, mode)
-    return z, full_path
+    return z, z_min, z_max, full_path
 
 def load_image(full_path) -> np.ndarray:
     image_uint8 = np.array(PIL.Image.open(full_path))

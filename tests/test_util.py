@@ -1021,14 +1021,14 @@ def test_save_image_diff():
         "test_save_image_diff_input_2_bw",
         OUTPUT_DIR,
     )
-    z1, s1 = util.save_image_diff(
+    z1, z1_min, z1_max, s1 = util.save_image_diff(
         mp1.full_path,
         mp2.full_path,
         "test_save_image_diff_rgba_True",
         OUTPUT_DIR,
         rgba=True,
     )
-    z2, s2 = util.save_image_diff(
+    z2, z2_min, z2_max, s2 = util.save_image_diff(
         bw_fp1,
         bw_fp2,
         "test_save_image_diff_rgba_False",
@@ -1036,7 +1036,17 @@ def test_save_image_diff():
     )
     assert isinstance(s1, str)
     assert isinstance(s2, str)
+    assert isinstance(z1_min, int)
+    assert isinstance(z1_max, int)
+    assert isinstance(z2_min, int)
+    assert isinstance(z2_max, int)
     assert isinstance(z1, np.ndarray)
     assert isinstance(z2, np.ndarray)
     assert z1.ndim == 3
     assert z2.ndim == 2
+    assert z1.shape == (600, 800, 4)
+    assert z2.shape == (600, 800)
+    assert z1_min == 0
+    assert z1_max == 255
+    assert z2_min == 0
+    assert z2_max == 192

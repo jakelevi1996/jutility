@@ -960,3 +960,10 @@ def test_noisydata_x_index():
         ),
     )
     mp.save("test_noisydata_x_index", OUTPUT_DIR)
+
+def test_noisy_data_repr():
+    n = plotting.NoisyData()
+    n.update(1, 1)
+    n.update(1, 2)
+    n.update(3, 4)
+    assert repr(n) == "NoisyData({1: [1, 2], 3: [4]})"

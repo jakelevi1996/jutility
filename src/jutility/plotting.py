@@ -410,6 +410,9 @@ class NoisyData:
         line_kwargs.setdefault("ls", "--")
         return AxLine([x0, y0], [x1, y1], **line_kwargs)
 
+    def __repr__(self):
+        return "%s(%s)" % (type(self).__name__, self._results_list_dict)
+
 class ColourPicker:
     """
     See https://matplotlib.org/stable/users/explain/colors/colormaps.html

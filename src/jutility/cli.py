@@ -163,7 +163,7 @@ class ObjectArg(Arg):
 
     def init_object(self, parsed_args_dict, **extra_kwargs):
         if self.full_name in parsed_args_dict:
-            if verbose.is_verbose:
+            if verbose:
                 verbose.display_retrieve(self.full_name)
 
             return parsed_args_dict[self.full_name]
@@ -174,7 +174,7 @@ class ObjectArg(Arg):
         }
         self.update_kwargs(kwargs, parsed_args_dict, extra_kwargs)
 
-        if verbose.is_verbose:
+        if verbose:
             verbose.display_init(self.object_type, kwargs)
 
         object_value = self.object_type(**kwargs)
@@ -392,7 +392,7 @@ class Namespace(argparse.Namespace):
 
 class _Verbose:
     def __init__(self):
-        self.is_verbose = False
+        self._verbosity = 0
         self._printer = util.Printer()
 
     def display_init(self, object_type, kwargs: dict):
@@ -406,9 +406,12 @@ class _Verbose:
         self._printer = printer
 
     def __enter__(self):
-        self.is_verbose = True
+        self._verbosity += 1
 
     def __exit__(self, *args):
-        self.is_verbose = False
+        self._verbosity -= 1
+
+    def __bool__(self):
+        return self._verbosity > 0
 
 verbose = _Verbose()

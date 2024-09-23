@@ -1060,3 +1060,51 @@ def test_update_args_reset_cache():
     assert c4 is c3
     assert isinstance(c4, C)
     assert c4.x == 3
+
+def test_nested_verbose():
+    printer = util.Printer("test_nested_verbose", OUTPUT_DIR)
+
+    class C:
+        def __init__(self, x: int):
+            self.x = x
+
+        def __repr__(self):
+            return "C(x=%i)" % self.x
+
+    parser = cli.ObjectParser(
+        cli.ObjectArg(C, cli.Arg("x", type=int), name="c1"),
+        cli.ObjectArg(C, cli.Arg("x", type=int), name="c2"),
+        cli.ObjectArg(C, cli.Arg("x", type=int), name="c3"),
+        cli.ObjectArg(C, cli.Arg("x", type=int), name="c4"),
+    )
+    args = parser.parse_args(
+        ["--c1.x", "6", "--c2.x", "7", "--c3.x", "8", "--c4.x", "9"],
+    )
+
+    cli.verbose.set_printer(printer)
+
+    with cli.verbose:
+        c1 = cli.init_object(args, "c1")
+
+        with cli.verbose:
+            c2 = cli.init_object(args, "c2")
+
+        c3 = cli.init_object(args, "c3")
+
+    c4 = cli.init_object(args, "c4")
+
+    assert isinstance(c1, C)
+    assert isinstance(c2, C)
+    assert isinstance(c3, C)
+    assert isinstance(c4, C)
+
+    assert c1.x == 6
+    assert c2.x == 7
+    assert c3.x == 8
+    assert c4.x == 9
+
+    cli_output = printer.read()
+    assert cli_output.count("cli: C(x=6)") == 1
+    assert cli_output.count("cli: C(x=7)") == 1
+    assert cli_output.count("cli: C(x=8)") == 1
+    assert cli_output.count("cli: C(x=9)") == 0

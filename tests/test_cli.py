@@ -1102,3 +1102,47 @@ def test_nested_verbose():
     assert cli_output.count("cli: C(x=7)") == 1
     assert cli_output.count("cli: C(x=8)") == 1
     assert cli_output.count("cli: C(x=9)") == 0
+
+def test_namespace_update_allow_new_keys():
+    printer = util.Printer("test_namespace_update_allow_new_keys", OUTPUT_DIR)
+
+    class C:
+        def __init__(self, x: int):
+            self.x = x
+
+        def __repr__(self):
+            return "C(x=%i)" % self.x
+
+    parser = cli.ObjectParser(
+        cli.ObjectArg(C, cli.Arg("x", type=int), name="c1"),
+        cli.ObjectArg(C, cli.Arg("x", type=int), name="c2"),
+        cli.ObjectArg(C, cli.Arg("x", type=int), name="c3"),
+        cli.ObjectArg(C, cli.Arg("x", type=int), name="c4"),
+    )
+    args = parser.parse_args(
+        ["--c1.x", "6", "--c2.x", "7", "--c3.x", "8", "--c4.x", "9"],
+    )
+
+    assert repr(args) == "Namespace(c1.x=6, c2.x=7, c3.x=8, c4.x=9)"
+
+    with cli.verbose:
+        c1 = cli.init_object(args, "c1")
+
+    assert isinstance(c1, C)
+    assert c1.x == 6
+
+    args.update({"c1.x": 7})
+
+    with cli.verbose:
+        c1 = cli.init_object(args, "c1")
+
+    assert isinstance(c1, C)
+    assert c1.x == 7
+
+    with pytest.raises(ValueError):
+        args.update({"c5.x": 7})
+
+    args.update({"c5.x": 7}, allow_new_keys=True)
+
+    assert repr(args) == "Namespace(c1.x=7, c2.x=7, c3.x=8, c4.x=9)"
+    assert args.get("c5.x") == 7

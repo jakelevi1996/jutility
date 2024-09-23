@@ -373,7 +373,17 @@ class Namespace(argparse.Namespace):
     def get(self, key):
         return vars(self).get(key)
 
-    def update(self, arg_dict):
+    def update(self, arg_dict: dict, allow_new_keys=False):
+        if not allow_new_keys:
+            old_keys = set(self._parser.get_arg_dict().keys())
+            new_keys = set(arg_dict.keys()) - old_keys
+            if len(new_keys) > 0:
+                raise ValueError(
+                    "Received extra keys %s. Either remove these keys, or "
+                    "call `Namespace.update` with `allow_new_keys=True`."
+                    % sorted(new_keys)
+                )
+
         self._parser.reset_object_cache()
         return vars(self).update(arg_dict)
 

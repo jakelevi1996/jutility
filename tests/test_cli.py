@@ -796,12 +796,6 @@ def test_namespace_str_repr():
     printer(args)
     printer(str(args))
     printer(repr(args))
-    assert str(args) == (
-        "--model 'DeepSet' --model.encoder 'Mlp' "
-        "--model.encoder.hidden_dim 100 --model.encoder.num_hidden_layers 3 "
-        "--model.hidden_dim 100 --model.num_hidden_layers 3 --num_epochs 10 "
-        "--seed 1234"
-    )
     assert repr(args) == (
         "Namespace(model='DeepSet', model.encoder='Mlp', "
         "model.encoder.hidden_dim=100, model.encoder.num_hidden_layers=3, "

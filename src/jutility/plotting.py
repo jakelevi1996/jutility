@@ -788,7 +788,7 @@ def plot(
 
     return multi_plot
 
-class MultiPlot:
+class MultiPlot(Subplot):
     def __init__(
         self,
         *subplots: Subplot,
@@ -836,6 +836,10 @@ class MultiPlot:
             self.close()
 
         return self.full_path
+
+    def plot(self, axis: plt.Axes):
+        axis.imshow(self.get_image_array())
+        axis.set_axis_off()
 
     def get_rgb_bytes(self):
         self._fig.canvas.draw()

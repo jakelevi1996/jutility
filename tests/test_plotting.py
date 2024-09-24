@@ -967,3 +967,47 @@ def test_noisy_data_repr():
     n.update(1, 2)
     n.update(3, 4)
     assert repr(n) == "NoisyData({1: [1, 2], 3: [4]})"
+
+def test_nested_multiplot():
+    rng = util.Seeder().get_rng("test_nested_multiplot")
+
+    def get_random_subplot(n=20):
+        x = np.linspace(0, 1, n)
+        return plotting.Subplot(
+            plotting.Line(x, x + rng.normal(0, 0.1, n)),
+            plotting.Scatter(x, rng.uniform(0, 1, n), c="r"),
+        )
+
+    mp = plotting.MultiPlot(
+        plotting.MultiPlot(
+            *[get_random_subplot() for _ in range(2)],
+            title="n = 2",
+            top_space=0.1,
+        ),
+        plotting.MultiPlot(
+            *[get_random_subplot() for _ in range(4)],
+            title="n = 4",
+            top_space=0.1,
+        ),
+        plotting.MultiPlot(
+            plotting.MultiPlot(
+                *[get_random_subplot() for _ in range(2)],
+                num_rows=1,
+                figsize=[10, 3],
+            ),
+            plotting.MultiPlot(
+                *[get_random_subplot() for _ in range(3)],
+                num_rows=1,
+                figsize=[10, 3],
+            ),
+            num_cols=1,
+            title="n = 2+3",
+            top_space=0.1,
+        ),
+        plotting.MultiPlot(
+            *[get_random_subplot() for _ in range(9)],
+            title="n = 9",
+            top_space=0.1,
+        ),
+    )
+    mp.save("test_nested_multiplot", OUTPUT_DIR)

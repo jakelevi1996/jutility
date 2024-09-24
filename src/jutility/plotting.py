@@ -628,26 +628,32 @@ class FigureProperties:
         self._w_pad = w_pad
         self._h_pad = h_pad
 
-    def get_figure_and_axes(self):
-        gridspec_kw = {
-            "width_ratios": self._width_ratios,
-            "height_ratios": self._height_ratios,
-        }
-        figure, axes = plt.subplots(
-            self._num_rows,
-            self._num_cols,
+    def get_figure(self):
+        figure = plt.figure(
             figsize=self._figsize,
-            sharex=self._sharex,
-            sharey=self._sharey,
-            gridspec_kw=gridspec_kw,
-            squeeze=False,
             layout=self._layout,
         )
         if self._constrained_layout:
             layout_engine = figure.get_layout_engine()
             layout_engine.set(w_pad=self._w_pad, h_pad=self._h_pad)
 
-        return figure, axes.flat
+        return figure
+
+    def get_axes(
+        self,
+        figure: matplotlib.figure.Figure,
+    ) -> list[matplotlib.axes.Axes]:
+        axis_array = figure.subplots(
+            nrows=self._num_rows,
+            ncols=self._num_cols,
+            sharex=self._sharex,
+            sharey=self._sharey,
+            squeeze=False,
+            width_ratios=self._width_ratios,
+            height_ratios=self._height_ratios,
+        )
+        axis_list = axis_array.flatten().tolist()
+        return axis_list
 
     def apply(self, figure: matplotlib.figure.Figure):
         if self._tight_layout:
@@ -814,7 +820,8 @@ class MultiPlot(Subplot):
         **figure_kwargs,
     ):
         figure_properties = FigureProperties(len(subplots), **figure_kwargs)
-        fig, axes = figure_properties.get_figure_and_axes()
+        fig  = figure_properties.get_figure()
+        axes = figure_properties.get_axes(fig)
 
         if len(subplots) < len(axes):
             subplots += tuple([Empty()]) * (len(axes) - len(subplots))

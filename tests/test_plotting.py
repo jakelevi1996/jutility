@@ -243,7 +243,6 @@ def test_multiplot(num_subplots):
         *subplots,
         figure_properties=plotting.FigureProperties(
             title=plot_name,
-            top_space=0.15,
         ),
     )
     mp.save(plot_name, OUTPUT_DIR)
@@ -828,8 +827,6 @@ def test_figure_legend(handles):
         plotting.Subplot(plotting.Line(x, y2, c="r", label="y2")),
         legend=legend,
         title=test_name,
-        bottom_space=0.2,
-        top_space=0.15,
     )
     mp.save(test_name, OUTPUT_DIR)
 

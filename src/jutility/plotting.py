@@ -566,6 +566,7 @@ class AxisProperties:
 class FigureProperties:
     def __init__(
         self,
+        num_subplots,
         num_rows=None,
         num_cols=None,
         figsize=None,
@@ -587,14 +588,14 @@ class FigureProperties:
         w_pad=0.15,
         h_pad=0.15,
     ):
-        self._num_rows = num_rows
-        self._num_cols = num_cols
-        self._figsize = figsize
-        self._sharex = sharex
-        self._sharey = sharey
-        self._width_ratios = width_ratios
-        self._height_ratios = height_ratios
-
+        if num_rows is None:
+            if num_cols is None:
+                num_cols = math.ceil(math.sqrt(num_subplots))
+            num_rows = math.ceil(num_subplots / num_cols)
+        if num_cols is None:
+            num_cols = math.ceil(num_subplots / num_rows)
+        if figsize is None:
+            figsize = [6 * num_cols, 4 * num_rows]
         if layout is not None:
             constrained_layout = False
             tight_layout = False
@@ -604,7 +605,16 @@ class FigureProperties:
         if constrained_layout:
             tight_layout = False
             layout = "constrained"
+        if (title is not None) and wrap_title:
+            title = util.wrap_string(title)
 
+        self._num_rows = num_rows
+        self._num_cols = num_cols
+        self._figsize = figsize
+        self._sharex = sharex
+        self._sharey = sharey
+        self._width_ratios = width_ratios
+        self._height_ratios = height_ratios
         self._constrained_layout = constrained_layout
         self._tight_layout = tight_layout
         self._layout = layout
@@ -612,24 +622,13 @@ class FigureProperties:
         self._title = title
         self._title_font_size = title_font_size
         self._title_colour = title_colour
-        self._wrap_title = wrap_title
         self._top_space = top_space
         self._bottom_space = bottom_space
         self._legend = legend
         self._w_pad = w_pad
         self._h_pad = h_pad
 
-    def get_figure_and_axes(self, num_subplots):
-        if self._num_rows is None:
-            if self._num_cols is None:
-                self._num_cols = math.ceil(math.sqrt(num_subplots))
-            self._num_rows = math.ceil(num_subplots / self._num_cols)
-        if self._num_cols is None:
-            self._num_cols = math.ceil(num_subplots / self._num_rows)
-
-        if self._figsize is None:
-            self._figsize = [6 * self._num_cols, 4 * self._num_rows]
-
+    def get_figure_and_axes(self):
         gridspec_kw = {
             "width_ratios": self._width_ratios,
             "height_ratios": self._height_ratios,
@@ -656,8 +655,6 @@ class FigureProperties:
         if self._colour is not None:
             figure.patch.set_facecolor(self._colour)
         if self._title is not None:
-            if self._wrap_title:
-                self._title = util.wrap_string(self._title)
             figure.suptitle(
                 self._title,
                 fontsize=self._title_font_size,
@@ -816,8 +813,8 @@ class MultiPlot(Subplot):
         *subplots: Subplot,
         **figure_kwargs,
     ):
-        figure_properties = FigureProperties(**figure_kwargs)
-        fig, axes = figure_properties.get_figure_and_axes(len(subplots))
+        figure_properties = FigureProperties(len(subplots), **figure_kwargs)
+        fig, axes = figure_properties.get_figure_and_axes()
 
         if len(subplots) < len(axes):
             subplots += tuple([Empty()]) * (len(axes) - len(subplots))

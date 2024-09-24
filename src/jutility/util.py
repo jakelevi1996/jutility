@@ -667,7 +667,8 @@ def save_image_diff(
     y = load_image(full_path_2).astype(float)
     z = np.abs(x - y).astype(np.uint8)
     if verbose:
-        print("Max difference = %s, min difference = %s" % (z.min(), z.max()))
+        print("Min image difference = %s" % z.min())
+        print("Max image difference = %s" % z.max())
     if rgba:
         mode = "RGBA"
     if mode == "RGBA":

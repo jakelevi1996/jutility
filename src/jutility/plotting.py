@@ -674,6 +674,25 @@ class FigureProperties:
         if self._legend is not None:
             self._legend.plot(figure)
 
+    def get_subplot_axes(
+        self,
+        axis: matplotlib.axes.Axes,
+    ) -> list[matplotlib.axes.Axes]:
+        subplot_spec = axis.get_subplotspec()
+        subgrid_spec = subplot_spec.subgridspec(
+            nrows=self._num_rows,
+            ncols=self._num_cols,
+            width_ratios=self._width_ratios,
+            height_ratios=self._height_ratios,
+        )
+        axes_array = subgrid_spec.subplots(
+            sharex=self._sharex,
+            sharey=self._sharey,
+            squeeze=False,
+        )
+        axis_list = axes_array.flatten().tolist()
+        return axis_list
+
 class Subplot:
     def __init__(
         self,
@@ -813,7 +832,7 @@ class MultiPlot(Subplot):
         if figure_properties is None:
             figure_properties = FigureProperties(**figure_kwargs)
 
-        self._fig, axes = figure_properties.get_figure_and_axes(len(subplots))
+        fig, axes = figure_properties.get_figure_and_axes(len(subplots))
 
         if len(subplots) < len(axes):
             subplots += tuple([Empty()]) * (len(axes) - len(subplots))
@@ -821,9 +840,12 @@ class MultiPlot(Subplot):
         for subplot, axis in zip(subplots, axes):
             subplot.plot(axis)
 
-        figure_properties.apply(self._fig)
+        figure_properties.apply(fig)
 
-        self.full_path = None
+        self.full_path      = None
+        self._fig           = fig
+        self._properties    = figure_properties
+        self._subplots      = subplots
 
     def save(
         self,
@@ -853,8 +875,10 @@ class MultiPlot(Subplot):
         return self.full_path
 
     def plot(self, axis: plt.Axes):
-        axis.imshow(self.get_image_array())
         axis.set_axis_off()
+        axis_list = self._properties.get_subplot_axes(axis)
+        for subplot, axis in zip(self._subplots, axis_list):
+            subplot.plot(axis)
 
     def get_rgb_bytes(self):
         self._fig.canvas.draw()

@@ -863,7 +863,7 @@ class MultiPlot(Subplot):
 
         return self.full_path
 
-    def plot(self, axis: plt.Axes):
+    def plot(self, axis: matplotlib.axes.Axes):
         axis.set_axis_off()
         axis_list = self._properties.get_subplot_axes(axis)
         for subplot, axis in zip(self._subplots, axis_list):

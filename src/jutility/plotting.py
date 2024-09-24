@@ -577,8 +577,9 @@ class FigureProperties:
         sharey=False,
         width_ratios=None,
         height_ratios=None,
-        tight_layout=True,
-        constrained_layout=False,
+        constrained_layout=True,
+        tight_layout=False,
+        layout=None,
         colour=None,
         title=None,
         title_font_size=25,
@@ -586,7 +587,9 @@ class FigureProperties:
         wrap_title=True,
         top_space=None,
         bottom_space=None,
-        legend: "FigureLegend"=None
+        legend: "FigureLegend"=None,
+        w_pad=0.15,
+        h_pad=0.15,
     ):
         self._num_rows = num_rows
         self._num_cols = num_cols
@@ -596,13 +599,19 @@ class FigureProperties:
         self._width_ratios = width_ratios
         self._height_ratios = height_ratios
 
+        if layout is not None:
+            constrained_layout = False
+            tight_layout = False
+        if tight_layout:
+            constrained_layout = False
+            layout = None
         if constrained_layout:
             tight_layout = False
-            self._layout = "constrained"
-        else:
-            self._layout = None
+            layout = "constrained"
 
+        self._constrained_layout = constrained_layout
         self._tight_layout = tight_layout
+        self._layout = layout
         self._colour = colour
         self._title = title
         self._title_font_size = title_font_size
@@ -611,6 +620,8 @@ class FigureProperties:
         self._top_space = top_space
         self._bottom_space = bottom_space
         self._legend = legend
+        self._w_pad = w_pad
+        self._h_pad = h_pad
 
     def get_figure_and_axes(self, num_subplots):
         if self._num_rows is None:
@@ -637,6 +648,10 @@ class FigureProperties:
             squeeze=False,
             layout=self._layout,
         )
+        if self._constrained_layout:
+            layout_engine = figure.get_layout_engine()
+            layout_engine.set(w_pad=self._w_pad, h_pad=self._h_pad)
+
         return figure, axes.flat
 
     def apply(self, figure: matplotlib.figure.Figure):

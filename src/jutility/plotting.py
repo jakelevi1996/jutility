@@ -720,7 +720,7 @@ class LegendSubplot(Subplot):
         self._legend_plottable.plot(axis)
         axis.set_axis_off()
 
-class FigureLegend(Subplot):
+class FigureLegend:
     """
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.legend.html

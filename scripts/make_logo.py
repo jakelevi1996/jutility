@@ -16,16 +16,15 @@ line_list = [
 mp = plotting.MultiPlot(
     plotting.Subplot(
         *line_list,
-        axis_properties=plotting.AxisProperties(axis_off=True, xlim=[-1, 7]),
+        axis_off=True,
+        xlim=[-1, 7],
     ),
-    figure_properties=plotting.FigureProperties(
-        figsize=[10, 4],
-        colour="k",
-        title="  ".join("jutility"),
-        title_colour="w",
-        title_font_size=40,
-        tight_layout=True,
-        top_space=0.2,
-    ),
+    figsize=[10, 4],
+    colour="k",
+    title="  ".join("jutility"),
+    title_colour="w",
+    title_font_size=40,
+    tight_layout=True,
+    top_space=0.2,
 )
 mp.save("logo_black", dir_name=os.path.join(os.getcwd(), "images"))

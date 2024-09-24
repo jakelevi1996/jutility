@@ -523,10 +523,6 @@ class AxisProperties:
         self._wrap_title = wrap_title
         self._colour = colour
 
-    def set_default_title(self, title):
-        if self._title is None:
-            self._title = title
-
     def apply(self, axis: matplotlib.axes.Axes):
         if self._xlabel is not None:
             axis.set_xlabel(self._xlabel)
@@ -697,13 +693,10 @@ class Subplot:
     def __init__(
         self,
         *lines: Plottable,
-        axis_properties=None,
         **axis_kwargs,
     ):
         self._lines = lines
-        if axis_properties is None:
-            axis_properties = AxisProperties(**axis_kwargs)
-        self._axis_properties = axis_properties
+        self._axis_properties = AxisProperties(**axis_kwargs)
 
     def plot(self, axis: matplotlib.axes.Axes):
         for line in self._lines:
@@ -786,7 +779,6 @@ class Empty(Subplot):
 
 def plot(
     *lines: Plottable,
-    axis_properties=None,
     legend=False,
     figsize=None,
     plot_name=None,
@@ -795,26 +787,22 @@ def plot(
     pdf=False,
     **axis_kwargs,
 ):
-    if axis_properties is None:
-        axis_properties = AxisProperties(**axis_kwargs)
     if figsize is None:
         figsize = [10, 6] if legend else [8, 6]
-    if plot_name is not None:
-        axis_properties.set_default_title(plot_name)
+
+    axis_kwargs.setdefault("title", plot_name)
 
     if legend:
-        wr =  [1, 0.2]
-        fig_properties = FigureProperties(1, 2, figsize, width_ratios=wr)
         multi_plot = MultiPlot(
-            Subplot(*lines, axis_properties=axis_properties),
+            Subplot(*lines, **axis_kwargs),
             LegendSubplot(*lines),
-            figure_properties=fig_properties,
+            figsize=figsize,
+            width_ratios=[1, 0.2],
         )
     else:
-        fig_properties = FigureProperties(1, 1, figsize)
         multi_plot = MultiPlot(
-            Subplot(*lines, axis_properties=axis_properties),
-            figure_properties=fig_properties,
+            Subplot(*lines, **axis_kwargs),
+            figsize=figsize,
         )
 
     if save_close:
@@ -826,12 +814,9 @@ class MultiPlot(Subplot):
     def __init__(
         self,
         *subplots: Subplot,
-        figure_properties=None,
         **figure_kwargs,
     ):
-        if figure_properties is None:
-            figure_properties = FigureProperties(**figure_kwargs)
-
+        figure_properties = FigureProperties(**figure_kwargs)
         fig, axes = figure_properties.get_figure_and_axes(len(subplots))
 
         if len(subplots) < len(axes):

@@ -18,7 +18,8 @@ def test_plot_lines():
         *line_list,
         plot_name="test_plot_lines",
         dir_name=OUTPUT_DIR,
-        axis_properties=plotting.AxisProperties(xlabel="x", ylabel="y"),
+        xlabel="x",
+        ylabel="y",
     )
     assert os.path.isfile(mp.full_path)
 
@@ -80,7 +81,8 @@ def test_plot_fill():
         ),
         plot_name="test_plot_fill",
         dir_name=OUTPUT_DIR,
-        axis_properties=plotting.AxisProperties(xlabel="x", ylabel="y"),
+        xlabel="x",
+        ylabel="y",
     )
     assert os.path.isfile(mp.full_path)
 
@@ -130,7 +132,9 @@ def test_log_axes():
     sp_list = []
     sp = plotting.Subplot(
         plotting.Line(x1, y1, c="b", marker="o"),
-        axis_properties=plotting.AxisProperties("x", "y", log_y=True),
+        xlabel="x",
+        ylabel="y",
+        log_y=True,
     )
     sp_list.append(sp)
 
@@ -138,7 +142,9 @@ def test_log_axes():
     y2 = [3.8, 3.2, 1.8, 1.2, -1.2]
     sp = plotting.Subplot(
         plotting.Line(x2, y2, c="b", marker="o"),
-        axis_properties=plotting.AxisProperties("x", "y", log_x=True),
+        xlabel="x",
+        ylabel="y",
+        log_x=True,
     )
     sp_list.append(sp)
 
@@ -232,18 +238,14 @@ def test_multiplot(num_subplots):
         plotting.Subplot(
             plotting.Scatter(x, f(x), c="b"),
             plotting.Scatter(x, f(x), c="r"),
-            axis_properties=plotting.AxisProperties(
-                title="Subplot %i" % subplot_ind,
-            ),
+            title="Subplot %i" % subplot_ind,
         )
         for subplot_ind in range(num_subplots)
     ]
     plot_name = "%i subplots" % num_subplots
     mp = plotting.MultiPlot(
         *subplots,
-        figure_properties=plotting.FigureProperties(
-            title=plot_name,
-        ),
+        title=plot_name,
     )
     mp.save(plot_name, OUTPUT_DIR)
     assert os.path.isfile(mp.full_path)
@@ -310,14 +312,11 @@ def test_colourbar(constrained_layout):
         colour_bar,
         plotting.ImShow(z2, vmin=v_min, vmax=v_max),
         colour_bar,
-        figure_properties=plotting.FigureProperties(
-            num_rows=2,
-            num_cols=2,
-            width_ratios=[1, 0.2],
-            tight_layout=False,
-            constrained_layout=constrained_layout,
-            title=plot_name,
-        ),
+        num_rows=2,
+        num_cols=2,
+        width_ratios=[1, 0.2],
+        constrained_layout=constrained_layout,
+        title=plot_name,
     )
     mp.save(plot_name, OUTPUT_DIR)
     assert os.path.isfile(mp.full_path)
@@ -331,13 +330,13 @@ def test_quiver():
     mp = plotting.MultiPlot(
         plotting.Subplot(
             plotting.Quiver(x, y, dx, dy, zorder=10, normalise=False),
-            axis_properties=plotting.AxisProperties(title="normalise=False")
+            title="normalise=False",
         ),
         plotting.Subplot(
             plotting.Quiver(x, y, dx, dy, zorder=10, normalise=True),
-            axis_properties=plotting.AxisProperties(title="normalise=True")
+            title="normalise=True",
         ),
-        figure_properties=plotting.FigureProperties(figsize=[10, 4])
+        figsize=[10, 4],
     )
     mp.save(plot_name="test_quiver", dir_name=OUTPUT_DIR)
     assert os.path.isfile(mp.full_path)
@@ -345,7 +344,8 @@ def test_quiver():
 def test_text():
     plotting.plot(
         plotting.Text(0.5, 0.5, "Text example", size=60, center_align=True),
-        axis_properties=plotting.AxisProperties(axis_off=True, title=""),
+        axis_off=True,
+        title=None,
         plot_name="test_text",
         dir_name=OUTPUT_DIR,
     )
@@ -411,7 +411,7 @@ def test_get_image_array():
     plot_name = "test_get_image_array"
     mp = plotting.plot(
         plotting.Text(0.5, 0.5, plot_name, center_align=True, size=10),
-        axis_properties=plotting.AxisProperties(axis_off=True),
+        axis_off=True,
         figsize=[2, 2],
         save_close=False,
     )
@@ -419,7 +419,7 @@ def test_get_image_array():
     mp.close()
     sp = plotting.Subplot(
         plotting.ImShow(image_array),
-        axis_properties=plotting.AxisProperties(axis_off=True),
+        axis_off=True,
     )
     sp_list = [sp] * 9
     mp = plotting.MultiPlot(*sp_list)
@@ -749,19 +749,15 @@ def test_noisy_log_data():
     mp = plotting.MultiPlot(
         plotting.Subplot(
             *noisy_log_data.plot(),
-            axis_properties=plotting.AxisProperties(
-                title="noisy_log_data, log_y=True",
-                log_x=True,
-                log_y=True,
-            ),
+            title="noisy_log_data, log_y=True",
+            log_x=True,
+            log_y=True,
         ),
         plotting.Subplot(
             *noisy_data.plot(),
-            axis_properties=plotting.AxisProperties(
-                title="noisy_data, log_y=False",
-                log_x=True,
-                log_y=True,
-            ),
+            title="noisy_data, log_y=False",
+            log_x=True,
+            log_y=True,
         ),
     )
     mp.save("test_noisy_log_data", OUTPUT_DIR)

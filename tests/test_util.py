@@ -518,18 +518,16 @@ def test_log_range():
         plotting.Subplot(*lines),
         plotting.Subplot(
             *lines,
-            axis_properties=plotting.AxisProperties(log_x=True),
+            log_x=True,
         ),
         plotting.Subplot(
             *lines,
-            axis_properties=plotting.AxisProperties(log_y=True),
+            log_y=True,
         ),
         plotting.Subplot(
             *lines,
-            axis_properties=plotting.AxisProperties(
-                log_x=True,
-                log_y=True,
-            ),
+            log_x=True,
+            log_y=True,
         ),
     )
     mp.save("test_log_range", dir_name=OUTPUT_DIR)

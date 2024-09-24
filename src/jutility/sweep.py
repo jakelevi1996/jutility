@@ -42,21 +42,21 @@ class Parameter:
         val_range,
         val_format=None,
         log_x_axis=False,
-        plot_axis_properties=None,
+        plot_axis_kwargs=None,
     ):
         self.name = name
         self.default = default
         self.val_range = val_range
         self.val_format = val_format
 
-        if plot_axis_properties is None:
-            plot_axis_properties = plotting.AxisProperties(
-                xlabel=name,
-                ylabel="Result",
-                log_x=log_x_axis,
-            )
+        if plot_axis_kwargs is None:
+            plot_axis_kwargs = {
+                "xlabel": name,
+                "ylabel": "Result",
+                "log_x": log_x_axis,
+            }
 
-        self.plot_axis_properties = plot_axis_properties
+        self.plot_axis_kwargs = plot_axis_kwargs
 
     def __repr__(self):
         return (
@@ -72,7 +72,7 @@ class ParamSweeper:
     def __init__(
         self,
         experiment,
-        *parameters,
+        *parameters: Parameter,
         n_repeats=5,
         n_sigma=1,
         higher_is_better=True,
@@ -204,6 +204,8 @@ class ParamSweeper:
             else:
                 param_default_str = str(parameter.default)
 
+            plot_axis_kwargs = parameter.plot_axis_kwargs.copy()
+            plot_axis_kwargs.update(plot_kwargs)
             plot_filename = plotting.plot(
                 *noisy_data.plot(n_sigma=self._n_sigma),
                 plotting.VLine(
@@ -225,8 +227,7 @@ class ParamSweeper:
                 ),
                 dir_name=dir_name,
                 legend=True,
-                axis_properties=parameter.plot_axis_properties,
-                **plot_kwargs,
+                **plot_axis_kwargs,
             )
             filename_list.append(plot_filename)
 

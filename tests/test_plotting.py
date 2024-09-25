@@ -996,3 +996,51 @@ def test_nested_multiplot():
     )
     for pdf in [True, False]:
         mp.save("test_nested_multiplot", OUTPUT_DIR, pdf=pdf)
+
+def test_nested_multiplot_titles():
+    cp = plotting.ColourPicker(7)
+    line_list = [
+        plotting.Line([1, 3, 2], c=cp.next(), label="[1, 3, 2]"),
+        plotting.Line([2, 1, 3], c=cp.next(), label="[2, 1, 3]"),
+        plotting.Line([2, 3, 1], c=cp.next(), label="[2, 3, 1]"),
+        plotting.Line([3, 1, 2], c=cp.next(), label="[3, 1, 2]"),
+        plotting.Line([1, 3, 1], c=cp.next(), label="[1, 3, 1]"),
+        plotting.Line([3, 1, 3], c=cp.next(), label="[3, 1, 3]"),
+    ]
+    lines = util.circular_iterator(line_list)
+
+    mp = plotting.MultiPlot(
+        plotting.Subplot(next(lines), next(lines), title="Subplot 1"),
+        plotting.MultiPlot(
+            plotting.Subplot(next(lines), next(lines)),
+            plotting.Subplot(next(lines), next(lines)),
+            plotting.Subplot(next(lines), next(lines), ylabel="ylabel"),
+            plotting.MultiPlot(
+                plotting.Subplot(next(lines), next(lines)),
+                plotting.Subplot(next(lines), next(lines)),
+                plotting.Subplot(next(lines), next(lines)),
+                plotting.Subplot(
+                    next(lines),
+                    next(lines),
+                    title="Subsubsubplot 4",
+                    title_font_size=8,
+                ),
+            ),
+            title="Subplot 2",
+            height_ratios=[1, 2],
+        ),
+        plotting.MultiPlot(
+            plotting.Subplot(next(lines), next(lines)),
+            plotting.Subplot(next(lines), next(lines)),
+            title="Subplot 3",
+            title_font_size=12,
+        ),
+        plotting.Subplot(next(lines), next(lines), title="Subplot 4"),
+        legend=plotting.FigureLegend(*line_list, ncols=len(line_list)),
+        h_pad=0.1,
+        w_pad=0.1,
+        title="Figure",
+        height_ratios=[2, 1],
+    )
+    for pdf in [True, False]:
+        mp.save("test_nested_multiplot_titles", OUTPUT_DIR, pdf=pdf)

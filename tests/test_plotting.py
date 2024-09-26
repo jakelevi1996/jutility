@@ -1010,11 +1010,15 @@ def test_nested_multiplot_titles():
     lines = util.circular_iterator(line_list)
 
     mp = plotting.MultiPlot(
-        plotting.Subplot(next(lines), next(lines), title="Subplot 1"),
         plotting.MultiPlot(
             plotting.Subplot(next(lines), next(lines)),
-            plotting.Subplot(next(lines), next(lines)),
-            plotting.Subplot(next(lines), next(lines), ylabel="ylabel"),
+            title="Subplot 1",
+            title_font_size=12,
+        ),
+        plotting.MultiPlot(
+            plotting.MultiPlot(plotting.Subplot(next(lines), next(lines))),
+            plotting.MultiPlot(plotting.Subplot(next(lines), next(lines))),
+            plotting.MultiPlot(plotting.Subplot(next(lines), next(lines))),
             plotting.MultiPlot(
                 plotting.Subplot(next(lines), next(lines)),
                 plotting.Subplot(next(lines), next(lines)),
@@ -1035,7 +1039,11 @@ def test_nested_multiplot_titles():
             title="Subplot 3",
             title_font_size=12,
         ),
-        plotting.Subplot(next(lines), next(lines), title="Subplot 4"),
+        plotting.MultiPlot(
+            plotting.Subplot(next(lines), next(lines)),
+            title="Subplot 4",
+            title_font_size=12,
+        ),
         legend=plotting.FigureLegend(*line_list, ncols=len(line_list)),
         h_pad=0.1,
         w_pad=0.1,

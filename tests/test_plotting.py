@@ -1045,8 +1045,7 @@ def test_nested_multiplot_titles():
             title_font_size=12,
         ),
         legend=plotting.FigureLegend(*line_list, ncols=len(line_list)),
-        h_pad=0.1,
-        w_pad=0.1,
+        pad=0.1,
         title="Figure",
         height_ratios=[2, 1],
     )
@@ -1072,12 +1071,12 @@ def test_nested_multiplot_space():
         ),
         plotting.MultiPlot(
             *[plotting.Subplot(next(lines)) for _ in range(9)],
-            hspace=0.3,
+            space=0.2,
         ),
         legend=plotting.FigureLegend(*line_list, ncols=len(line_list)),
         title="Figure",
         figsize=[10, 6],
-        wspace=0.2,
+        space=0.4,
     )
     for pdf in [True, False]:
         mp.save("test_nested_multiplot_space", OUTPUT_DIR, pdf=pdf)

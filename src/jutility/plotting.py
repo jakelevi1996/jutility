@@ -591,8 +591,8 @@ class FigureProperties:
         top_space=None,
         bottom_space=None,
         legend: "FigureLegend"=None,
-        w_pad=0.15,
-        h_pad=0.15,
+        w_pad=0.1,
+        h_pad=0.1,
         wspace=0,
         hspace=0,
     ):

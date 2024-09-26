@@ -1044,3 +1044,32 @@ def test_nested_multiplot_titles():
     )
     for pdf in [True, False]:
         mp.save("test_nested_multiplot_titles", OUTPUT_DIR, pdf=pdf)
+
+def test_nested_multiplot_space():
+    cp = plotting.ColourPicker(7)
+    line_list = [
+        plotting.Line([1, 3, 2], c=cp.next(), label="[1, 3, 2]"),
+        plotting.Line([2, 1, 3], c=cp.next(), label="[2, 1, 3]"),
+        plotting.Line([2, 3, 1], c=cp.next(), label="[2, 3, 1]"),
+        plotting.Line([3, 1, 2], c=cp.next(), label="[3, 1, 2]"),
+        plotting.Line([1, 3, 1], c=cp.next(), label="[1, 3, 1]"),
+        plotting.Line([3, 1, 3], c=cp.next(), label="[3, 1, 3]"),
+    ]
+    lines = util.circular_iterator(line_list)
+
+    mp = plotting.MultiPlot(
+        plotting.MultiPlot(
+            *[plotting.Subplot(next(lines)) for _ in range(9)],
+            title="Group 1",
+        ),
+        plotting.MultiPlot(
+            *[plotting.Subplot(next(lines)) for _ in range(9)],
+            hspace=0.3,
+        ),
+        legend=plotting.FigureLegend(*line_list, ncols=len(line_list)),
+        title="Figure",
+        figsize=[10, 6],
+        wspace=0.2,
+    )
+    for pdf in [True, False]:
+        mp.save("test_nested_multiplot_space", OUTPUT_DIR, pdf=pdf)

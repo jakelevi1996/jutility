@@ -593,6 +593,8 @@ class FigureProperties:
         legend: "FigureLegend"=None,
         w_pad=0.15,
         h_pad=0.15,
+        wspace=0,
+        hspace=0,
     ):
         if num_rows is None:
             if num_cols is None:
@@ -633,6 +635,8 @@ class FigureProperties:
         self._legend = legend
         self._w_pad = w_pad
         self._h_pad = h_pad
+        self._wspace = wspace
+        self._hspace = hspace
 
     def get_figure(self):
         figure = plt.figure(
@@ -641,7 +645,10 @@ class FigureProperties:
         )
         if self._constrained_layout:
             layout_engine = figure.get_layout_engine()
-            layout_engine.set(w_pad=self._w_pad, h_pad=self._h_pad)
+            layout_engine.set(
+                w_pad=self._w_pad,
+                h_pad=self._h_pad,
+            )
 
         return figure
 
@@ -657,6 +664,10 @@ class FigureProperties:
             squeeze=False,
             width_ratios=self._width_ratios,
             height_ratios=self._height_ratios,
+            gridspec_kw=dict(
+                wspace=self._wspace,
+                hspace=self._hspace,
+            ),
         )
         axis_list = axis_array.flatten().tolist()
         return axis_list
@@ -695,6 +706,8 @@ class FigureProperties:
             ncols=self._num_cols,
             width_ratios=self._width_ratios,
             height_ratios=self._height_ratios,
+            wspace=self._wspace,
+            hspace=self._hspace,
         )
         axes_array = subgrid_spec.subplots(
             sharex=self._sharex,

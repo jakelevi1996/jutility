@@ -695,10 +695,7 @@ class FigureProperties:
         axis: matplotlib.axes.Axes,
     ) -> list[matplotlib.axes.Axes]:
         if self._title is not None:
-            title_axis, axis = self.get_subplot_title_axes(axis)
-            title_axis.set_title(self._title, fontsize=self._title_font_size)
-            title_axis.set_axis_off()
-            axis.set_axis_off()
+            axis.set_title(self._title, fontsize=self._title_font_size)
 
         subplot_spec = axis.get_subplotspec()
         subgrid_spec = subplot_spec.subgridspec(
@@ -716,16 +713,6 @@ class FigureProperties:
         )
         axis_list = axes_array.flatten().tolist()
         return axis_list
-
-    def get_subplot_title_axes(
-        self,
-        axis: matplotlib.axes.Axes,
-        eps=1e-6,
-    ) -> tuple[matplotlib.axes.Axes, matplotlib.axes.Axes]:
-        subplot_spec = axis.get_subplotspec()
-        subgrid_spec = subplot_spec.subgridspec(2, 1, height_ratios=[eps, 1])
-        title_axis, axis = subgrid_spec.subplots().flatten().tolist()
-        return title_axis, axis
 
 class Subplot:
     def __init__(

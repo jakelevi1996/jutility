@@ -776,21 +776,12 @@ class ColourBar(Subplot):
     def __init__(self, vmin, vmax, cmap=None, **kwargs):
         norm = matplotlib.colors.Normalize(vmin, vmax)
         self._sm = matplotlib.cm.ScalarMappable(norm, cmap=cmap)
-        self._axes = []
-        self._colourbar = None
         self._kwargs = kwargs
 
     def plot(self, axis: matplotlib.axes.Axes):
-        if self._colourbar is not None:
-            self._colourbar.remove()
-
-        axis.set_axis_off()
-        self._axes.append(axis)
-        self._colourbar = axis.figure.colorbar(
+        axis.figure.colorbar(
             mappable=self._sm,
-            ax=self._axes,
-            fraction=1,
-            location="left",
+            cax=axis,
             **self._kwargs,
         )
 

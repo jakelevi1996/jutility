@@ -771,7 +771,7 @@ class FigureLegend:
 class ColourBar(Subplot):
     """
     See
-    https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.colorbar.html
+    https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.colorbar.html
     """
     def __init__(self, vmin, vmax, cmap=None, **kwargs):
         norm = matplotlib.colors.Normalize(vmin, vmax)
@@ -786,7 +786,7 @@ class ColourBar(Subplot):
 
         axis.set_axis_off()
         self._axes.append(axis)
-        self._colourbar = plt.colorbar(
+        self._colourbar = axis.figure.colorbar(
             mappable=self._sm,
             ax=self._axes,
             fraction=1,

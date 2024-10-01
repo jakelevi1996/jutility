@@ -296,29 +296,27 @@ def test_gif_add_image_file_frame():
     gif.save(output_name, OUTPUT_DIR, frame_duration_ms=500)
     assert os.path.isfile(gif.full_path)
 
-@pytest.mark.parametrize("constrained_layout", [True, False])
-def test_colourbar(constrained_layout):
+def test_colourbar():
     rng = util.Seeder().get_rng("test_colourbar")
     z1 = rng.random((100, 200)) + 5
     z2 = rng.random((100, 200)) + 2
     v_min = min(z1.min(), z2.min())
     v_max = max(z1.max(), z2.max())
 
-    colour_bar = plotting.ColourBar(v_min, v_max)
-
-    plot_name = "test_colourbar, constrained_layout=%s" % constrained_layout
     mp = plotting.MultiPlot(
-        plotting.ImShow(z1, vmin=v_min, vmax=v_max),
-        colour_bar,
-        plotting.ImShow(z2, vmin=v_min, vmax=v_max),
-        colour_bar,
-        num_rows=2,
-        num_cols=2,
+        plotting.MultiPlot(
+            plotting.Subplot(plotting.ImShow(z1, vmin=v_min, vmax=v_max)),
+            plotting.Subplot(plotting.ImShow(z2, vmin=v_min, vmax=v_max)),
+            num_cols=1,
+        ),
+        plotting.MultiPlot(
+            plotting.ColourBar(v_min, v_max, label="ColourBar"),
+        ),
         width_ratios=[1, 0.2],
-        constrained_layout=constrained_layout,
-        title=plot_name,
+        title="Shared colour bar",
+        figsize=[8, 6],
     )
-    mp.save(plot_name, OUTPUT_DIR)
+    mp.save("test_colourbar", OUTPUT_DIR)
     assert os.path.isfile(mp.full_path)
 
 def test_quiver():

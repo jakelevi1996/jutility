@@ -773,10 +773,12 @@ class ColourBar(Subplot):
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.colorbar.html
     """
-    def __init__(self, vmin, vmax, cmap=None, **kwargs):
+    def __init__(self, vmin, vmax, cmap=None, horizontal=False, **kwargs):
         norm = matplotlib.colors.Normalize(vmin, vmax)
         self._sm = matplotlib.cm.ScalarMappable(norm, cmap=cmap)
         self._kwargs = kwargs
+        if horizontal:
+            self._kwargs["orientation"] = "horizontal"
 
     def plot(self, axis: matplotlib.axes.Axes):
         axis.figure.colorbar(

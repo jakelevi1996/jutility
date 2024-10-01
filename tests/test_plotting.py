@@ -319,6 +319,29 @@ def test_colourbar():
     mp.save("test_colourbar", OUTPUT_DIR)
     assert os.path.isfile(mp.full_path)
 
+def test_colourbar_horizontal():
+    rng = util.Seeder().get_rng("test_colourbar_horizontal")
+    z1 = rng.random((100, 200)) + 5
+    z2 = rng.random((100, 200)) + 2
+    v_min = min(z1.min(), z2.min())
+    v_max = max(z1.max(), z2.max())
+
+    mp = plotting.MultiPlot(
+        plotting.MultiPlot(
+            plotting.Subplot(plotting.ImShow(z1, vmin=v_min, vmax=v_max)),
+            plotting.Subplot(plotting.ImShow(z2, vmin=v_min, vmax=v_max)),
+        ),
+        plotting.MultiPlot(
+            plotting.ColourBar(v_min, v_max, horizontal=True),
+        ),
+        num_cols=1,
+        height_ratios=[1, 0.4],
+        title="Shared colour bar",
+        figsize=[8, 4],
+    )
+    mp.save("test_colourbar_horizontal", OUTPUT_DIR)
+    assert os.path.isfile(mp.full_path)
+
 def test_quiver():
     n = 25
     x = np.linspace(-2, 2, n).reshape(1, n)

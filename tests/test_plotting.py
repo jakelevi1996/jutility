@@ -946,6 +946,23 @@ def test_xticklabels():
         dir_name=OUTPUT_DIR,
     )
 
+def test_yticks():
+    plotting.plot(
+        plotting.Line([1, 3, 2]),
+        yticks=[0.3, 1.1, 1.2, 2.5, 3.1],
+        plot_name="test_yticks",
+        dir_name=OUTPUT_DIR,
+    )
+
+def test_yticklabels():
+    plotting.plot(
+        plotting.Line([1, 3, 2]),
+        yticks=[0.3, 1.1, 1.2, 2.5, 3.1],
+        yticklabels=["frog", "bog", "grog", "log", "dog"],
+        plot_name="test_yticklabels",
+        dir_name=OUTPUT_DIR,
+    )
+
 def test_noisydata_x_index():
     rng = util.Seeder().get_rng("test_noisydata_x_index")
 

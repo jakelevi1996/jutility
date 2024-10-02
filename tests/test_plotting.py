@@ -342,6 +342,44 @@ def test_colourbar_horizontal():
     mp.save("test_colourbar_horizontal", OUTPUT_DIR)
     assert os.path.isfile(mp.full_path)
 
+def test_log_colourbar():
+    z = 100
+    x = np.linspace(0, z, 500)
+    y = lambda n, z: (z**n - x**n)**(1/n)
+    ticks = list(range(-z, z+1, 20))
+    n_list = util.log_range(0.1, 10, 21)
+    cp_n = plotting.ColourPicker(len(n_list))
+
+    mp = plotting.MultiPlot(
+        plotting.Subplot(
+            *[
+                line
+                for i, n in enumerate(n_list)
+                for line in
+                [
+                    plotting.Line( x,  y(n, z), c=cp_n(i)),
+                    plotting.Line( x, -y(n, z), c=cp_n(i)),
+                    plotting.Line(-x,  y(n, z), c=cp_n(i)),
+                    plotting.Line(-x, -y(n, z), c=cp_n(i)),
+                ]
+            ],
+            axis_equal=True,
+            grid=False,
+            xticks=ticks,
+            yticks=ticks,
+        ),
+        plotting.ColourBar(
+            n_list.min(),
+            n_list.max(),
+            "hsv",
+            log=True,
+            label="n",
+        ),
+        figsize=[8, 6],
+        width_ratios=[1, 0.1],
+    )
+    mp.save("test_log_colourbar", OUTPUT_DIR)
+
 def test_quiver():
     n = 25
     x = np.linspace(-2, 2, n).reshape(1, n)

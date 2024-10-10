@@ -335,8 +335,6 @@ class NoisyData:
 
             x = self._x_index_list.index(x)
 
-        if self._log_y:
-            y = np.log(y)
         if x in self._results_list_dict:
             self._results_list_dict[x].append(y)
         else:
@@ -349,22 +347,24 @@ class NoisyData:
             for y in result_list
         ]
         all_x, all_y = np.split(np.array(all_results_pairs), 2, axis=1)
-        if self._log_y:
-            all_y = np.exp(all_y)
-
         return all_x.flatten(), all_y.flatten()
 
     def get_statistics(self, n_sigma=1):
-        x = sorted(
-            x_i for x_i, results_list in self._results_list_dict.items()
-            if len(results_list) > 0
+        x_list = sorted(
+            x for x, y_list in self._results_list_dict.items()
+            if len(y_list) > 0
         )
-        results_list_list = [self._results_list_dict[x_i] for x_i in x]
-        mean, ucb, lcb = confidence_bounds(results_list_list, n_sigma)
+        y_list_list = [self._results_list_dict[x] for x in x_list]
+
+        if self._log_y:
+            y_list_list = [np.log(y_list) for y_list in y_list_list]
+
+        mean, ucb, lcb = confidence_bounds(y_list_list, n_sigma)
+
         if self._log_y:
             mean, ucb, lcb = np.exp([mean, ucb, lcb])
 
-        return np.array(x), mean, ucb, lcb
+        return np.array(x_list), mean, ucb, lcb
 
     def plot(self, c="b", label=None, n_sigma=1):
         x, mean, ucb, lcb = self.get_statistics(n_sigma)

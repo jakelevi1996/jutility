@@ -343,8 +343,8 @@ class NoisyData:
     def get_all_data(self):
         all_results_pairs = [
             [x, y]
-            for x, result_list in self._results_list_dict.items()
-            for y in result_list
+            for x, y_list in self._results_list_dict.items()
+            for y in y_list
         ]
         all_x, all_y = np.split(np.array(all_results_pairs), 2, axis=1)
         return all_x.flatten(), all_y.flatten()

@@ -640,6 +640,9 @@ class FigureProperties:
         self._pad = pad
         self._space = space
 
+    def get_num_axes(self):
+        return self._num_rows * self._num_cols
+
     def get_figure(self):
         figure = plt.figure(
             figsize=self._figsize,
@@ -849,21 +852,27 @@ class MultiPlot(Subplot):
         **figure_kwargs,
     ):
         figure_properties = FigureProperties(len(subplots), **figure_kwargs)
-        fig  = figure_properties.get_figure()
-        axes = figure_properties.get_axes(fig)
-
-        if len(subplots) < len(axes):
-            subplots += tuple([Empty()]) * (len(axes) - len(subplots))
-
-        for subplot, axis in zip(subplots, axes):
-            subplot.plot(axis)
-
-        figure_properties.apply(fig)
+        num_axes = figure_properties.get_num_axes()
+        if len(subplots) < num_axes:
+            subplots += tuple([Empty()]) * (num_axes - len(subplots))
 
         self.full_path      = None
-        self._fig           = fig
+        self._fig           = None
         self._properties    = figure_properties
         self._subplots      = subplots
+
+    def _make_figure(self):
+        if self._fig is not None:
+            return
+
+        fig  = self._properties.get_figure()
+        axes = self._properties.get_axes(fig)
+
+        for subplot, axis in zip(self._subplots, axes):
+            subplot.plot(axis)
+
+        self._properties.apply(fig)
+        self._fig = fig
 
     def save(
         self,
@@ -885,6 +894,7 @@ class MultiPlot(Subplot):
             file_ext=file_ext,
             verbose=verbose,
         )
+        self._make_figure()
         self._fig.savefig(self.full_path)
 
         if close:
@@ -899,12 +909,14 @@ class MultiPlot(Subplot):
             subplot.plot(axis)
 
     def get_rgb_bytes(self):
+        self._make_figure()
         self._fig.canvas.draw()
         rgb_bytes       = self._fig.canvas.tostring_rgb()
         width, height   = self._fig.canvas.get_width_height()
         return rgb_bytes, width, height
 
     def get_rgba_bytes(self):
+        self._make_figure()
         self._fig.canvas.draw()
         rgba_bytes      = self._fig.canvas.buffer_rgba().tobytes()
         width, height   = self._fig.canvas.get_width_height()
@@ -923,7 +935,8 @@ class MultiPlot(Subplot):
         return np.array(self.get_pil_image())
 
     def close(self):
-        plt.close(self._fig)
+        if self._fig is not None:
+            plt.close(self._fig)
 
 class Gif:
     def __init__(self):

@@ -375,6 +375,9 @@ class NoisyData:
         best_y = max(best_y_dict.keys())
         best_x = best_y_dict[best_y]
         best_repeat = self._results_list_dict[best_x].index(best_y)
+        if self._x_index:
+            best_x = self._x_index_list[best_x]
+
         return best_x, best_repeat, best_y
 
     def argmin(self):
@@ -386,6 +389,9 @@ class NoisyData:
         best_y = min(best_y_dict.keys())
         best_x = best_y_dict[best_y]
         best_repeat = self._results_list_dict[best_x].index(best_y)
+        if self._x_index:
+            best_x = self._x_index_list[best_x]
+
         return best_x, best_repeat, best_y
 
     def plot(self, c="b", label=None, n_sigma=1):

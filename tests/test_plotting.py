@@ -894,6 +894,43 @@ def test_noisy_data_argmax_argmin():
         dir_name=OUTPUT_DIR,
     )
 
+def test_noisy_data_argmax_argmin_x_index():
+    nd = plotting.NoisyData(x_index=True)
+
+    for x, y in [
+        ("abc", 10),
+        ("abc", 14),
+        ("abc", 13),
+        ("defg", 9),
+        ("defg", 20),
+        ("defg", 12),
+        ("defg", 11),
+        ("hi", 19),
+        ("hi", 22),
+    ]:
+        nd.update(x, y)
+
+    max_x, max_repeat, max_y = nd.argmax()
+    min_x, min_repeat, min_y = nd.argmin()
+
+    print(nd.argmax(), nd.argmin())
+
+    assert max_x == "hi"
+    assert max_repeat == 1
+    assert max_y == 22
+    assert min_x == "defg"
+    assert min_repeat == 0
+    assert min_y == 9
+
+    plotting.plot(
+        *nd.plot(),
+        plotting.HLine(min_y, c="r", ls="--"),
+        plotting.HLine(max_y, c="g", ls="--"),
+        **nd.get_xtick_kwargs(),
+        plot_name="test_noisy_data_argmax_argmin_x_index",
+        dir_name=OUTPUT_DIR,
+    )
+
 @pytest.mark.parametrize("handles", [True, False])
 def test_figure_legend(handles):
     test_name = "test_figure_legend, handles=%s" % handles

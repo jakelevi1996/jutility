@@ -857,6 +857,43 @@ def test_noisy_data_predict_log():
     mp = plotting.MultiPlot(*subplots)
     mp.save("test_noisy_data_predict_log", OUTPUT_DIR)
 
+def test_noisy_data_argmax_argmin():
+    nd = plotting.NoisyData()
+
+    for x, y in [
+        (3, 10),
+        (3, 14),
+        (3, 13),
+        (5, 9),
+        (5, 20),
+        (5, 12),
+        (5, 11),
+        (8, 19),
+        (8, 22),
+    ]:
+        nd.update(x, y)
+
+    max_x, max_repeat, max_y = nd.argmax()
+    min_x, min_repeat, min_y = nd.argmin()
+
+    assert max_x == 8
+    assert max_repeat == 1
+    assert max_y == 22
+    assert min_x == 5
+    assert min_repeat == 0
+    assert min_y == 9
+
+    plotting.plot(
+        *nd.plot(),
+        nd.predict_line(2, 10, a=0.5),
+        plotting.VLine(min_x, c="r", ls="--"),
+        plotting.HLine(min_y, c="r", ls="--"),
+        plotting.VLine(max_x, c="g", ls="--"),
+        plotting.HLine(max_y, c="g", ls="--"),
+        plot_name="test_noisy_data_argmax_argmin",
+        dir_name=OUTPUT_DIR,
+    )
+
 @pytest.mark.parametrize("handles", [True, False])
 def test_figure_legend(handles):
     test_name = "test_figure_legend, handles=%s" % handles

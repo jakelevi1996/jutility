@@ -366,6 +366,28 @@ class NoisyData:
 
         return np.array(x_list), mean, ucb, lcb
 
+    def argmax(self):
+        best_y_dict = {
+            max(y_list): x
+            for x, y_list in self._results_list_dict.items()
+            if len(y_list) > 0
+        }
+        best_y = max(best_y_dict.keys())
+        best_x = best_y_dict[best_y]
+        best_repeat = self._results_list_dict[best_x].index(best_y)
+        return best_x, best_repeat, best_y
+
+    def argmin(self):
+        best_y_dict = {
+            min(y_list): x
+            for x, y_list in self._results_list_dict.items()
+            if len(y_list) > 0
+        }
+        best_y = min(best_y_dict.keys())
+        best_x = best_y_dict[best_y]
+        best_repeat = self._results_list_dict[best_x].index(best_y)
+        return best_x, best_repeat, best_y
+
     def plot(self, c="b", label=None, n_sigma=1):
         x, mean, ucb, lcb = self.get_statistics(n_sigma)
         return (

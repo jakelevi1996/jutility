@@ -400,7 +400,7 @@ class CountColumn(Column):
 class Table:
     def __init__(
         self,
-        *columns,
+        *columns: Column,
         print_interval=None,
         print_level=0,
         printer=None,

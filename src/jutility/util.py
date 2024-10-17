@@ -215,6 +215,9 @@ class Timer:
     def reset(self):
         self._t0 = time.perf_counter()
 
+    def set_time(self, num_seconds: float):
+        self._t0 = time.perf_counter() - num_seconds
+
     def set_name(self, name):
         self._name_str = (" for `%s`" % name) if (name is not None) else ""
 
@@ -380,6 +383,9 @@ class TimeColumn(Column):
         t = self._data_list[row_ind]
         t_str = time_format(t, concise=True)
         return self._format % t_str
+
+    def get_timer(self):
+        return self._timer
 
 class CountColumn(Column):
     def __init__(self, name="c", width=5):

@@ -1089,6 +1089,7 @@ def test_table_load_pickle_callback():
 
     table = util.Table(
         util.CountColumn(),
+        util.TimeColumn(),
         util.Column("a", ".5f", 10),
         util.CallbackColumn("b", "s", 5).set_callback(
             lambda: next(data_iter),
@@ -1103,8 +1104,15 @@ def test_table_load_pickle_callback():
 
     loaded_table = util.load_pickle(table_path)
     assert isinstance(loaded_table, util.Table)
-    loaded_table.get_column("b").set_callback(lambda: next(data_iter))
     loaded_table.set_printer(printer)
+
+    callback_column = loaded_table.get_column("b")
+    assert isinstance(callback_column, util.CallbackColumn)
+    callback_column.set_callback(lambda: next(data_iter))
+
+    time_column = loaded_table.get_column("t")
+    assert isinstance(time_column, util.TimeColumn)
+    time_column.get_timer().set_time(10+loaded_table.get_data("t")[-1])
 
     for _ in range(10):
         loaded_table.update(a=10+rng.uniform())

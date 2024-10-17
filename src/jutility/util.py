@@ -344,9 +344,6 @@ class Column:
     def reset_callback(self):
         self._callback = None
 
-    def set_callback(self, callback, level=0, interval=None):
-        raise NotImplementedError()
-
     def __repr__(self):
         return "%s(name=\"%s\")" % (type(self).__name__, self.name)
 

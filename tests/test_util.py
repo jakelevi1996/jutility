@@ -1077,3 +1077,38 @@ def test_columnformatter():
         "abc        ||      0.14286 || ijk        || lmnop     \n"
         "abc        ||  14285.71429 || hijk       || lmnop     \n"
     )
+
+def test_table_load_pickle_callback():
+    test_name = "test_table_load_pickle_callback"
+    printer = util.Printer(test_name, OUTPUT_DIR)
+    rng = util.Seeder().get_rng(test_name)
+
+    data_list = rng.integers(3, 11, [20]).tolist()
+    data_iter = iter(data_list)
+    printer(data_list)
+
+    table = util.Table(
+        util.CountColumn(),
+        util.Column("a", ".5f", 10),
+        util.CallbackColumn("b", "s", 5).set_callback(
+            lambda: next(data_iter),
+        ),
+        printer=printer,
+    )
+
+    for _ in range(10):
+        table.update(a=rng.uniform())
+
+    table_path = table.save_pickle(test_name, OUTPUT_DIR)
+
+    loaded_table = util.load_pickle(table_path)
+    assert isinstance(loaded_table, util.Table)
+    loaded_table.get_column("b").set_callback(lambda: next(data_iter))
+    loaded_table.set_printer(printer)
+
+    for _ in range(10):
+        loaded_table.update(a=10+rng.uniform())
+
+    assert table.get_data("b")        != data_list
+    assert loaded_table.get_data("b") == data_list
+    assert "   19 | " in printer.read()

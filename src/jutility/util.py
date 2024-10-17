@@ -341,6 +341,9 @@ class Column:
     def reset_callback(self):
         self._callback = None
 
+    def set_callback(self, callback, level=0, interval=None):
+        raise NotImplementedError()
+
     def __repr__(self):
         return "%s(name=\"%s\")" % (type(self).__name__, self.name)
 
@@ -412,9 +415,9 @@ class Table:
         for column in columns:
             self.add_column(column)
 
+        self.set_printer(printer)
         self._print_interval = print_interval
         self._print_level = print_level
-        self._print = printer
         self._num_updates = 0
         if len(columns) > 0:
             self._print(self.format_header())
@@ -427,6 +430,12 @@ class Table:
             )
         self._column_list.append(column)
         self._column_dict[column.name] = column
+
+    def get_column(self, column_name: str) -> Column:
+        return self._column_dict[column_name]
+
+    def set_printer(self, printer: Printer):
+        self._print = printer
 
     def update(self, level=0, **kwargs):
         for name, column in self._column_dict.items():

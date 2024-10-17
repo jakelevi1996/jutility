@@ -1036,3 +1036,44 @@ def test_save_image_diff():
     assert isinstance(fp2, str)
     assert os.path.isfile(fp1)
     assert os.path.isfile(fp2)
+
+def test_columnformatter():
+    printer = util.Printer("test_columnformatter", OUTPUT_DIR)
+
+    cf = util.ColumnFormatter("%-10s", "%-10s", printer=printer)
+
+    cf.print("abc")
+    cf.print("abcde", "fgh")
+    cf.print("abcde", "fgh", "ijk", "lmnop")
+    cf.print("abcd", "efgh", "ijk", "lmnop")
+    cf.print("abcd", "efg", "hijk", "lmnop")
+
+    printer.hline("-", 50)
+
+    cf = util.ColumnFormatter(
+        "%-10s",
+        "%12.5f",
+        sep=" || ",
+        default_format="%-10s",
+        printer=printer,
+    )
+
+    cf.print("abc")
+    cf.print("abc", 1)
+    cf.print("abc", 0.1, "ijk", "lmnop")
+    cf.print("abc", 1/7, "ijk", "lmnop")
+    cf.print("abc", (1e5)/7, "hijk", "lmnop")
+
+    assert printer.read() == (
+        "abc       \n"
+        "abcde      | fgh       \n"
+        "abcde      | fgh        | ijk | lmnop\n"
+        "abcd       | efgh       | ijk | lmnop\n"
+        "abcd       | efg        | hijk | lmnop\n"
+        "--------------------------------------------------\n"
+        "abc       \n"
+        "abc        ||      1.00000\n"
+        "abc        ||      0.10000 || ijk        || lmnop     \n"
+        "abc        ||      0.14286 || ijk        || lmnop     \n"
+        "abc        ||  14285.71429 || hijk       || lmnop     \n"
+    )

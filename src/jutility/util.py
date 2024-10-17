@@ -152,6 +152,31 @@ class Printer:
         if self._file is not None:
             self._file.close()
 
+class ColumnFormatter:
+    def __init__(
+        self,
+        *column_formats: str,
+        sep: str=" | ",
+        default_format: str="%s",
+        printer: Printer=None,
+    ):
+        if printer is None:
+            printer = Printer()
+
+        self._format_dict = {i: f for i, f in enumerate(column_formats)}
+        self._sep = sep
+        self._default_format = default_format
+        self._printer = printer
+
+    def format(self, *args):
+        return self._sep.join(
+            self._format_dict.get(i, self._default_format) % a
+            for i, a in enumerate(args)
+        )
+
+    def print(self, *args):
+        self._printer(self.format(*args))
+
 class Seeder:
     def __init__(self):
         self._used_seeds = set()

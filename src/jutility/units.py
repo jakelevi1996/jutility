@@ -39,6 +39,9 @@ class UnitsFormatter:
     def diff(self, x: str, y: str):
         return self.format(abs(self.parse(x) - self.parse(y)))
 
+    def sum(self, a: str, b: str, b_scale=1.0):
+        return self.format(self.parse(a) + b_scale * self.parse(b))
+
 class SinglePartFormatter(UnitsFormatter):
     def __init__(
         self,

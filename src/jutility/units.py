@@ -23,7 +23,7 @@ class UnitsFormatter:
         parts = []
         num_units = num_base_units
         for n in self._num_divisions:
-            if num_units > n:
+            if num_units >= n:
                 num_units, remainder = divmod(num_units, n)
                 parts.append(remainder)
             else:

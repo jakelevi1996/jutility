@@ -11,14 +11,15 @@ class UnitsFormatter:
         self._num_divisions = num_divisions
         self._names = names
         self._format_list = []
+        part_formats = [
+            "%%%ii%s" % (widths[min(i, len(widths) - 1)], names[i])
+            for i in range(1, len(names))
+        ]
         for i in range(len(names)):
             p = base_precisions[min(i, len(base_precisions) - 1)]
             w = (widths[0] + p + 1) if (p > 0) else widths[0]
-            i_format_parts = ["%%%i.%if%s" % (w, p, names[0])]
-            for j in range(i):
-                w = widths[min(i, len(widths) - 1)]
-                i_format_parts.append("%%%ii%s" % (w, names[j + 1]))
-
+            base_format = "%%%i.%if%s" % (w, p, names[0])
+            i_format_parts = [base_format] + part_formats[:i]
             self._format_list.append(" ".join(reversed(i_format_parts)))
 
         v = 1

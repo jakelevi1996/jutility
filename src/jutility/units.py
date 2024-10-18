@@ -19,6 +19,12 @@ class UnitsFormatter:
 
             self._format_list.append(" ".join(reversed(i_format_parts)))
 
+        self._base_units = {names[0]: 1}
+        for i in range(len(names) - 1):
+            self._base_units[names[i+1]] = (
+                self._base_units[names[i]] * num_divisions[i]
+            )
+
     def format(self, num_base_units: float):
         parts = []
         num_units = num_base_units
@@ -34,7 +40,20 @@ class UnitsFormatter:
         return format_str % tuple(reversed(parts))
 
     def parse(self, input_str: str):
-        ...
+        matches = {
+            input_str.index(name): name
+            for name in self._names
+            if name in input_str
+        }
+        num_base_units = 0
+        start = 0
+        for i in sorted(matches.keys()):
+            name = matches[i]
+            num_units = float(input_str[start:i])
+            num_base_units += num_units * self._base_units[name]
+            start = i + len(name)
+
+        return num_base_units
 
     def diff(self, x: str, y: str):
         return self.format(abs(self.parse(x) - self.parse(y)))

@@ -115,3 +115,24 @@ def test_time_format():
         "1234d  2h  0m  0s",
         "1234d 13h  0m  0s",
     ]
+
+def test_parse():
+    printer = util.Printer("test_parse", OUTPUT_DIR)
+
+    cf = util.ColumnFormatter("%14.4f", "%17s", "%14.4f", printer=printer)
+    t_list = [
+        *[0, 60, 61, 60*60, 60*60+1, 60*61, 12*60*60+34*60+56],
+        *[10 ** i for i in range(-4, 9)],
+    ]
+    for t in t_list:
+        s = units.time_concise.format(t)
+        p = units.time_concise.parse(s)
+        cf.print(t, s, p)
+        assert t == p
+
+    st_list = [
+        ("  12.3  s  45  h  6  m  ", 12.3 + 45*60*60 + 6*60),
+        ("1157d  9h 46m 40s", 100000000.0),
+    ]
+    for s, t in st_list:
+        assert units.time_concise.parse(s) == t

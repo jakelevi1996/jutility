@@ -157,3 +157,30 @@ def test_future_time():
 
     assert current_remaining == " 1h  9m 46s"
     assert total_remaining   == " 7h 10m 56s"
+
+def test_format_list():
+    assert units.time_concise._format_list == [
+        '%7.4fs',
+        '%2im %5.2fs',
+        '%2ih %2im %2.0fs',
+        '%2id %2ih %2im %2.0fs',
+    ]
+    assert units.time_verbose._format_list == [
+        '%7.4f seconds',
+        '%2i minutes %5.2f seconds',
+        '%2i hours %2i minutes %2.0f seconds',
+        '%2i days %2i hours %2i minutes %2.0f seconds',
+    ]
+
+    time_wide_format = units.TimeFormatter(
+        names=["s", "m", "h", "d"],
+        num_divisions=[60, 60, 24],
+        base_precisions=[4, 2, 0],
+        widths=[2, 3, 4],
+    )
+    assert time_wide_format._format_list == [
+        '%7.4fs',
+        '%3im %5.2fs',
+        '%4ih %3im %2.0fs',
+        '%4id %4ih %3im %2.0fs',
+    ]

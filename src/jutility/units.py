@@ -44,7 +44,7 @@ class SinglePartFormatter(UnitsFormatter):
         self,
         names: list[str],
         num_divisions: list[int],
-        precisions: int,
+        precision: int,
     ):
         ...
 
@@ -66,12 +66,12 @@ time_concise = UnitsFormatter(
 metric = SinglePartFormatter(
     names=["k", "m", "b", "t"],
     num_divisions=[1000],
-    precisions=1,
+    precision=1,
 )
 file_size = SinglePartFormatter(
     names=[" bytes", " kb", " mb", " gb", " tb", " pb"],
     num_divisions=[1024],
-    precisions=1,
+    precision=1,
 )
 
 def time_format(num_seconds: float, concise=False):

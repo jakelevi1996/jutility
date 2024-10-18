@@ -390,16 +390,20 @@ def test_callbackcontext(raise_error):
 def test_time_format():
     printer = util.Printer("test_time_format", dir_name=OUTPUT_DIR)
     rng = util.Seeder().get_rng("test_time_format")
-    for concise in [True, False]:
-        for num_hours in [0, 5, 15]:
-            for num_mins in [0, 5, 15]:
-                for num_secs in [0, 5, 15]:
-                    t = num_secs + 60 * (num_mins + 60 * num_hours)
-                    printer(
-                        util.time_format(t, concise).rjust(30),
-                        util.time_format(t + rng.normal(), concise).rjust(30),
-                        sep=" | ",
-                    )
+    chms_list = [
+        (concise, num_hours, num_mins, num_secs)
+        for concise in [True, False]
+        for num_hours in [0, 5, 15]
+        for num_mins in [0, 5, 15]
+        for num_secs in [0, 5, 15]
+    ]
+    for concise, num_hours, num_mins, num_secs in chms_list:
+        t = num_secs + 60 * (num_mins + 60 * num_hours)
+        printer(
+            util.time_format(t, concise).rjust(30),
+            util.time_format(t + rng.normal(), concise).rjust(30),
+            sep=" | ",
+        )
 
 def test_timer_context():
     printer = util.Printer("test_timer", dir_name=OUTPUT_DIR)

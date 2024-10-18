@@ -136,3 +136,24 @@ def test_parse():
     ]
     for s, t in st_list:
         assert units.time_concise.parse(s) == t
+
+def test_future_time():
+    printer = util.Printer("test_future_time", OUTPUT_DIR)
+
+    t_complete  = "6h  1m 10s"
+    t_current   = "4h 51m 24s"
+    n_complete  = 3
+    n_total     = 5
+
+    n = n_total - (n_complete + 1)
+    current_remaining = units.time_concise.diff(t_complete, t_current)
+    total_remaining = units.time_concise.sum(current_remaining, t_complete, n)
+    finish_time = units.time_concise.future_time(total_remaining)
+
+    cf = util.ColumnFormatter("%-19s", sep=" = ", printer=printer)
+    cf.print("Time left (current)", current_remaining)
+    cf.print("Time left (total)",   total_remaining)
+    cf.print("Estimated finish",    finish_time)
+
+    assert current_remaining == " 1h  9m 46s"
+    assert total_remaining   == " 7h 10m 56s"

@@ -1,3 +1,5 @@
+import datetime
+
 class UnitsFormatter:
     def __init__(
         self,
@@ -61,6 +63,13 @@ class UnitsFormatter:
     def sum(self, a: str, b: str, b_scale=1.0):
         return self.format(self.parse(a) + b_scale * self.parse(b))
 
+class TimeFormatter(UnitsFormatter):
+    def future_time(self, time_delta_str: str, base_units="seconds"):
+        kwargs = {base_units: self.parse(time_delta_str)}
+        delta = datetime.timedelta(**kwargs)
+        now = datetime.datetime.now()
+        return (now + delta).replace(microsecond=0)
+
 class SinglePartFormatter(UnitsFormatter):
     def __init__(
         self,
@@ -73,13 +82,13 @@ class SinglePartFormatter(UnitsFormatter):
     def format(self, num_base_units: float):
         ...
 
-time_verbose = UnitsFormatter(
+time_verbose = TimeFormatter(
     names=[" seconds", " minutes", " hours", " days"],
     num_divisions=[60, 60, 24],
     base_precisions=[4, 2, 0],
     widths=[2],
 )
-time_concise = UnitsFormatter(
+time_concise = TimeFormatter(
     names=["s", "m", "h", "d"],
     num_divisions=[60, 60, 24],
     base_precisions=[4, 2, 0],

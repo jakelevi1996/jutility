@@ -51,18 +51,28 @@ class SinglePartFormatter(UnitsFormatter):
     def format(self, num_base_units: float):
         ...
 
-_time_verbose_names = [" seconds", " minutes", " hours", " days"]
-_time_concise_names = ["s", "m", "h", "d"]
-_time_args = ([60, 60, 24], [4, 2, 0], [2])
-
-time_verbose = UnitsFormatter(_time_verbose_names, *_time_args)
-time_concise = UnitsFormatter(_time_concise_names, *_time_args)
-
-_metric_names = ["k", "m", "b", "t"]
-_file_size_names = [" bytes", " kb", " mb", " gb", " tb", " pb"]
-
-metric = SinglePartFormatter(_metric_names, [1000], 1)
-file_size = SinglePartFormatter(_file_size_names, [1024], 1)
+time_verbose = UnitsFormatter(
+    names=[" seconds", " minutes", " hours", " days"],
+    num_divisions=[60, 60, 24],
+    base_precisions=[4, 2, 0],
+    widths=[2],
+)
+time_concise = UnitsFormatter(
+    names=["s", "m", "h", "d"],
+    num_divisions=[60, 60, 24],
+    base_precisions=[4, 2, 0],
+    widths=[2],
+)
+metric = SinglePartFormatter(
+    names=["k", "m", "b", "t"],
+    num_divisions=[1000],
+    precisions=1,
+)
+file_size = SinglePartFormatter(
+    names=[" bytes", " kb", " mb", " gb", " tb", " pb"],
+    num_divisions=[1024],
+    precisions=1,
+)
 
 def time_format(num_seconds: float, concise=False):
     if concise:

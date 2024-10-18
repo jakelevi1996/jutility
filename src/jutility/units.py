@@ -21,11 +21,16 @@ class UnitsFormatter:
 
             self._format_list.append(" ".join(reversed(i_format_parts)))
 
-        self._base_units = {names[0]: 1}
-        for i in range(len(names) - 1):
-            self._base_units[names[i+1]] = (
-                self._base_units[names[i]] * num_divisions[i]
-            )
+        v = 1
+        values = [1]
+        for d in num_divisions:
+            v *= d
+            values.append(v)
+
+        self._base_units = {
+            names[i]: values[i]
+            for i in range(len(names))
+        }
 
     def format(self, num_base_units: float):
         parts = []

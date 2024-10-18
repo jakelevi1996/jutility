@@ -1,0 +1,71 @@
+class UnitsFormatter:
+    def __init__(
+        self,
+        names: list[str],
+        num_divisions: list[int],
+        base_precisions: list[int],
+        widths: list[int],
+    ):
+        self._num_divisions = num_divisions
+        self._names = names
+        self._format_list = []
+        for i in range(len(names)):
+            p = base_precisions[min(i, len(base_precisions) - 1)]
+            w = (widths[0] + p + 1) if (p > 0) else widths[0]
+            i_format_parts = ["%%%i.%if%s" % (w, p, names[0])]
+            for j in range(i):
+                w = widths[min(i, len(widths) - 1)]
+                i_format_parts.append("%%%ii%s" % (w, names[j + 1]))
+
+            self._format_list.append(" ".join(reversed(i_format_parts)))
+
+    def format(self, num_base_units: float):
+        parts = []
+        num_units = num_base_units
+        for n in self._num_divisions:
+            if num_units > n:
+                num_units, remainder = divmod(num_units, n)
+                parts.append(remainder)
+            else:
+                break
+
+        parts.append(num_units)
+        format_str = self._format_list[len(parts) - 1]
+        return format_str % tuple(reversed(parts))
+
+    def parse(self, input_str: str):
+        ...
+
+    def diff(self, x: str, y: str):
+        return self.format(abs(self.parse(x) - self.parse(y)))
+
+class SinglePartFormatter(UnitsFormatter):
+    def __init__(
+        self,
+        names: list[str],
+        num_divisions: list[int],
+        precisions: int,
+    ):
+        ...
+
+    def format(self, num_base_units: float):
+        ...
+
+_time_verbose_names = [" seconds", " minutes", " hours", " days"]
+_time_concise_names = ["s", "m", "h", "d"]
+_time_args = ([60, 60, 24], [4, 2, 0], [2])
+
+time_verbose = UnitsFormatter(_time_verbose_names, *_time_args)
+time_concise = UnitsFormatter(_time_concise_names, *_time_args)
+
+_metric_names = ["k", "m", "b", "t"]
+_file_size_names = [" bytes", " kb", " mb", " gb", " tb", " pb"]
+
+metric = SinglePartFormatter(_metric_names, [1000], 1)
+file_size = SinglePartFormatter(_file_size_names, [1024], 1)
+
+def time_format(num_seconds: float, concise=False):
+    if concise:
+        return time_concise.format(num_seconds)
+    else:
+        return time_verbose.format(num_seconds)

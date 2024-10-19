@@ -8,6 +8,7 @@ class UnitsFormatter:
         base_precisions: list[int],
         widths: list[int],
     ):
+        self._set_base_units(num_divisions, names)
         self._num_divisions = num_divisions
         self._names = names
         self._format_list = []
@@ -22,6 +23,7 @@ class UnitsFormatter:
             i_format_parts = [base_format] + part_formats[:i]
             self._format_list.append(" ".join(reversed(i_format_parts)))
 
+    def _set_base_units(self, num_divisions, names):
         v = 1
         values = [1]
         for d in num_divisions:
@@ -87,23 +89,13 @@ class SinglePartFormatter(UnitsFormatter):
             n = len(names) - 1 - len(num_divisions)
             num_divisions = num_divisions + ([num_divisions[-1]] * n)
 
+        self._set_base_units(num_divisions, names)
         self._num_divisions = num_divisions
         self._names = names
         self._format_list = [
             "%%.%if%s" % (precisions[min(i, len(precisions) - 1)], name)
             for i, name in enumerate(names)
         ]
-
-        v = 1
-        values = [1]
-        for d in num_divisions:
-            v *= d
-            values.append(v)
-
-        self._base_units = {
-            names[i]: values[i]
-            for i in range(len(names))
-        }
 
     def format(self, num_base_units: float):
         num_units = num_base_units

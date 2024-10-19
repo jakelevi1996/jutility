@@ -171,6 +171,21 @@ def test_format_list():
         '%2i hours %2i minutes %2.0f seconds',
         '%2i days %2i hours %2i minutes %2.0f seconds',
     ]
+    assert units.metric._format_list == [
+        '%.0f',
+        '%.1fk',
+        '%.1fm',
+        '%.1fb',
+        '%.1ft',
+    ]
+    assert units.file_size._format_list == [
+        '%.0f bytes',
+        '%.1f kb',
+        '%.1f mb',
+        '%.1f gb',
+        '%.1f tb',
+        '%.1f pb',
+    ]
 
     time_wide_format = units.TimeFormatter(
         names=["s", "m", "h", "d"],
@@ -183,4 +198,69 @@ def test_format_list():
         '%3im %5.2fs',
         '%4ih %3im %2.0fs',
         '%4id %4ih %3im %2.0fs',
+    ]
+
+def test_metric():
+    printer = util.Printer("test_metric", OUTPUT_DIR)
+
+    cf = util.ColumnFormatter("%25.4f", "%8s", printer=printer)
+    x_list = [1.23 * (10 ** i) for i in range(-1, 17)]
+    for x in x_list:
+        cf.print(x, units.metric.format(x))
+
+    assert [units.metric.format(x) for x in x_list] == [
+        "0",
+        "1",
+        "12",
+        "123",
+        "1.2k",
+        "12.3k",
+        "123.0k",
+        "1.2m",
+        "12.3m",
+        "123.0m",
+        "1.2b",
+        "12.3b",
+        "123.0b",
+        "1.2t",
+        "12.3t",
+        "123.0t",
+        "1230.0t",
+        "12300.0t",
+    ]
+
+def test_file_size():
+    printer = util.Printer("test_file_size", OUTPUT_DIR)
+
+    cf = util.ColumnFormatter("%25.2f", "%11s", printer=printer)
+    x_list = [2 ** i for i in range(-1, 70, 3)] + [1e7/17]
+    for x in x_list:
+        cf.print(x, units.file_size.format(x))
+
+    assert [units.file_size.format(x) for x in x_list] == [
+        "0 bytes",
+        "4 bytes",
+        "32 bytes",
+        "256 bytes",
+        "2.0 kb",
+        "16.0 kb",
+        "128.0 kb",
+        "1.0 mb",
+        "8.0 mb",
+        "64.0 mb",
+        "512.0 mb",
+        "4.0 gb",
+        "32.0 gb",
+        "256.0 gb",
+        "2.0 tb",
+        "16.0 tb",
+        "128.0 tb",
+        "1.0 pb",
+        "8.0 pb",
+        "64.0 pb",
+        "512.0 pb",
+        "4096.0 pb",
+        "32768.0 pb",
+        "262144.0 pb",
+        "574.4 kb",
     ]

@@ -81,12 +81,41 @@ class SinglePartFormatter(UnitsFormatter):
         self,
         names: list[str],
         num_divisions: list[int],
-        precision: int,
+        precisions: list[int],
     ):
-        ...
+        if len(num_divisions) < (len(names) - 1):
+            n = len(names) - 1 - len(num_divisions)
+            num_divisions = num_divisions + ([num_divisions[-1]] * n)
+
+        self._num_divisions = num_divisions
+        self._names = names
+        self._format_list = [
+            "%%.%if%s" % (precisions[min(i, len(precisions) - 1)], name)
+            for i, name in enumerate(names)
+        ]
+
+        v = 1
+        values = [1]
+        for d in num_divisions:
+            v *= d
+            values.append(v)
+
+        self._base_units = {
+            names[i]: values[i]
+            for i in range(len(names))
+        }
 
     def format(self, num_base_units: float):
-        ...
+        num_units = num_base_units
+        i = 0
+        for n in self._num_divisions:
+            if num_units >= n:
+                num_units /= n
+                i += 1
+            else:
+                break
+
+        return self._format_list[i] % num_units
 
 time_verbose = TimeFormatter(
     names=[" seconds", " minutes", " hours", " days"],
@@ -101,14 +130,14 @@ time_concise = TimeFormatter(
     widths=[2],
 )
 metric = SinglePartFormatter(
-    names=["k", "m", "b", "t"],
+    names=["", "k", "m", "b", "t"],
     num_divisions=[1000],
-    precision=1,
+    precisions=[0, 1],
 )
 file_size = SinglePartFormatter(
     names=[" bytes", " kb", " mb", " gb", " tb", " pb"],
     num_divisions=[1024],
-    precision=1,
+    precisions=[0, 1],
 )
 
 def time_format(num_seconds: float, concise=False):

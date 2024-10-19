@@ -131,9 +131,3 @@ file_size = SinglePartFormatter(
     num_divisions=[1024],
     precisions=[0, 1],
 )
-
-def time_format(num_seconds: float, concise=False):
-    if concise:
-        return time_concise.format(num_seconds)
-    else:
-        return time_verbose.format(num_seconds)

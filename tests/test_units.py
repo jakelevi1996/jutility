@@ -10,9 +10,9 @@ def test_time_format():
     cf = util.ColumnFormatter(*column_formats, printer=printer)
     t_list = [10 ** i for i in range(-6, 9)]
     for i, t in enumerate(t_list):
-        cf.print(i, t, units.time_format(t, True), units.time_format(t))
+        cf.print(i, t, util.time_format(t, True), util.time_format(t))
 
-    assert [units.time_format(t) for t in t_list] == [
+    assert [util.time_format(t) for t in t_list] == [
         " 0.0000 seconds",
         " 0.0000 seconds",
         " 0.0001 seconds",
@@ -29,7 +29,7 @@ def test_time_format():
         "115 days 17 hours 46 minutes 40 seconds",
         "1157 days  9 hours 46 minutes 40 seconds",
     ]
-    assert [units.time_format(t, concise=True) for t in t_list] == [
+    assert [util.time_format(t, concise=True) for t in t_list] == [
         " 0.0000s",
         " 0.0000s",
         " 0.0001s",
@@ -73,9 +73,9 @@ def test_time_format():
     ]
     t_list = [s + 60*(m + 60*(h + 24*d)) for s, m, h, d in smhd_list]
     for (s, m, h, d), t in zip(smhd_list, t_list):
-        cf.print(s, m, h, d, units.time_format(t, True), units.time_format(t))
+        cf.print(s, m, h, d, util.time_format(t, True), util.time_format(t))
 
-    assert [units.time_format(t) for t in t_list] == [
+    assert [util.time_format(t) for t in t_list] == [
         "45 minutes  0.00 seconds",
         "45 minutes  0.10 seconds",
         "45 minutes  2.00 seconds",
@@ -95,7 +95,7 @@ def test_time_format():
         "1234 days  2 hours  0 minutes  0 seconds",
         "1234 days 13 hours  0 minutes  0 seconds",
     ]
-    assert [units.time_format(t, concise=True) for t in t_list] == [
+    assert [util.time_format(t, concise=True) for t in t_list] == [
         "45m  0.00s",
         "45m  0.10s",
         "45m  2.00s",

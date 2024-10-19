@@ -32,6 +32,7 @@ import datetime
 import time
 import numpy as np
 import PIL.Image
+from jutility import units
 
 CURRENT_DIR = os.path.abspath(os.getcwd())
 RESULTS_DIR = os.path.join(CURRENT_DIR, "results")
@@ -583,23 +584,11 @@ def wrap_string(s, max_len=80, wrap_len=60):
 def indent(input_str, num_spaces=4):
     return textwrap.indent(input_str, " " * num_spaces)
 
-def time_format(t, concise=False):
+def time_format(num_seconds: float, concise=False):
     if concise:
-        h_str = "h"
-        m_str = "m"
-        s_str = "s"
+        return units.time_concise.format(num_seconds)
     else:
-        h_str = " hours"
-        m_str = " minutes"
-        s_str = " seconds"
-
-    if t < 60:
-        return "%.4f%s" % (t, s_str)
-    m, s = divmod(t, 60)
-    if m < 60:
-        return "%i%s %5.2f%s" % (m, m_str, s, s_str)
-    h, m = divmod(m, 60)
-    return "%i%s %2i%s %2i%s" % (h, h_str, m, m_str, s, s_str)
+        return units.time_verbose.format(num_seconds)
 
 def timestamp(s, suffix=False):
     now = datetime.datetime.now()

@@ -684,6 +684,27 @@ def test_abbreviate_dictionary():
     s = util.abbreviate_dictionary(d, key_abbreviations, replaces)
     assert s == "buFhd30,20,10lr0.001ls-4mtVLMNne10tdT"
 
+    s = util.abbreviate_dictionary(
+        {
+            "model": "MLP",
+            "model.width": [20, 30, 20],
+            "model.output": "SoftMax",
+            "model.output.temperature": 0.1,
+            "seed": 0,
+            "devices": [2, 3],
+            "devices.type": "GPU",
+        },
+        {
+            "model":                    "m",
+            "model.width":              "m.w",
+            "model.output":             "m.o",
+            "model.output.temperature": "m.o.t",
+            "seed":                     "s",
+            "devices.type":             "d.t",
+        },
+    )
+    assert s == "d.tGPUmMLPm.oSOFTMAXm.o.t0.1m.w20,30,20s0"
+
 def test_table_str():
     rng = util.Seeder().get_rng("test_table_str")
 

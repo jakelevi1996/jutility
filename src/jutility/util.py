@@ -735,12 +735,15 @@ def abbreviate_dictionary(
     for k, v in replaces_defaults.items():
         replaces.setdefault(k, v)
 
-    s_sorted = sorted(
-        "%s: %s" % (key_abbreviations[k].lower(), str(v).upper())
-        for k, v in input_dict.items()
-        if k in key_abbreviations
+    sorted_keys = sorted(
+        (k for k in input_dict.keys() if k in key_abbreviations),
+        key=lambda k: key_abbreviations[k],
     )
-    s_clean = clean_string("".join(s_sorted))
+    pairs_list = [
+        "%s: %s" % (key_abbreviations[k].lower(), str(input_dict[k]).upper())
+        for k in sorted_keys
+    ]
+    s_clean = clean_string("".join(pairs_list))
     for k, v in replaces.items():
         s_clean = s_clean.replace(k, v)
 

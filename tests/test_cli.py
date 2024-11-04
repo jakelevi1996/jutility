@@ -314,7 +314,7 @@ def test_object_choice():
     assert optimiser.beta == [0.9, 0.999]
     assert (
         cli.get_args_summary(args)
-        == "ne10op.be0.9,0.999op.lr0.001op.wd0.1opADAMse0"
+        == "ne10opADAMop.be0.9,0.999op.lr0.001op.wd0.1se0"
     )
 
     args = parser.parse_args(["--optimiser=adam"])
@@ -351,7 +351,7 @@ def test_object_choice():
     assert optimiser.lr == 1e-2
     assert (
         cli.get_args_summary(args)
-        == "ne10op.lr0.01op.wd0opSGDse0"
+        == "ne10opSGDop.lr0.01op.wd0se0"
     )
 
     args = parser.parse_args(["--optimiser=Sgd", "--optimiser.lr=1e-3"])
@@ -476,7 +476,7 @@ def test_nested_object_choice_parser():
     printer(cli.get_args_summary(args))
     assert (
         cli.get_args_summary(args)
-        == "mo.en.hd100mo.en.nl3mo.enDEEPSETmo.hd100mo.nl3moMLPne10se0"
+        == "moMLPmo.enDEEPSETmo.en.hd100mo.en.nl3mo.hd100mo.nl3ne10se0"
     )
     with pytest.raises(ValueError):
         model = cli.init_object(args, "model")
@@ -770,7 +770,7 @@ def test_object_choice_nested_tags():
     with cli.verbose:
         cli.init_object(args, "model")
 
-    assert cli.get_args_summary(args) == "m.a1m.b2m.s6mC"
+    assert cli.get_args_summary(args) == "mCm.a1m.b2m.s6"
 
     args = parser.parse_args(["--model=D"])
     printer(cli.get_arg_dict(args))
@@ -778,7 +778,7 @@ def test_object_choice_nested_tags():
     with cli.verbose:
         cli.init_object(args, "model")
 
-    assert cli.get_args_summary(args) == "m.e3m.f.g4m.s5mD"
+    assert cli.get_args_summary(args) == "mDm.e3m.f.g4m.s5"
 
 def test_namespace_str_repr():
     printer = util.Printer("test_namespace_str_repr", OUTPUT_DIR)
@@ -846,7 +846,7 @@ def test_init_ignores():
         m = cli.init_object(args, "model")
         assert isinstance(m, C)
         assert m.forward() == 6
-        assert cli.get_args_summary(args) == "m.x1m.y2mC"
+        assert cli.get_args_summary(args) == "mCm.x1m.y2"
         assert printer.read() == "cli: C(x=1, y=2, z=3)\n"
 
     args = parser.parse_args(["--model", "D"])
@@ -854,7 +854,7 @@ def test_init_ignores():
         m = cli.init_object(args, "model")
         assert isinstance(m, C)
         assert m.forward() == 14
-        assert cli.get_args_summary(args) == "m.x1m.y2mD"
+        assert cli.get_args_summary(args) == "mDm.x1m.y2"
         assert "cli: D(x=1, y=2, z=3)" in printer.read()
 
     args = parser.parse_args(["--model", "E"])
@@ -862,7 +862,7 @@ def test_init_ignores():
         m = cli.init_object(args, "model")
         assert isinstance(m, C)
         assert m.forward() == 1
-        assert cli.get_args_summary(args) == "m.x1mE"
+        assert cli.get_args_summary(args) == "mEm.x1"
         assert "cli: E(x=1)" in printer.read()
 
 class _Optimiser:

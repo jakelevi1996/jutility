@@ -404,12 +404,15 @@ class NoisyData:
         )
 
     def get_xtick_kwargs(self):
-        xtick_kwargs = dict()
         if self._x_index:
-            xtick_kwargs["xticks"] = list(range(len(self._x_index_list)))
-            xtick_kwargs["xticklabels"] = self._x_index_list
-
-        return xtick_kwargs
+            return {
+                "xticks": list(range(len(self._x_index_list))),
+                "xticklabels": self._x_index_list,
+            }
+        else:
+            return {
+                "xticks": sorted(self._results_list_dict.keys()),
+            }
 
     def predict(self, x_pred: np.ndarray, eps=1e-5):
         x, y = self.get_all_data()

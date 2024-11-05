@@ -1104,6 +1104,28 @@ def test_noisydata_x_index():
     )
     mp.save("test_noisydata_x_index", OUTPUT_DIR)
 
+def test_noisy_data_get_xtick_kwargs():
+    test_name = "test_noisy_data_get_xtick_kwargs"
+    sp_list = []
+    for x_index in [False, True]:
+        rng = util.Seeder().get_rng(test_name)
+        nd = plotting.NoisyData(x_index=x_index)
+
+        for x in rng.integers(0, 100, [10]):
+            for repeat in range(rng.integers(2, 10)):
+                nd.update(x, 0.8*x + 0.2 + rng.normal(0, 10))
+
+        sp = plotting.Subplot(
+            *nd.plot(),
+            nd.predict_line(0, 1),
+            **nd.get_xtick_kwargs(),
+            title="x_index = %s" % x_index,
+        )
+        sp_list.append(sp)
+
+    mp = plotting.MultiPlot(*sp_list, title=test_name)
+    mp.save(test_name, OUTPUT_DIR)
+
 def test_noisy_data_repr():
     n = plotting.NoisyData()
     n.update(1, 1)

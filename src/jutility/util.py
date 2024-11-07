@@ -859,7 +859,7 @@ def progress(
         "ETA %19s",
         printer=printer,
     )
-    timer = Timer(printer=printer)
+    timer = Timer()
     for i, element in enumerate(input_iter, start=1):
         yield element
 

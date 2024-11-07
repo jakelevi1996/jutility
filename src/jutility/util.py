@@ -851,7 +851,6 @@ def progress(
         print_interval = TimeInterval(1)
 
     total_len = len(input_iter)
-    timer = Timer(printer=printer)
     cf = ColumnFormatter(
         "\r%s%%%ii/%i" % (prefix, len(str(total_len)), total_len),
         "%5.1f %%",
@@ -860,6 +859,7 @@ def progress(
         "ETA %19s",
         printer=printer,
     )
+    timer = Timer(printer=printer)
     for i, element in enumerate(input_iter, start=1):
         yield element
 

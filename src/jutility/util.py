@@ -861,6 +861,8 @@ def progress(
         printer=printer,
     )
     for i, element in enumerate(input_iter, start=1):
+        yield element
+
         if print_interval.ready() or (i == total_len):
             fraction = i / total_len
             percent  = 100 * fraction
@@ -886,5 +888,3 @@ def progress(
             print_interval.reset()
         if (i == total_len) and (end == ""):
             printer()
-
-        yield element

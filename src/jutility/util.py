@@ -857,7 +857,7 @@ def progress(
         "%5.1f %%",
         "t+ %11s",
         "t- %11s",
-        # "ETA %s",
+        "ETA %19s",
         printer=printer,
     )
     for i, element in enumerate(input_iter, start=1):
@@ -867,11 +867,14 @@ def progress(
             t_taken  = timer.get_time_taken()
             t_total  = total_len * (t_taken / i)
             t_remain = t_total - t_taken
+            t_now    = datetime.datetime.now()
+            t_delta  = datetime.timedelta(seconds=t_remain)
             str_elements = [
                 i,
                 percent,
                 units.time_concise.format(t_taken),
                 units.time_concise.format(t_remain),
+                (t_now + t_delta).replace(microsecond=0),
             ]
             if bar_length is not None:
                 num_done_chars = int(fraction * bar_length)

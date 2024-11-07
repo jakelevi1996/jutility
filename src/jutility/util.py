@@ -175,8 +175,8 @@ class ColumnFormatter:
             for i, a in enumerate(args)
         )
 
-    def print(self, *args):
-        self._printer(self.format(*args))
+    def print(self, *args, **kwargs):
+        self._printer(self.format(*args), **kwargs)
 
 class Seeder:
     def __init__(self):
@@ -851,21 +851,27 @@ def progress(
         print_interval = TimeInterval(1)
 
     total_len = len(input_iter)
-    i_str_len = len(str(total_len))
     timer = Timer(printer=printer)
+    cf = ColumnFormatter(
+        "\r%s%%%ii/%i" % (prefix, len(str(total_len)), total_len),
+        "%5.1f %%",
+        "t+ %11s",
+        "t- %11s",
+        # "ETA %s",
+        printer=printer,
+    )
     for i, element in enumerate(input_iter, start=1):
         if print_interval.ready() or (i == total_len):
-            i_str = str(i).rjust(i_str_len)
             fraction = i / total_len
             percent  = 100 * fraction
             t_taken  = timer.get_time_taken()
             t_total  = total_len * (t_taken / i)
             t_remain = t_total - t_taken
             str_elements = [
-                "\r%s%s/%i"   % (prefix, i_str, total_len),
-                "%5.1f %%"  % percent,
-                "time taken = %10s"     % time_format(t_taken,  True),
-                "time remaining = %10s" % time_format(t_remain, True),
+                i,
+                percent,
+                units.time_concise.format(t_taken),
+                units.time_concise.format(t_remain),
             ]
             if bar_length is not None:
                 num_done_chars = int(fraction * bar_length)
@@ -873,7 +879,7 @@ def progress(
                 bar = ("*" * num_done_chars) + ("-" * num_remain_chars)
                 str_elements.append(bar)
 
-            printer(" | ".join(str_elements), end=end)
+            cf.print(*str_elements, end=end)
             print_interval.reset()
         if (i == total_len) and (end == ""):
             printer()

@@ -1126,6 +1126,32 @@ def test_noisy_data_get_xtick_kwargs():
     mp = plotting.MultiPlot(*sp_list, title=test_name)
     mp.save(test_name, OUTPUT_DIR)
 
+def test_noisy_data_get_xtick_kwargs_log_x():
+    test_name = "test_noisy_data_get_xtick_kwargs_log_x"
+    sp_list = []
+    for x in [
+        2*np.arange(5),
+        2**np.arange(5),
+        [1e-5, 3e-5, 1e-4, 3e-4, 5e-4, 1e-3],
+    ]:
+        for log_x in [True, False]:
+            nd = plotting.NoisyData(True)
+
+            for i, xi in enumerate(x, 1):
+                for j in range(i):
+                    nd.update(xi, j)
+
+            sp = plotting.Subplot(
+                *nd.plot(),
+                **nd.get_xtick_kwargs(),
+                log_x=log_x,
+                title="x=%s, log_x=%s" % (x, log_x)
+            )
+            sp_list.append(sp)
+
+    mp = plotting.MultiPlot(*sp_list, num_cols=2, title=test_name)
+    mp.save(test_name, OUTPUT_DIR)
+
 def test_noisy_data_repr():
     n = plotting.NoisyData()
     n.update(1, 1)

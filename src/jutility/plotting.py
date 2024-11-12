@@ -405,14 +405,13 @@ class NoisyData:
 
     def get_xtick_kwargs(self):
         if self._x_index:
-            return {
-                "xticks": list(range(len(self._x_index_list))),
-                "xticklabels": self._x_index_list,
-            }
+            ticks = list(range(len(self._x_index_list)))
+            labels = self._x_index_list
         else:
-            return {
-                "xticks": sorted(self._results_list_dict.keys()),
-            }
+            ticks = sorted(self._results_list_dict.keys())
+            labels = ticks
+
+        return {"xticks": ticks, "xticklabels": labels}
 
     def predict(self, x_pred: np.ndarray, eps=1e-5):
         x, y = self.get_all_data()
@@ -565,14 +564,6 @@ class AxisProperties:
             axis.set_xlabel(self._xlabel)
         if self._ylabel is not None:
             axis.set_ylabel(self._ylabel)
-        if self._xticks is not None:
-            axis.set_xticks(self._xticks, self._xticklabels)
-        if self._yticks is not None:
-            axis.set_yticks(self._yticks, self._yticklabels)
-        if self._xlim is not None:
-            axis.set_xlim(self._xlim)
-        if self._ylim is not None:
-            axis.set_ylim(self._ylim)
         if self._axis_equal:
             axis.axis("equal")
         if self._axis_square:
@@ -589,6 +580,14 @@ class AxisProperties:
             axis.set_yscale("symlog")
         if self._grid:
             axis.grid(True, which="both")
+        if self._xticks is not None:
+            axis.set_xticks(self._xticks, self._xticklabels)
+        if self._yticks is not None:
+            axis.set_yticks(self._yticks, self._yticklabels)
+        if self._xlim is not None:
+            axis.set_xlim(self._xlim)
+        if self._ylim is not None:
+            axis.set_ylim(self._ylim)
         if self._rotate_xticklabels:
             for xtl in axis.get_xticklabels():
                 xtl.set(rotation=-45, ha="left")

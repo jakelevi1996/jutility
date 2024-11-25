@@ -153,6 +153,9 @@ class Printer:
         if self._file is not None:
             self._file.close()
 
+def hline(line_char="-", line_len=100):
+    print(line_char * line_len)
+
 class ColumnFormatter:
     def __init__(
         self,

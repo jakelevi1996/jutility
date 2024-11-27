@@ -629,6 +629,7 @@ class FigureProperties:
         legend: "FigureLegend"=None,
         pad=0.1,
         space=0,
+        dpi=None,
     ):
         if num_rows is None:
             if num_cols is None:
@@ -669,6 +670,7 @@ class FigureProperties:
         self._legend = legend
         self._pad = pad
         self._space = space
+        self._dpi = dpi
 
     def get_num_axes(self):
         return self._num_rows * self._num_cols
@@ -676,6 +678,7 @@ class FigureProperties:
     def get_figure(self):
         figure = plt.figure(
             figsize=self._figsize,
+            dpi=self._dpi,
             layout=self._layout,
         )
         if self._constrained_layout:

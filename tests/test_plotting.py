@@ -1278,3 +1278,33 @@ def test_nested_multiplot_space():
     )
     for pdf in [True, False]:
         mp.save("test_nested_multiplot_space", OUTPUT_DIR, pdf=pdf)
+
+def test_dpi():
+    printer = util.Printer("test_dpi", OUTPUT_DIR)
+
+    size_dict = dict()
+    for dpi in [None, 100, 50, 25]:
+        name = "test_dpi_%s" % dpi
+        full_path = util.get_full_path(name, OUTPUT_DIR, "png")
+        if os.path.exists(full_path):
+            os.remove(full_path)
+            printer("Removed", full_path)
+
+        sp = plotting.Subplot(plotting.Line([1, 2], [3, 4]))
+        mp = plotting.MultiPlot(sp, dpi=dpi)
+        mp.save(name, OUTPUT_DIR)
+        size_dict[dpi] = os.path.getsize(full_path)
+
+        printer("name =", name)
+        printer("dpi =", dpi)
+        printer("size (bytes) =", size_dict[dpi])
+        printer.hline()
+
+    assert size_dict[25] < size_dict[50]
+    assert size_dict[25] < size_dict[100]
+    assert size_dict[25] < size_dict[None]
+
+    assert size_dict[50] < size_dict[100]
+    assert size_dict[50] < size_dict[None]
+
+    assert size_dict[100] == size_dict[None]

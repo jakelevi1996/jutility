@@ -8,6 +8,27 @@ def test_time_format():
 
     column_formats = ["%7i", "%18.7f", "%17s", "%40s"]
     cf = util.ColumnFormatter(*column_formats, printer=printer)
+    t_list = [
+        unit.num_base_units
+        for unit in units.time_verbose._all_units
+    ]
+    for i, t in enumerate(t_list):
+        cf.print(i, t, util.time_format(t, True), util.time_format(t))
+
+    assert t_list == [1, 60, 60*60, 60*60*24]
+    assert [util.time_format(t) for t in t_list] == [
+        "1.0000 seconds",
+        "1 minutes  0.00 seconds",
+        "1 hours  0 minutes  0 seconds",
+        "1 days  0 hours  0 minutes  0 seconds",
+    ]
+    assert [util.time_format(t, concise=True) for t in t_list] == [
+        "1.0000s",
+        "1m  0.00s",
+        "1h  0m  0s",
+        "1d  0h  0m  0s",
+    ]
+
     t_list = [10 ** i for i in range(-6, 9)]
     for i, t in enumerate(t_list):
         cf.print(i, t, util.time_format(t, True), util.time_format(t))

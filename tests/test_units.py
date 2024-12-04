@@ -13,35 +13,35 @@ def test_time_format():
         cf.print(i, t, util.time_format(t, True), util.time_format(t))
 
     assert [util.time_format(t) for t in t_list] == [
-        " 0.0000 seconds",
-        " 0.0000 seconds",
-        " 0.0001 seconds",
-        " 0.0010 seconds",
-        " 0.0100 seconds",
-        " 0.1000 seconds",
-        " 1.0000 seconds",
+        "0.0000 seconds",
+        "0.0000 seconds",
+        "0.0001 seconds",
+        "0.0010 seconds",
+        "0.0100 seconds",
+        "0.1000 seconds",
+        "1.0000 seconds",
         "10.0000 seconds",
-        " 1 minutes 40.00 seconds",
+        "1 minutes 40.00 seconds",
         "16 minutes 40.00 seconds",
-        " 2 hours 46 minutes 40 seconds",
-        " 1 days  3 hours 46 minutes 40 seconds",
+        "2 hours 46 minutes 40 seconds",
+        "1 days  3 hours 46 minutes 40 seconds",
         "11 days 13 hours 46 minutes 40 seconds",
         "115 days 17 hours 46 minutes 40 seconds",
         "1157 days  9 hours 46 minutes 40 seconds",
     ]
     assert [util.time_format(t, concise=True) for t in t_list] == [
-        " 0.0000s",
-        " 0.0000s",
-        " 0.0001s",
-        " 0.0010s",
-        " 0.0100s",
-        " 0.1000s",
-        " 1.0000s",
+        "0.0000s",
+        "0.0000s",
+        "0.0001s",
+        "0.0010s",
+        "0.0100s",
+        "0.1000s",
+        "1.0000s",
         "10.0000s",
-        " 1m 40.00s",
+        "1m 40.00s",
         "16m 40.00s",
-        " 2h 46m 40s",
-        " 1d  3h 46m 40s",
+        "2h 46m 40s",
+        "1d  3h 46m 40s",
         "11d 13h 46m 40s",
         "115d 17h 46m 40s",
         "1157d  9h 46m 40s",
@@ -155,49 +155,55 @@ def test_future_time():
     cf.print("Time left (total)",   total_remaining)
     cf.print("Estimated finish",    finish_time)
 
-    assert current_remaining == " 1h  9m 46s"
-    assert total_remaining   == " 7h 10m 56s"
+    assert current_remaining == "1h  9m 46s"
+    assert total_remaining   == "7h 10m 56s"
 
 def test_format_list():
-    assert units.time_concise._format_list == [
-        '%7.4fs',
-        '%2im %5.2fs',
-        '%2ih %2im %2.0fs',
-        '%2id %2ih %2im %2.0fs',
+    def get_format_list(formatter: units.UnitsFormatter):
+        return [
+            unit.format_str
+            for unit in formatter._all_units
+        ]
+
+    assert get_format_list(units.time_concise) == [
+        '%0.4fs',
+        '%0.0fm %5.2fs',
+        '%0.0fh %2.0fm %2.0fs',
+        '%0.0fd %2.0fh %2.0fm %2.0fs',
     ]
-    assert units.time_verbose._format_list == [
-        '%7.4f seconds',
-        '%2i minutes %5.2f seconds',
-        '%2i hours %2i minutes %2.0f seconds',
-        '%2i days %2i hours %2i minutes %2.0f seconds',
+    assert get_format_list(units.time_verbose) == [
+        '%0.4f seconds',
+        '%0.0f minutes %5.2f seconds',
+        '%0.0f hours %2.0f minutes %2.0f seconds',
+        '%0.0f days %2.0f hours %2.0f minutes %2.0f seconds',
     ]
-    assert units.metric._format_list == [
-        '%.0f',
-        '%.1fk',
-        '%.1fm',
-        '%.1fb',
-        '%.1ft',
+    assert get_format_list(units.metric) == [
+        '%0.0f',
+        '%0.1fk',
+        '%0.1fm',
+        '%0.1fb',
+        '%0.1ft',
     ]
-    assert units.file_size._format_list == [
-        '%.0f bytes',
-        '%.1f kb',
-        '%.1f mb',
-        '%.1f gb',
-        '%.1f tb',
-        '%.1f pb',
+    assert get_format_list(units.file_size) == [
+        '%0.0f bytes',
+        '%0.1f kb',
+        '%0.1f mb',
+        '%0.1f gb',
+        '%0.1f tb',
+        '%0.1f pb',
     ]
 
     time_wide_format = units.TimeFormatter(
-        names=["s", "m", "h", "d"],
-        num_divisions=[60, 60, 24],
-        base_precisions=[4, 2, 0],
-        widths=[2, 3, 4],
+        units.BaseUnit("s", 2, [4, 2, 0]),
+        units.CompoundUnit("m", 3, 0, 60),
+        units.CompoundUnit("h", 4, 0, 60),
+        units.CompoundUnit("d", 5, 0, 24),
     )
-    assert time_wide_format._format_list == [
-        '%7.4fs',
-        '%3im %5.2fs',
-        '%4ih %3im %2.0fs',
-        '%4id %4ih %3im %2.0fs',
+    assert get_format_list(time_wide_format) == [
+        '%0.4fs',
+        '%0.0fm %5.2fs',
+        '%0.0fh %3.0fm %2.0fs',
+        '%0.0fd %4.0fh %3.0fm %2.0fs',
     ]
 
 def test_metric():

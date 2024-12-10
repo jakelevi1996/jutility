@@ -803,7 +803,7 @@ def numpy_set_print_options(
         threshold=threshold,
     )
 
-def log_range(start, stop, num=50, unique_integers=False):
+def log_range(start, stop, num=50, unique_integers=False) -> np.ndarray:
     x = np.exp(np.linspace(np.log(start), np.log(stop), num))
     if unique_integers:
         new_num = num

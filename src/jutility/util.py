@@ -803,15 +803,17 @@ def numpy_set_print_options(
         threshold=threshold,
     )
 
-def log_range(start, stop, num=50, unique_integers=False, min_num=None):
+def log_range(start, stop, num=50, unique_integers=False):
     x = np.exp(np.linspace(np.log(start), np.log(stop), num))
     if unique_integers:
-        x = np.unique(np.int64(np.round(x)))
-        max_num = x.max() - x.min() + 1
-        if min_num is None:
-            min_num = num
-        if (len(x) < min_num) and (len(x) < max_num):
-            x = log_range(start, stop, num + 1, unique_integers, min_num)
+        new_num = num
+        while True:
+            x = np.unique(np.int64(np.round(x)))
+            if (len(x) == num) or (new_num > abs(stop - start) + 1):
+                break
+
+            new_num += 1
+            x = np.exp(np.linspace(np.log(start), np.log(stop), new_num))
 
     return x
 

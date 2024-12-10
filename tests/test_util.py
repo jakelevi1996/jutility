@@ -540,9 +540,18 @@ def test_log_range():
     )
     mp.save("test_log_range", dir_name=OUTPUT_DIR)
 
+    x = util.log_range(10, 100, 50, unique_integers=True ).tolist()
+    y = util.log_range(10, 100, 50, unique_integers=False).tolist()
+    x_int_set = sorted(set(int(xi) for xi in x))
+    y_int_set = sorted(set(int(yi) for yi in y))
+
+    assert len(x) == 50
+    assert len(y) == 50
+    assert len(x_int_set) == 50
+    assert len(y_int_set) == 45
+
     assert len(util.log_range(10, 100, 10, True)) == 10
     assert len(util.log_range(10, 100, 50, True)) == 50
-    assert len(util.log_range(10, 100, 50, True, 0)) == 45
     assert len(util.log_range(10, 12, 10, True)) == 3
     assert len(util.log_range(10.1, 12.2, 10, True)) == 3
     assert len(util.log_range(10.2, 12.1, 10, True)) == 3

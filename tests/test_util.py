@@ -508,15 +508,18 @@ def test_log_range():
     printer = util.Printer("test_log_range", dir_name=OUTPUT_DIR)
 
     n = 27
-    x = util.log_range(0.1, 10, n)
-    y = util.log_range(3, 2789, n)
-    z = np.linspace(3, 2789, n)
+    x_log = util.log_range(0.1, 10, n)
+    y_log = util.log_range(3, 2789, n)
+    x_lin = np.linspace(0.1, 10, n)
+    y_lin = np.linspace(3, 2789, n)
 
-    printer(x, y, z, sep="\n")
+    printer(x_lin, x_log, y_log, y_lin, sep="\n")
 
     lines = [
-        plotting.Line(x, y, c="b", marker="o"),
-        plotting.Line(x, z, c="r", marker="o"),
+        plotting.Line(x_lin, y_lin, c="c", marker="o", label="lin-lin"),
+        plotting.Line(x_log, y_lin, c="r", marker="o", label="log-lin"),
+        plotting.Line(x_lin, y_log, c="g", marker="o", label="lin-log"),
+        plotting.Line(x_log, y_log, c="b", marker="o", label="log-log"),
     ]
     mp = plotting.MultiPlot(
         plotting.Subplot(*lines),
@@ -533,6 +536,7 @@ def test_log_range():
             log_x=True,
             log_y=True,
         ),
+        legend=plotting.FigureLegend(*lines, ncols=4),
     )
     mp.save("test_log_range", dir_name=OUTPUT_DIR)
 

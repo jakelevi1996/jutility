@@ -530,7 +530,8 @@ class AxisProperties:
         axis_square=False,
         axis_off=False,
         grid=True,
-        grid_which="both",
+        grid_x="both",
+        grid_y="both",
         title=None,
         title_font_size=12,
         title_colour=None,
@@ -554,7 +555,8 @@ class AxisProperties:
         self._axis_square = axis_square
         self._axis_off = axis_off
         self._grid = grid
-        self._grid_which = grid_which
+        self._grid_x = grid_x
+        self._grid_y = grid_y
         self._title = title
         self._title_font_size = title_font_size
         self._title_colour = title_colour
@@ -580,8 +582,10 @@ class AxisProperties:
             axis.set_xscale("symlog")
         if self._symlog_y:
             axis.set_yscale("symlog")
-        if self._grid:
-            axis.grid(True, which=self._grid_which)
+        if self._grid and self._grid_x:
+            axis.grid(visible=True, which=self._grid_x, axis="x")
+        if self._grid and self._grid_y:
+            axis.grid(visible=True, which=self._grid_y, axis="y")
         if self._xticks is not None:
             axis.set_xticks(self._xticks, self._xticklabels)
         if self._yticks is not None:

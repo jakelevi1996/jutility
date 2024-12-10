@@ -1309,7 +1309,7 @@ def test_dpi():
 
     assert size_dict[100] == size_dict[None]
 
-def test_grid_which():
+def test_grid_xy():
     line = plotting.Line(
         [1e-2, 3e-1, 3e0, 1e2],
         [1e-2, 3e-2, 3e1, 1e2],
@@ -1317,10 +1317,12 @@ def test_grid_which():
     )
     kwargs = {"log_x": True, "log_y": True}
     mp = plotting.MultiPlot(
-        plotting.Subplot(line, **kwargs, grid=False),
         plotting.Subplot(line, **kwargs),
-        plotting.Subplot(line, **kwargs, grid_which="major"),
-        num_rows=1,
-        figsize=[10, 3],
+        plotting.Subplot(line, **kwargs, grid=False),
+        plotting.Subplot(line, **kwargs, grid_x=None, grid_y="major"),
+        plotting.Subplot(line, **kwargs, grid_x=None),
+        plotting.Subplot(line, **kwargs, grid_x="major"),
+        plotting.Subplot(line, **kwargs, grid_x="major", grid_y="major"),
+        figsize=[10, 6],
     )
-    mp.save("test_grid_which", OUTPUT_DIR)
+    mp.save("test_grid_xy", OUTPUT_DIR)

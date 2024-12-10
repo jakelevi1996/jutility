@@ -1308,3 +1308,19 @@ def test_dpi():
     assert size_dict[50] < size_dict[None]
 
     assert size_dict[100] == size_dict[None]
+
+def test_grid_which():
+    line = plotting.Line(
+        [1e-2, 3e-1, 3e0, 1e2],
+        [1e-2, 3e-2, 3e1, 1e2],
+        marker="o",
+    )
+    kwargs = {"log_x": True, "log_y": True}
+    mp = plotting.MultiPlot(
+        plotting.Subplot(line, **kwargs, grid=False),
+        plotting.Subplot(line, **kwargs),
+        plotting.Subplot(line, **kwargs, grid_which="major"),
+        num_rows=1,
+        figsize=[10, 3],
+    )
+    mp.save("test_grid_which", OUTPUT_DIR)

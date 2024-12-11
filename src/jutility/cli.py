@@ -370,8 +370,14 @@ class Namespace(argparse.Namespace):
     def get_parser(self):
         return self._parser
 
-    def get(self, key):
-        return vars(self).get(key)
+    def get(self, keys_csv: str, unpack_single=True):
+        keys = [s.strip() for s in keys_csv.split(",")]
+        self_dict = vars(self)
+        if (len(keys) == 1) and unpack_single:
+            [k] = keys
+            return self_dict[k]
+        else:
+            return [self_dict[k] for k in keys]
 
     def update(self, arg_dict: dict, allow_new_keys=False):
         if not allow_new_keys:

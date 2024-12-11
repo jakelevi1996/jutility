@@ -804,18 +804,19 @@ def numpy_set_print_options(
     )
 
 def log_range(start, stop, num=50, unique_integers=False) -> np.ndarray:
-    x = np.exp(np.linspace(np.log(start), np.log(stop), num))
     if unique_integers:
-        new_num = num
-        while True:
+        max_num = int(np.ceil(abs(stop - start) + 1))
+        for num_float in range(num, max_num + 1):
+            x = log_range(start, stop, num_float, unique_integers=False)
             x = np.unique(np.int64(np.round(x)))
-            if (len(x) == num) or (new_num > abs(stop - start) + 1):
-                break
+            if len(x) >= num:
+                return x
 
-            new_num += 1
-            x = np.exp(np.linspace(np.log(start), np.log(stop), new_num))
+        x = np.linspace(start, stop, max_num)
+        x = np.unique(np.int64(np.round(x)))
+        return x
 
-    return x
+    return np.exp(np.linspace(np.log(start), np.log(stop), num))
 
 def check_type(instance, expected_type, name=None):
     if not isinstance(instance, expected_type):

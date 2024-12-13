@@ -219,6 +219,14 @@ class FillBetween(_Patch):
     def _get_default_kwargs(self):
         return {"zorder": 10, "color": "b", "ec": None}
 
+class FillBetweenx(FillBetween):
+    """
+    See
+    https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.fill_betweenx.html
+    """
+    def plot(self, axis: matplotlib.axes.Axes):
+        axis.fill_betweenx(*self._args, **self._kwargs)
+
 class HSpan(FillBetween):
     """
     See

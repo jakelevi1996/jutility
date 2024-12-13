@@ -1326,3 +1326,24 @@ def test_grid_xy():
         figsize=[10, 6],
     )
     mp.save("test_grid_xy", OUTPUT_DIR)
+
+def test_fillbetweenx():
+    plotting.plot(
+        plotting.FillBetweenx(
+            [3, 5, 6, 7, 9],
+            [2, 1, 3, 2, 3],
+            [4, 2, 6, 7, 4],
+            c="r",
+            a=0.3,
+            z=20,
+        ),
+        plotting.FillBetween(
+            [0, 2, 4, 5, 7],
+            [7, 9, 8, 7, 5],
+            [6, 6, 7, 5, 4],
+            c="b",
+            a=0.3,
+        ),
+        plot_name="test_fillbetweenx",
+        dir_name=OUTPUT_DIR,
+    )

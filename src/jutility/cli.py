@@ -27,6 +27,8 @@ class Arg:
         self.argparse_kwargs = argparse_kwargs
         self.args: list[Arg] = []
         self.init_names(name, tag)
+        if (len(argparse_kwargs) > 0) and ("help" not in argparse_kwargs):
+            argparse_kwargs["help"] = util.format_dict(argparse_kwargs)
 
     def init_names(self, name: str, tag: str):
         self.name = name

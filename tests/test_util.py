@@ -1158,3 +1158,18 @@ def test_table_load_pickle_callback():
     assert table.get_data("b")        != data_list
     assert loaded_table.get_data("b") == data_list
     assert "   19 | " in printer.read()
+
+def test_format_dict():
+    d = {("f(%s)" % x): x*x/2 for x in range(4)}
+    assert util.format_dict(d) == (
+        "f(0) = 0.0, f(1) = 0.5, f(2) = 2.0, f(3) = 4.5"
+    )
+    assert util.format_dict(d, item_sep=" | ") == (
+        "f(0) = 0.0 | f(1) = 0.5 | f(2) = 2.0 | f(3) = 4.5"
+    )
+    assert util.format_dict(d, kv_sep="->") == (
+        "f(0)->0.0, f(1)->0.5, f(2)->2.0, f(3)->4.5"
+    )
+    assert util.format_dict(d, key_order=sorted(d.keys(), reverse=True)) == (
+        "f(3) = 4.5, f(2) = 2.0, f(1) = 0.5, f(0) = 0.0"
+    )

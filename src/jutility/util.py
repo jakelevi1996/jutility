@@ -587,6 +587,20 @@ def wrap_string(s, max_len=80, wrap_len=60):
 def indent(input_str, num_spaces=4):
     return textwrap.indent(input_str, " " * num_spaces)
 
+def format_dict(
+    input_dict: dict,
+    item_sep=", ",
+    kv_sep=" = ",
+    key_order=None,
+) -> str:
+    if key_order is None:
+        key_order = sorted(input_dict.keys())
+
+    return item_sep.join(
+        "%s%s%r" % (k, kv_sep, input_dict[k])
+        for k in key_order
+    )
+
 def time_format(num_seconds: float, concise=False):
     if concise:
         return units.time_concise.format(num_seconds)

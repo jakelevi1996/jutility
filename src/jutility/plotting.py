@@ -301,11 +301,26 @@ class Legend(Plottable):
     See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.legend.html
     """
     def plot(self, axis: matplotlib.axes.Axes):
+        if "plottables" in self._kwargs:
+            plottables = self._kwargs.pop("plottables")
+            self._kwargs.update(self.get_kwargs(plottables))
+
         zorder = self._kwargs.pop("zorder", None)
         legend = axis.legend(*self._args, **self._kwargs)
-
         if zorder is not None:
             legend.set_zorder(zorder)
+
+    @staticmethod
+    def get_kwargs(plottables: list[Plottable]):
+        plottables = [p for p in plottables if p.has_label()]
+        return {
+            "handles": [p.get_handle() for p in plottables],
+            "labels":  [p.get_label()  for p in plottables],
+        }
+
+    @classmethod
+    def from_plottables(cls, *plottables: Plottable, **kwargs):
+        return cls(plottables=plottables, **kwargs)
 
 def confidence_bounds(
     data_list,
@@ -781,16 +796,16 @@ class LegendSubplot(Subplot):
     """
     See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.legend.html
     """
-    def __init__(self, *lines: Plottable, **legend_kwargs):
-        handles = [
-            line.get_handle() for line in lines if line.has_label()
-        ]
-        legend_kwargs.setdefault("handles", handles)
-        legend_kwargs.setdefault("loc", "center")
-        self._legend_plottable = Legend(**legend_kwargs)
+    def __init__(self, *lines: Plottable, loc="center", **legend_kwargs):
+        self._lines = lines
+        self._kwargs = legend_kwargs
+        self._kwargs["loc"] = loc
 
     def plot(self, axis: matplotlib.axes.Axes):
-        self._legend_plottable.plot(axis)
+        if len(self._lines) > 0:
+            self._kwargs.update(Legend.get_kwargs(self._lines))
+
+        axis.legend(**self._kwargs)
         axis.set_axis_off()
 
 class FigureLegend:
@@ -801,23 +816,21 @@ class FigureLegend:
     def __init__(
         self,
         *lines: Plottable,
-        ncols=1,
+        num_rows=1,
         loc="outside lower center",
         **legend_kwargs,
     ):
-        handles = [
-            line.get_handle() for line in lines if line.has_label()
-        ]
-        self._kwargs = {
-            "ncols":    ncols,
-            "loc":      loc,
-        }
-        if len(handles) > 0:
-            self._kwargs["handles"] = handles
+        if num_rows is not None:
+            legend_kwargs["ncols"] = math.ceil(len(lines) / num_rows)
 
-        self._kwargs.update(legend_kwargs)
+        self._lines = lines
+        self._kwargs = legend_kwargs
+        self._kwargs["loc"] = loc
 
     def plot(self, figure: matplotlib.figure.Figure):
+        if len(self._lines) > 0:
+            self._kwargs.update(Legend.get_kwargs(self._lines))
+
         figure.legend(**self._kwargs)
 
 class ColourBar(Subplot):

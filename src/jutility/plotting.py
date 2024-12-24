@@ -38,23 +38,19 @@ from jutility import util
 class Plottable:
     def __init__(self, *args, **kwargs):
         self._args = args
-        self._kwargs = kwargs
-        self._expand_abbreviated_keys()
-        for k, v in self._get_default_kwargs().items():
-            self._kwargs.setdefault(k, v)
+        self._kwargs = dict()
+        self.set_options(**self._get_default_kwargs())
+        self.set_options(**kwargs)
 
     def plot(self, axis: matplotlib.axes.Axes):
         raise NotImplementedError()
 
     def set_options(self, **kwargs):
-        for k, v in kwargs.items():
-            self._kwargs[k] = v
-
-        self._expand_abbreviated_keys()
+        self._kwargs.update(self._expand_dict_keys(kwargs))
         return self
 
     def _get_default_kwargs(self):
-        return {"zorder": 10}
+        return {"z": 10}
 
     def _get_abbreviated_keys_dict(self):
         return {
@@ -64,10 +60,12 @@ class Plottable:
             "m": "marker",
         }
 
-    def _expand_abbreviated_keys(self):
-        for k, k_full in self._get_abbreviated_keys_dict().items():
-            if k in self._kwargs:
-                self._kwargs[k_full] = self._kwargs.pop(k)
+    def _expand_dict_keys(self, input_dict: dict) -> dict:
+        key_map = self._get_abbreviated_keys_dict()
+        return {
+            key_map.get(k, k): v
+            for k, v in input_dict.items()
+        }
 
     def _get_handle_args(self):
         return [
@@ -107,7 +105,7 @@ class Line(Plottable):
         axis.plot(*self._args, **self._kwargs)
 
     def _get_default_kwargs(self):
-        return {"zorder": 10, "color": "b"}
+        return {"z": 10, "c": "b"}
 
 class HLine(Line):
     """
@@ -213,7 +211,7 @@ class FillBetween(Plottable):
         axis.fill_between(*self._args, **self._kwargs)
 
     def _get_default_kwargs(self):
-        return {"zorder": 10, "color": "b", "ec": None}
+        return {"z": 10, "c": "b", "ec": None}
 
 class FillBetweenx(FillBetween):
     """
@@ -248,7 +246,7 @@ class Bar(Plottable):
         axis.bar(*self._args, **self._kwargs)
 
     def _get_default_kwargs(self):
-        return {"zorder": 10, "color": "b", "ec": "k"}
+        return {"z": 10, "c": "b", "ec": "k"}
 
 class Hist(Bar):
     """
@@ -267,7 +265,7 @@ class Polygon(Plottable):
         axis.fill(*self._args, **self._kwargs)
 
     def _get_default_kwargs(self):
-        return {"zorder": 10, "fc": "b", "ec": "k", "lw": 5}
+        return {"z": 10, "fc": "b", "ec": "k", "lw": 5}
 
 class ColourMesh(Plottable):
     """

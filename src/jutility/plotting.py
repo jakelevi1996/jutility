@@ -46,9 +46,6 @@ class Plottable:
     def plot(self, axis: matplotlib.axes.Axes):
         raise NotImplementedError()
 
-    def get_handle(self):
-        raise NotImplementedError()
-
     def set_options(self, **kwargs):
         for k, v in kwargs.items():
             self._kwargs[k] = v
@@ -72,8 +69,27 @@ class Plottable:
             if k in self._kwargs:
                 self._kwargs[k_full] = self._kwargs.pop(k)
 
+    def _get_handle_args(self):
+        return [
+            None if (a is None) else [np.nan]
+            for a in self._args
+        ]
+
+    def get_handle(self):
+        plot_args = self._args
+        self._args = self._get_handle_args()
+        axis = plt.gca()
+        old_children = set(axis.get_children())
+        self.plot(axis)
+        new_children = set(axis.get_children()) - old_children
+        self._args = plot_args
+        return tuple(new_children)
+
+    def get_label(self):
+        return self._kwargs.get("label")
+
     def has_label(self):
-        return (self._kwargs.get("label") is not None)
+        return (self.get_label() is not None)
 
     def __repr__(self):
         args_str   = ", ".join(repr(a) for a in self._args)
@@ -89,9 +105,6 @@ class Line(Plottable):
     """
     def plot(self, axis: matplotlib.axes.Axes):
         axis.plot(*self._args, **self._kwargs)
-
-    def get_handle(self):
-        return matplotlib.lines.Line2D([], [], **self._kwargs)
 
     def _get_default_kwargs(self):
         return {"zorder": 10, "color": "b"}
@@ -165,15 +178,6 @@ class Scatter(Plottable):
     def plot(self, axis: matplotlib.axes.Axes):
         axis.scatter(*self._args, **self._kwargs)
 
-    def get_handle(self):
-        line_kwargs = self._kwargs.copy()
-        line_kwargs.setdefault("marker", "o")
-        line_kwargs.setdefault("ls", "")
-        if "s" in line_kwargs:
-            line_kwargs.setdefault("ms", np.sqrt(line_kwargs.pop("s")))
-
-        return matplotlib.lines.Line2D([], [], **line_kwargs)
-
     def _get_abbreviated_keys_dict(self):
         return {"z": "zorder", "a": "alpha", "m": "marker"}
 
@@ -200,15 +204,7 @@ class Text(Plottable):
 
         axis.text(*self._args, **self._kwargs)
 
-class _Patch(Plottable):
-    def get_handle(self):
-        patch_kwargs = {
-            k: v for k, v in self._kwargs.items()
-            if k not in ["x", "y1", "y2"]
-        }
-        return matplotlib.patches.Patch(**patch_kwargs)
-
-class FillBetween(_Patch):
+class FillBetween(Plottable):
     """
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.fill_between.html
@@ -243,7 +239,7 @@ class VSpan(FillBetween):
     def plot(self, axis: matplotlib.axes.Axes):
         axis.axvspan(*self._args, **self._kwargs)
 
-class Bar(_Patch):
+class Bar(Plottable):
     """
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.bar.html

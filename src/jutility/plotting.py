@@ -90,11 +90,8 @@ class Plottable:
         return (self.get_label() is not None)
 
     def __repr__(self):
-        args_str   = ", ".join(repr(a) for a in self._args)
-        kwargs_str = ", ".join(
-            "%s=%r" % (k, v)
-            for k, v in self._kwargs.items()
-        )
+        args_str = ", ".join(repr(a) for a in self._args)
+        kwargs_str = util.format_dict(self._kwargs, ", ", "=")
         return ("%s(%s, %s)" % (type(self).__name__, args_str, kwargs_str))
 
 class Line(Plottable):
@@ -167,6 +164,9 @@ class Circle(Line):
         self._kwargs.setdefault("fill", False)
         circle = matplotlib.patches.Circle(*self._args, **self._kwargs)
         axis.add_artist(circle)
+
+    def _get_handle_args(self):
+        return [[np.nan, np.nan], np.nan]
 
 class Scatter(Plottable):
     """

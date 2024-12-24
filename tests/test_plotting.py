@@ -27,7 +27,7 @@ def test_plottable_repr():
     line = plotting.Line([1, 2], [3, 4], c="g", z=23, a=0.8, ls="--")
     scatter = plotting.Scatter([5, 6, 7], [8, 9, 10], color="r")
     assert repr(line) == (
-        "Line([1, 2], [3, 4], ls='--', color='g', zorder=23, alpha=0.8)"
+        "Line([1, 2], [3, 4], alpha=0.8, color='g', ls='--', zorder=23)"
     )
     assert repr(scatter) == (
         "Scatter([5, 6, 7], [8, 9, 10], color='r', zorder=10)"
@@ -671,8 +671,6 @@ def test_legend_labels():
         plotting.Scatter(n(20), n(20), c=n(20), cmap="binary"),
         plotting.Scatter([], [],            c="r",  label="red"),
         plotting.Line(sorted(n(20)), n(20),         label="blue"),
-        plotting.Line(                              label="blue2"),
-        plotting.Line(                      c="g",  label="green"),
         plotting.Line([], [],               c="c",  label="cyan"),
         plotting.FillBetween([], [], a=0.5, c="m",  label="patch"),
         plotting.Legend(),

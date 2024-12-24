@@ -942,14 +942,11 @@ def test_figure_legend(handles):
 
     if handles:
         legend = plotting.FigureLegend(
-            plotting.Line(c="b", label="y1"),
-            plotting.Line(c="r", label="y2"),
-            ncols=2,
+            plotting.Line([], c="b", label="y1"),
+            plotting.Line([], c="r", label="y2"),
         )
     else:
-        legend = plotting.FigureLegend(
-            ncols=2,
-        )
+        legend = plotting.FigureLegend()
 
     mp = plotting.MultiPlot(
         plotting.Subplot(plotting.Line(x, y1, c="b", label="y1")),

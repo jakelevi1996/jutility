@@ -301,6 +301,7 @@ class Legend(Plottable):
     def plot(self, axis: matplotlib.axes.Axes):
         if "plottables" in self._kwargs:
             plottables = self._kwargs.pop("plottables")
+            plottables = self.filter_plottables(plottables)
             self._kwargs.update(self.get_kwargs(plottables))
 
         zorder = self._kwargs.pop("zorder", None)
@@ -309,8 +310,11 @@ class Legend(Plottable):
             legend.set_zorder(zorder)
 
     @staticmethod
+    def filter_plottables(plottables: list[Plottable]):
+        return [p for p in plottables if p.has_label()]
+
+    @staticmethod
     def get_kwargs(plottables: list[Plottable]):
-        plottables = [p for p in plottables if p.has_label()]
         return {
             "handles": [p.get_handle() for p in plottables],
             "labels":  [p.get_label()  for p in plottables],
@@ -795,7 +799,7 @@ class LegendSubplot(Subplot):
     See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.legend.html
     """
     def __init__(self, *lines: Plottable, loc="center", **legend_kwargs):
-        self._lines = lines
+        self._lines = Legend.filter_plottables(lines)
         self._kwargs = legend_kwargs
         self._kwargs["loc"] = loc
 
@@ -818,12 +822,11 @@ class FigureLegend:
         loc="outside lower center",
         **legend_kwargs,
     ):
-        if num_rows is not None:
-            legend_kwargs["ncols"] = math.ceil(len(lines) / num_rows)
-
-        self._lines = lines
+        self._lines = Legend.filter_plottables(lines)
         self._kwargs = legend_kwargs
         self._kwargs["loc"] = loc
+        if (num_rows is not None) and (len(self._lines) > 0):
+            self._kwargs["ncols"] = math.ceil(len(self._lines) / num_rows)
 
     def plot(self, figure: matplotlib.figure.Figure):
         if len(self._lines) > 0:

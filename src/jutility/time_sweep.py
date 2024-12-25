@@ -56,9 +56,8 @@ def time_sweep(
     cp = plotting.ColourPicker(len(experiments))
     plotting.plot(
         *[
-            line
+            data_dict[name].plot(cp(i), name, n_sigma)
             for i, name in enumerate(sorted(exp_dict.keys()))
-            for line in data_dict[name].plot(cp(i), name, n_sigma)
         ],
         xlabel="n",
         ylabel="Time (seconds)",

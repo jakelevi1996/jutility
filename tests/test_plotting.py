@@ -784,7 +784,7 @@ def test_noisy_data():
     y = noisy_data.predict(x)
 
     plotting.plot(
-        *noisy_data.plot("b", "Data"),
+        noisy_data.plot("b", "Data"),
         noisy_data.predict_line(0, 5, z=40, c="r", ls="-", a=0.2, lw=10),
         plotting.AxLine([x[0], y[0]], [x[1], y[1]], ls="--", z=50),
         plotting.Legend(),
@@ -803,19 +803,23 @@ def test_noisy_log_data():
             noisy_log_data.update(x, y)
             noisy_data.update(x, y)
 
+
+    g1 = noisy_log_data.plot(c="b", label="`log_y=True`")
+    g2 = noisy_data.plot(c="r", label="`log_y=False`")
     mp = plotting.MultiPlot(
         plotting.Subplot(
-            *noisy_log_data.plot(),
+            g1,
             title="noisy_log_data, log_y=True",
             log_x=True,
             log_y=True,
         ),
         plotting.Subplot(
-            *noisy_data.plot(),
+            g2,
             title="noisy_data, log_y=False",
             log_x=True,
             log_y=True,
         ),
+        legend=plotting.FigureLegend(g1, g2),
     )
     mp.save("test_noisy_log_data", OUTPUT_DIR)
 
@@ -844,7 +848,7 @@ def test_noisy_data_predict_log():
             printer.hline()
 
             sp = plotting.Subplot(
-                *data.plot("b", "Data"),
+                data.plot("b", "Data"),
                 plotting.AxLine(*zip(x, y), ls="--"),
                 log_x=log_x,
                 log_y=log_y,
@@ -882,7 +886,7 @@ def test_noisy_data_argmax_argmin():
     assert min_y == 9
 
     plotting.plot(
-        *nd.plot(),
+        nd.plot(),
         nd.predict_line(2, 10, a=0.5),
         plotting.VLine(min_x, c="r", ls="--"),
         plotting.HLine(min_y, c="r", ls="--"),
@@ -921,7 +925,7 @@ def test_noisy_data_argmax_argmin_x_index():
     assert min_y == 9
 
     plotting.plot(
-        *nd.plot(),
+        nd.plot(),
         plotting.HLine(min_y, c="r", ls="--"),
         plotting.HLine(max_y, c="g", ls="--"),
         **nd.get_xtick_kwargs(),
@@ -1046,7 +1050,7 @@ def test_xticklabels():
             results.update(i, means[name] + rng.normal())
 
     plotting.plot(
-        *results.plot(),
+        results.plot(),
         xticks=[0, 1, 2],
         xticklabels=sorted(means.keys()),
         plot_name="test_xticklabels",
@@ -1089,11 +1093,11 @@ def test_noisydata_x_index():
 
     mp = plotting.MultiPlot(
         plotting.Subplot(
-            *results.plot(),
+            results.plot(),
             **results.get_xtick_kwargs(),
         ),
         plotting.Subplot(
-            *results_index.plot(),
+            results_index.plot(),
             **results_index.get_xtick_kwargs(),
         ),
     )
@@ -1111,7 +1115,7 @@ def test_noisy_data_get_xtick_kwargs():
                 nd.update(x, 0.8*x + 0.2 + rng.normal(0, 10))
 
         sp = plotting.Subplot(
-            *nd.plot(),
+            nd.plot(),
             nd.predict_line(0, 1),
             **nd.get_xtick_kwargs(),
             title="x_index = %s" % x_index,
@@ -1137,7 +1141,7 @@ def test_noisy_data_get_xtick_kwargs_log_x():
                     nd.update(xi, j)
 
             sp = plotting.Subplot(
-                *nd.plot(),
+                nd.plot(),
                 **nd.get_xtick_kwargs(),
                 log_x=log_x,
                 title="x=%s, log_x=%s" % (x, log_x)

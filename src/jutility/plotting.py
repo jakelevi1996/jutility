@@ -450,11 +450,11 @@ class NoisyData:
 
     def plot(self, c="b", label=None, n_sigma=1):
         x, mean, ucb, lcb = self.get_statistics(n_sigma)
-        return (
-            Scatter([], [], label=label, color=c),
+        return PlottableGroup(
             Scatter(*self.get_all_data(),   a=0.5, z=20, color=c),
             Line(x, mean,                   a=1.0, z=30, c=c),
             FillBetween(x, lcb, ucb,        a=0.2, z=10, c=c),
+            label=label,
         )
 
     def get_xtick_kwargs(self):

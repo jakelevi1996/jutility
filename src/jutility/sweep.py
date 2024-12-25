@@ -207,7 +207,7 @@ class ParamSweeper:
             plot_axis_kwargs = parameter.plot_axis_kwargs.copy()
             plot_axis_kwargs.update(plot_kwargs)
             plot_filename = plotting.plot(
-                *noisy_data.plot(n_sigma=self._n_sigma),
+                noisy_data.plot(n_sigma=self._n_sigma),
                 plotting.VLine(
                     parameter.default,
                     c="r",

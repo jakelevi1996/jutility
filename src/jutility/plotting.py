@@ -127,6 +127,9 @@ class AxLine(Line):
     def plot(self, axis: matplotlib.axes.Axes):
         axis.axline(*self._args, **self._kwargs)
 
+    def _get_handle_args(self):
+        return [[np.nan, np.nan], [np.nan, np.nan]]
+
 class Quiver(Line):
     """
     See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.quiver.html

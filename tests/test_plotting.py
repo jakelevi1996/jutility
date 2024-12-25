@@ -1399,3 +1399,21 @@ def test_plottable_group():
         plot_name="test_plottable_group",
         dir_name=OUTPUT_DIR,
     )
+
+def test_empty_noisy_data_plot():
+    n = 5
+    cp = plotting.ColourPicker(n, False)
+    nd = plotting.NoisyData()
+    mp = plotting.MultiPlot(
+        plotting.LegendSubplot(
+            *[
+                nd.plot(c=cp.next(), label="Series %i" % i)
+                for i in range(n)
+            ],
+            title="test_empty_noisy_data_plot",
+        ),
+        title="test_empty_noisy_data_plot",
+        title_font_size=15,
+        figsize=[4, 2],
+    )
+    mp.save("test_empty_noisy_data_plot", OUTPUT_DIR)

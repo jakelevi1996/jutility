@@ -400,8 +400,10 @@ class NoisyData:
             for x, y_list in self._results_list_dict.items()
             for y in y_list
         ]
-        all_x, all_y = np.split(np.array(all_results_pairs), 2, axis=1)
-        return all_x.flatten(), all_y.flatten()
+        n = len(all_results_pairs)
+        xy_n2 = np.array(all_results_pairs).reshape(n, 2)
+        x_n1, y_n1 = np.split(xy_n2, 2, axis=1)
+        return x_n1.flatten(), y_n1.flatten()
 
     def get_statistics(self, n_sigma=1):
         x_list = sorted(

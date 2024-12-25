@@ -569,15 +569,18 @@ def test_axline():
     rng = util.Seeder().get_rng("test_axline")
     num_lines = 10
     cp = plotting.ColourPicker(num_lines)
+    lines = [
+        plotting.AxLine(
+            rng.uniform(-1, 1, 2),
+            rng.uniform(-1, 1, 2),
+            c=cp(i),
+            label="lines[%i]" % i,
+        )
+        for i in range(num_lines)
+    ]
     plotting.plot(
-        *[
-            plotting.AxLine(
-                rng.uniform(-1, 1, 2),
-                rng.uniform(-1, 1, 2),
-                c=cp(i),
-            )
-            for i in range(num_lines)
-        ],
+        *lines,
+        plotting.Legend.from_plottables(*lines),
         plot_name="test_axline",
         dir_name=OUTPUT_DIR,
     )

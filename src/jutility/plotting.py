@@ -338,6 +338,25 @@ class Legend(Plottable):
     def from_plottables(cls, *plottables: Plottable, **kwargs):
         return cls(plottables=plottables, **kwargs)
 
+class PlottableGroup(Plottable):
+    def __init__(
+        self,
+        *plottables: Plottable,
+        label=None,
+    ):
+        self._plottables = plottables
+        self._label = label
+
+    def plot(self, axis):
+        for plottable in self._plottables:
+            plottable.plot(axis)
+
+    def get_handle(self):
+        return tuple(p.get_handle() for p in self._plottables)
+
+    def get_label(self):
+        return self._label
+
 def confidence_bounds(
     data_list,
     n_sigma=1,

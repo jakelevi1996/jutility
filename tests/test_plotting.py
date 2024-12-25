@@ -1360,3 +1360,38 @@ def test_errorbar():
         plot_name="test_errorbar",
         dir_name=OUTPUT_DIR,
     )
+
+def test_plottable_group():
+    rng = util.Seeder().get_rng("test_plottable_group")
+
+    n = 10
+    r = 5
+    x = np.linspace(-2, 5, n)
+    xn = rng.uniform(-0.1, 0.1, [n, r]) + x.reshape(n, 1)
+    y1 = rng.uniform(1, 3, [n, r]) + xn
+    m1 = y1.mean(-1)
+    s1 = y1.std(-1)
+    y2 = rng.uniform(6, 8, [n, r]) - xn
+    m2 = y2.mean(-1)
+    s2 = y2.std(-1)
+
+    lines = [
+        plotting.PlottableGroup(
+            plotting.Scatter(xn, y1, c="b"),
+            plotting.Line(x, m1, c="b"),
+            plotting.FillBetween(x, m1-s1, m1+s1, c="b", a=0.2),
+            label="Blue",
+        ),
+        plotting.PlottableGroup(
+            plotting.Scatter(xn, y2, c="r"),
+            plotting.Line(x, m2, c="r"),
+            plotting.FillBetween(x, m2-s2, m2+s2, c="r", a=0.2),
+            label="Red",
+        ),
+    ]
+    plotting.plot(
+        *lines,
+        plotting.Legend.from_plottables(*lines),
+        plot_name="test_plottable_group",
+        dir_name=OUTPUT_DIR,
+    )

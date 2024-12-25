@@ -1342,3 +1342,21 @@ def test_fillbetweenx():
         plot_name="test_fillbetweenx",
         dir_name=OUTPUT_DIR,
     )
+
+def test_errorbar():
+    rng = util.Seeder().get_rng("test_errorbar")
+
+    n = 10
+    x = np.linspace(-2, 5, n)
+    y1 = rng.uniform(1, 2, n) + x
+    e1 = rng.uniform(0.1, 0.5, n)
+    y2 = rng.uniform(7, 8, n) - x
+    e2 = rng.uniform(0.2, 0.6, n)
+
+    plotting.plot(
+        plotting.ErrorBar(x, y1, e1, label="Vertical", ls="--"),
+        plotting.ErrorBar(x, y2, None, e2, label="Horizontal", c="r", m="o"),
+        plotting.Legend(),
+        plot_name="test_errorbar",
+        dir_name=OUTPUT_DIR,
+    )

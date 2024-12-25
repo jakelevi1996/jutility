@@ -168,6 +168,20 @@ class Circle(Line):
     def _get_handle_args(self):
         return [[np.nan, np.nan], np.nan]
 
+class ErrorBar(Plottable):
+    """
+    See
+    https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.errorbar.html
+    """
+    def plot(self, axis: matplotlib.axes.Axes):
+        axis.errorbar(*self._args, **self._kwargs)
+
+    def get_handle(self):
+        return plt.gca().errorbar(*self._get_handle_args(), **self._kwargs)
+
+    def _get_default_kwargs(self):
+        return {"z": 10, "c": "k", "capsize": 5}
+
 class Scatter(Plottable):
     """
     See

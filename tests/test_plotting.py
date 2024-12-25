@@ -783,14 +783,16 @@ def test_noisy_data():
         assert isinstance(i, np.ndarray)
         assert len(i.shape) == 1
 
-    x = np.array([0, 5])
-    y = noisy_data.predict(x)
-
+    p_kw = {"ls": "--", "z": 50}
+    x_kw = {"ls": "-",  "z": 40, "c": "r", "a": 0.2, "lw": 10}
+    lines = [
+        noisy_data.plot("b", label="Data"),
+        noisy_data.predict_line(0, 5, label="Regression", **p_kw),
+        plotting.AxLine([0, 0], [1, 1], label="y = x", **x_kw),
+    ]
     plotting.plot(
-        noisy_data.plot("b", "Data"),
-        noisy_data.predict_line(0, 5, z=40, c="r", ls="-", a=0.2, lw=10),
-        plotting.AxLine([x[0], y[0]], [x[1], y[1]], ls="--", z=50),
-        plotting.Legend(),
+        *lines,
+        plotting.Legend.from_plottables(*lines),
         plot_name="test_noisy_data",
         dir_name=OUTPUT_DIR,
     )

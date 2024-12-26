@@ -76,10 +76,8 @@ class Plottable:
     def get_handle(self):
         plot_args = self._args
         self._args = self._get_handle_args()
-        axis = plt.gca()
-        old_children = set(axis.get_children())
-        self.plot(axis)
-        new_children = set(axis.get_children()) - old_children
+        self.plot(_temp_axis.get_axis())
+        new_children = _temp_axis.pop_artists()
         self._args = plot_args
         return tuple(new_children)
 
@@ -1181,3 +1179,20 @@ def set_latex_params(use_tex=True):
             matplotlib.rcParams[key] = value
         else:
             matplotlib.rcParams[key] = matplotlib.rcParamsDefault[key]
+
+class _TempAxis:
+    def __init__(self):
+        self._axis = plt.figure().gca()
+        self._old_children = set(self._axis.get_children())
+
+    def get_axis(self):
+        return self._axis
+
+    def pop_artists(self):
+        new_children = set(self._axis.get_children()) - self._old_children
+        for a in new_children:
+            a.remove()
+
+        return new_children
+
+_temp_axis = _TempAxis()

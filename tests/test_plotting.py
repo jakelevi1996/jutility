@@ -1384,23 +1384,22 @@ def test_plottable_group():
     m2 = y2.mean(-1)
     s2 = y2.std(-1)
 
-    lines = [
-        plotting.PlottableGroup(
-            plotting.Scatter(xn, y1, c="b"),
-            plotting.Line(x, m1, c="b"),
-            plotting.FillBetween(x, m1-s1, m1+s1, c="b", a=0.2),
-            label="Blue",
-        ),
-        plotting.PlottableGroup(
-            plotting.Scatter(xn, y2, c="r"),
-            plotting.Line(x, m2, c="r"),
-            plotting.FillBetween(x, m2-s2, m2+s2, c="r", a=0.2),
-            label="Red",
-        ),
-    ]
+    pg1 = plotting.PlottableGroup(
+        plotting.Scatter(xn, y1),
+        plotting.Line(x, m1),
+        plotting.FillBetween(x, m1-s1, m1+s1, a=0.2),
+    )
+    pg2 = plotting.PlottableGroup(
+        plotting.Scatter(xn, y2),
+        plotting.Line(x, m2),
+        plotting.FillBetween(x, m2-s2, m2+s2, a=0.2),
+    )
+    pg1.set_options(c="b", label="Blue")
+    pg2.set_options(c="r", label="Red")
     plotting.plot(
-        *lines,
-        plotting.Legend.from_plottables(*lines),
+        pg1,
+        pg2,
+        plotting.Legend.from_plottables(pg1, pg2),
         plot_name="test_plottable_group",
         dir_name=OUTPUT_DIR,
     )

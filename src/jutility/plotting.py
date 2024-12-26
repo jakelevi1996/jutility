@@ -352,6 +352,13 @@ class PlottableGroup(Plottable):
         for plottable in self._plottables:
             plottable.plot(axis)
 
+    def set_options(self, **kwargs):
+        if "label" in kwargs:
+            self._label = kwargs.pop("label")
+
+        for plottable in self._plottables:
+            plottable.set_options(**kwargs)
+
     def get_handle(self):
         return tuple(p.get_handle() for p in self._plottables)
 

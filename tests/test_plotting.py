@@ -205,6 +205,30 @@ def test_colour_picker_next():
     )
     assert os.path.isfile(mp.full_path)
 
+def test_colour_picker_colourise():
+    rng = util.Seeder().get_rng("test_colour_picker_colourise")
+    lines = [
+        plotting.Line(
+            rng.uniform(0, 1, 20),
+            label="Line %i" % i,
+        )
+        for i in range(5)
+    ]
+    nd = plotting.NoisyData()
+    for x in range(20):
+        for _ in range(5):
+            nd.update(x, rng.uniform(1, 2))
+
+    lines.append(nd.plot(label="NoisyData"))
+    cp = plotting.ColourPicker(len(lines))
+    cp.colourise(lines)
+    mp = plotting.plot(
+        *lines,
+        plotting.Legend.from_plottables(*lines, z=50),
+        plot_name="test_colour_picker_colourise",
+        dir_name=OUTPUT_DIR,
+    )
+
 def test_title():
     title = (
         "This is a very long title containing /|\\*:<\"$pecial?\">:*/|\\ "

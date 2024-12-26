@@ -1123,6 +1123,13 @@ class Gif:
         full_path = os.path.join(dir_name, filename)
         self.add_pil_image_frame(PIL.Image.open(full_path))
 
+    def shuffle(self, rng: np.random.Generator=None):
+        if rng is None:
+            rng = np.random.default_rng()
+
+        perm = rng.permutation(len(self._frame_list)).tolist()
+        self._frame_list = [self._frame_list[i] for i in perm]
+
     def save(
         self,
         output_name=None,

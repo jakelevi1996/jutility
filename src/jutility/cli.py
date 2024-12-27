@@ -381,6 +381,11 @@ class Namespace(argparse.Namespace):
         else:
             return [self_dict[k] for k in keys]
 
+    def get_kwargs(self, keys_csv: str):
+        keys = [s.strip() for s in keys_csv.split(",")]
+        self_dict = vars(self)
+        return {k: self_dict[k] for k in keys}
+
     def update(self, arg_dict: dict, allow_new_keys=False):
         if not allow_new_keys:
             new_keys = set(arg_dict.keys()) - set(vars(self))

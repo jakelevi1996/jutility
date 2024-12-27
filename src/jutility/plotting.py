@@ -77,9 +77,8 @@ class Plottable:
         plot_args = self._args
         self._args = self._get_handle_args()
         self.plot(_temp_axis.get_axis())
-        new_children = _temp_axis.pop_artists()
         self._args = plot_args
-        return tuple(new_children)
+        return tuple(_temp_axis.pop_artists())
 
     def get_label(self):
         return self._kwargs.get("label")

@@ -176,8 +176,12 @@ class ExampleClass:
     def __init__(self, p: float):
         self.p = p
 
-def main(args: cli.Namespace):
-    x, y, z = args.get("x, y, z")
+def main(
+    args: cli.Namespace,
+    x: float,
+    y: str,
+    z: bool,
+):
     assert isinstance(x, float)
     assert isinstance(y, str)
     assert isinstance(z, bool)
@@ -201,9 +205,11 @@ if __name__ == "__main__":
         ),
     )
     args = parser.parse_args()
+    kwargs = args.get_kwargs("x, y, z")
 
     with util.Timer("main"):
-        main(args)
+        main(args, **kwargs)
+
 ```
 
 ### `util`

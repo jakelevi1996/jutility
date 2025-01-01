@@ -176,9 +176,6 @@ class ErrorBar(Plottable):
     def plot(self, axis: matplotlib.axes.Axes):
         axis.errorbar(*self._args, **self._kwargs)
 
-    def get_handle(self):
-        return plt.gca().errorbar(*self._get_handle_args(), **self._kwargs)
-
     def _get_default_kwargs(self):
         return {"z": 10, "c": "k", "capsize": 5}
 

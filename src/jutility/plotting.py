@@ -179,6 +179,7 @@ class ErrorBar(Plottable):
     def get_handle(self):
         args = self._get_handle_args()
         handle = _temp_axis.get_axis().errorbar(*args, **self._kwargs)
+        _temp_axis.pop_artists()
         return handle
 
     def _get_default_kwargs(self):

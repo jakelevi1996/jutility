@@ -1386,10 +1386,15 @@ def test_errorbar():
     y2 = rng.uniform(7, 8, n) - x
     e2 = rng.uniform(0.2, 0.6, n)
 
-    plotting.plot(
+    lines = [
         plotting.ErrorBar(x, y1, e1, label="Vertical", ls="--"),
         plotting.ErrorBar(x, y2, None, e2, label="Horizontal", c="r", m="o"),
-        plotting.Legend(),
+    ]
+    mp = plotting.MultiPlot(
+        plotting.Subplot(*lines, plotting.Legend()),
+        legend=plotting.FigureLegend(*lines),
+    )
+    mp.save(
         plot_name="test_errorbar",
         dir_name=OUTPUT_DIR,
     )

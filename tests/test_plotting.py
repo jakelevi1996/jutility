@@ -1385,10 +1385,13 @@ def test_errorbar():
     e1 = rng.uniform(0.1, 0.5, n)
     y2 = rng.uniform(7, 8, n) - x
     e2 = rng.uniform(0.2, 0.6, n)
+    xs = rng.uniform(-2, 5, 20)
+    ys = rng.uniform( 0, 9, 20)
 
     lines = [
         plotting.ErrorBar(x, y1, e1, label="Vertical", ls="--"),
         plotting.ErrorBar(x, y2, None, e2, label="Horizontal", c="r", m="o"),
+        plotting.Scatter(xs, ys, label="Scatter", c="b", z=20),
     ]
     mp = plotting.MultiPlot(
         plotting.Subplot(*lines, plotting.Legend()),

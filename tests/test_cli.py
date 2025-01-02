@@ -275,9 +275,10 @@ def test_get_update_args():
     parser = get_nested_object_parser()
     args = parser.parse_args(["--model.hidden_dim=99", "--num_epochs=9"])
     arg_dict_pre_init  = cli.get_arg_dict(args)
-    model: Mlp         = cli.init_object( args, "model", output_dim=19)
+    model = cli.init_object(args, "model", output_dim=19)
     arg_dict_post_init = cli.get_arg_dict(args)
     printer(model)
+    assert isinstance(model, Mlp)
     assert model.hidden_dim == 99
     assert model.output_dim == 19
     assert arg_dict_pre_init == arg_dict_post_init
@@ -288,8 +289,9 @@ def test_get_update_args():
     new_parser = get_nested_object_parser()
     new_args = new_parser.parse_args([])
     new_args.update(util.load_json(full_path))
-    new_model: Mlp = new_parser.init_object("model", output_dim=19)
+    new_model = new_parser.init_object("model", output_dim=19)
     printer(new_model)
+    assert isinstance(new_model, Mlp)
     assert new_model.hidden_dim == 99
     assert new_model.output_dim == 19
     assert parser.get_arg_dict() == new_parser.get_arg_dict()
@@ -949,7 +951,8 @@ class _Model:
         self.encoder            = encoder
 
     def __repr__(self):
-        return "%s(%s)" % (type(self).__name__, vars(self))
+        arg_str = util.format_dict(vars(self), ", ", "=")
+        return "%s(%s)" % (type(self).__name__, arg_str)
 
 class Mlp(_Model):
     pass

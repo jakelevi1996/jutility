@@ -38,10 +38,13 @@ def test_parse():
     printer(parser)
     printer(args)
 
-    assert parser.parse_args([]).int == 10
-    assert parser.parse_args([]).list == [30, 20, 10]
-    assert parser.parse_args(["--int=-3"]).int == -3
-    assert parser.parse_args(["--list", "3", "4", "5"]).list == [3, 4, 5]
+    assert parser.parse_args([]).get("int") == 10
+    assert parser.parse_args([]).get("list") == [30, 20, 10]
+    assert parser.parse_args(["--int=-3"]).get("int") == -3
+    assert (
+        parser.parse_args(["--list", "3", "4", "5"]).get("list")
+        == [3, 4, 5]
+    )
 
 def test_get_args_summary():
     printer = util.Printer("test_get_args_summary", OUTPUT_DIR)

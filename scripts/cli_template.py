@@ -33,7 +33,6 @@ if __name__ == "__main__":
         ),
     )
     args = parser.parse_args()
-    kwargs = args.get_kwargs("x, y, z")
 
     with util.Timer("main"):
-        main(args, **kwargs)
+        main(args, **args.get_kwargs())

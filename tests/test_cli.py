@@ -313,6 +313,9 @@ def test_get_update_args():
         "model.hidden_dim": 234,
         "num_epochs": 10,
     }
+    assert default_args.get_kwargs() == {
+        "num_epochs": 10,
+    }
 
 def get_object_choice_parser():
     parser = cli.ObjectParser(

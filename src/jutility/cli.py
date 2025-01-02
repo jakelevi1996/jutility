@@ -372,7 +372,13 @@ class ParsedArgs:
         else:
             return [self._arg_dict[k] for k in keys]
 
-    def get_kwargs(self, keys_csv: str):
+    def get_kwargs(self, keys_csv: str=None):
+        if keys_csv is None:
+            keys_csv = ",".join(
+                s for s in self._arg_dict.keys()
+                if ("." not in s)
+            )
+
         keys = [s.strip() for s in keys_csv.split(",")]
         return {k: self._arg_dict[k] for k in keys}
 

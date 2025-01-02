@@ -306,13 +306,10 @@ class ObjectParser:
         https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.parse_args
         """
         parser = self._get_argparse_parser()
-        kwargs.setdefault("namespace", Namespace())
-        args = parser.parse_args(*args, **kwargs)
-        assert isinstance(args, Namespace)
-        args.set_parser(self)
-        self._parsed_args_dict = vars(args)
+        argparse_args = parser.parse_args(*args, **kwargs)
+        self._parsed_args_dict = vars(argparse_args)
         self._initial_args_cache = set(self._parsed_args_dict.keys())
-        return args
+        return Namespace(self, self._parsed_args_dict)
 
     def init_object(self, full_name, **extra_kwargs):
         self._check_parsed()
@@ -351,44 +348,38 @@ class ObjectParser:
 
     def reset_object_cache(self):
         self._check_parsed()
-        current_args_cache = set(self._parsed_args_dict.keys())
-        for k in (current_args_cache - self._initial_args_cache):
-            self._parsed_args_dict.pop(k)
+        self._parsed_args_dict = {
+            k: self._parsed_args_dict[k]
+            for k in self._initial_args_cache
+        }
 
     def __repr__(self):
         description = ",\n".join(repr(arg) for arg in self._arg_dict.values())
         return "%s(\n%s,\n)" % (type(self).__name__, util.indent(description))
 
-class Namespace(argparse.Namespace):
-    def __init__(self):
-        self._parser = None
-
-    def set_parser(self, parser: ObjectParser):
-        if self._parser is not None:
-            raise RuntimeError("This Namespace already has a parser")
-
+class Namespace:
+    def __init__(self, parser: ObjectParser, arg_dict: dict):
         self._parser = parser
+        self._arg_dict = arg_dict
 
     def get_parser(self):
         return self._parser
 
     def get(self, keys_csv: str, unpack_single=True):
         keys = [s.strip() for s in keys_csv.split(",")]
-        self_dict = vars(self)
         if (len(keys) == 1) and unpack_single:
             [k] = keys
-            return self_dict[k]
+            return self._arg_dict[k]
         else:
-            return [self_dict[k] for k in keys]
+            return [self._arg_dict[k] for k in keys]
 
     def get_kwargs(self, keys_csv: str):
         keys = [s.strip() for s in keys_csv.split(",")]
-        self_dict = vars(self)
-        return {k: self_dict[k] for k in keys}
+        return {k: self._arg_dict[k] for k in keys}
 
     def update(self, arg_dict: dict, allow_new_keys=False):
         if not allow_new_keys:
-            new_keys = set(arg_dict.keys()) - set(vars(self))
+            new_keys = set(arg_dict.keys()) - set(self._arg_dict.keys())
             if len(new_keys) > 0:
                 raise ValueError(
                     "Received extra keys %s. Either remove these keys, or "
@@ -397,13 +388,10 @@ class Namespace(argparse.Namespace):
                 )
 
         self._parser.reset_object_cache()
-        return vars(self).update(arg_dict)
+        self._arg_dict.update(arg_dict)
 
     def __repr__(self):
-        arg_str = ", ".join(
-            "%s=%r" % (k, v)
-            for k, v in sorted(self._parser.get_arg_dict().items())
-        )
+        arg_str = util.format_dict(self._arg_dict, ", ", "=")
         return "%s(%s)" % (type(self).__name__, arg_str)
 
 class _Verbose:

@@ -177,7 +177,7 @@ class ExampleClass:
         self.p = p
 
 def main(
-    args: cli.Namespace,
+    args: cli.ParsedArgs,
     x: float,
     y: str,
     z: bool,

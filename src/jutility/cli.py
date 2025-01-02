@@ -1,16 +1,16 @@
 import argparse
 from jutility import util
 
-def init_object(args: "Namespace", full_name, **extra_kwargs):
+def init_object(args: "ParsedArgs", full_name, **extra_kwargs):
     return args.get_parser().init_object(full_name, **extra_kwargs)
 
-def reset_object_cache(args: "Namespace"):
+def reset_object_cache(args: "ParsedArgs"):
     return args.get_parser().reset_object_cache()
 
-def get_arg_dict(args: "Namespace"):
+def get_arg_dict(args: "ParsedArgs"):
     return args.get_parser().get_arg_dict()
 
-def get_args_summary(args: "Namespace", replaces=None):
+def get_args_summary(args: "ParsedArgs", replaces=None):
     return args.get_parser().get_args_summary(replaces)
 
 class Arg:
@@ -309,7 +309,7 @@ class ObjectParser:
         argparse_args = parser.parse_args(*args, **kwargs)
         self._parsed_args_dict = vars(argparse_args)
         self._initial_args_cache = set(self._parsed_args_dict.keys())
-        return Namespace(self, self._parsed_args_dict)
+        return ParsedArgs(self, self._parsed_args_dict)
 
     def init_object(self, full_name, **extra_kwargs):
         self._check_parsed()
@@ -356,7 +356,7 @@ class ObjectParser:
         description = ",\n".join(repr(arg) for arg in self._arg_dict.values())
         return "%s(\n%s,\n)" % (type(self).__name__, util.indent(description))
 
-class Namespace:
+class ParsedArgs:
     def __init__(self, parser: ObjectParser, arg_dict: dict):
         self._parser = parser
         self._arg_dict = arg_dict
@@ -382,7 +382,7 @@ class Namespace:
             if len(new_keys) > 0:
                 raise ValueError(
                     "Received extra keys %s. Either remove these keys, or "
-                    "call `Namespace.update` with `allow_new_keys=True`."
+                    "call `ParsedArgs.update` with `allow_new_keys=True`."
                     % sorted(new_keys)
                 )
 

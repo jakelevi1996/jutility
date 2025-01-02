@@ -135,7 +135,7 @@ def test_init_nested_objects():
     args = parser.parse_args([])
     printer(args, cli.get_args_summary(args), "-"*100, sep="\n")
     assert repr(args) == (
-        "Namespace(model.encoder.hidden_dim=20, "
+        "ParsedArgs(model.encoder.hidden_dim=20, "
         "model.encoder.num_hidden_layers=2, model.hidden_dim=100, "
         "model.num_hidden_layers=5, num_epochs=10)"
     )
@@ -153,7 +153,7 @@ def test_init_nested_objects():
     encoder = cli.init_object(args, "model.encoder")
     printer(args, cli.get_args_summary(args), "-"*100, sep="\n")
     assert repr(args) == (
-        "Namespace(model.encoder=DeepSet(encoder=None, hidden_dim=20, "
+        "ParsedArgs(model.encoder=DeepSet(encoder=None, hidden_dim=20, "
         "input_dim=4, num_hidden_layers=2, output_dim=100), "
         "model.encoder.hidden_dim=20, model.encoder.num_hidden_layers=2, "
         "model.hidden_dim=100, model.num_hidden_layers=5, num_epochs=10)"
@@ -175,7 +175,7 @@ def test_init_nested_objects():
     model = cli.init_object(args, "model", output_dim=23)
     printer(args, cli.get_args_summary(args), "-"*100, sep="\n")
     assert repr(args) == (
-        "Namespace(model=Mlp(encoder=DeepSet(encoder=None, hidden_dim=20, "
+        "ParsedArgs(model=Mlp(encoder=DeepSet(encoder=None, hidden_dim=20, "
         "input_dim=4, num_hidden_layers=2, output_dim=100), hidden_dim=100, "
         "input_dim=None, num_hidden_layers=5, output_dim=23), "
         "model.encoder=DeepSet(encoder=None, hidden_dim=20, input_dim=4, "
@@ -199,7 +199,7 @@ def test_init_nested_objects():
     args = parser.parse_args(argv)
     printer(args, cli.get_args_summary(args), "-"*100, sep="\n")
     assert repr(args) == (
-        "Namespace(model.encoder.hidden_dim=25, "
+        "ParsedArgs(model.encoder.hidden_dim=25, "
         "model.encoder.num_hidden_layers=2, model.hidden_dim=100, "
         "model.num_hidden_layers=10, num_epochs=10)"
     )
@@ -304,7 +304,7 @@ def test_get_update_args():
     assert default_model.hidden_dim == 100
     assert cli.get_arg_dict(args) != cli.get_arg_dict(default_args)
 
-    assert isinstance(default_args, cli.Namespace)
+    assert isinstance(default_args, cli.ParsedArgs)
     assert default_args.get("model.hidden_dim") == 100
     default_args.update({"model.hidden_dim": 234})
     assert default_args.get("model.hidden_dim") == 234
@@ -842,8 +842,8 @@ def test_object_choice_nested_tags():
 
     assert cli.get_args_summary(args) == "mDm.e3m.f.g4m.s5"
 
-def test_namespace_str_repr():
-    printer = util.Printer("test_namespace_str_repr", OUTPUT_DIR)
+def test_parsedargs_str_repr():
+    printer = util.Printer("test_parsedargs_str_repr", OUTPUT_DIR)
 
     parser = get_nested_object_choice_parser()
     cli.verbose.set_printer(printer)
@@ -859,7 +859,7 @@ def test_namespace_str_repr():
     printer(str(args))
     printer(repr(args))
     assert repr(args) == (
-        "Namespace(model='DeepSet', model.encoder='Mlp', "
+        "ParsedArgs(model='DeepSet', model.encoder='Mlp', "
         "model.encoder.hidden_dim=100, model.encoder.num_hidden_layers=3, "
         "model.hidden_dim=100, model.num_hidden_layers=3, num_epochs=10, "
         "seed=1234)"
@@ -1166,8 +1166,11 @@ def test_nested_verbose():
     assert cli_output.count("cli: C(x=8)") == 1
     assert cli_output.count("cli: C(x=9)") == 0
 
-def test_namespace_update_allow_new_keys():
-    printer = util.Printer("test_namespace_update_allow_new_keys", OUTPUT_DIR)
+def test_parsedargs_update_allow_new_keys():
+    printer = util.Printer(
+        "test_parsedargs_update_allow_new_keys",
+        OUTPUT_DIR,
+    )
 
     class C:
         def __init__(self, x: int):
@@ -1186,7 +1189,7 @@ def test_namespace_update_allow_new_keys():
         ["--c1.x", "6", "--c2.x", "7", "--c3.x", "8", "--c4.x", "9"],
     )
 
-    assert repr(args) == "Namespace(c1.x=6, c2.x=7, c3.x=8, c4.x=9)"
+    assert repr(args) == "ParsedArgs(c1.x=6, c2.x=7, c3.x=8, c4.x=9)"
 
     with cli.verbose:
         c1 = cli.init_object(args, "c1")
@@ -1207,5 +1210,5 @@ def test_namespace_update_allow_new_keys():
 
     args.update({"c5.x": 7}, allow_new_keys=True)
 
-    assert repr(args) == "Namespace(c1.x=7, c2.x=7, c3.x=8, c4.x=9, c5.x=7)"
+    assert repr(args) == "ParsedArgs(c1.x=7, c2.x=7, c3.x=8, c4.x=9, c5.x=7)"
     assert args.get("c5.x") == 7

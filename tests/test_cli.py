@@ -1215,3 +1215,31 @@ def test_parsedargs_update_allow_new_keys():
 
     assert repr(args) == "ParsedArgs(c1.x=7, c2.x=7, c3.x=8, c4.x=9, c5.x=7)"
     assert args.get("c5.x") == 7
+
+def test_positional_args():
+    parser = cli.ObjectParser(
+        cli.Arg("a", type=int, positional=True),
+        cli.Arg("b", type=int, positional=True, default=3, nargs="?"),
+        cli.Arg("c", type=int, default=4),
+    )
+
+    with pytest.raises(SystemExit):
+        args = parser.parse_args([])
+
+    args = parser.parse_args(["5"])
+    assert repr(args) == "ParsedArgs(a=5, b=3, c=4)"
+    assert args.get("a, b, c") == [5, 3, 4]
+    assert args.get_kwargs() == {"a": 5, "b": 3, "c": 4}
+
+    args = parser.parse_args(["5", "6"])
+    assert repr(args) == "ParsedArgs(a=5, b=6, c=4)"
+    assert args.get("a, b, c") == [5, 6, 4]
+    assert args.get_kwargs() == {"a": 5, "b": 6, "c": 4}
+
+    with pytest.raises(SystemExit):
+        args = parser.parse_args(["5", "6", "7"])
+
+    args = parser.parse_args(["5", "6", "--c", "7"])
+    assert repr(args) == "ParsedArgs(a=5, b=6, c=7)"
+    assert args.get("a, b, c") == [5, 6, 7]
+    assert args.get_kwargs() == {"a": 5, "b": 6, "c": 7}

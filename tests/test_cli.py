@@ -625,16 +625,19 @@ def test_reset_object_cache_nested():
             "--seed=1234",
         ]
         args = parser.parse_args(argv)
-        assert "seed" in vars(args)
-        assert args.seed == 1234
-        assert "model.DeepSet" not in vars(args)
-        assert "model.encoder.Mlp" not in vars(args)
+        assert args.get("seed") == 1234
+        with pytest.raises(KeyError):
+            args.get("model.DeepSet")
+        with pytest.raises(KeyError):
+            args.get("model.encoder.Mlp")
 
         model = cli.init_object(args, "model")
-        assert "model.DeepSet" in vars(args)
-        assert "model.encoder.Mlp" in vars(args)
         assert isinstance(model, DeepSet)
         assert isinstance(model.encoder, Mlp)
+        assert args.get("model") == "DeepSet"
+        assert args.get("model.encoder") == "Mlp"
+        assert args.get("model.DeepSet") is model
+        assert args.get("model.encoder.Mlp") is model.encoder
 
         model2 = cli.init_object(args, "model")
         assert isinstance(model2, DeepSet)
@@ -642,16 +645,20 @@ def test_reset_object_cache_nested():
         assert model.encoder is model2.encoder
 
         cli.reset_object_cache(args)
-        assert "seed" in vars(args)
-        assert args.seed == 1234
-        assert "model.DeepSet" not in vars(args)
-        assert "model.encoder.Mlp" not in vars(args)
+        assert args.get("seed") == 1234
+        with pytest.raises(KeyError):
+            args.get("model.DeepSet")
+        with pytest.raises(KeyError):
+            args.get("model.encoder.Mlp")
 
         model3 = cli.init_object(args, "model")
-        assert "model.DeepSet" in vars(args)
-        assert "model.encoder.Mlp" in vars(args)
         assert isinstance(model3, DeepSet)
         assert isinstance(model3.encoder, Mlp)
+        assert args.get("model") == "DeepSet"
+        assert args.get("model.encoder") == "Mlp"
+        assert args.get("model.DeepSet") is model3
+        assert args.get("model.encoder.Mlp") is model3.encoder
+
         assert model is model2
         assert model3 is not model
         assert model3 is not model2

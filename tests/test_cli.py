@@ -584,26 +584,28 @@ def test_reset_object_cache():
     cli.verbose.set_printer(printer)
     with cli.verbose:
         args = parser.parse_args([])
-        assert "y" in vars(args)
-        assert args.y == 4
-        assert "C.x" in vars(args)
-        assert "C" not in vars(args)
+        assert args.get("y") == 4
+        assert args.get("C.x") == 3
+        with pytest.raises(KeyError):
+            args.get("C")
 
-        c: C = cli.init_object(args, "C")
-        assert "C" in vars(args)
+        c = cli.init_object(args, "C")
+        assert isinstance(c, C)
+        assert args.get("C") is c
         assert c.x == 3
 
         c2 = cli.init_object(args, "C")
         assert c2 is c
 
         cli.reset_object_cache(args)
-        assert "y" in vars(args)
-        assert args.y == 4
-        assert "C.x" in vars(args)
-        assert "C" not in vars(args)
+        assert args.get("y") == 4
+        assert args.get("C.x") == 3
+        with pytest.raises(KeyError):
+            args.get("C")
 
-        c3: C = cli.init_object(args, "C")
-        assert "C" in vars(args)
+        c3 = cli.init_object(args, "C")
+        assert isinstance(c3, C)
+        assert args.get("C") is c3
         assert c2 is c
         assert c3 is not c
         assert c3 is not c2

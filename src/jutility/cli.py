@@ -18,7 +18,6 @@ class Arg:
         self,
         name: str,
         tag: str=None,
-        positional=False,
         **argparse_kwargs,
     ):
         """
@@ -27,7 +26,6 @@ class Arg:
         """
         self.argparse_kwargs = argparse_kwargs
         self.args: list[Arg] = []
-        self.positional = positional
         self.init_names(name, tag)
         if (len(argparse_kwargs) > 0) and ("help" not in argparse_kwargs):
             argparse_kwargs["help"] = util.format_dict(argparse_kwargs)
@@ -68,8 +66,7 @@ class Arg:
         return False
 
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
-        name = self.full_name if self.positional else ("--" + self.full_name)
-        parser.add_argument(name, **self.argparse_kwargs)
+        parser.add_argument("--" + self.full_name, **self.argparse_kwargs)
 
     def init_object(self, parsed_args_dict):
         return parsed_args_dict[self.full_name]
@@ -85,6 +82,10 @@ class Arg:
             "%s(name=\"%s\", full_name=\"%s\", full_tag=\"%s\")"
             % (type(self).__name__, self.name, self.full_name, self.full_tag)
         )
+
+class PositionalArg(Arg):
+    def add_argparse_arguments(self, parser: argparse.ArgumentParser):
+        parser.add_argument(self.full_name, **self.argparse_kwargs)
 
 class ObjectArg(Arg):
     def __init__(

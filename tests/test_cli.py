@@ -1226,8 +1226,8 @@ def test_positional_args():
             self.y = y
 
     parser = cli.ObjectParser(
-        cli.Arg("a", type=int, positional=True),
-        cli.Arg("b", type=int, positional=True, default=3, nargs="?"),
+        cli.PositionalArg("a", type=int),
+        cli.PositionalArg("b", type=int, default=3, nargs="?"),
         cli.Arg("c", type=int, default=4),
         cli.ObjectArg(A, cli.Arg("x", type=float, default=3.2)),
         cli.ObjectChoice(

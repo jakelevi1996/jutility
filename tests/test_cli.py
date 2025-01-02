@@ -1207,5 +1207,5 @@ def test_namespace_update_allow_new_keys():
 
     args.update({"c5.x": 7}, allow_new_keys=True)
 
-    assert repr(args) == "Namespace(c1.x=7, c2.x=7, c3.x=8, c4.x=9)"
+    assert repr(args) == "Namespace(c1.x=7, c2.x=7, c3.x=8, c4.x=9, c5.x=7)"
     assert args.get("c5.x") == 7

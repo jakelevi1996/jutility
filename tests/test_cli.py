@@ -133,33 +133,63 @@ def test_init_nested_objects():
 
     parser = get_nested_object_parser()
     args = parser.parse_args([])
-    arg_dict: dict = vars(args)
-    printer(*arg_dict.items(), cli.get_args_summary(args), "-"*100, sep="\n")
-
-    assert args.num_epochs == 10
-    assert arg_dict["model.hidden_dim"] == 100
-    assert arg_dict["model.encoder.num_hidden_layers"] == 2
-    assert "model"          not in arg_dict
-    assert "model.encoder"  not in arg_dict
+    printer(args, cli.get_args_summary(args), "-"*100, sep="\n")
+    assert repr(args) == (
+        "Namespace(model.encoder.hidden_dim=20, "
+        "model.encoder.num_hidden_layers=2, model.hidden_dim=100, "
+        "model.num_hidden_layers=5, num_epochs=10)"
+    )
+    assert cli.get_args_summary(args) == (
+        "ml.en.hd20ml.en.nh2ml.hd100ml.nh5ne10"
+    )
+    assert args.get("num_epochs") == 10
+    assert args.get("model.hidden_dim") == 100
+    assert args.get("model.encoder.num_hidden_layers") == 2
+    with pytest.raises(KeyError):
+        args.get("model")
+    with pytest.raises(KeyError):
+        args.get("model.encoder")
 
     encoder = cli.init_object(args, "model.encoder")
-    printer(*arg_dict.items(), cli.get_args_summary(args), "-"*100, sep="\n")
-    assert "model.encoder" in arg_dict
-    assert "model" not in arg_dict
+    printer(args, cli.get_args_summary(args), "-"*100, sep="\n")
+    assert repr(args) == (
+        "Namespace(model.encoder=DeepSet(encoder=None, hidden_dim=20, "
+        "input_dim=4, num_hidden_layers=2, output_dim=100), "
+        "model.encoder.hidden_dim=20, model.encoder.num_hidden_layers=2, "
+        "model.hidden_dim=100, model.num_hidden_layers=5, num_epochs=10)"
+    )
+    assert cli.get_args_summary(args) == (
+        "ml.en.hd20ml.en.nh2ml.hd100ml.nh5ne10"
+    )
     assert isinstance(encoder, DeepSet)
+    assert args.get("model.encoder") is encoder
     assert encoder.num_hidden_layers == 2
     assert encoder.input_dim == 4
-    assert encoder.output_dim == arg_dict["model.hidden_dim"]
+    assert encoder.output_dim == args.get("model.hidden_dim")
+    with pytest.raises(KeyError):
+        args.get("model")
 
     with pytest.raises(ValueError):
         model = cli.init_object(args, "model")
 
     model = cli.init_object(args, "model", output_dim=23)
-    printer(*arg_dict.items(), cli.get_args_summary(args), "-"*100, sep="\n")
-    assert "model"          in arg_dict
-    assert "model.encoder"  in arg_dict
+    printer(args, cli.get_args_summary(args), "-"*100, sep="\n")
+    assert repr(args) == (
+        "Namespace(model=Mlp(encoder=DeepSet(encoder=None, hidden_dim=20, "
+        "input_dim=4, num_hidden_layers=2, output_dim=100), hidden_dim=100, "
+        "input_dim=None, num_hidden_layers=5, output_dim=23), "
+        "model.encoder=DeepSet(encoder=None, hidden_dim=20, input_dim=4, "
+        "num_hidden_layers=2, output_dim=100), model.encoder.hidden_dim=20, "
+        "model.encoder.num_hidden_layers=2, model.hidden_dim=100, "
+        "model.num_hidden_layers=5, num_epochs=10)"
+    )
+    assert cli.get_args_summary(args) == (
+        "ml.en.hd20ml.en.nh2ml.hd100ml.nh5ne10"
+    )
     assert isinstance(model, Mlp)
     assert isinstance(model.encoder, DeepSet)
+    assert args.get("model") is model
+    assert args.get("model.encoder") is encoder
     assert model.encoder is encoder
     assert model.output_dim == 23
     assert model.num_hidden_layers == 5
@@ -167,19 +197,30 @@ def test_init_nested_objects():
 
     argv = ["--model.num_hidden_layers=10", "--model.encoder.hidden_dim=25"]
     args = parser.parse_args(argv)
-    arg_dict: dict = vars(args)
-    printer(*arg_dict.items(), cli.get_args_summary(args), "-"*100, sep="\n")
-    assert "model"          not in arg_dict
-    assert "model.encoder"  not in arg_dict
+    printer(args, cli.get_args_summary(args), "-"*100, sep="\n")
+    assert repr(args) == (
+        "Namespace(model.encoder.hidden_dim=25, "
+        "model.encoder.num_hidden_layers=2, model.hidden_dim=100, "
+        "model.num_hidden_layers=10, num_epochs=10)"
+    )
+    assert cli.get_args_summary(args) == (
+        "ml.en.hd25ml.en.nh2ml.hd100ml.nh10ne10"
+    )
+    with pytest.raises(KeyError):
+        args.get("model")
+    with pytest.raises(KeyError):
+        args.get("model.encoder")
+
     model = cli.init_object(args, "model", output_dim=29)
-    assert "model"          in arg_dict
-    assert "model.encoder"  in arg_dict
     assert isinstance(model, Mlp)
     assert isinstance(model.encoder, DeepSet)
+    assert args.get("model") is model
+    assert args.get("model.encoder") is model.encoder
     assert model.output_dim == 29
     assert model.num_hidden_layers == 10
     assert model.encoder.hidden_dim == 25
 
+    arg_dict = cli.get_arg_dict(args)
     util.save_json(arg_dict, "test_init_nested_objects", OUTPUT_DIR)
 
 def test_init_object_override_kwargs():

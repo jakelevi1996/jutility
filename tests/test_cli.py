@@ -91,15 +91,17 @@ def test_init_object():
     assert isinstance(optimiser, Adam)
     assert optimiser.lr == 1e-3
     assert optimiser.inner_params == [1, 2, 3]
-    assert cli.init_object(args, "list") == args.list
+    assert cli.init_object(args, "list") == args.get("list")
     assert cli.init_object(args, "Adam.lr") == optimiser.lr
 
     parser.parse_args(["--Adam.lr=3e-3"])
-    optimiser: Adam = parser.init_object("Adam", params=[1, 2, 3])
+    optimiser = parser.init_object("Adam", params=[1, 2, 3])
+    assert isinstance(optimiser, Adam)
     assert optimiser.lr == 3e-3
 
     parser.parse_args([])
-    optimiser: Adam = parser.init_object("Adam", params=[20, 30])
+    optimiser = parser.init_object("Adam", params=[20, 30])
+    assert isinstance(optimiser, Adam)
     assert optimiser.inner_params == [20, 30]
 
 def get_nested_object_parser():

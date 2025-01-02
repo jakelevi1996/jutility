@@ -77,6 +77,9 @@ class Arg:
     def get_arg_dict_keys(self, parsed_args_dict):
         return [self.full_name]
 
+    def is_leaf(self) -> bool:
+        return True
+
     def __repr__(self):
         return (
             "%s(name=\"%s\", full_name=\"%s\", full_tag=\"%s\")"
@@ -192,6 +195,9 @@ class ObjectArg(Arg):
             for arg in self.args
             for name in arg.get_arg_dict_keys(parsed_args_dict)
         ]
+
+    def is_leaf(self) -> bool:
+        return False
 
 class ObjectChoice(ObjectArg):
     def __init__(
@@ -349,6 +355,9 @@ class ObjectParser:
             replaces=replaces,
         )
 
+    def get_kwarg_names(self):
+        return [arg.name for arg in self._arg_list if arg.is_leaf()]
+
     def reset_object_cache(self):
         self._check_parsed()
         current_args_cache = set(self._parsed_args_dict.keys())
@@ -377,12 +386,10 @@ class ParsedArgs:
 
     def get_kwargs(self, keys_csv: str=None):
         if keys_csv is None:
-            keys_csv = ",".join(
-                s for s in self._arg_dict.keys()
-                if ("." not in s)
-            )
+            keys = self._parser.get_kwarg_names()
+        else:
+            keys = [s.strip() for s in keys_csv.split(",")]
 
-        keys = [s.strip() for s in keys_csv.split(",")]
         return {k: self._arg_dict[k] for k in keys}
 
     def update(self, arg_dict: dict, allow_new_keys=False):

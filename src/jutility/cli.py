@@ -348,10 +348,9 @@ class ObjectParser:
 
     def reset_object_cache(self):
         self._check_parsed()
-        self._parsed_args_dict = {
-            k: self._parsed_args_dict[k]
-            for k in self._initial_args_cache
-        }
+        current_args_cache = set(self._parsed_args_dict.keys())
+        for k in (current_args_cache - self._initial_args_cache):
+            self._parsed_args_dict.pop(k)
 
     def __repr__(self):
         description = ",\n".join(repr(arg) for arg in self._arg_dict.values())

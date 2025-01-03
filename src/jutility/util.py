@@ -703,15 +703,20 @@ def save_image_diff(
     output_name: str="diff",
     dir_name: str=None,
     verbose: bool=True,
+    normalise: bool=True,
     mode="L",
     rgba=False,
 ):
-    x = load_image(full_path_1).astype(float)
-    y = load_image(full_path_2).astype(float)
-    z = np.abs(x - y).astype(np.uint8)
+    x = np.float64(load_image(full_path_1))
+    y = np.float64(load_image(full_path_2))
+    z = np.uint8(np.abs(x - y))
     if verbose:
         print("Min image difference = %s" % z.min())
         print("Max image difference = %s" % z.max())
+    if normalise and (z.max() > 0):
+        z = np.float64(z)
+        z *= 255 / z.max()
+        z = np.uint8(z)
     if rgba:
         mode = "RGBA"
     if mode == "RGBA":

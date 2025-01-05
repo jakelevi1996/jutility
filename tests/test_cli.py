@@ -7,16 +7,16 @@ OUTPUT_DIR = test_utils.get_output_dir("test_cli")
 def get_parser():
     parser = cli.ObjectParser(
         cli.Arg("int",   "in", default=10,            type=int),
-        cli.Arg("float", "fl", default=-4.7,          type=float),
-        cli.Arg("list",  "li", default=[30, 20, 10],  type=int, nargs="*"),
-        cli.Arg("none",  "no", default=None),
-        cli.Arg("true",  "tr", default=True),
-        cli.Arg("false", "fa", default=False),
-        cli.Arg("no_abbrev",   default="random"),
+        cli.Arg("float",       default=-4.7,          type=float),
+        cli.Arg("list",        default=[30, 20, 10],  type=int, nargs="*"),
+        cli.Arg("none",        default=None),
+        cli.Arg("true",        default=True),
+        cli.Arg("false",       default=False),
+        cli.Arg("no_abbrev",   default="random", tagged=False),
         cli.ObjectArg(
             Adam,
-            cli.Arg("lr",   "lr", type=float, default=1e-3),
-            cli.Arg("beta", "be", type=float, default=[0.9, 0.999], nargs=2),
+            cli.Arg("lr",   type=float, default=1e-3),
+            cli.Arg("beta", type=float, default=[0.9, 0.999], nargs=2),
             tag="op",
             init_requires=["params"],
         ),
@@ -53,7 +53,7 @@ def test_get_args_summary():
     args = parser.parse_args([])
     s = cli.get_args_summary(args)
 
-    assert s == "faFfl-4.7in10li30,20,10noNop.be0.9,0.999op.lr0.001trT"
+    assert s == "faFfl-4.7in10l30,20,10nNop.b0.9,0.999op.l0.001tT"
 
     s2 = cli.get_args_summary(parser.parse_args(["--no_abbrev=123"]))
     assert s2 == s
@@ -63,9 +63,11 @@ def test_get_args_summary():
 
     s4 = cli.get_args_summary(parser.parse_args(["--int=20"]))
     assert s4 != s
+    assert s4 == s.replace("in10", "in20")
 
     s5 = cli.get_args_summary(parser.parse_args(["--Adam.lr=3e-3"]))
     assert s5 != s
+    assert s5 == s.replace("op.l0.001", "op.l0.003")
 
     args = parser.parse_args([])
     cli.init_object(args, "Adam", params=[1, 2, 3])

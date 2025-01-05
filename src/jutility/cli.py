@@ -18,6 +18,7 @@ class Arg:
         self,
         name: str,
         tag: str=None,
+        tagged=True,
         **argparse_kwargs,
     ):
         """
@@ -26,15 +27,17 @@ class Arg:
         """
         self.argparse_kwargs = argparse_kwargs
         self.args: list[Arg] = []
-        self.init_names(name, tag)
+        self.init_names(name, tag, tagged)
         if (len(argparse_kwargs) > 0) and ("help" not in argparse_kwargs):
             argparse_kwargs["help"] = util.format_dict(argparse_kwargs)
 
-    def init_names(self, name: str, tag: str):
+    def init_names(self, name: str, tag: str, tagged: bool):
         self.name = name
         self.tag  = tag
+        self.tagged = tagged
         self.full_name: str = None
         self.full_tag:  str = None
+        self.fixed_tag = True if (tag is not None) else False
 
     def register_names(self, arg_dict, parent: "Arg"=None):
         if self.full_name is not None:
@@ -59,8 +62,46 @@ class Arg:
 
         arg_dict[self.full_name] = self
 
+        if self.full_tag is not None:
+            self.set_tags(self.args)
         for arg in self.args:
             arg.register_names(arg_dict, self)
+
+    @staticmethod
+    def set_tags(args: list["Arg"]):
+        fixed_tags = set(a.tag.lower() for a in args if a.fixed_tag)
+        names_to_args = {
+            a.name: a
+            for a in args
+            if a.tagged and (not a.fixed_tag)
+        }
+        names_to_tags = dict()
+        untagged_names = set(
+            name.lower().replace("_", "")
+            for name in names_to_args.keys()
+        )
+        if len(untagged_names) == 0:
+            return
+
+        max_len = max(len(name) for name in untagged_names)
+        for i in range(1, max_len + 1):
+            partial_tag_dict = {
+                name: name[:i]
+                for name in untagged_names
+            }
+            partial_tags = list(partial_tag_dict.values())
+            new_tags = {
+                name: t
+                for name, t in partial_tag_dict.items()
+                if (partial_tags.count(t) == 1) and (t not in fixed_tags)
+            }
+            names_to_tags.update(new_tags)
+            untagged_names -= set(new_tags.keys())
+            if len(untagged_names) == 0:
+                break
+
+        for arg in names_to_args.values():
+            arg.tag = names_to_tags[arg.name.lower().replace("_", "")]
 
     def hide_tag(self, arg: "Arg"):
         return False
@@ -94,6 +135,7 @@ class ObjectArg(Arg):
         *args: Arg,
         name: str=None,
         tag: str=None,
+        tagged=True,
         init_requires: list[str]=None,
         init_parsed_kwargs: dict=None,
         init_const_kwargs: dict=None,
@@ -103,8 +145,8 @@ class ObjectArg(Arg):
             name = object_type.__name__
 
         self.object_type = object_type
-        self.args        = args
-        self.init_names(name, tag)
+        self.args = args
+        self.init_names(name, tag, tagged)
         self.set_init_attributes(
             init_requires,
             init_parsed_kwargs,
@@ -208,6 +250,7 @@ class ObjectChoice(ObjectArg):
         shared_args: list[Arg]=None,
         default: str=None,
         tag: str=None,
+        tagged=True,
         init_requires: list[str]=None,
         init_parsed_kwargs: dict=None,
         init_const_kwargs: dict=None,
@@ -216,9 +259,9 @@ class ObjectChoice(ObjectArg):
         if shared_args is None:
             shared_args = []
 
-        self.shared_args    = shared_args
-        self.default        = default
-        self.init_names(name, tag)
+        self.shared_args = shared_args
+        self.default = default
+        self.init_names(name, tag, tagged)
         self.set_init_attributes(
             init_requires,
             init_parsed_kwargs,
@@ -290,8 +333,9 @@ class ObjectParser:
         self.add_arguments(*args)
 
     def add_arguments(self, *args: Arg):
+        self._arg_list += list(args)
+        Arg.set_tags(self._arg_list)
         for arg in args:
-            self._arg_list.append(arg)
             arg.register_names(self._arg_dict)
 
     def _get_argparse_parser(self):

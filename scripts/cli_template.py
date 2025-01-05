@@ -18,7 +18,7 @@ def main(
         cn = cli.init_object(args, "ExampleClass")
         assert isinstance(cn, ExampleClass)
 
-    print(x, y, z, cn.p, sep=", ")
+    print(x, y, z, cn.p, cli.get_args_summary(args), sep=" | ")
 
     ...
 

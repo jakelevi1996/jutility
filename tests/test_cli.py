@@ -1312,6 +1312,34 @@ def test_autotag_edge_cases():
     args = parser.parse_args([])
     assert cli.get_args_summary(args) == "abc789abc123abcd456"
 
+    parser = cli.ObjectParser(
+        cli.Arg("abc", default=123),
+        cli.Arg("abz", default=456),
+    )
+    args = parser.parse_args([])
+    assert cli.get_args_summary(args) == "abc123abz456"
+
+    parser = cli.ObjectParser(
+        cli.Arg("abc", default=123),
+        cli.Arg("abzz", default=456),
+    )
+    args = parser.parse_args([])
+    assert cli.get_args_summary(args) == "abc123abz456"
+
+    parser = cli.ObjectParser(
+        cli.Arg("abc", default=123),
+        cli.Arg("azc", default=456),
+    )
+    args = parser.parse_args([])
+    assert cli.get_args_summary(args) == "ab123az456"
+
+    parser = cli.ObjectParser(
+        cli.Arg("abc", default=123),
+        cli.Arg("azz", default=456),
+    )
+    args = parser.parse_args([])
+    assert cli.get_args_summary(args) == "ab123az456"
+
 def test_autotag_edge_cases_objectchoice():
     class A:
         def __init__(self, x):

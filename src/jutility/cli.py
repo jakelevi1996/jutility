@@ -75,18 +75,18 @@ class Arg:
             for a in args
             if a.tagged and (not a.fixed_tag)
         }
-        names_to_tags = dict()
-        untagged_names = set(
-            Arg.clean_tag(name)
+        untagged_names = set(names_to_args.keys())
+        names_to_tags = {
+            name: Arg.clean_tag(name)
             for name in names_to_args.keys()
-        )
+        }
         if len(untagged_names) == 0:
             return
 
         max_len = max(len(name) for name in untagged_names)
         for i in range(1, max_len + 1):
             partial_tag_dict = {
-                name: name[:i]
+                name: Arg.clean_tag(name[:i])
                 for name in untagged_names
             }
             partial_tags = list(partial_tag_dict.values())
@@ -101,8 +101,7 @@ class Arg:
                 break
 
         for arg in names_to_args.values():
-            default_tag = arg.name.lower().replace("_", "")
-            arg.tag = names_to_tags.get(default_tag, default_tag)
+            arg.tag = names_to_tags[arg.name]
 
     @staticmethod
     def clean_tag(tag: str):

@@ -1258,7 +1258,7 @@ def test_positional_args():
     assert args.get("a, b, c") == [5, 6, 7]
     assert args.get_kwargs() == {"a": 5, "b": 6, "c": 7}
 
-def test_auto_tag_edge_cases():
+def test_autotag_edge_cases():
     parser = cli.ObjectParser(
         cli.Arg("ab_c", default=123),
         cli.Arg("a_bc", default=456),
@@ -1311,3 +1311,70 @@ def test_auto_tag_edge_cases():
     )
     args = parser.parse_args([])
     assert cli.get_args_summary(args) == "abc789abc123abcd456"
+
+def test_autotag_edge_cases_objectchoice():
+    class A:
+        def __init__(self, x):
+            self.x = x
+
+    class B:
+        def __init__(self, y):
+            self.y = y
+
+    parser = cli.ObjectParser(
+        cli.Arg("abc",  default=123),
+        cli.Arg("abcd", default=456),
+        cli.ObjectChoice(
+            "ABC",
+            cli.ObjectArg(A, cli.Arg("x", default="78")),
+            cli.ObjectArg(B, cli.Arg("y", default="90")),
+            default="A",
+        ),
+    )
+    args = parser.parse_args([])
+    assert cli.get_args_summary(args) == "abc123abcAabc.x78abcd456"
+
+    parser = cli.ObjectParser(
+        cli.Arg("abc",  default=123),
+        cli.Arg("abcd", default=456),
+        cli.ObjectChoice(
+            "ABC",
+            cli.ObjectArg(A, cli.Arg("x", default="78")),
+            cli.ObjectArg(B, cli.Arg("y", default="90")),
+            default="A",
+            tag="a_b_c",
+        ),
+    )
+    args = parser.parse_args([])
+    assert cli.get_args_summary(args) == "abcAabc.x78abc123abcd456"
+
+    parser = cli.ObjectParser(
+        cli.Arg("abc",  default=123),
+        cli.Arg("abcd", default=456),
+        cli.ObjectChoice(
+            "a_or_b",
+            cli.ObjectArg(A, cli.Arg("x", default="78")),
+            cli.ObjectArg(B, cli.Arg("y", default="90")),
+            default="A",
+        ),
+    )
+    args = parser.parse_args([])
+    assert cli.get_args_summary(args) == "aAa.x78abc123abcd456"
+
+    args = parser.parse_args(["--a_or_b", "B"])
+    assert cli.get_args_summary(args) == "aBa.y90abc123abcd456"
+    parser = cli.ObjectParser(
+        cli.Arg("abc",  default=123),
+        cli.Arg("abcd", default=456),
+        cli.ObjectChoice(
+            "model",
+            cli.ObjectArg(A, cli.Arg("x", default="78")),
+            cli.ObjectArg(B, cli.Arg("y", default="90")),
+            default="A",
+        ),
+    )
+    args = parser.parse_args([])
+    assert cli.get_args_summary(args) == "abc123abcd456mAm.x78"
+
+    args = parser.parse_args(["--model", "B"])
+    assert cli.get_args_summary(args) == "abc123abcd456mBm.y90"

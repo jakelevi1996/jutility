@@ -1295,3 +1295,19 @@ def test_auto_tag_edge_cases():
     )
     args = parser.parse_args([])
     assert cli.get_args_summary(args) == "abc123abc789abcd456"
+
+    parser = cli.ObjectParser(
+        cli.Arg("abc",  default=123),
+        cli.Arg("abcd", default=456),
+        cli.Arg("ABC",  default=789, tag="abc_"),
+    )
+    args = parser.parse_args([])
+    assert cli.get_args_summary(args) == "abc123abc789abcd456"
+
+    parser = cli.ObjectParser(
+        cli.Arg("abc",  default=123),
+        cli.Arg("abcd", default=456),
+        cli.Arg("ABC",  default=789, tag="a_b_c"),
+    )
+    args = parser.parse_args([])
+    assert cli.get_args_summary(args) == "abc789abc123abcd456"

@@ -1257,3 +1257,41 @@ def test_positional_args():
     args = parser.parse_args(["5", "6", "--c", "7"])
     assert args.get("a, b, c") == [5, 6, 7]
     assert args.get_kwargs() == {"a": 5, "b": 6, "c": 7}
+
+def test_auto_tag_edge_cases():
+    parser = cli.ObjectParser(
+        cli.Arg("ab_c", default=123),
+        cli.Arg("a_bc", default=456),
+    )
+    args = parser.parse_args([])
+    assert cli.get_args_summary(args) == "a123a456"
+
+    parser = cli.ObjectParser(
+        cli.Arg("abc", default=123),
+        cli.Arg("ABC", default=456),
+    )
+    args = parser.parse_args([])
+    assert cli.get_args_summary(args) == "a123a456"
+
+    parser = cli.ObjectParser(
+        cli.Arg("abc",  default=123),
+        cli.Arg("abcd", default=456),
+    )
+    args = parser.parse_args([])
+    assert cli.get_args_summary(args) == "abc123abcd456"
+
+    parser = cli.ObjectParser(
+        cli.Arg("abc",  default=123),
+        cli.Arg("abcd", default=456),
+        cli.Arg("ABC",  default=789),
+    )
+    args = parser.parse_args([])
+    assert cli.get_args_summary(args) == "abc123abc789abcd456"
+
+    parser = cli.ObjectParser(
+        cli.Arg("abc",  default=123),
+        cli.Arg("abcd", default=456),
+        cli.Arg("ABC",  default=789, tag="abc"),
+    )
+    args = parser.parse_args([])
+    assert cli.get_args_summary(args) == "abc123abc789abcd456"

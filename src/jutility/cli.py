@@ -84,7 +84,7 @@ class Arg:
             return
 
         max_len = max(len(name) for name in untagged_names)
-        for i in range(1, max_len + 1):
+        for i in range(1, max_len):
             partial_tag_dict = {
                 name: Arg.clean_tag(name[:i])
                 for name in untagged_names

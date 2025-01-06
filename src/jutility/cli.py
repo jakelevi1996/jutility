@@ -69,10 +69,7 @@ class Arg:
 
     @staticmethod
     def set_tags(args: list["Arg"]):
-        fixed_tags = set(
-            a.tag.lower().replace("_", "")
-            for a in args if a.fixed_tag
-        )
+        fixed_tags = set(Arg.clean_tag(a.tag) for a in args if a.fixed_tag)
         names_to_args = {
             a.name: a
             for a in args
@@ -80,7 +77,7 @@ class Arg:
         }
         names_to_tags = dict()
         untagged_names = set(
-            name.lower().replace("_", "")
+            Arg.clean_tag(name)
             for name in names_to_args.keys()
         )
         if len(untagged_names) == 0:
@@ -106,6 +103,10 @@ class Arg:
         for arg in names_to_args.values():
             default_tag = arg.name.lower().replace("_", "")
             arg.tag = names_to_tags.get(default_tag, default_tag)
+
+    @staticmethod
+    def clean_tag(tag: str):
+        return tag.lower().replace("_", "")
 
     def hide_tag(self, arg: "Arg"):
         return False

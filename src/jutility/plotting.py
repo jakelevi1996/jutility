@@ -1200,10 +1200,14 @@ def set_latex_params(use_tex=True):
 
 class _TempAxis:
     def __init__(self):
-        self._axis = plt.figure().gca()
-        self._old_children = set(self._axis.get_children())
+        self._axis = None
+        self._old_children = None
 
     def get_axis(self):
+        if self._axis is None:
+            self._axis = plt.figure().gca()
+            self._old_children = set(self._axis.get_children())
+
         return self._axis
 
     def pop_artists(self):

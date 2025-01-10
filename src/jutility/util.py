@@ -707,6 +707,9 @@ def save_image_diff(
     mode="L",
     rgba=False,
 ):
+    if dir_name is None:
+        dir_name = os.path.dirname(full_path_1)
+
     x = np.float64(load_image(full_path_1))
     y = np.float64(load_image(full_path_2))
     z = np.uint8(np.abs(x - y))

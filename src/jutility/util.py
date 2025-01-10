@@ -687,11 +687,20 @@ def save_image(
     filename: str,
     dir_name: str=None,
     verbose: bool=True,
-    mode="L",
-    rgba=False,
 ):
-    if rgba:
-        mode = "RGBA"
+    if image_uint8.dtype != np.uint8:
+        im_ge0 = image_uint8 - np.min(image_uint8)
+        im_255 = im_ge0 * (255 / np.max(im_ge0))
+        image_uint8 = np.uint8(im_255)
+
+    shape = image_uint8.shape
+    mode_dict_1 = {(3, 3): "RGB", (3, 4): "RGBA"}
+    mode_dict_2 = {2: "L"}
+    mode = mode_dict_1.get(
+        (len(shape), shape[-1]),
+        mode_dict_2.get(len(shape)),
+    )
+
     pil_image = PIL.Image.fromarray(image_uint8, mode=mode)
     full_path = get_full_path(filename, dir_name, "png", verbose=verbose)
     pil_image.save(full_path)
@@ -704,8 +713,6 @@ def save_image_diff(
     dir_name: str=None,
     verbose: bool=True,
     normalise: bool=True,
-    mode="L",
-    rgba=False,
 ):
     if dir_name is None:
         dir_name = os.path.dirname(full_path_1)
@@ -720,12 +727,10 @@ def save_image_diff(
         z = np.float64(z)
         z *= 255 / z.max()
         z = np.uint8(z)
-    if rgba:
-        mode = "RGBA"
-    if mode == "RGBA":
+    if (len(z.shape) == 3) and (z.shape[-1] == 4):
         z[:, :, 3] = 255
 
-    return save_image(z, output_name, dir_name, verbose, mode)
+    return save_image(z, output_name, dir_name, verbose)
 
 def load_image(full_path) -> np.ndarray:
     image_uint8 = np.array(PIL.Image.open(full_path))

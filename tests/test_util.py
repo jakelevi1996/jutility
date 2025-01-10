@@ -1010,10 +1010,7 @@ def test_save_image_load_image_rgba():
 
     shape = (100, 150, 4)
     x = rng.integers(0, 256, shape).astype(np.uint8)
-    with pytest.raises(ValueError):
-        util.save_image(x, test_name, OUTPUT_DIR)
-
-    util.save_image(x, test_name, OUTPUT_DIR, rgba=True)
+    util.save_image(x, test_name, OUTPUT_DIR)
     full_path = util.get_full_path(test_name, OUTPUT_DIR, "png")
     y = util.load_image(full_path)
 
@@ -1028,6 +1025,10 @@ def test_save_image_load_image_rgba():
     assert y.dtype != np.float32
 
     assert np.all(y == x)
+
+    x = rng.normal(0, 1, [20, 30])
+    full_path = util.save_image(x, "%s_float" % test_name, OUTPUT_DIR)
+    assert os.path.isfile(full_path)
 
 def test_save_image_diff():
     rng = util.Seeder().get_rng("test_save_image_diff")
@@ -1047,39 +1048,19 @@ def test_save_image_diff():
         plot_name="test_save_image_diff_input_2",
         dir_name=OUTPUT_DIR,
     )
-    bw_fp1 = util.save_image(
-        util.load_image(mp1.full_path).mean(axis=2).astype(np.uint8),
-        "test_save_image_diff_input_1_bw",
-        OUTPUT_DIR,
-    )
-    bw_fp2 = util.save_image(
-        util.load_image(mp2.full_path).mean(axis=2).astype(np.uint8),
-        "test_save_image_diff_input_2_bw",
-        OUTPUT_DIR,
-    )
     diff_fp1 = util.save_image_diff(
         mp1.full_path,
         mp2.full_path,
         "test_save_image_diff_rgba_True",
         OUTPUT_DIR,
-        rgba=True,
-    )
-    diff_fp2 = util.save_image_diff(
-        bw_fp1,
-        bw_fp2,
-        "test_save_image_diff_rgba_False",
-        OUTPUT_DIR,
     )
     assert isinstance(diff_fp1, str)
-    assert isinstance(diff_fp2, str)
     assert os.path.isfile(diff_fp1)
-    assert os.path.isfile(diff_fp2)
 
     diff_fp3 = util.save_image_diff(
         mp1.full_path,
         mp2.full_path,
         "test_save_image_diff_default_dir",
-        rgba=True,
     )
     assert isinstance(diff_fp3, str)
     assert os.path.isfile(diff_fp3)

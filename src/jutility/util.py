@@ -717,8 +717,13 @@ def save_image_diff(
     if dir_name is None:
         dir_name = os.path.dirname(full_path_1)
 
-    x = np.float64(load_image(full_path_1))
-    y = np.float64(load_image(full_path_2))
+    x_pil = PIL.Image.open(full_path_1)
+    y_pil = PIL.Image.open(full_path_2)
+    if y_pil.size != x_pil.size:
+        y_pil = y_pil.resize(x_pil.size)
+
+    x = np.array(x_pil, dtype=np.float64)
+    y = np.array(y_pil, dtype=np.float64)
     z = np.uint8(np.abs(x - y))
     if verbose:
         print("Min image difference = %s" % z.min())

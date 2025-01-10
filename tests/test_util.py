@@ -1051,11 +1051,22 @@ def test_save_image_diff():
     diff_fp1 = util.save_image_diff(
         mp1.full_path,
         mp2.full_path,
-        "test_save_image_diff_rgba_True",
+        "test_save_image_diff",
         OUTPUT_DIR,
     )
     assert isinstance(diff_fp1, str)
     assert os.path.isfile(diff_fp1)
+
+    x = rng.normal(0, 1, [20, 30, 4])
+    fp = util.save_image(x, "test_save_image_diff_noise_image", OUTPUT_DIR)
+    diff_fp2 = util.save_image_diff(
+        mp1.full_path,
+        fp,
+        "test_save_image_diff_resize",
+        OUTPUT_DIR,
+    )
+    assert isinstance(diff_fp2, str)
+    assert os.path.isfile(diff_fp2)
 
     diff_fp3 = util.save_image_diff(
         mp1.full_path,

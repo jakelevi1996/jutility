@@ -1057,23 +1057,33 @@ def test_save_image_diff():
         "test_save_image_diff_input_2_bw",
         OUTPUT_DIR,
     )
-    fp1 = util.save_image_diff(
+    diff_fp1 = util.save_image_diff(
         mp1.full_path,
         mp2.full_path,
         "test_save_image_diff_rgba_True",
         OUTPUT_DIR,
         rgba=True,
     )
-    fp2 = util.save_image_diff(
+    diff_fp2 = util.save_image_diff(
         bw_fp1,
         bw_fp2,
         "test_save_image_diff_rgba_False",
         OUTPUT_DIR,
     )
-    assert isinstance(fp1, str)
-    assert isinstance(fp2, str)
-    assert os.path.isfile(fp1)
-    assert os.path.isfile(fp2)
+    assert isinstance(diff_fp1, str)
+    assert isinstance(diff_fp2, str)
+    assert os.path.isfile(diff_fp1)
+    assert os.path.isfile(diff_fp2)
+
+    diff_fp3 = util.save_image_diff(
+        mp1.full_path,
+        mp2.full_path,
+        "test_save_image_diff_default_dir",
+        rgba=True,
+    )
+    assert isinstance(diff_fp3, str)
+    assert os.path.isfile(diff_fp3)
+    assert os.path.dirname(diff_fp3) == os.path.dirname(mp2.full_path)
 
 def test_columnformatter():
     printer = util.Printer("test_columnformatter", OUTPUT_DIR)

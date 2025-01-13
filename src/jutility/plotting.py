@@ -137,7 +137,6 @@ class Arrow(Line):
             "c": "color",
             "z": "zorder",
             "a": "alpha",
-            "m": "marker",
             "hw": "head_width",
             "lih": "length_includes_head",
         }

@@ -46,7 +46,12 @@ class Plottable:
         raise NotImplementedError()
 
     def set_options(self, **kwargs):
-        self._kwargs.update(self._expand_dict_keys(kwargs))
+        key_map = self._get_abbreviated_keys_dict()
+        kwargs = {
+            key_map.get(k, k): v
+            for k, v in kwargs.items()
+        }
+        self._kwargs.update(kwargs)
         return self
 
     def _get_default_kwargs(self):
@@ -58,13 +63,6 @@ class Plottable:
             "z": "zorder",
             "a": "alpha",
             "m": "marker",
-        }
-
-    def _expand_dict_keys(self, input_dict: dict) -> dict:
-        key_map = self._get_abbreviated_keys_dict()
-        return {
-            key_map.get(k, k): v
-            for k, v in input_dict.items()
         }
 
     def _get_handle_args(self):

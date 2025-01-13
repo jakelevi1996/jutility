@@ -237,6 +237,15 @@ class Text(Plottable):
 
         axis.text(*self._args, **self._kwargs)
 
+    def _get_abbreviated_keys_dict(self):
+        return {
+            "c": "color",
+            "z": "zorder",
+            "a": "alpha",
+            "fs": "fontsize",
+            "ca": "center_align",
+        }
+
 class FillBetween(Plottable):
     """
     See

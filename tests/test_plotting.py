@@ -1453,3 +1453,14 @@ def test_empty_noisy_data_plot():
         figsize=[4, 2],
     )
     mp.save("test_empty_noisy_data_plot", OUTPUT_DIR)
+
+def test_arrow():
+    rng = util.Seeder().get_rng("test_arrow")
+    n = 20
+    x = rng.normal(0, 1, [n, 4]).tolist()
+    w = np.exp(rng.normal(-2, 0.5, [n])).tolist()
+    plotting.plot(
+        *[plotting.Arrow(*x[i], c="k", hw=w[i]) for i in range(n)],
+        plot_name="test_arrow",
+        dir_name=OUTPUT_DIR,
+    )

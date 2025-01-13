@@ -125,6 +125,26 @@ class AxLine(Line):
     def _get_handle_args(self):
         return [[np.nan, np.nan], [np.nan, np.nan]]
 
+class Arrow(Line):
+    """
+    See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.arrow.html
+    """
+    def plot(self, axis: matplotlib.axes.Axes):
+        axis.arrow(*self._args, **self._kwargs)
+
+    def _get_abbreviated_keys_dict(self):
+        return {
+            "c": "color",
+            "z": "zorder",
+            "a": "alpha",
+            "m": "marker",
+            "hw": "head_width",
+            "lih": "length_includes_head",
+        }
+
+    def _get_default_kwargs(self):
+        return {"z": 10, "c": "b", "lih": True, "hw": 0.05}
+
 class Quiver(Line):
     """
     See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.quiver.html

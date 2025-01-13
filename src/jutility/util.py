@@ -156,6 +156,10 @@ class Printer:
 def hline(line_char="-", line_len=100):
     print(line_char * line_len)
 
+def print_hline(*args, **kwargs):
+    print(*args, **kwargs)
+    hline()
+
 class ColumnFormatter:
     def __init__(
         self,

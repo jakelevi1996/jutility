@@ -594,7 +594,7 @@ def indent(input_str, num_spaces=4):
 def format_dict(
     input_dict: dict,
     item_sep=", ",
-    kv_sep=" = ",
+    kv_sep="=",
     key_fmt="%s",
     val_fmt="%r",
     prefix="",

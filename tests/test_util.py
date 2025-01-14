@@ -1164,17 +1164,17 @@ def test_table_load_pickle_callback():
 def test_format_dict():
     d = {str(x): x*x/2 for x in range(4)}
     assert util.format_dict(d) == (
-        "0 = 0.0, 1 = 0.5, 2 = 2.0, 3 = 4.5"
+        "0=0.0, 1=0.5, 2=2.0, 3=4.5"
     )
     assert util.format_dict(d, " | ", "->") == (
         "0->0.0 | 1->0.5 | 2->2.0 | 3->4.5"
     )
     assert util.format_dict(d, key_order=["3", "2", "1"]) == (
-        "3 = 4.5, 2 = 2.0, 1 = 0.5"
+        "3=4.5, 2=2.0, 1=0.5"
     )
     assert util.format_dict(d, key_fmt="f(%s)", val_fmt="%.2f") == (
-        "f(0) = 0.00, f(1) = 0.50, f(2) = 2.00, f(3) = 4.50"
+        "f(0)=0.00, f(1)=0.50, f(2)=2.00, f(3)=4.50"
     )
     assert util.format_dict(d, prefix="P(", suffix=")", key_fmt="x_%s") == (
-        "P(x_0 = 0.0, x_1 = 0.5, x_2 = 2.0, x_3 = 4.5)"
+        "P(x_0=0.0, x_1=0.5, x_2=2.0, x_3=4.5)"
     )

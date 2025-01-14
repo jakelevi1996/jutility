@@ -1340,6 +1340,32 @@ def test_autotag_edge_cases():
     args = parser.parse_args([])
     assert cli.get_args_summary(args) == "ab123az456"
 
+    arg_names = [
+        "abc",
+        "abcdef",
+        "a",
+        "num_epochs",
+        "num_steps",
+        "ne",
+        "ns",
+        "p",
+        "plid",
+        "plimits",
+        "b",
+    ]
+    parser = cli.ObjectParser(
+        cli.Arg("plim", default="plim", tag="plim"),
+        *[
+            cli.Arg(n, default=n)
+            for n in arg_names
+        ],
+    )
+    args = parser.parse_args([])
+    assert cli.get_args_summary(args) == (
+        "aAabcABCabcdABCDEFbBneNEnsNSnumeNUMEPOCHSnumsNUMSTEPSpPplidPLID"
+        "plimPLIMplimiPLIMITS"
+    )
+
 def test_autotag_edge_cases_objectchoice():
     class A:
         def __init__(self, x):

@@ -595,15 +595,21 @@ def format_dict(
     input_dict: dict,
     item_sep=", ",
     kv_sep=" = ",
+    key_fmt="%s",
+    val_fmt="%r",
+    prefix="",
+    suffix="",
     key_order=None,
 ) -> str:
     if key_order is None:
         key_order = sorted(input_dict.keys())
 
-    return item_sep.join(
-        "%s%s%r" % (k, kv_sep, input_dict[k])
+    item_fmt = key_fmt + kv_sep + val_fmt
+    items_str = item_sep.join(
+        item_fmt % (k, input_dict[k])
         for k in key_order
     )
+    return prefix + items_str + suffix
 
 def time_format(num_seconds: float, concise=False):
     if concise:

@@ -1189,8 +1189,8 @@ def test_format_type():
         "ExampleClass(1, 's', True, b=False, f=3.14, n=None)"
     )
     assert util.format_type(ExampleClass, *args) == (
-        "ExampleClass(1, 's', True, )"
+        "ExampleClass(1, 's', True)"
     )
     assert util.format_type(ExampleClass, b=False, n=None, f=3.14) == (
-        "ExampleClass(, b=False, f=3.14, n=None)"
+        "ExampleClass(b=False, f=3.14, n=None)"
     )

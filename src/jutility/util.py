@@ -766,10 +766,15 @@ def format_dict(
 
 def format_type(input_type: type, *args, **kwargs):
     type_str = input_type.__name__
-    args_str = ", ".join(repr(a) for a in args)
+    prefix = type_str + "("
+    if len(args) > 0:
+        prefix += ", ".join(repr(a) for a in args)
+        if len(kwargs) > 0:
+            prefix += ", "
+
     return format_dict(
         input_dict=kwargs,
-        prefix=(type_str + "(" + args_str + ", "),
+        prefix=prefix,
         suffix=")",
     )
 

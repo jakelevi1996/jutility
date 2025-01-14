@@ -1178,3 +1178,19 @@ def test_format_dict():
     assert util.format_dict(d, prefix="P(", suffix=")", key_fmt="x_%s") == (
         "P(x_0=0.0, x_1=0.5, x_2=2.0, x_3=4.5)"
     )
+
+def test_format_type():
+    class ExampleClass:
+        def __init__(self, x):
+            self.x = x
+
+    args = [1, "s", True]
+    assert util.format_type(ExampleClass, *args, b=False, n=None, f=3.14) == (
+        "ExampleClass(1, 's', True, b=False, f=3.14, n=None)"
+    )
+    assert util.format_type(ExampleClass, *args) == (
+        "ExampleClass(1, 's', True, )"
+    )
+    assert util.format_type(ExampleClass, b=False, n=None, f=3.14) == (
+        "ExampleClass(, b=False, f=3.14, n=None)"
+    )

@@ -1194,3 +1194,6 @@ def test_format_type():
     assert util.format_type(ExampleClass, b=False, n=None, f=3.14) == (
         "ExampleClass(b=False, f=3.14, n=None)"
     )
+    assert util.format_type(ExampleClass) == (
+        "ExampleClass()"
+    )

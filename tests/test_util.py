@@ -419,7 +419,7 @@ def test_timer_context():
 
     assert t.time_taken >= sleep_interval
 
-    with util.Timer("sleep 2", printer, verbose_enter=True) as t:
+    with util.Timer("sleep 2", printer, verbose=True) as t:
         time.sleep(sleep_interval)
 
     assert t.time_taken >= sleep_interval

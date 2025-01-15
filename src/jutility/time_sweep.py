@@ -30,7 +30,7 @@ def time_sweep(
         repr(exp): plotting.NoisyData(log_y=True)
         for exp in experiments
     }
-    timer = util.Timer(verbose_exit=False)
+    timer = util.Timer(verbose=False)
     table = util.Table(
         util.CountColumn("c", -5),
         util.TimeColumn("t"),

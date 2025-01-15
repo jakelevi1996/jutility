@@ -207,16 +207,15 @@ class Timer:
         self,
         name=None,
         printer=None,
-        verbose_enter=False,
-        verbose_exit=True,
+        verbose=True,
         hline=False,
     ):
         if printer is None:
             printer = Printer()
-        self._print         = printer
-        self._verbose_enter = verbose_enter
-        self._verbose_exit  = verbose_exit
-        self._hline         = hline
+
+        self._print     = printer
+        self._verbose   = verbose
+        self._hline     = hline
         self.set_name(name)
         self.reset()
 
@@ -236,7 +235,6 @@ class Timer:
     def __enter__(self):
         if self._hline:
             self._print.hline()
-        if self._verbose_enter or self._hline:
             self._print("Starting timer%s..." % self._name_str)
 
         self.reset()
@@ -244,7 +242,7 @@ class Timer:
 
     def __exit__(self, *args):
         self.time_taken = self.get_time_taken()
-        if self._verbose_exit or self._hline:
+        if self._verbose:
             t_str = time_format(self.time_taken)
             self._print("Time taken%s = %s" % (self._name_str, t_str))
         if self._hline:

@@ -430,7 +430,7 @@ def test_quiver():
 
 def test_text():
     plotting.plot(
-        plotting.Text(0.5, 0.5, "Text example", size=60, center_align=True),
+        plotting.Text(0.5, 0.5, "Text example", fs=60),
         axis_off=True,
         title=None,
         plot_name="test_text",
@@ -497,7 +497,7 @@ def test_set_latex_params(pdf):
 def test_get_image_array():
     plot_name = "test_get_image_array"
     mp = plotting.plot(
-        plotting.Text(0.5, 0.5, plot_name, center_align=True, size=10),
+        plotting.Text(0.5, 0.5, plot_name, fs=10),
         axis_off=True,
         figsize=[2, 2],
         save_close=False,

@@ -228,10 +228,6 @@ class Text(Plottable):
     https://matplotlib.org/stable/gallery/subplots_axes_and_figures/figure_size_units.html
     """
     def plot(self, axis: matplotlib.axes.Axes):
-        if self._kwargs.pop("center_align", False):
-            self._kwargs["horizontalalignment"]   = "center"
-            self._kwargs["verticalalignment"]     = "center"
-
         axis.text(*self._args, **self._kwargs)
 
     def _get_abbreviated_keys_dict(self):
@@ -240,8 +236,12 @@ class Text(Plottable):
             "z": "zorder",
             "a": "alpha",
             "fs": "fontsize",
-            "ca": "center_align",
+            "ha": "horizontalalignment",
+            "va": "verticalalignment",
         }
+
+    def _get_default_kwargs(self):
+        return {"z": 10, "ha": "center", "va": "center"}
 
 class FillBetween(Plottable):
     """

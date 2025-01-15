@@ -166,7 +166,7 @@ class Step(Line):
     def plot(self, axis: matplotlib.axes.Axes):
         axis.step(*self._args, **self._kwargs)
 
-class Circle(Line):
+class Circle(Plottable):
     """
     See
     https://matplotlib.org/stable/api/_as_gen/matplotlib.patches.Circle.html
@@ -174,11 +174,12 @@ class Circle(Line):
     https://matplotlib.org/stable/gallery/shapes_and_collections/artist_reference.html
     """
     def plot(self, axis: matplotlib.axes.Axes):
-        default_lw = matplotlib.rcParams["lines.linewidth"]
-        self._kwargs.setdefault("lw", default_lw)
-        self._kwargs.setdefault("fill", False)
         circle = matplotlib.patches.Circle(*self._args, **self._kwargs)
         axis.add_artist(circle)
+
+    def _get_default_kwargs(self):
+        default_lw = matplotlib.rcParams["lines.linewidth"]
+        return {"z": 10, "ec": "b", "fc": "w", "lw": default_lw}
 
     def _get_handle_args(self):
         return [[np.nan, np.nan], np.nan]

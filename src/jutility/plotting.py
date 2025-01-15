@@ -85,9 +85,7 @@ class Plottable:
         return (self.get_label() is not None)
 
     def __repr__(self):
-        args_str = ", ".join(repr(a) for a in self._args)
-        kwargs_str = util.format_dict(self._kwargs, ", ", "=")
-        return ("%s(%s, %s)" % (type(self).__name__, args_str, kwargs_str))
+        return util.format_type(type(self), **self._kwargs)
 
 class Line(Plottable):
     """

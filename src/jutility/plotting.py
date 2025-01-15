@@ -564,6 +564,12 @@ class ColourPicker:
         self._colours = [self._cmap(i) for i in cmap_sample_points]
         self.reset()
 
+    @classmethod
+    def from_colourise(cls, plottables: list[Plottable], *args, **kwargs):
+        self = cls(len(plottables), *args, **kwargs)
+        self.colourise(plottables)
+        return self
+
     def colourise(
         self,
         plottables: list[Plottable],

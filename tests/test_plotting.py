@@ -218,10 +218,18 @@ def test_colour_picker_colourise():
     lines.append(nd.plot(label="NoisyData"))
     cp = plotting.ColourPicker(len(lines))
     cp.colourise(lines)
-    mp = plotting.plot(
+    plotting.plot(
         *lines,
         plotting.Legend.from_plottables(*lines, z=50),
         plot_name="test_colour_picker_colourise",
+        dir_name=OUTPUT_DIR,
+    )
+
+    plotting.ColourPicker.from_colourise(lines, False)
+    plotting.plot(
+        *lines,
+        plotting.Legend.from_plottables(*lines, z=50),
+        plot_name="test_colour_picker_from_colourise",
         dir_name=OUTPUT_DIR,
     )
 

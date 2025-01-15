@@ -614,22 +614,19 @@ def test_axline():
     )
 
 def test_circle():
-    rng = util.Seeder().get_rng("test_circle")
-    num_circles = 10
-    cp = plotting.ColourPicker(num_circles)
     plotting.plot(
-        *[
-            plotting.Circle(
-                rng.uniform(-1, 1, 2),
-                np.exp(rng.uniform(-1, 1)),
-                c=cp(i),
-            )
-            for i in range(num_circles)
-        ],
-        xlim=[-5, 5],
-        ylim=[-5, 5],
+        plotting.AxLine([0, 0], [1, 1]),
+        plotting.Circle([0.0, 0.0], 0.1),
+        plotting.Circle([0.1, 0.1], 0.1, fill=False),
+        plotting.Circle([0.2, 0.2], 0.1, fc=None),
+        plotting.Circle([0.3, 0.3], 0.1, ec=None),
+        plotting.Circle([0.4, 0.4], 0.1, lw=5),
+        plotting.Circle([0.5, 0.5], 0.1, ec="g"),
+        plotting.Circle([0.6, 0.6], 0.1, fc="r"),
+        plotting.Circle([0.7, 0.7], 0.1, fc=[0, 1, 0], ec=None),
         axis_equal=True,
-        grid=False,
+        xlim=[-0.2, 1],
+        ylim=[-0.2, 1],
         plot_name="test_circle",
         dir_name=OUTPUT_DIR,
     )

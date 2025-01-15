@@ -406,7 +406,7 @@ def test_time_format():
         )
 
 def test_timer_context():
-    printer = util.Printer("test_timer", dir_name=OUTPUT_DIR)
+    printer = util.Printer("test_timer_context", dir_name=OUTPUT_DIR)
     sleep_interval = 0.01
 
     with util.Timer("sleep", printer) as t:
@@ -419,20 +419,59 @@ def test_timer_context():
 
     assert t.time_taken >= sleep_interval
 
-    with util.Timer("sleep 2", printer, verbose=True) as t:
-        time.sleep(sleep_interval)
-
-    assert t.time_taken >= sleep_interval
-
-    with util.Timer("hline", printer, hline=True) as t:
-        printer("In Timer context")
-        time.sleep(sleep_interval)
-
-    assert t.time_taken >= sleep_interval
-
     with util.Timer("name 1", printer) as t:
         time.sleep(sleep_interval)
         t.set_name("name 2")
+
+def test_timer_verbose():
+    printer = util.Printer("test_timer_verbose", dir_name=OUTPUT_DIR)
+    sleep_interval = 0.01
+
+    with util.Timer("1", printer=printer):
+        printer("In Timer context")
+        time.sleep(sleep_interval)
+
+    printer.hline("*", 40)
+
+    with util.Timer("2", verbose=True, printer=printer):
+        printer("In Timer context")
+        time.sleep(sleep_interval)
+
+    printer.hline("*", 40)
+
+    with util.Timer("3", verbose=False, printer=printer):
+        printer("In Timer context")
+        time.sleep(sleep_interval)
+
+    printer.hline("*", 40)
+
+    with util.Timer("4", hline=True, printer=printer):
+        printer("In Timer context")
+        time.sleep(sleep_interval)
+
+    timer_output = printer.read()
+    assert timer_output == (
+        "In Timer context\n"
+        "Time taken for `1` = %s seconds\n"
+        "****************************************\n"
+        "In Timer context\n"
+        "Time taken for `2` = %s seconds\n"
+        "****************************************\n"
+        "In Timer context\n"
+        "****************************************\n"
+        "--------------------------------------------------"
+        "--------------------------------------------------\n"
+        "Starting timer for `4`...\n"
+        "In Timer context\n"
+        "Time taken for `4` = %s seconds\n"
+        "--------------------------------------------------"
+        "--------------------------------------------------\n"
+        % (
+            util.extract_substring(timer_output, "for `1` = ", " seconds"),
+            util.extract_substring(timer_output, "for `2` = ", " seconds"),
+            util.extract_substring(timer_output, "for `4` = ", " seconds"),
+        )
+    )
 
 def test_intervals():
     printer = util.Printer("test_intervals", dir_name=OUTPUT_DIR)

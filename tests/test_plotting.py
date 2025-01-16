@@ -29,6 +29,13 @@ def test_plottable_repr():
     assert repr(line) == "Line(alpha=0.8, color='g', ls='--', zorder=23)"
     assert repr(scatter) == "Scatter(color='r', zorder=10)"
 
+def test_subplot_repr():
+    line = plotting.Line([1, 2], [3, 4], c="g")
+    assert repr(plotting.Subplot(line)) == "Subplot()"
+    assert repr(plotting.Subplot(line, title="Subplot title")) == (
+        "Subplot(title='Subplot title')"
+    )
+
 def test_line_shapes_defaults():
     nx = 150
     nf = 3

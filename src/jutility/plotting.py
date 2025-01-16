@@ -872,12 +872,16 @@ class Subplot:
     ):
         self._lines = lines
         self._axis_properties = AxisProperties(**axis_kwargs)
+        self._kwargs = axis_kwargs
 
     def plot(self, axis: matplotlib.axes.Axes):
         for line in self._lines:
             line.plot(axis)
 
         self._axis_properties.apply(axis)
+
+    def __repr__(self):
+        return util.format_type(type(self), **self._kwargs)
 
 class LegendSubplot(Subplot):
     """

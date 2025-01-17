@@ -3,9 +3,9 @@ from jutility import util
 class PropertyDict:
     def __init__(self, **kwargs):
         self._kwargs = kwargs
-        self._set_defaults()
+        self._init_defaults()
 
-    def _set_defaults(self):
+    def _init_defaults(self):
         return
 
     def _has(self, name):

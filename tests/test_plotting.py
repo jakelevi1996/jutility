@@ -1472,3 +1472,13 @@ def test_arrow():
         plot_name="test_arrow",
         dir_name=OUTPUT_DIR,
     )
+
+def test_bad_axis_properties():
+    mp = plotting.MultiPlot(
+        plotting.Subplot(
+            plotting.Line([1, 3, 2]),
+            bad_kwarg="something",
+        ),
+    )
+    with pytest.raises(ValueError):
+        mp.save("test_bad_axis_properties", OUTPUT_DIR)

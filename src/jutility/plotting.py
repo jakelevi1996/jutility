@@ -837,6 +837,9 @@ class Subplot:
         properties.apply(axis)
         properties.check_unused_kwargs()
 
+    def set_options(self, **kwargs):
+        self._kwargs.update(kwargs)
+
     def __repr__(self):
         return util.format_type(type(self), **self._kwargs)
 

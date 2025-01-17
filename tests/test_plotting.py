@@ -1488,3 +1488,29 @@ def test_bad_axis_properties():
     )
     with pytest.raises(ValueError):
         mp.save("test_bad_axis_properties", OUTPUT_DIR)
+
+def test_subplot_set_options():
+    test_name = "test_subplot_set_options"
+    sp = plotting.Subplot(plotting.Line([1, 3, 2]))
+    assert repr(sp) == "Subplot()"
+
+    mp1 = plotting.MultiPlot(sp)
+    mp1.save(test_name, OUTPUT_DIR)
+    im1 = mp1.get_image_array()
+
+    sp.set_options(colour="r")
+    assert repr(sp) == "Subplot(colour='r')"
+
+    mp2 = plotting.MultiPlot(sp)
+    mp2.save(test_name + "_red", OUTPUT_DIR)
+    im2 = mp2.get_image_array()
+
+    assert      np.all(im1 == im1)
+    assert not  np.all(im1 == im2)
+
+    sp.set_options(bad_kwarg="something")
+    assert repr(sp) == "Subplot(bad_kwarg='something', colour='r')"
+
+    mp3 = plotting.MultiPlot(sp)
+    with pytest.raises(ValueError):
+        mp3.save(test_name + "bad", OUTPUT_DIR)

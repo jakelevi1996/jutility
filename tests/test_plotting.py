@@ -117,17 +117,23 @@ def test_legend():
 def test_plot_bar():
     x1 = "Red" * 10
     x2 = "Green" * 5
-    mp = plotting.plot(
-        plotting.Bar(x1, 3.1, color="r", zorder=10, label="Bar 1"),
-        plotting.Bar(x2, 4.3, color="g", zorder=10, label="Bar 2"),
-        plot_name="test_plot_bar",
-        dir_name=OUTPUT_DIR,
-        xlabel="Category",
-        ylabel="Height",
-        rotate_xticklabels=True,
-        legend=True,
-    )
-    assert os.path.isfile(mp.full_path)
+    results = dict()
+    for rotate in [True, False]:
+        mp = plotting.plot(
+            plotting.Bar(x1, 3.1, color="r", zorder=10, label="Bar 1"),
+            plotting.Bar(x2, 4.3, color="g", zorder=10, label="Bar 2"),
+            plot_name="test_plot_bar %s" % rotate,
+            dir_name=OUTPUT_DIR,
+            xlabel="Category",
+            ylabel="Height",
+            rotate_xticklabels=rotate,
+            legend=True,
+        )
+        results[rotate] = mp.get_image_array()
+
+    assert      np.all(results[True ] == results[True ])
+    assert      np.all(results[False] == results[False])
+    assert not  np.all(results[True ] == results[False])
 
 def test_log_axes():
     x1 = [1, 2, 3, 4, 5, 6]

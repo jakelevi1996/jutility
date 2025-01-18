@@ -691,7 +691,7 @@ class FigureProperties:
         title=None,
         title_font_size=25,
         title_colour=None,
-        wrap_title=True,
+        title_wrap_len=None,
         top_space=None,
         bottom_space=None,
         legend: "FigureLegend"=None,
@@ -716,8 +716,12 @@ class FigureProperties:
         if constrained_layout:
             tight_layout = False
             layout = "constrained"
-        if (title is not None) and wrap_title:
-            title = util.wrap_string(title)
+        if title_wrap_len is not None:
+            title = util.wrap_string(
+                title,
+                max_len=title_wrap_len,
+                wrap_len=title_wrap_len,
+            )
 
         self._num_rows = num_rows
         self._num_cols = num_cols

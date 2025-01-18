@@ -762,7 +762,7 @@ def format_dict(
     )
     return prefix + items_str + suffix
 
-def format_type(input_type: type, *args, **kwargs):
+def format_type(input_type: type, *args, val_fmt="%r", **kwargs):
     type_str = input_type.__name__
     prefix = type_str + "("
     if len(args) > 0:
@@ -772,6 +772,7 @@ def format_type(input_type: type, *args, **kwargs):
 
     return format_dict(
         input_dict=kwargs,
+        val_fmt=val_fmt,
         prefix=prefix,
         suffix=")",
     )

@@ -29,6 +29,55 @@ def test_print_help():
     parser = get_parser()
     parser.print_help(printer.get_file())
 
+    assert printer.read() == (
+        "usage: run_pytest_script.py [-h] [--int INT] [--float FLOAT]\n"
+        "                            [--list [LIST ...]] [--none NONE] "
+        "[--true TRUE]\n"
+        "                            [--false FALSE] [--no_abbrev "
+        "NO_ABBREV]\n"
+        "                            [--Adam.lr ADAM.LR]\n"
+        "                            [--Adam.beta ADAM.BETA ADAM.BETA]\n"
+        "\n"
+        "options:\n"
+        "  -h, --help            show this help message and exit\n"
+        "  --int INT             default=10, type=<class 'int'>\n"
+        "  --float FLOAT         default=-4.7, type=<class 'float'>\n"
+        "  --list [LIST ...]     default=[30, 20, 10], nargs='*', "
+        "type=<class 'int'>\n"
+        "  --none NONE           default=None\n"
+        "  --true TRUE           default=True\n"
+        "  --false FALSE         default=False\n"
+        "  --no_abbrev NO_ABBREV\n"
+        "                        default='random'\n"
+        "  --Adam.lr ADAM.LR     default=0.001, type=<class 'float'>\n"
+        "  --Adam.beta ADAM.BETA ADAM.BETA\n"
+        "                        default=[0.9, 0.999], nargs=2, "
+        "type=<class 'float'>\n"
+    )
+
+    printer = util.Printer("test_print_help_boolean", OUTPUT_DIR)
+    parser = cli.Parser(
+        cli.BooleanArg("a"),
+        cli.BooleanArg("b", default=True),
+        cli.BooleanArg("c", default=False),
+        cli.BooleanArg("d", default=False, help="help message for d"),
+        cli.Arg("x", type=float, default=1.23),
+    )
+    parser.print_help(printer.get_file())
+    assert printer.read() == (
+        "usage: run_pytest_script.py [-h] [--a | --no-a] [--b | --no-b] "
+        "[--c | --no-c]\n"
+        "                            [--d | --no-d] [--x X]\n"
+        "\n"
+        "options:\n"
+        "  -h, --help   show this help message and exit\n"
+        "  --a, --no-a  (default: None)\n"
+        "  --b, --no-b  (default: True)\n"
+        "  --c, --no-c  (default: False)\n"
+        "  --d, --no-d  help message for d (default: False)\n"
+        "  --x X        default=1.23, type=<class 'float'>\n"
+    )
+
 def test_parse():
     printer = util.Printer("test_parse", OUTPUT_DIR)
 

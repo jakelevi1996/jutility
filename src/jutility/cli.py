@@ -25,11 +25,10 @@ class Arg:
         See
         https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.add_argument
         """
-        self.argparse_kwargs = argparse_kwargs
+        self.kwargs = argparse_kwargs
         self.args: list[Arg] = []
         self.init_names(name, tag, tagged)
-        if (len(argparse_kwargs) > 0) and ("help" not in argparse_kwargs):
-            argparse_kwargs["help"] = util.format_dict(argparse_kwargs)
+        self.init_help()
 
     def init_names(self, name: str, tag: str, tagged: bool):
         self.name = name
@@ -38,6 +37,10 @@ class Arg:
         self.full_name: str = None
         self.full_tag:  str = None
         self.fixed_tag = True if (tag is not None) else False
+
+    def init_help(self):
+        if ((len(self.kwargs) > 0) and ("help" not in self.kwargs)):
+            self.kwargs["help"] = util.format_dict(self.kwargs)
 
     def register_names(self, arg_dict, parent: "Arg"=None):
         if self.full_name is not None:
@@ -111,7 +114,7 @@ class Arg:
         return False
 
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
-        parser.add_argument("--" + self.full_name, **self.argparse_kwargs)
+        parser.add_argument("--" + self.full_name, **self.kwargs)
 
     def init_object(self, parsed_args_dict):
         return parsed_args_dict[self.full_name]
@@ -130,15 +133,22 @@ class Arg:
 
 class PositionalArg(Arg):
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
-        parser.add_argument(self.full_name, **self.argparse_kwargs)
+        parser.add_argument(self.full_name, **self.kwargs)
 
 class BooleanArg(Arg):
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         parser.add_argument(
             "--" + self.full_name,
             action=argparse.BooleanOptionalAction,
-            **self.argparse_kwargs,
+            **self.kwargs,
         )
+
+    def init_help(self):
+        if "help" not in self.kwargs:
+            if "default" in self.kwargs:
+                self.kwargs["help"] = ""
+            else:
+                self.kwargs["help"] = "(default: None)"
 
 class ObjectArg(Arg):
     def __init__(

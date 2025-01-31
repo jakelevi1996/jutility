@@ -965,7 +965,7 @@ class _Model:
         self.encoder            = encoder
 
     def __repr__(self):
-        arg_str = util.format_dict(vars(self), ", ", "=")
+        arg_str = util.format_dict(vars(self))
         return "%s(%s)" % (type(self).__name__, arg_str)
 
 class Mlp(_Model):

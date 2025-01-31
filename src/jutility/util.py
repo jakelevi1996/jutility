@@ -744,10 +744,8 @@ def extract_substring(s, prefix, suffix, offset=None, strip=True):
 
 def format_dict(
     input_dict: dict,
+    item_fmt="%s=%r",
     item_sep=", ",
-    kv_sep="=",
-    key_fmt="%s",
-    val_fmt="%r",
     prefix="",
     suffix="",
     key_order=None,
@@ -755,14 +753,13 @@ def format_dict(
     if key_order is None:
         key_order = sorted(input_dict.keys())
 
-    item_fmt = key_fmt + kv_sep + val_fmt
     items_str = item_sep.join(
         item_fmt % (k, input_dict[k])
         for k in key_order
     )
     return prefix + items_str + suffix
 
-def format_type(input_type: type, *args, val_fmt="%r", **kwargs):
+def format_type(input_type: type, *args, item_fmt="%s=%r", **kwargs):
     type_str = input_type.__name__
     prefix = type_str + "("
     if len(args) > 0:
@@ -772,7 +769,7 @@ def format_type(input_type: type, *args, val_fmt="%r", **kwargs):
 
     return format_dict(
         input_dict=kwargs,
-        val_fmt=val_fmt,
+        item_fmt=item_fmt,
         prefix=prefix,
         suffix=")",
     )

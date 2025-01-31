@@ -1205,16 +1205,16 @@ def test_format_dict():
     assert util.format_dict(d) == (
         "0=0.0, 1=0.5, 2=2.0, 3=4.5"
     )
-    assert util.format_dict(d, " | ", "->") == (
+    assert util.format_dict(d, "%s->%r", " | ") == (
         "0->0.0 | 1->0.5 | 2->2.0 | 3->4.5"
     )
     assert util.format_dict(d, key_order=["3", "2", "1"]) == (
         "3=4.5, 2=2.0, 1=0.5"
     )
-    assert util.format_dict(d, key_fmt="f(%s)", val_fmt="%.2f") == (
+    assert util.format_dict(d, "f(%s)=%.2f") == (
         "f(0)=0.00, f(1)=0.50, f(2)=2.00, f(3)=4.50"
     )
-    assert util.format_dict(d, prefix="P(", suffix=")", key_fmt="x_%s") == (
+    assert util.format_dict(d, "x_%s=%r", prefix="P(", suffix=")") == (
         "P(x_0=0.0, x_1=0.5, x_2=2.0, x_3=4.5)"
     )
 
@@ -1235,4 +1235,7 @@ def test_format_type():
     )
     assert util.format_type(ExampleClass) == (
         "ExampleClass()"
+    )
+    assert util.format_type(ExampleClass, a=1.2, b=2, item_fmt="%s=%.3f") == (
+        "ExampleClass(a=1.200, b=2.000)"
     )

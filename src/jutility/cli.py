@@ -455,7 +455,7 @@ class ParsedArgs:
         self._arg_dict.update(arg_dict)
 
     def __repr__(self):
-        arg_str = util.format_dict(self._arg_dict, ", ", "=")
+        arg_str = util.format_dict(self._arg_dict)
         return "%s(%s)" % (type(self).__name__, arg_str)
 
 class _Verbose:

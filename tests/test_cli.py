@@ -5,7 +5,7 @@ import test_utils
 OUTPUT_DIR = test_utils.get_output_dir("test_cli")
 
 def get_parser():
-    parser = cli.ObjectParser(
+    parser = cli.Parser(
         cli.Arg("int",   "in", default=10,            type=int),
         cli.Arg("float",       default=-4.7,          type=float),
         cli.Arg("list",        default=[30, 20, 10],  type=int, nargs="*"),
@@ -107,7 +107,7 @@ def test_init_object():
     assert optimiser.inner_params == [20, 30]
 
 def get_nested_object_parser():
-    parser = cli.ObjectParser(
+    parser = cli.Parser(
         cli.Arg("num_epochs", "ne", type=int, default=10),
         cli.ObjectArg(
             Mlp,
@@ -320,7 +320,7 @@ def test_get_update_args():
     }
 
 def get_object_choice_parser():
-    parser = cli.ObjectParser(
+    parser = cli.Parser(
         cli.Arg("seed",         "se", type=int, default=0),
         cli.Arg("num_epochs",   "ne", type=int, default=10),
         cli.ObjectChoice(
@@ -436,7 +436,7 @@ def test_object_choice_init():
         def __init__(self, **kwargs):
             self.kwargs = kwargs
 
-    parser = cli.ObjectParser(
+    parser = cli.Parser(
         cli.ObjectChoice(
             "top",
             cli.ObjectArg(
@@ -472,7 +472,7 @@ def test_object_choice_init():
     assert b.kwargs == {"x": 40, "y": 30}
 
 def get_nested_object_choice_parser():
-    parser = cli.ObjectParser(
+    parser = cli.Parser(
         cli.Arg("seed",         "se", type=int, default=0),
         cli.Arg("num_epochs",   "ne", type=int, default=10),
         cli.ObjectChoice(
@@ -579,7 +579,7 @@ def test_reset_object_cache():
         def __repr__(self):
             return "C(x=%s)" % self.x
 
-    parser = cli.ObjectParser(
+    parser = cli.Parser(
         cli.ObjectArg(
             C,
             cli.Arg("x", default=3),
@@ -673,12 +673,12 @@ def test_reset_object_cache_nested():
 
 def test_duplicate_names():
     with pytest.raises(ValueError):
-        cli.ObjectParser(
+        cli.Parser(
             cli.Arg("arg_name", type=int),
             cli.Arg("arg_name", type=float),
         )
     with pytest.raises(ValueError):
-        cli.ObjectParser(
+        cli.Parser(
             cli.ObjectArg(
                 Mlp,
                 cli.Arg("arg_name"),
@@ -691,7 +691,7 @@ def test_duplicate_names():
             ),
         )
     with pytest.raises(ValueError):
-        cli.ObjectParser(
+        cli.Parser(
             cli.ObjectChoice(
                 "model",
                 cli.ObjectArg(Mlp),
@@ -699,7 +699,7 @@ def test_duplicate_names():
             ),
         )
     with pytest.raises(ValueError):
-        cli.ObjectParser(
+        cli.Parser(
             cli.ObjectChoice(
                 "model",
                 cli.ObjectArg(Mlp, name="arg_name"),
@@ -712,7 +712,7 @@ def test_duplicate_names():
 def test_arg_registered_twice():
     arg = cli.Arg("learning_rate", "lr", type=float, default=1e-3)
     with pytest.raises(RuntimeError):
-        parser = cli.ObjectParser(
+        parser = cli.Parser(
             cli.ObjectArg(
                 Adam,
                 arg,
@@ -722,7 +722,7 @@ def test_arg_registered_twice():
 
     arg = cli.Arg("learning_rate", "lr", type=float, default=1e-3)
     with pytest.raises(RuntimeError):
-        parser = cli.ObjectParser(
+        parser = cli.Parser(
             arg,
             cli.ObjectArg(
                 Adam,
@@ -737,7 +737,7 @@ def test_cli_verbose():
         def __init__(self, a, b):
             self.data = [a, b]
 
-    parser = cli.ObjectParser(
+    parser = cli.Parser(
         cli.ObjectArg(
             A,
             cli.Arg("a", default=3, type=int),
@@ -807,7 +807,7 @@ def test_object_choice_nested_tags():
         def __repr__(self):
             return "F(g=%r)" % self.g
 
-    parser = cli.ObjectParser(
+    parser = cli.Parser(
         cli.ObjectChoice(
             "model",
             cli.ObjectArg(
@@ -893,7 +893,7 @@ def test_init_ignores():
         def forward(self):
             return self.x
 
-    parser = cli.ObjectParser(
+    parser = cli.Parser(
         cli.ObjectChoice(
             "model",
             cli.ObjectArg(C),
@@ -998,7 +998,7 @@ def test_cache_object_choice():
         def __repr__(self):
             return "C(c=%r, y=%i)" % (self.c, self.y)
 
-    parser = cli.ObjectParser(
+    parser = cli.Parser(
         cli.ObjectArg(C, cli.Arg("x", type=int)),
         cli.ObjectChoice(
             "model",
@@ -1068,7 +1068,7 @@ def test_update_args_reset_cache():
         def __repr__(self):
             return "C(x=%i)" % self.x
 
-    parser = cli.ObjectParser(
+    parser = cli.Parser(
         cli.ObjectArg(C, cli.Arg("x", type=int)),
     )
     args = parser.parse_args(["--C.x", "2"])
@@ -1133,7 +1133,7 @@ def test_nested_verbose():
         def __repr__(self):
             return "C(x=%i)" % self.x
 
-    parser = cli.ObjectParser(
+    parser = cli.Parser(
         cli.ObjectArg(C, cli.Arg("x", type=int), name="c1"),
         cli.ObjectArg(C, cli.Arg("x", type=int), name="c2"),
         cli.ObjectArg(C, cli.Arg("x", type=int), name="c3"),
@@ -1184,7 +1184,7 @@ def test_parsedargs_update_allow_new_keys():
         def __repr__(self):
             return "C(x=%i)" % self.x
 
-    parser = cli.ObjectParser(
+    parser = cli.Parser(
         cli.ObjectArg(C, cli.Arg("x", type=int), name="c1"),
         cli.ObjectArg(C, cli.Arg("x", type=int), name="c2"),
         cli.ObjectArg(C, cli.Arg("x", type=int), name="c3"),
@@ -1227,7 +1227,7 @@ def test_positional_args():
         def __init__(self, y: float):
             self.y = y
 
-    parser = cli.ObjectParser(
+    parser = cli.Parser(
         cli.PositionalArg("a", type=int),
         cli.PositionalArg("b", type=int, default=3, nargs="?"),
         cli.Arg("c", type=int, default=4),
@@ -1259,28 +1259,28 @@ def test_positional_args():
     assert args.get_kwargs() == {"a": 5, "b": 6, "c": 7}
 
 def test_autotag_edge_cases():
-    parser = cli.ObjectParser(
+    parser = cli.Parser(
         cli.Arg("ab_c", default=123),
         cli.Arg("a_bc", default=456),
     )
     args = parser.parse_args([])
     assert cli.get_args_summary(args) == "a456ab123"
 
-    parser = cli.ObjectParser(
+    parser = cli.Parser(
         cli.Arg("abc", default=123),
         cli.Arg("ABC", default=456),
     )
     args = parser.parse_args([])
     assert cli.get_args_summary(args) == "abc123abc456"
 
-    parser = cli.ObjectParser(
+    parser = cli.Parser(
         cli.Arg("abc",  default=123),
         cli.Arg("abcd", default=456),
     )
     args = parser.parse_args([])
     assert cli.get_args_summary(args) == "abc123abcd456"
 
-    parser = cli.ObjectParser(
+    parser = cli.Parser(
         cli.Arg("abc",  default=123),
         cli.Arg("abcd", default=456),
         cli.Arg("ABC",  default=789),
@@ -1288,7 +1288,7 @@ def test_autotag_edge_cases():
     args = parser.parse_args([])
     assert cli.get_args_summary(args) == "abc123abc789abcd456"
 
-    parser = cli.ObjectParser(
+    parser = cli.Parser(
         cli.Arg("abc",  default=123),
         cli.Arg("abcd", default=456),
         cli.Arg("ABC",  default=789, tag="abc"),
@@ -1296,7 +1296,7 @@ def test_autotag_edge_cases():
     args = parser.parse_args([])
     assert cli.get_args_summary(args) == "abc123abc789abcd456"
 
-    parser = cli.ObjectParser(
+    parser = cli.Parser(
         cli.Arg("abc",  default=123),
         cli.Arg("abcd", default=456),
         cli.Arg("ABC",  default=789, tag="abc_"),
@@ -1304,7 +1304,7 @@ def test_autotag_edge_cases():
     args = parser.parse_args([])
     assert cli.get_args_summary(args) == "abc123abc789abcd456"
 
-    parser = cli.ObjectParser(
+    parser = cli.Parser(
         cli.Arg("abc",  default=123),
         cli.Arg("abcd", default=456),
         cli.Arg("ABC",  default=789, tag="a_b_c"),
@@ -1312,28 +1312,28 @@ def test_autotag_edge_cases():
     args = parser.parse_args([])
     assert cli.get_args_summary(args) == "abc789abc123abcd456"
 
-    parser = cli.ObjectParser(
+    parser = cli.Parser(
         cli.Arg("abc", default=123),
         cli.Arg("abz", default=456),
     )
     args = parser.parse_args([])
     assert cli.get_args_summary(args) == "abc123abz456"
 
-    parser = cli.ObjectParser(
+    parser = cli.Parser(
         cli.Arg("abc", default=123),
         cli.Arg("abzz", default=456),
     )
     args = parser.parse_args([])
     assert cli.get_args_summary(args) == "abc123abz456"
 
-    parser = cli.ObjectParser(
+    parser = cli.Parser(
         cli.Arg("abc", default=123),
         cli.Arg("azc", default=456),
     )
     args = parser.parse_args([])
     assert cli.get_args_summary(args) == "ab123az456"
 
-    parser = cli.ObjectParser(
+    parser = cli.Parser(
         cli.Arg("abc", default=123),
         cli.Arg("azz", default=456),
     )
@@ -1353,7 +1353,7 @@ def test_autotag_edge_cases():
         "plimits",
         "b",
     ]
-    parser = cli.ObjectParser(
+    parser = cli.Parser(
         cli.Arg("plim", default="plim", tag="plim"),
         *[
             cli.Arg(n, default=n)
@@ -1375,7 +1375,7 @@ def test_autotag_edge_cases_objectchoice():
         def __init__(self, y):
             self.y = y
 
-    parser = cli.ObjectParser(
+    parser = cli.Parser(
         cli.Arg("abc",  default=123),
         cli.Arg("abcd", default=456),
         cli.ObjectChoice(
@@ -1388,7 +1388,7 @@ def test_autotag_edge_cases_objectchoice():
     args = parser.parse_args([])
     assert cli.get_args_summary(args) == "abc123abcAabc.x78abcd456"
 
-    parser = cli.ObjectParser(
+    parser = cli.Parser(
         cli.Arg("abc",  default=123),
         cli.Arg("abcd", default=456),
         cli.ObjectChoice(
@@ -1402,7 +1402,7 @@ def test_autotag_edge_cases_objectchoice():
     args = parser.parse_args([])
     assert cli.get_args_summary(args) == "abcAabc.x78abc123abcd456"
 
-    parser = cli.ObjectParser(
+    parser = cli.Parser(
         cli.Arg("abc",  default=123),
         cli.Arg("abcd", default=456),
         cli.ObjectChoice(
@@ -1417,7 +1417,7 @@ def test_autotag_edge_cases_objectchoice():
 
     args = parser.parse_args(["--a_or_b", "B"])
     assert cli.get_args_summary(args) == "aBa.y90abc123abcd456"
-    parser = cli.ObjectParser(
+    parser = cli.Parser(
         cli.Arg("abc",  default=123),
         cli.Arg("abcd", default=456),
         cli.ObjectChoice(

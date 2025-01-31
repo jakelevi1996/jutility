@@ -320,7 +320,7 @@ class ObjectChoice(ObjectArg):
             ]
         )
 
-class ObjectParser:
+class Parser:
     def __init__(
         self,
         *args: Arg,
@@ -418,7 +418,7 @@ class ObjectParser:
         return "%s(\n%s,\n)" % (type(self).__name__, util.indent(description))
 
 class ParsedArgs:
-    def __init__(self, parser: ObjectParser, arg_dict: dict):
+    def __init__(self, parser: Parser, arg_dict: dict):
         self._parser = parser
         self._arg_dict = arg_dict
 

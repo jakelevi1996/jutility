@@ -23,7 +23,7 @@ def main(
     ...
 
 if __name__ == "__main__":
-    parser = cli.ObjectParser(
+    parser = cli.Parser(
         cli.Arg("x", type=float, default=3.45),
         cli.Arg("y", type=str,   default="\"default\""),
         cli.Arg("z", action="store_true"),

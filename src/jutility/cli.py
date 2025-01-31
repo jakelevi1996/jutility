@@ -144,9 +144,11 @@ class BooleanArg(Arg):
         )
 
     def init_help(self):
-        if "help" not in self.kwargs:
-            if "default" in self.kwargs:
-                self.kwargs["help"] = ""
+        if "default" in self.kwargs:
+            self.kwargs.setdefault("help", "")
+        else:
+            if "help" in self.kwargs:
+                self.kwargs["help"] += " (default: None)"
             else:
                 self.kwargs["help"] = "(default: None)"
 

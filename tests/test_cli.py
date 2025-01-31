@@ -60,21 +60,23 @@ def test_print_help():
         cli.BooleanArg("a"),
         cli.BooleanArg("b", default=True),
         cli.BooleanArg("c", default=False),
-        cli.BooleanArg("d", default=False, help="help message for d"),
+        cli.BooleanArg("d", help="help message for d"),
+        cli.BooleanArg("e", help="help message for e", default=False),
         cli.Arg("x", type=float, default=1.23),
     )
     parser.print_help(printer.get_file())
     assert printer.read() == (
         "usage: run_pytest_script.py [-h] [--a | --no-a] [--b | --no-b] "
         "[--c | --no-c]\n"
-        "                            [--d | --no-d] [--x X]\n"
+        "                            [--d | --no-d] [--e | --no-e] [--x X]\n"
         "\n"
         "options:\n"
         "  -h, --help   show this help message and exit\n"
         "  --a, --no-a  (default: None)\n"
         "  --b, --no-b  (default: True)\n"
         "  --c, --no-c  (default: False)\n"
-        "  --d, --no-d  help message for d (default: False)\n"
+        "  --d, --no-d  help message for d (default: None)\n"
+        "  --e, --no-e  help message for e (default: False)\n"
         "  --x X        default=1.23, type=<class 'float'>\n"
     )
 

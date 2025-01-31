@@ -1432,3 +1432,32 @@ def test_autotag_edge_cases_objectchoice():
 
     args = parser.parse_args(["--model", "B"])
     assert cli.get_args_summary(args) == "abc123abcd456mBm.y90"
+
+def test_boolean_arg():
+    parser = cli.Parser(
+        cli.BooleanArg("a"),
+        cli.BooleanArg("b", default=True),
+        cli.BooleanArg("c", default=False),
+        cli.Arg("x", type=float, default=1.23),
+    )
+    assert parser.parse_args([]).get_kwargs() == (
+        {"a": None, "b": True, "c": False, "x": 1.23}
+    )
+    assert parser.parse_args(["--a"]).get_kwargs() == (
+        {"a": True, "b": True, "c": False, "x": 1.23}
+    )
+    assert parser.parse_args(["--no-a"]).get_kwargs() == (
+        {"a": False, "b": True, "c": False, "x": 1.23}
+    )
+    assert parser.parse_args(["--b"]).get_kwargs() == (
+        {"a": None, "b": True, "c": False, "x": 1.23}
+    )
+    assert parser.parse_args(["--no-b"]).get_kwargs() == (
+        {"a": None, "b": False, "c": False, "x": 1.23}
+    )
+    assert parser.parse_args(["--c"]).get_kwargs() == (
+        {"a": None, "b": True, "c": True, "x": 1.23}
+    )
+    assert parser.parse_args(["--no-c"]).get_kwargs() == (
+        {"a": None, "b": True, "c": False, "x": 1.23}
+    )

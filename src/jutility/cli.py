@@ -132,6 +132,14 @@ class PositionalArg(Arg):
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         parser.add_argument(self.full_name, **self.argparse_kwargs)
 
+class BooleanArg(Arg):
+    def add_argparse_arguments(self, parser: argparse.ArgumentParser):
+        parser.add_argument(
+            "--" + self.full_name,
+            action=argparse.BooleanOptionalAction,
+            **self.argparse_kwargs,
+        )
+
 class ObjectArg(Arg):
     def __init__(
         self,

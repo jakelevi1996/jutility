@@ -1512,3 +1512,56 @@ def test_boolean_arg():
     assert parser.parse_args(["--no-c"]).get_kwargs() == (
         {"a": None, "b": True, "c": False, "x": 1.23}
     )
+
+def test_json_arg():
+    printer = util.Printer("test_json_arg", OUTPUT_DIR)
+
+    parser = cli.Parser(
+        cli.JsonArg("a"),
+        cli.JsonArg("b", required=True, nargs="+"),
+    )
+
+    parser.print_help(printer.get_file())
+    assert printer.read() == (
+        "usage: run_pytest_script.py [-h] [--a A] --b B [B ...]\n"
+        "\n"
+        "options:\n"
+        "  -h, --help     show this help message and exit\n"
+        "  --a A          Format: JSON string\n"
+        "  --b B [B ...]  nargs='+', required=True (format: JSON string)\n"
+    )
+
+    args = parser.parse_args(["--b", "3.4", '"abc"', "7", "[1, 2, 3]"])
+    a, b = args.get("a, b")
+    assert a is None
+    assert b == [3.4, "abc", 7, [1, 2, 3]]
+
+    args = parser.parse_args(["--b", "1.2", "--a", "3"])
+    a, b = args.get("a, b")
+    assert isinstance(a, int)
+    assert a == 3
+    assert b == [1.2]
+
+    args = parser.parse_args(["--b", "1.2", "--a", "4.5"])
+    a, b = args.get("a, b")
+    assert isinstance(a, float)
+    assert a == 4.5
+    assert b == [1.2]
+
+    args = parser.parse_args(["--b", "1.2", "--a", "[6, 7, 8]"])
+    a, b = args.get("a, b")
+    assert isinstance(a, list)
+    assert a == [6, 7, 8]
+    assert b == [1.2]
+
+    args = parser.parse_args(["--b", "1.2", "--a", "[6, 7, 8, [9, 10]]"])
+    a, b = args.get("a, b")
+    assert isinstance(a, list)
+    assert a == [6, 7, 8, [9, 10]]
+    assert b == [1.2]
+
+    args = parser.parse_args(["--b", "1.2", "--a", '"abc"'])
+    a, b = args.get("a, b")
+    assert isinstance(a, str)
+    assert a == "abc"
+    assert b == [1.2]

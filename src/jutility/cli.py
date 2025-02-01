@@ -1,4 +1,5 @@
 import argparse
+import json
 from jutility import util
 
 def init_object(args: "ParsedArgs", full_name, **extra_kwargs):
@@ -151,6 +152,22 @@ class BooleanArg(Arg):
                 self.kwargs["help"] += " (default: None)"
             else:
                 self.kwargs["help"] = "(default: None)"
+
+class JsonArg(Arg):
+    def add_argparse_arguments(self, parser: argparse.ArgumentParser):
+        parser.add_argument(
+            "--" + self.full_name,
+            type=json.loads,
+            **self.kwargs,
+        )
+
+    def init_help(self):
+        if ((len(self.kwargs) > 0) and ("help" not in self.kwargs)):
+            self.kwargs["help"] = util.format_dict(self.kwargs)
+        if "help" in self.kwargs:
+            self.kwargs["help"] += " (format: JSON string)"
+        else:
+            self.kwargs["help"] = "Format: JSON string"
 
 class ObjectArg(Arg):
     def __init__(

@@ -500,7 +500,7 @@ class ParsedArgs:
 class _Verbose:
     def __init__(self):
         self._verbosity = 0
-        self._printer = util.Printer()
+        self.set_printer(util.Printer())
 
     def display_init(self, object_type, kwargs: dict):
         arg_str = ", ".join("%s=%r" % (k, v) for k, v in kwargs.items())

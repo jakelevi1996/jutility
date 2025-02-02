@@ -20,12 +20,14 @@ class Arg:
         name: str,
         tag: str=None,
         tagged=True,
+        is_kwarg=True,
         **argparse_kwargs,
     ):
         """
         See
         https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.add_argument
         """
+        self._is_kwarg = is_kwarg
         self.kwargs = argparse_kwargs
         self.args: list[Arg] = []
         self.init_names(name, tag, tagged)
@@ -123,8 +125,8 @@ class Arg:
     def get_arg_dict_keys(self, parsed_args_dict):
         return [self.full_name]
 
-    def is_leaf(self) -> bool:
-        return True
+    def is_kwarg(self):
+        return self._is_kwarg
 
     def __repr__(self):
         return (
@@ -280,7 +282,7 @@ class ObjectArg(Arg):
             for name in arg.get_arg_dict_keys(parsed_args_dict)
         ]
 
-    def is_leaf(self) -> bool:
+    def is_kwarg(self):
         return False
 
 class ObjectChoice(ObjectArg):
@@ -442,7 +444,7 @@ class Parser:
         )
 
     def get_kwarg_names(self):
-        return [arg.name for arg in self._arg_list if arg.is_leaf()]
+        return [arg.name for arg in self._arg_list if arg.is_kwarg()]
 
     def reset_object_cache(self):
         self._check_parsed()

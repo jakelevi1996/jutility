@@ -464,13 +464,8 @@ class ParsedArgs:
     def get_parser(self):
         return self._parser
 
-    def get(self, keys_csv: str, unpack_single=True):
-        keys = [s.strip() for s in keys_csv.split(",")]
-        if (len(keys) == 1) and unpack_single:
-            [k] = keys
-            return self._arg_dict[k]
-        else:
-            return [self._arg_dict[k] for k in keys]
+    def get(self, arg_name: str):
+        return self._arg_dict[arg_name]
 
     def get_kwargs(self):
         kwarg_names = self._parser.get_kwarg_names()

@@ -1317,18 +1317,15 @@ def test_positional_args():
         args = parser.parse_args([])
 
     args = parser.parse_args(["5"])
-    assert args.get("a, b, c") == [5, 3, 4]
     assert args.get_kwargs() == {"a": 5, "b": 3, "c": 4}
 
     args = parser.parse_args(["5", "6"])
-    assert args.get("a, b, c") == [5, 6, 4]
     assert args.get_kwargs() == {"a": 5, "b": 6, "c": 4}
 
     with pytest.raises(SystemExit):
         args = parser.parse_args(["5", "6", "7"])
 
     args = parser.parse_args(["5", "6", "--c", "7"])
-    assert args.get("a, b, c") == [5, 6, 7]
     assert args.get_kwargs() == {"a": 5, "b": 6, "c": 7}
 
 def test_autotag_edge_cases():
@@ -1554,36 +1551,42 @@ def test_json_arg():
     )
 
     args = parser.parse_args(["--b", "3.4", '"abc"', "7", "[1, 2, 3]"])
-    a, b = args.get("a, b")
+    a = args.get("a")
+    b = args.get("b")
     assert a is None
     assert b == [3.4, "abc", 7, [1, 2, 3]]
 
     args = parser.parse_args(["--b", "1.2", "--a", "3"])
-    a, b = args.get("a, b")
+    a = args.get("a")
+    b = args.get("b")
     assert isinstance(a, int)
     assert a == 3
     assert b == [1.2]
 
     args = parser.parse_args(["--b", "1.2", "--a", "4.5"])
-    a, b = args.get("a, b")
+    a = args.get("a")
+    b = args.get("b")
     assert isinstance(a, float)
     assert a == 4.5
     assert b == [1.2]
 
     args = parser.parse_args(["--b", "1.2", "--a", "[6, 7, 8]"])
-    a, b = args.get("a, b")
+    a = args.get("a")
+    b = args.get("b")
     assert isinstance(a, list)
     assert a == [6, 7, 8]
     assert b == [1.2]
 
     args = parser.parse_args(["--b", "1.2", "--a", "[6, 7, 8, [9, 10]]"])
-    a, b = args.get("a, b")
+    a = args.get("a")
+    b = args.get("b")
     assert isinstance(a, list)
     assert a == [6, 7, 8, [9, 10]]
     assert b == [1.2]
 
     args = parser.parse_args(["--b", "1.2", "--a", '"abc"'])
-    a, b = args.get("a, b")
+    a = args.get("a")
+    b = args.get("b")
     assert isinstance(a, str)
     assert a == "abc"
     assert b == [1.2]

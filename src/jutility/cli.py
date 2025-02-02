@@ -472,13 +472,9 @@ class ParsedArgs:
         else:
             return [self._arg_dict[k] for k in keys]
 
-    def get_kwargs(self, keys_csv: str=None):
-        if keys_csv is None:
-            keys = self._parser.get_kwarg_names()
-        else:
-            keys = [s.strip() for s in keys_csv.split(",")]
-
-        return {k: self._arg_dict[k] for k in keys}
+    def get_kwargs(self):
+        kwarg_names = self._parser.get_kwarg_names()
+        return {k: self._arg_dict[k] for k in kwarg_names}
 
     def update(self, arg_dict: dict, allow_new_keys=False):
         if not allow_new_keys:

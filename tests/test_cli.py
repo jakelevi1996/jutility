@@ -362,13 +362,35 @@ def test_get_update_args():
     default_args.update({"model.hidden_dim": 234})
     assert default_args.get("model.hidden_dim") == 234
 
-    assert default_args.get_kwargs("model.hidden_dim, num_epochs") == {
-        "model.hidden_dim": 234,
-        "num_epochs": 10,
-    }
-    assert default_args.get_kwargs() == {
-        "num_epochs": 10,
-    }
+def test_get_kwargs():
+    class C:
+        def __init__(self, x):
+            self.x = x
+
+    parser = cli.Parser(
+        cli.Arg("a", type=int, default=1),
+        cli.Arg("b", type=int, default=2),
+        cli.Arg("c", type=int, default=3, is_kwarg=False),
+        cli.ObjectArg(
+            C,
+            cli.Arg("x", default=4),
+        ),
+    )
+
+    args = parser.parse_args([])
+    assert args.get("a") == 1
+    assert args.get("b") == 2
+    assert args.get("c") == 3
+    assert args.get_kwargs() == {"a": 1, "b": 2}
+    c = cli.init_object(args, "C")
+    assert isinstance(c, C)
+    assert c.x == 4
+
+    args = parser.parse_args(["--a", "4", "--b", "5", "--c", "6"])
+    assert args.get("a") == 4
+    assert args.get("b") == 5
+    assert args.get("c") == 6
+    assert args.get_kwargs() == {"a": 4, "b": 5}
 
 def get_object_choice_parser():
     parser = cli.Parser(

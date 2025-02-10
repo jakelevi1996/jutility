@@ -1514,3 +1514,16 @@ def test_subplot_set_options():
     mp3 = plotting.MultiPlot(sp)
     with pytest.raises(ValueError):
         mp3.save(test_name + "bad", OUTPUT_DIR)
+
+def test_figure_legend_lines_no_data():
+    mp = plotting.MultiPlot(
+        plotting.Subplot(),
+        plotting.Subplot(),
+        legend=plotting.FigureLegend(
+            plotting.Line(c="b", marker="o", label="Target"),
+            plotting.Line(c="r", marker="o", label="Prediction"),
+        ),
+        title="Reconstructions",
+        figsize=[6, 4],
+    )
+    mp.save("test_figure_legend_lines_no_data", OUTPUT_DIR)

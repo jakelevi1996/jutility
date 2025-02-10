@@ -68,7 +68,7 @@ class Plottable:
     def _get_handle_args(self):
         return [
             None if (a is None) else [np.nan]
-            for a in self._args
+            for a in (self._args if (len(self._args) > 0) else [[]])
         ]
 
     def get_handle(self):

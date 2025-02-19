@@ -839,21 +839,27 @@ def merge_strings(input_list: list[str], clean=True):
 
     return output_str
 
-def get_unique_prefixes(*input_strings: str) -> dict[str, str]:
-    if len(input_strings) == 0:
+def get_unique_prefixes(
+    input_list: list[str],
+    forbidden: (set[str] | None)=None,
+    min_len: int=1,
+) -> dict[str, str]:
+    if len(input_list) == 0:
         return dict()
+    if forbidden is None:
+        forbidden = set()
 
-    remaining = set(input_strings)
+    remaining = set(input_list)
     prefix_dict = dict()
     max_len = max(len(s) for s in remaining)
 
-    for i in range(1, max_len):
+    for i in range(min_len, max_len):
         partial_dict = {s: s[:i] for s in remaining}
         partial_list = list(partial_dict.values())
         new_prefixes = {
             s: p
             for s, p in partial_dict.items()
-            if (partial_list.count(p) == 1)
+            if ((partial_list.count(p) == 1) and (p not in forbidden))
         }
         prefix_dict.update(new_prefixes)
         remaining -= set(new_prefixes.keys())

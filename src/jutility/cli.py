@@ -14,6 +14,70 @@ def get_arg_dict(args: "ParsedArgs"):
 def get_args_summary(args: "ParsedArgs", replaces=None):
     return args.get_parser().get_args_summary(replaces)
 
+class _ArgParent:
+    def _init_arg_list(self, arg_list: list["Arg"]):
+        self._arg_list = arg_list
+
+    def register_names(
+        self,
+        arg_dict: dict[str, "Arg"],
+        prefix: str,
+    ) -> dict[str, "Arg"]:
+        for arg in self._arg_list:
+            if arg.full_name is not None:
+                raise RuntimeError("%s is already registered" % arg)
+
+            arg.full_name = prefix + arg.name
+            if arg.full_name in arg_dict:
+                raise ValueError(
+                    "Found duplicates %s and %s"
+                    % (arg, arg_dict[arg.full_name])
+                )
+
+            arg_dict[arg.full_name] = arg
+            arg.register_names(arg_dict, arg.full_name + ".")
+
+        return arg_dict
+
+    def register_tags(
+        self,
+        tag_dict: dict[str, str],
+        prefix: str,
+    ) -> dict[str, str]:
+        for arg in self._arg_list:
+            if (arg.tagged and (arg.tag is not None)):
+                tag_dict[arg.full_name] = self._make_tag(prefix, arg.tag)
+
+        default_tag_dict = {
+            arg.full_name: self._make_tag(prefix, arg.name)
+            for arg in self._arg_list
+            if (arg.tagged and (arg.tag is None))
+        }
+        prefix_dict = util.get_unique_prefixes(
+            input_list=default_tag_dict.values(),
+            forbidden=set(tag_dict.values()),
+            min_len=(len(prefix) + 1),
+        )
+        for full_name, full_tag in default_tag_dict.items():
+            tag_dict[full_name] = prefix_dict[full_tag]
+
+        for arg in self._arg_list:
+            if arg.tagged:
+                arg_prefix = (
+                    prefix
+                    if self._hide_tag(arg)
+                    else tag_dict[arg.full_name] + "."
+                )
+                arg.register_tags(tag_dict, arg_prefix)
+
+        return tag_dict
+
+    def _make_tag(self, prefix: str, suffix: str) -> str:
+        return prefix + suffix.lower().replace("_", "")
+
+    def _hide_tag(self, arg: "Arg"):
+        return False
+
 class Arg:
     def __init__(
         self,

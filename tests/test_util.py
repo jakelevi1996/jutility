@@ -1239,3 +1239,41 @@ def test_format_type():
     assert util.format_type(ExampleClass, a=1.2, b=2, item_fmt="%s=%.3f") == (
         "ExampleClass(a=1.200, b=2.000)"
     )
+
+def test_get_unique_prefixes():
+    x = [
+        "abc",
+        "abcde",
+        "abcdf",
+        "bcdf",
+        "lmnopqrst",
+        "lmnop12345",
+        "copy",
+        "copy",
+        "duplicate_123456",
+        "duplicate_123456",
+        "duplicate_1234567",
+        "z",
+    ]
+    prefix_dict = util.get_unique_prefixes(x)
+    assert prefix_dict == {
+        "abc":                  "abc",
+        "abcde":                "abcde",
+        "abcdf":                "abcdf",
+        "bcdf":                 "b",
+        "copy":                 "c",
+        "duplicate_123456":     "duplicate_123456",
+        "duplicate_1234567":    "duplicate_1234567",
+        "lmnop12345":           "lmnop1",
+        "lmnopqrst":            "lmnopq",
+        "z":                    "z",
+    }
+    assert set(x) == set(prefix_dict.keys())
+
+    assert util.get_unique_prefixes([])      == dict()
+    assert util.get_unique_prefixes(["a"])   == {"a": "a"}
+    assert util.get_unique_prefixes(["abc"]) == {"abc": "a"}
+    assert util.get_unique_prefixes(["abc", "aba"]) == {
+        "abc": "abc",
+        "aba": "aba",
+    }

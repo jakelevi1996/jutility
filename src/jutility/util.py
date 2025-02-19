@@ -839,6 +839,30 @@ def merge_strings(input_list: list[str], clean=True):
 
     return output_str
 
+def get_unique_prefixes(input_list: list[str]) -> dict[str, str]:
+    if len(input_list) == 0:
+        return dict()
+
+    remaining = set(input_list)
+    prefix_dict = dict()
+    max_len = max(len(s) for s in remaining)
+
+    for i in range(1, max_len):
+        partial_dict = {s: s[:i] for s in remaining}
+        partial_list = list(partial_dict.values())
+        new_prefixes = {
+            s: p
+            for s, p in partial_dict.items()
+            if (partial_list.count(p) == 1)
+        }
+        prefix_dict.update(new_prefixes)
+        remaining -= set(new_prefixes.keys())
+        if len(remaining) == 0:
+            break
+
+    prefix_dict.update({s: s for s in remaining})
+    return prefix_dict
+
 def is_numeric(x):
     return any(isinstance(x, t) for t in [int, float, np.number])
 

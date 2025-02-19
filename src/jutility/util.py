@@ -839,11 +839,11 @@ def merge_strings(input_list: list[str], clean=True):
 
     return output_str
 
-def get_unique_prefixes(input_list: list[str]) -> dict[str, str]:
-    if len(input_list) == 0:
+def get_unique_prefixes(*input_strings: str) -> dict[str, str]:
+    if len(input_strings) == 0:
         return dict()
 
-    remaining = set(input_list)
+    remaining = set(input_strings)
     prefix_dict = dict()
     max_len = max(len(s) for s in remaining)
 

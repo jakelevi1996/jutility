@@ -78,11 +78,11 @@ class _ArgParent:
     def _hide_tag(self, arg: "Arg"):
         return False
 
-class Arg:
+class Arg(_ArgParent):
     def __init__(
         self,
         name: str,
-        tag: str=None,
+        tag: (str | None)=None,
         tagged=True,
         is_kwarg=True,
         **argparse_kwargs,
@@ -91,94 +91,24 @@ class Arg:
         See
         https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.add_argument
         """
+        self._init_arg_list([])
         self._is_kwarg = is_kwarg
         self.kwargs = argparse_kwargs
-        self.args: list[Arg] = []
-        self.init_names(name, tag, tagged)
+        self.init_name(name)
+        self.init_tag(tag, tagged)
         self.init_help()
 
-    def init_names(self, name: str, tag: str, tagged: bool):
+    def init_name(self, name: str):
         self.name = name
-        self.tag  = tag
+        self.full_name = None
+
+    def init_tag(self, tag: str | None, tagged: bool):
+        self.tag = tag
         self.tagged = tagged
-        self.full_name: str = None
-        self.full_tag:  str = None
-        self.fixed_tag = True if (tag is not None) else False
 
     def init_help(self):
         if ((len(self.kwargs) > 0) and ("help" not in self.kwargs)):
             self.kwargs["help"] = util.format_dict(self.kwargs)
-
-    def register_names(self, arg_dict, parent: "Arg"=None):
-        if self.full_name is not None:
-            raise RuntimeError("%s is already registered" % self)
-
-        if parent is None:
-            self.full_name = self.name
-            self.full_tag = self.tag
-        else:
-            self.full_name = "%s.%s" % (parent.full_name, self.name)
-            if parent.full_tag is not None:
-                if parent.hide_tag(self):
-                    self.full_tag = parent.full_tag
-                elif self.tag is not None:
-                    self.full_tag = "%s.%s" % (parent.full_tag, self.tag)
-
-        if self.full_name in arg_dict:
-            raise ValueError(
-                "Found duplicates %s and %s"
-                % (self, arg_dict[self.full_name])
-            )
-
-        arg_dict[self.full_name] = self
-
-        if self.full_tag is not None:
-            self.set_tags(self.args)
-        for arg in self.args:
-            arg.register_names(arg_dict, self)
-
-    @staticmethod
-    def set_tags(args: list["Arg"]):
-        fixed_tags = set(Arg.clean_tag(a.tag) for a in args if a.fixed_tag)
-        names_to_args = {
-            a.name: a
-            for a in args
-            if a.tagged and (not a.fixed_tag)
-        }
-        untagged_names = set(names_to_args.keys())
-        names_to_tags = {
-            name: Arg.clean_tag(name)
-            for name in names_to_args.keys()
-        }
-        if len(untagged_names) == 0:
-            return
-
-        max_len = max(len(name) for name in untagged_names)
-        for i in range(1, max_len):
-            partial_tag_dict = {
-                name: Arg.clean_tag(name[:i])
-                for name in untagged_names
-            }
-            partial_tags = list(partial_tag_dict.values())
-            new_tags = {
-                name: t
-                for name, t in partial_tag_dict.items()
-                if (partial_tags.count(t) == 1) and (t not in fixed_tags)
-            }
-            names_to_tags.update(new_tags)
-            untagged_names -= set(new_tags.keys())
-            if len(untagged_names) == 0:
-                break
-
-        for arg in names_to_args.values():
-            arg.tag = names_to_tags[arg.name]
-
-    @staticmethod
-    def clean_tag(tag: str):
-        return tag.lower().replace("_", "")
-
-    def hide_tag(self, arg: "Arg"):
-        return False
 
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         parser.add_argument("--" + self.full_name, **self.kwargs)
@@ -193,9 +123,10 @@ class Arg:
         return self._is_kwarg
 
     def __repr__(self):
-        return (
-            "%s(name=\"%s\", full_name=\"%s\", full_tag=\"%s\")"
-            % (type(self).__name__, self.name, self.full_name, self.full_tag)
+        return util.format_type(
+            type(self),
+            name=self.name,
+            full_name=self.full_name,
         )
 
 class PositionalArg(Arg):
@@ -241,7 +172,7 @@ class ObjectArg(Arg):
         object_type: type,
         *args: Arg,
         name: str=None,
-        tag: str=None,
+        tag: (str | None)=None,
         tagged=True,
         init_requires: list[str]=None,
         init_parsed_kwargs: dict=None,
@@ -252,8 +183,9 @@ class ObjectArg(Arg):
             name = object_type.__name__
 
         self.object_type = object_type
-        self.args = args
-        self.init_names(name, tag, tagged)
+        self._init_arg_list(args)
+        self.init_name(name)
+        self.init_tag(tag, tagged)
         self.set_init_attributes(
             init_requires,
             init_parsed_kwargs,
@@ -284,7 +216,7 @@ class ObjectArg(Arg):
 
     def get_protected_args(self):
         return (
-            set(arg.name for arg in self.args)
+            set(arg.name for arg in self._arg_list)
             | set(self.init_parsed_kwargs.keys())
             | set(self.init_const_kwargs.keys())
             | set(self.init_ignores)
@@ -316,7 +248,7 @@ class ObjectArg(Arg):
             )
 
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
-        for arg in self.args:
+        for arg in self._arg_list:
             arg.add_argparse_arguments(parser)
 
     def init_object(self, parsed_args_dict, **extra_kwargs):
@@ -328,7 +260,7 @@ class ObjectArg(Arg):
 
         kwargs = {
             arg.name: arg.init_object(parsed_args_dict)
-            for arg in self.args
+            for arg in self._arg_list
         }
         self.update_kwargs(kwargs, parsed_args_dict, extra_kwargs)
 
@@ -342,7 +274,7 @@ class ObjectArg(Arg):
     def get_arg_dict_keys(self, parsed_args_dict):
         return [
             name
-            for arg in self.args
+            for arg in self._arg_list
             for name in arg.get_arg_dict_keys(parsed_args_dict)
         ]
 
@@ -356,7 +288,7 @@ class ObjectChoice(ObjectArg):
         *choices: ObjectArg,
         shared_args: list[Arg]=None,
         default: str=None,
-        tag: str=None,
+        tag: (str | None)=None,
         tagged=True,
         init_requires: list[str]=None,
         init_parsed_kwargs: dict=None,
@@ -368,7 +300,8 @@ class ObjectChoice(ObjectArg):
 
         self.shared_args = shared_args
         self.default = default
-        self.init_names(name, tag, tagged)
+        self.init_name(name)
+        self.init_tag(tag, tagged)
         self.set_init_attributes(
             init_requires,
             init_parsed_kwargs,
@@ -376,7 +309,7 @@ class ObjectChoice(ObjectArg):
             init_ignores,
         )
 
-        self.args = tuple(choices) + tuple(shared_args)
+        self._init_arg_list(tuple(choices) + tuple(shared_args))
         self.choice_dict = {arg.name: arg for arg in choices}
         if (default is not None) and (default not in self.choice_dict):
             valid_names = [arg.name for arg in choices]
@@ -385,7 +318,7 @@ class ObjectChoice(ObjectArg):
                 % (type(self).__name__, name, default, valid_names)
             )
 
-    def hide_tag(self, arg: Arg):
+    def _hide_tag(self, arg: Arg):
         return (arg.name in self.choice_dict)
 
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
@@ -395,7 +328,7 @@ class ObjectChoice(ObjectArg):
             default=self.default,
             required=(True if (self.default is None) else False),
         )
-        for arg in self.args:
+        for arg in self._arg_list:
             arg.add_argparse_arguments(parser)
 
     def init_object(self, parsed_args_dict, **extra_kwargs):
@@ -423,7 +356,7 @@ class ObjectChoice(ObjectArg):
             ]
         )
 
-class Parser:
+class Parser(_ArgParent):
     def __init__(
         self,
         *args: Arg,
@@ -434,16 +367,9 @@ class Parser:
         https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser
         """
         self._parser_kwargs = parser_kwargs
-        self._arg_list: list[Arg] = []
-        self._arg_dict: dict[str, Arg] = dict()
+        self._init_arg_list(args)
+        self._arg_dict = self.register_names(dict(), "")
         self._parsed_args_dict: dict = None
-        self.add_arguments(*args)
-
-    def add_arguments(self, *args: Arg):
-        self._arg_list += list(args)
-        Arg.set_tags(self._arg_list)
-        for arg in args:
-            arg.register_names(self._arg_dict)
 
     def _get_argparse_parser(self):
         parser = argparse.ArgumentParser(**self._parser_kwargs)
@@ -493,17 +419,9 @@ class Parser:
 
     def get_args_summary(self, replaces=None):
         self._check_parsed()
-        arg_list = [
-            self._arg_dict[arg_name]
-            for arg_name in self.get_arg_dict().keys()
-        ]
         return util.abbreviate_dictionary(
-            self._parsed_args_dict,
-            key_abbreviations={
-                arg.full_name: arg.full_tag
-                for arg in arg_list
-                if arg.full_tag is not None
-            },
+            input_dict=self.get_arg_dict(),
+            key_abbreviations=self.register_tags(dict(), ""),
             replaces=replaces,
         )
 

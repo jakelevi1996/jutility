@@ -416,7 +416,7 @@ class ParsedArgs(_ArgParent):
     def get(self, arg_name: str):
         return self._arg_dict[arg_name].value
 
-    def get_kwargs(self):
+    def get_kwargs(self) -> dict:
         return {
             arg.name: arg.value
             for arg in self._arg_list

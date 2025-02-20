@@ -436,8 +436,11 @@ class Parser(_ArgParent):
             self._parsed_args_dict.pop(k)
 
     def __repr__(self):
-        description = ",\n".join(repr(arg) for arg in self._arg_dict.values())
-        return "%s(\n%s,\n)" % (type(self).__name__, util.indent(description))
+        return util.format_type(
+            type(self),
+            *self._arg_list,
+            **self._parser_kwargs,
+        )
 
 class ParsedArgs:
     def __init__(self, parser: Parser, arg_dict: dict):
@@ -468,8 +471,10 @@ class ParsedArgs:
         self._arg_dict.update(arg_dict)
 
     def __repr__(self):
-        arg_str = util.format_dict(self._arg_dict)
-        return "%s(%s)" % (type(self).__name__, arg_str)
+        return util.format_type(
+            type(self),
+            **self._parser.get_arg_dict(),
+        )
 
 class _Verbose:
     def __init__(self):

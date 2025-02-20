@@ -2,12 +2,6 @@ import argparse
 import json
 from jutility import util
 
-def init_object(args: "ParsedArgs", full_name, **extra_kwargs):
-    return args.get_parser().init_object(full_name, **extra_kwargs)
-
-def reset_object_cache(args: "ParsedArgs"):
-    return args.get_parser().reset_object_cache()
-
 def get_arg_dict(args: "ParsedArgs"):
     return args.get_parser().get_arg_dict()
 
@@ -232,46 +226,34 @@ class ObjectArg(Arg):
         ]
         return set(protected_arg_list)
 
-    def update_kwargs(
-        self,
-        kwargs: dict,
-        extra_kwargs: dict,
-        protected: (set | None)=None,
-    ):
-        if protected is None:
-            protected = set()
-        for k, v in self.init_const_kwargs.items():
-            if k not in protected:
-                kwargs[k] = v
-        for k, v in extra_kwargs.items():
-            kwargs[k] = v
-
-        missing_keys = set(self.init_requires) - (set(kwargs) | protected)
+    def check_missing(self, kwarg_names: set[str]):
+        missing_keys = set(self.init_requires) - kwarg_names
         if len(missing_keys) > 0:
             raise ValueError(
                 "Please provide values for the following keys %s for \"%s\""
                 % (sorted(missing_keys), self.full_name)
             )
 
-    def init_object(self, parsed_args_dict, **extra_kwargs):
-        if self.full_name in parsed_args_dict:
+    def init_object(self, **extra_kwargs):
+        if self.value is not None:
             if verbose:
                 verbose.display_retrieve(self.full_name)
 
-            return parsed_args_dict[self.full_name]
+            return self.value
 
         kwargs = {
-            arg.name: arg.init_object(parsed_args_dict)
+            arg.name: arg.init_object()
             for arg in self._arg_list
         }
-        self.update_kwargs(kwargs, parsed_args_dict, extra_kwargs)
+        kwargs.update(self.init_const_kwargs)
+        kwargs.update(extra_kwargs)
+        self.check_missing(set(kwargs.keys()))
 
         if verbose:
             verbose.display_init(self.object_type, kwargs)
 
-        object_value = self.object_type(**kwargs)
-        parsed_args_dict[self.full_name] = object_value
-        return object_value
+        self.value = self.object_type(**kwargs)
+        return self.value
 
     def reset_object_cache(self):
         self._init_value()
@@ -335,16 +317,21 @@ class ObjectChoice(ObjectArg):
         for arg in self._arg_list:
             arg.add_argparse_arguments(parser)
 
-    def init_object(self, parsed_args_dict, **extra_kwargs):
-        chosen_arg = self.choice_dict[parsed_args_dict[self.full_name]]
+    def init_object(self, **extra_kwargs):
+        chosen_arg = self.choice_dict[self.value]
         protected = chosen_arg.get_protected_args()
         kwargs = {
-            arg.name: arg.init_object(parsed_args_dict)
+            arg.name: arg.init_object()
             for arg in self.shared_args
             if arg.name not in protected
         }
-        self.update_kwargs(kwargs, parsed_args_dict, extra_kwargs, protected)
-        return chosen_arg.init_object(parsed_args_dict, **kwargs)
+        for k, v in self.init_const_kwargs.items():
+            if k not in protected:
+                kwargs[k] = v
+
+        kwargs.update(extra_kwargs)
+        self.check_missing(set(kwargs.keys()) | protected)
+        return chosen_arg.init_object(**kwargs)
 
     def reset_object_cache(self):
         return

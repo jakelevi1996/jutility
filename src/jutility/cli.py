@@ -392,9 +392,6 @@ class Parser(_ArgParent):
 
         return parser
 
-    def print_help(self, file=None):
-        self._get_argparse_parser().print_help(file)
-
     def parse_args(self, *args, **kwargs) -> "ParsedArgs":
         """
         See
@@ -408,6 +405,9 @@ class Parser(_ArgParent):
             self._arg_dict[arg_name].value = arg_value
 
         return ParsedArgs(self._arg_list, self._arg_dict)
+
+    def help(self) -> str:
+        return self._get_argparse_parser().format_help()
 
     def __repr__(self):
         return util.format_type(

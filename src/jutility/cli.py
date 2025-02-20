@@ -304,9 +304,6 @@ class ObjectChoice(ObjectArg):
                 % (type(self).__name__, name, default, valid_names)
             )
 
-    def _hide_tag(self, arg: "Arg") -> bool:
-        return (arg.name in self.choice_dict)
-
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         parser.add_argument(
             "--" + self.full_name,
@@ -349,6 +346,9 @@ class ObjectChoice(ObjectArg):
                 for name in arg.get_arg_dict_keys(parsed_args_dict)
             ],
         ]
+
+    def _hide_tag(self, arg: "Arg") -> bool:
+        return (arg.name in self.choice_dict)
 
 class UnknownArg(Arg):
     def __init__(self, value):

@@ -24,10 +24,7 @@ class _ArgParent:
         prefix: str,
     ) -> dict[str, "Arg"]:
         for arg in self._arg_list:
-            if arg.full_name is not None:
-                raise RuntimeError("%s is already registered" % arg)
-
-            arg.full_name = prefix + arg.name
+            arg.set_full_name(prefix + arg.name)
             if arg.full_name in arg_dict:
                 raise ValueError(
                     "Found duplicates %s and %s"
@@ -109,6 +106,12 @@ class Arg(_ArgParent):
     def _init_help(self):
         if ((len(self.kwargs) > 0) and ("help" not in self.kwargs)):
             self.kwargs["help"] = util.format_dict(self.kwargs)
+
+    def set_full_name(self, full_name: str):
+        if self.full_name is not None:
+            raise RuntimeError("%s is already registered" % self)
+
+        self.full_name = full_name
 
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         parser.add_argument("--" + self.full_name, **self.kwargs)

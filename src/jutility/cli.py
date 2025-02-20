@@ -354,6 +354,7 @@ class UnknownArg(Arg):
     def __init__(self, value):
         self._init_arg_list([])
         self._init_name(None)
+        self._init_tag(None, False)
         self.value = value
 
     def init_object(self, **extra_kwargs):

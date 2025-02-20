@@ -2,15 +2,19 @@ import argparse
 import json
 from jutility import util
 
-def get_arg_dict(args: "ParsedArgs"):
-    return args.get_parser().get_arg_dict()
-
-def get_args_summary(args: "ParsedArgs", replaces=None):
-    return args.get_parser().get_args_summary(replaces)
-
 class _ArgParent:
     def _init_arg_list(self, arg_list: list["Arg"]):
         self._arg_list = arg_list
+
+    def get_arg_dict(self) -> dict:
+        return self.register_values(dict())
+
+    def get_summary(self, replaces=None) -> str:
+        return util.abbreviate_dictionary(
+            input_dict=self.get_arg_dict(),
+            key_abbreviations=self.register_tags(dict(), ""),
+            replaces=replaces,
+        )
 
     def register_names(
         self,
@@ -63,11 +67,21 @@ class _ArgParent:
 
         return tag_dict
 
+    def register_values(self, val_dict: dict) -> dict:
+        for arg in self._get_active_args():
+            arg.store_value(val_dict)
+            arg.register_values(val_dict)
+
+        return val_dict
+
     def _make_tag(self, prefix: str, suffix: str) -> str:
         return prefix + suffix.lower().replace("_", "")
 
     def _hide_tag(self, arg: "Arg") -> bool:
         return False
+
+    def _get_active_args(self) -> list["Arg"]:
+        return self._arg_list
 
 class Arg(_ArgParent):
     def __init__(
@@ -120,8 +134,8 @@ class Arg(_ArgParent):
     def reset_object_cache(self):
         return
 
-    def get_arg_dict_keys(self, parsed_args_dict) -> list[str]:
-        return [self.full_name]
+    def store_value(self, val_dict: dict):
+        val_dict[self.full_name] = self.value
 
     def is_kwarg(self) -> bool:
         return self._is_kwarg
@@ -258,12 +272,8 @@ class ObjectArg(Arg):
     def reset_object_cache(self):
         self._init_value()
 
-    def get_arg_dict_keys(self, parsed_args_dict) -> list[str]:
-        return [
-            name
-            for arg in self._arg_list
-            for name in arg.get_arg_dict_keys(parsed_args_dict)
-        ]
+    def store_value(self, val_dict: dict):
+        return
 
     def is_kwarg(self) -> bool:
         return False
@@ -333,22 +343,23 @@ class ObjectChoice(ObjectArg):
     def reset_object_cache(self):
         return
 
-    def get_arg_dict_keys(self, parsed_args_dict) -> list[str]:
-        chosen_arg = self.choice_dict[parsed_args_dict[self.full_name]]
-        protected = chosen_arg.get_protected_args()
-        return [
-            self.full_name,
-            *chosen_arg.get_arg_dict_keys(parsed_args_dict),
-            *[
-                name
-                for arg in self.shared_args
-                if  arg.name not in protected
-                for name in arg.get_arg_dict_keys(parsed_args_dict)
-            ],
-        ]
+    def store_value(self, val_dict: dict):
+        val_dict[self.full_name] = self.value
 
     def _hide_tag(self, arg: "Arg") -> bool:
         return (arg.name in self.choice_dict)
+
+    def _get_active_args(self) -> list["Arg"]:
+        chosen_arg = self.choice_dict[self.value]
+        protected = chosen_arg.get_protected_args()
+        return [
+            chosen_arg,
+            *[
+                arg
+                for arg in self.shared_args
+                if  arg.name not in protected
+            ],
+        ]
 
 class UnknownArg(Arg):
     def __init__(self, value):
@@ -441,25 +452,11 @@ class ParsedArgs(_ArgParent):
         self.reset_object_cache()
 
     def init_object(self, full_name: str, **extra_kwargs):
-        return self._arg_dict[full_name].init_object(extra_kwargs)
+        return self._arg_dict[full_name].init_object(**extra_kwargs)
 
     def reset_object_cache(self):
         for arg in self._arg_dict.values():
             arg.reset_object_cache()
-
-    def get_arg_dict(self):
-        return {
-            key: self._parsed_args_dict[key]
-            for arg in self._arg_list
-            for key in arg.get_arg_dict_keys(self._parsed_args_dict)
-        }
-
-    def get_args_summary(self, replaces=None):
-        return util.abbreviate_dictionary(
-            input_dict=self.get_arg_dict(),
-            key_abbreviations=self.register_tags(dict(), ""),
-            replaces=replaces,
-        )
 
     def __repr__(self):
         return util.format_type(

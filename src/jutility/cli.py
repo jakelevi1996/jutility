@@ -93,15 +93,19 @@ class Arg(_ArgParent):
         self._init_arg_list([])
         self._init_name(name)
         self._init_tag(tag, tagged)
+        self._init_value()
         self._init_help()
 
-    def _init_name(self, name: str):
+    def _init_name(self, name: str | None):
         self.name = name
         self.full_name = None
 
     def _init_tag(self, tag: str | None, tagged: bool):
         self.tag = tag
         self.tagged = tagged
+
+    def _init_value(self):
+        self.value = None
 
     def _init_help(self):
         if ((len(self.kwargs) > 0) and ("help" not in self.kwargs)):
@@ -116,8 +120,11 @@ class Arg(_ArgParent):
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         parser.add_argument("--" + self.full_name, **self.kwargs)
 
-    def init_object(self, parsed_args_dict):
-        return parsed_args_dict[self.full_name]
+    def init_object(self):
+        return self.value
+
+    def reset_object_cache(self):
+        return
 
     def get_arg_dict_keys(self, parsed_args_dict) -> list[str]:
         return [self.full_name]
@@ -130,6 +137,7 @@ class Arg(_ArgParent):
             type(self),
             name=self.name,
             full_name=self.full_name,
+            value=self.value,
         )
 
 class PositionalArg(Arg):
@@ -179,7 +187,6 @@ class ObjectArg(Arg):
         tagged=True,
         init_requires: (list[str] | None)=None,
         init_ignores:  (list[str] | None)=None,
-        init_parsed_kwargs: (dict | None)=None,
         init_const_kwargs:  (dict | None)=None,
     ):
         if name is None:
@@ -189,10 +196,10 @@ class ObjectArg(Arg):
         self._init_arg_list(args)
         self._init_name(name)
         self._init_tag(tag, tagged)
+        self._init_value()
         self._init_object_options(
             init_requires,
             init_ignores,
-            init_parsed_kwargs,
             init_const_kwargs,
         )
 
@@ -200,28 +207,27 @@ class ObjectArg(Arg):
         self,
         init_requires: (list[str] | None),
         init_ignores:  (list[str] | None),
-        init_parsed_kwargs: (dict | None),
         init_const_kwargs:  (dict | None),
     ):
         if init_requires is None:
             init_requires = []
         if init_ignores is None:
             init_ignores = []
-        if init_parsed_kwargs is None:
-            init_parsed_kwargs = dict()
         if init_const_kwargs is None:
             init_const_kwargs = dict()
 
         self.init_requires = init_requires
         self.init_ignores  = init_ignores
-        self.init_parsed_kwargs = init_parsed_kwargs
         self.init_const_kwargs  = init_const_kwargs
+
+    def add_argparse_arguments(self, parser: argparse.ArgumentParser):
+        for arg in self._arg_list:
+            arg.add_argparse_arguments(parser)
 
     def get_protected_args(self) -> set[str]:
         protected_arg_list = [
             *[arg.name for arg in self._arg_list],
             *self.init_ignores,
-            *self.init_parsed_kwargs.keys(),
             *self.init_const_kwargs.keys(),
         ]
         return set(protected_arg_list)
@@ -229,15 +235,11 @@ class ObjectArg(Arg):
     def update_kwargs(
         self,
         kwargs: dict,
-        parsed_args_dict: dict,
         extra_kwargs: dict,
         protected: (set | None)=None,
     ):
         if protected is None:
             protected = set()
-        for k, v in self.init_parsed_kwargs.items():
-            if k not in protected:
-                kwargs[k] = parsed_args_dict[v]
         for k, v in self.init_const_kwargs.items():
             if k not in protected:
                 kwargs[k] = v
@@ -250,10 +252,6 @@ class ObjectArg(Arg):
                 "Please provide values for the following keys %s for \"%s\""
                 % (sorted(missing_keys), self.full_name)
             )
-
-    def add_argparse_arguments(self, parser: argparse.ArgumentParser):
-        for arg in self._arg_list:
-            arg.add_argparse_arguments(parser)
 
     def init_object(self, parsed_args_dict, **extra_kwargs):
         if self.full_name in parsed_args_dict:
@@ -274,6 +272,9 @@ class ObjectArg(Arg):
         object_value = self.object_type(**kwargs)
         parsed_args_dict[self.full_name] = object_value
         return object_value
+
+    def reset_object_cache(self):
+        self._init_value()
 
     def get_arg_dict_keys(self, parsed_args_dict) -> list[str]:
         return [
@@ -296,7 +297,6 @@ class ObjectChoice(ObjectArg):
         tagged=True,
         init_requires: (list[str] | None)=None,
         init_ignores:  (list[str] | None)=None,
-        init_parsed_kwargs: (dict | None)=None,
         init_const_kwargs:  (dict | None)=None,
     ):
         if shared_args is None:
@@ -306,10 +306,10 @@ class ObjectChoice(ObjectArg):
         self.default = default
         self._init_name(name)
         self._init_tag(tag, tagged)
+        self._init_value()
         self._init_object_options(
             init_requires,
             init_ignores,
-            init_parsed_kwargs,
             init_const_kwargs,
         )
 
@@ -346,6 +346,9 @@ class ObjectChoice(ObjectArg):
         self.update_kwargs(kwargs, parsed_args_dict, extra_kwargs, protected)
         return chosen_arg.init_object(parsed_args_dict, **kwargs)
 
+    def reset_object_cache(self):
+        return
+
     def get_arg_dict_keys(self, parsed_args_dict) -> list[str]:
         chosen_arg = self.choice_dict[parsed_args_dict[self.full_name]]
         protected = chosen_arg.get_protected_args()
@@ -360,6 +363,15 @@ class ObjectChoice(ObjectArg):
             ],
         ]
 
+class UnknownArg(Arg):
+    def __init__(self, value):
+        self._init_arg_list([])
+        self._init_name(None)
+        self.value = value
+
+    def init_object(self, **extra_kwargs):
+        raise ValueError("Can only initialise `Arg`s defined in `Parser`")
+
 class Parser(_ArgParent):
     def __init__(
         self,
@@ -373,7 +385,6 @@ class Parser(_ArgParent):
         self._parser_kwargs = parser_kwargs
         self._init_arg_list(args)
         self._arg_dict = self.register_names(dict(), "")
-        self._parsed_args_dict: dict = None
 
     def _get_argparse_parser(self) -> argparse.ArgumentParser:
         parser = argparse.ArgumentParser(**self._parser_kwargs)
@@ -381,12 +392,6 @@ class Parser(_ArgParent):
             arg.add_argparse_arguments(parser)
 
         return parser
-
-    def _check_parsed(self):
-        if self._parsed_args_dict is None:
-            raise RuntimeError(
-                "Must call `parse_args` before calling this method"
-            )
 
     def print_help(self, file=None):
         self._get_argparse_parser().print_help(file)
@@ -397,46 +402,13 @@ class Parser(_ArgParent):
         https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.parse_args
         """
         parser = self._get_argparse_parser()
-        argparse_args = parser.parse_args(*args, **kwargs)
-        self._parsed_args_dict = vars(argparse_args)
-        self._initial_args_cache = set(self._parsed_args_dict.keys())
-        return ParsedArgs(self, self._parsed_args_dict)
+        argparse_namespace = parser.parse_args(*args, **kwargs)
+        argparse_dict = vars(argparse_namespace)
+        for arg_name in argparse_dict:
+            arg_value = argparse_dict[arg_name]
+            self._arg_dict[arg_name].value = arg_value
 
-    def init_object(self, full_name, **extra_kwargs):
-        self._check_parsed()
-        if full_name not in self._arg_dict:
-            raise ValueError(
-                "\"%s\" not in %s"
-                % (full_name, sorted(self._arg_dict.keys()))
-            )
-
-        object_arg = self._arg_dict[full_name]
-        return object_arg.init_object(self._parsed_args_dict, **extra_kwargs)
-
-    def get_arg_dict(self):
-        self._check_parsed()
-        return {
-            key: self._parsed_args_dict[key]
-            for arg in self._arg_list
-            for key in arg.get_arg_dict_keys(self._parsed_args_dict)
-        }
-
-    def get_args_summary(self, replaces=None):
-        self._check_parsed()
-        return util.abbreviate_dictionary(
-            input_dict=self.get_arg_dict(),
-            key_abbreviations=self.register_tags(dict(), ""),
-            replaces=replaces,
-        )
-
-    def get_kwarg_names(self):
-        return [arg.name for arg in self._arg_list if arg.is_kwarg()]
-
-    def reset_object_cache(self):
-        self._check_parsed()
-        current_args_cache = set(self._parsed_args_dict.keys())
-        for k in (current_args_cache - self._initial_args_cache):
-            self._parsed_args_dict.pop(k)
+        return ParsedArgs(self._arg_list, self._arg_dict)
 
     def __repr__(self):
         return util.format_type(
@@ -445,38 +417,66 @@ class Parser(_ArgParent):
             **self._parser_kwargs,
         )
 
-class ParsedArgs:
-    def __init__(self, parser: Parser, arg_dict: dict):
-        self._parser = parser
+class ParsedArgs(_ArgParent):
+    def __init__(
+        self,
+        arg_list: list[Arg],
+        arg_dict: dict[str, Arg],
+    ):
+        self._init_arg_list(arg_list)
         self._arg_dict = arg_dict
 
-    def get_parser(self):
-        return self._parser
-
     def get(self, arg_name: str):
-        return self._arg_dict[arg_name]
+        return self._arg_dict[arg_name].value
 
     def get_kwargs(self):
-        kwarg_names = self._parser.get_kwarg_names()
-        return {k: self._arg_dict[k] for k in kwarg_names}
+        return {
+            arg.name: arg.value
+            for arg in self._arg_list
+            if arg.is_kwarg()
+        }
 
     def update(self, arg_dict: dict, allow_new_keys=False):
-        if not allow_new_keys:
-            new_keys = set(arg_dict.keys()) - set(self._arg_dict.keys())
-            if len(new_keys) > 0:
+        for name, value in arg_dict.items():
+            if name in self._arg_dict:
+                self._arg_dict[name].value = value
+            elif allow_new_keys:
+                self._arg_dict[name] = UnknownArg(value)
+            else:
+                new_keys = set(arg_dict.keys()) - set(self._arg_dict.keys())
                 raise ValueError(
                     "Received extra keys %s. Either remove these keys, or "
-                    "call `ParsedArgs.update` with `allow_new_keys=True`."
+                    "call `ParsedArgs.update(..., allow_new_keys=True)`."
                     % sorted(new_keys)
                 )
 
-        self._parser.reset_object_cache()
-        self._arg_dict.update(arg_dict)
+        self.reset_object_cache()
+
+    def init_object(self, full_name: str, **extra_kwargs):
+        return self._arg_dict[full_name].init_object(extra_kwargs)
+
+    def reset_object_cache(self):
+        for arg in self._arg_dict.values():
+            arg.reset_object_cache()
+
+    def get_arg_dict(self):
+        return {
+            key: self._parsed_args_dict[key]
+            for arg in self._arg_list
+            for key in arg.get_arg_dict_keys(self._parsed_args_dict)
+        }
+
+    def get_args_summary(self, replaces=None):
+        return util.abbreviate_dictionary(
+            input_dict=self.get_arg_dict(),
+            key_abbreviations=self.register_tags(dict(), ""),
+            replaces=replaces,
+        )
 
     def __repr__(self):
         return util.format_type(
             type(self),
-            **self._parser.get_arg_dict(),
+            **self.get_arg_dict(),
         )
 
 class _Verbose:

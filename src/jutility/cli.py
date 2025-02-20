@@ -425,7 +425,10 @@ class ParsedArgs(_ArgParent):
         self._init_arg_list(arg_list)
         self._arg_dict = arg_dict
 
-    def get(self, arg_name: str):
+    def get_arg(self, arg_name: str) -> Arg:
+        return self._arg_dict[arg_name]
+
+    def get_value(self, arg_name: str):
         return self._arg_dict[arg_name].value
 
     def get_kwargs(self) -> dict:

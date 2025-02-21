@@ -6,12 +6,12 @@ class _ArgParent:
     def _init_arg_list(self, arg_list: list["Arg"]):
         self._arg_list = arg_list
 
-    def get_arg_dict(self) -> dict:
+    def get_value_dict(self) -> dict:
         return self.register_values(dict())
 
     def get_summary(self, replaces=None) -> str:
         return util.abbreviate_dictionary(
-            input_dict=self.get_arg_dict(),
+            input_dict=self.get_value_dict(),
             key_abbreviations=self.register_tags(dict(), ""),
             replaces=replaces,
         )
@@ -65,12 +65,12 @@ class _ArgParent:
 
         return tag_dict
 
-    def register_values(self, val_dict: dict) -> dict:
+    def register_values(self, value_dict: dict) -> dict:
         for arg in self._get_active_args():
-            arg.store_value(val_dict)
-            arg.register_values(val_dict)
+            arg.store_value(value_dict)
+            arg.register_values(value_dict)
 
-        return val_dict
+        return value_dict
 
     def _make_tag(self, prefix: str, suffix: str) -> str:
         return prefix + suffix.lower().replace("_", "")
@@ -132,8 +132,8 @@ class Arg(_ArgParent):
     def reset_object_cache(self):
         return
 
-    def store_value(self, val_dict: dict):
-        val_dict[self.full_name] = self.value
+    def store_value(self, value_dict: dict):
+        value_dict[self.full_name] = self.value
 
     def is_kwarg(self) -> bool:
         return self._is_kwarg
@@ -270,7 +270,7 @@ class ObjectArg(Arg):
     def reset_object_cache(self):
         self._init_value()
 
-    def store_value(self, val_dict: dict):
+    def store_value(self, value_dict: dict):
         return
 
     def is_kwarg(self) -> bool:
@@ -341,8 +341,8 @@ class ObjectChoice(ObjectArg):
     def reset_object_cache(self):
         return
 
-    def store_value(self, val_dict: dict):
-        val_dict[self.full_name] = self.value
+    def store_value(self, value_dict: dict):
+        value_dict[self.full_name] = self.value
 
     def _hide_tag(self, arg: "Arg") -> bool:
         return (arg.name in self.choice_dict)
@@ -436,14 +436,14 @@ class ParsedArgs(_ArgParent):
             if arg.is_kwarg()
         }
 
-    def update(self, arg_dict: dict, allow_new_keys=False):
-        for name, value in arg_dict.items():
+    def update(self, value_dict: dict, allow_new_keys=False):
+        for name, value in value_dict.items():
             if name in self._arg_dict:
                 self._arg_dict[name].value = value
             elif allow_new_keys:
                 self._arg_dict[name] = UnknownArg(value)
             else:
-                new_keys = set(arg_dict.keys()) - set(self._arg_dict.keys())
+                new_keys = set(value_dict.keys()) - set(self._arg_dict.keys())
                 raise ValueError(
                     "Received extra keys %s. Either remove these keys, or "
                     "call `ParsedArgs.update(..., allow_new_keys=True)`."
@@ -462,7 +462,7 @@ class ParsedArgs(_ArgParent):
     def __repr__(self):
         return util.format_type(
             type(self),
-            **self.get_arg_dict(),
+            **self.get_value_dict(),
         )
 
 class _Verbose:

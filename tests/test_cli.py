@@ -4,6 +4,101 @@ import test_utils
 
 OUTPUT_DIR = test_utils.get_output_dir("test_cli")
 
+def test_parsed_args():
+    class A:
+        def __init__(self, x: int):
+            self.x = x
+
+    class B:
+        def __init__(self, a: A, y: float):
+            self.a = a
+            self.y = y
+
+    parser = cli.Parser(
+        cli.ObjectChoice(
+            "m",
+            cli.ObjectArg(A, cli.Arg("x", type=int, default=1)),
+            cli.ObjectArg(
+                B,
+                cli.ObjectArg(A, cli.Arg("x", type=int, default=2), name="a"),
+                cli.Arg("y", type=float, default=3.4),
+            ),
+            default="A",
+        ),
+        cli.Arg("c", type=str, default="abc"),
+        cli.Arg("d", action="store_true"),
+    )
+    args = parser.parse_args([])
+
+    assert isinstance(args, cli.ParsedArgs)
+    assert args.get_value_dict() == {
+        "m": "A",
+        "m.A.x": 1,
+        "c": "abc",
+        "d": False,
+    }
+    assert args.get_summary() == "cABCdFmAm.x1"
+
+    c = args.get_arg("c")
+    assert isinstance(c, cli.Arg)
+    assert c.value == "abc"
+
+    assert args.get_value("c") == "abc"
+    assert args.get_value("m.A.x") == 1
+    assert args.get_kwargs() == {"c": "abc", "d": False}
+
+    args.update({"c": "defg"})
+    assert args.get_value("c") == "defg"
+
+    assert args.get_value("m.A") is None
+    assert not isinstance(args.get_value("m.A"), A)
+
+    a = args.init_object("m")
+    assert isinstance(a, A)
+    assert a.x == 1
+    assert not args.get_value("m.A") is None
+    assert isinstance(args.get_value("m.A"), A)
+
+    args.reset_object_cache()
+    assert args.get_value("m.A") is None
+    assert not isinstance(args.get_value("m.A"), A)
+
+    args.update({"m.A.x": 3})
+    a = args.init_object("m")
+    assert isinstance(a, A)
+    assert a.x == 3
+
+    assert args.get_value_dict() == {
+        "m": "A",
+        "m.A.x": 3,
+        "c": "defg",
+        "d": False,
+    }
+    assert args.get_summary() == "cDEFGdFmAm.x3"
+
+    new_args = parser.parse_args(
+        "--m B --m.B.a.x 5 --m.B.y 6.7 --c hijk --d".split(),
+    )
+
+    assert isinstance(new_args, cli.ParsedArgs)
+    assert new_args.get_value_dict() == {
+        "m": "B",
+        "m.B.a.x": 5,
+        "m.B.y": 6.7,
+        "c": "hijk",
+        "d": True,
+    }
+    assert new_args.get_summary() == "cHIJKdTmBm.a.x5m.y6.7"
+
+    assert new_args.get_value("c") == "hijk"
+    assert new_args.get_kwargs() == {"c": "hijk", "d": True}
+
+    b = new_args.init_object("m")
+    assert isinstance(b, B)
+    assert isinstance(b.a, A)
+    assert b.a.x == 5
+    assert b.y == 6.7
+
 def get_parser():
     parser = cli.Parser(
         cli.Arg("int",   "in", default=10,            type=int),

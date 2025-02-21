@@ -23,13 +23,7 @@ class _ArgParent:
     ) -> dict[str, "Arg"]:
         for arg in self._arg_list:
             arg.set_full_name(prefix + arg.name)
-            if arg.full_name in arg_dict:
-                raise ValueError(
-                    "Found duplicates %s and %s"
-                    % (arg, arg_dict[arg.full_name])
-                )
-
-            arg_dict[arg.full_name] = arg
+            arg.store_name(arg_dict)
             arg.register_names(arg_dict, arg.full_name + ".")
 
         return arg_dict
@@ -123,6 +117,18 @@ class Arg(_ArgParent):
 
         self.full_name = full_name
 
+    def store_name(self, arg_dict: dict[str, "Arg"]):
+        if self.full_name in arg_dict:
+            raise ValueError(
+                "Found duplicates %s and %s"
+                % (self, arg_dict[self.full_name])
+            )
+
+        arg_dict[self.full_name] = self
+
+    def store_value(self, value_dict: dict):
+        value_dict[self.full_name] = self.value
+
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         parser.add_argument("--" + self.full_name, **self.kwargs)
 
@@ -131,9 +137,6 @@ class Arg(_ArgParent):
 
     def reset_object_cache(self):
         return
-
-    def store_value(self, value_dict: dict):
-        value_dict[self.full_name] = self.value
 
     def is_kwarg(self) -> bool:
         return self._is_kwarg

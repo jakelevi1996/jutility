@@ -31,6 +31,7 @@ def test_parsed_args():
     args = parser.parse_args([])
 
     assert isinstance(args, cli.ParsedArgs)
+    assert repr(args) == "ParsedArgs(c='abc', d=False, m='A', m.A.x=1)"
     assert args.get_value_dict() == {
         "m": "A",
         "m.A.x": 1,
@@ -68,6 +69,7 @@ def test_parsed_args():
     assert isinstance(a, A)
     assert a.x == 3
 
+    assert repr(args) == "ParsedArgs(c='defg', d=False, m='A', m.A.x=3)"
     assert args.get_value_dict() == {
         "m": "A",
         "m.A.x": 3,
@@ -81,6 +83,9 @@ def test_parsed_args():
     )
 
     assert isinstance(new_args, cli.ParsedArgs)
+    assert repr(new_args) == (
+        "ParsedArgs(c='hijk', d=True, m='B', m.B.a.x=5, m.B.y=6.7)"
+    )
     assert new_args.get_value_dict() == {
         "m": "B",
         "m.B.a.x": 5,

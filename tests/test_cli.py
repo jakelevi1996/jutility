@@ -183,6 +183,7 @@ def test_parser_help():
 
 def test_object_arg():
     printer = util.Printer("test_object_arg", dir_name=OUTPUT_DIR)
+    cli.verbose.set_printer(printer)
 
     class A:
         def __init__(self, b: int, c: str):
@@ -249,8 +250,6 @@ def test_object_arg():
         "j": -7.8
     }
 
-    cli.verbose.set_printer(printer)
-
     with cli.verbose:
         with pytest.raises(ValueError):
             h = args.init_object("H")
@@ -308,6 +307,7 @@ def test_object_arg():
 
 def test_object_choice():
     printer = util.Printer("test_object_choice", dir_name=OUTPUT_DIR)
+    cli.verbose.set_printer(printer)
 
     class A:
         def __init__(self, b: int, c: str):
@@ -377,8 +377,6 @@ def test_object_choice():
         'model.A.c': 'abc',
         'model.b': 1,
     }
-
-    cli.verbose.set_printer(printer)
 
     with cli.verbose:
         a = args.init_object("model")

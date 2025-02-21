@@ -99,7 +99,81 @@ def test_parsed_args():
     assert b.y == 6.7
 
 def test_parser_help():
+    printer = util.Printer("test_parser_help", dir_name=OUTPUT_DIR)
+
+    class A:
+        def __init__(self, x: int, z: str):
+            self.x = x
+            self.z = z
+
+    class B:
+        def __init__(self, a: A, y: float, z: str):
+            self.a = a
+            self.y = y
+            self.z = z
+
     parser = cli.Parser(
+        cli.ObjectChoice(
+            "model",
+            cli.ObjectArg(A, cli.Arg("x", type=int, default=1)),
+            cli.ObjectArg(
+                B,
+                cli.ObjectArg(A, cli.Arg("x", type=int, default=2), name="a"),
+                cli.Arg("y", type=float, default=3.4),
+                name="Mlp",
+            ),
+            shared_args=[cli.Arg("z", type=str, default="abc")],
+            default="A",
+        ),
+        cli.Arg("c", type=str, default="defg"),
+        cli.Arg("d", action="store_true"),
+        cli.Arg("e", type=int, nargs="*", default=[]),
+        cli.PositionalArg("f", type=float),
+        cli.PositionalArg("g", type=int),
+        cli.BooleanArg("h"),
+        cli.BooleanArg("i", default=True),
+        cli.BooleanArg("j", default=False),
+        cli.JsonArg("k", default=[1, [2, 3]]),
+        cli.JsonArg("l", default=[4, [5, 6]], nargs="*"),
+    )
+
+    printer(parser.help())
+
+    assert parser.help() == (
+        "usage: run_pytest_script.py [-h] [--model {A,Mlp}] "
+        "[--model.A.x MODEL.A.X]\n"
+        "                            [--model.Mlp.a.x MODEL.MLP.A.X]\n"
+        "                            [--model.Mlp.y MODEL.MLP.Y] "
+        "[--model.z MODEL.Z]\n"
+        "                            [--c C] [--d] [--e [E ...]] "
+        "[--h | --no-h]\n"
+        "                            [--i | --no-i] [--j | --no-j] [--k K]\n"
+        "                            [--l [L ...]]\n"
+        "                            f g\n"
+        "\n"
+        "positional arguments:\n"
+        "  f                     type=<class 'float'>\n"
+        "  g                     type=<class 'int'>\n"
+        "\n"
+        "options:\n"
+        "  -h, --help            show this help message and exit\n"
+        "  --model {A,Mlp}\n"
+        "  --model.A.x MODEL.A.X\n"
+        "                        default=1, type=<class 'int'>\n"
+        "  --model.Mlp.a.x MODEL.MLP.A.X\n"
+        "                        default=2, type=<class 'int'>\n"
+        "  --model.Mlp.y MODEL.MLP.Y\n"
+        "                        default=3.4, type=<class 'float'>\n"
+        "  --model.z MODEL.Z     default='abc', type=<class 'str'>\n"
+        "  --c C                 default='defg', type=<class 'str'>\n"
+        "  --d                   action='store_true'\n"
+        "  --e [E ...]           default=[], nargs='*', type=<class 'int'>\n"
+        "  --h, --no-h           (default: None)\n"
+        "  --i, --no-i           (default: True)\n"
+        "  --j, --no-j           (default: False)\n"
+        "  --k K                 default=[1, [2, 3]] (format: JSON string)\n"
+        "  --l [L ...]           default=[4, [5, 6]], nargs='*' "
+        "(format: JSON string)\n"
     )
 
 def test_object_arg():

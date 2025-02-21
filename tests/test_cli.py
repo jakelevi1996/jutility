@@ -479,8 +479,50 @@ def test_object_choice():
     printer(parser.help())
 
 def test_unknown_arg():
+    printer = util.Printer("test_unknown_arg", dir_name=OUTPUT_DIR)
+
     parser = cli.Parser(
+        cli.Arg("a", type=int,      default=1),
+        cli.Arg("b", type=float,    default=2.3),
+        cli.Arg("c", type=str,      default="abc"),
     )
+    args = parser.parse_args([])
+
+    assert repr(args) == "ParsedArgs(a=1, b=2.3, c='abc')"
+    assert args.get_summary() == "a1b2.3cABC"
+    assert args.get_value_dict() == {"a": 1, "b": 2.3, "c": "abc"}
+
+    new_arg_dict = {"a": 4, "d": "xyz", "e.f": 5.67}
+    with pytest.raises(ValueError):
+        args.update(new_arg_dict)
+
+    args.update(new_arg_dict, allow_new_keys=True)
+    assert repr(args) == "ParsedArgs(a=4, b=2.3, c='abc', d='xyz', e.f=5.67)"
+    assert args.get_summary() == "a4b2.3cABC"
+    assert args.get_value_dict() == {
+        "a": 4,
+        "b": 2.3,
+        "c": "abc",
+        "d": "xyz",
+        "e.f": 5.67,
+    }
+    assert args.get_kwargs() == {"a": 4, "b": 2.3, "c": "abc"}
+
+    assert isinstance(args.get_arg("a"),    cli.Arg)
+    assert isinstance(args.get_arg("d"),    cli.UnknownArg)
+    assert isinstance(args.get_arg("e.f"),  cli.UnknownArg)
+
+    assert repr(args.get_arg("a")) == (
+        "Arg(full_name='a', name='a', value=4)"
+    )
+    assert repr(args.get_arg("d")) == (
+        "UnknownArg(full_name='d', name=None, value='xyz')"
+    )
+    assert repr(args.get_arg("e.f")) == (
+        "UnknownArg(full_name='e.f', name=None, value=5.67)"
+    )
+
+    printer(args, parser, parser.help(), sep="\n\n")
 
 def get_parser():
     parser = cli.Parser(

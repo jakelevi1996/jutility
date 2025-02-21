@@ -369,8 +369,11 @@ class UnknownArg(Arg):
         self._init_tag(None, False)
         self._init_value(value)
 
-    def init_object(self, **extra_kwargs):
-        raise ValueError("Can only initialise `Arg`s defined in `Parser`")
+    def add_argparse_arguments(self, parser: argparse.ArgumentParser):
+        return
+
+    def is_kwarg(self):
+        return False
 
 class Parser(_ArgParent):
     def __init__(
@@ -383,7 +386,7 @@ class Parser(_ArgParent):
         https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser
         """
         self._parser_kwargs = parser_kwargs
-        self._init_arg_list(args)
+        self._init_arg_list(list(args))
         self._arg_dict = self.register_names(dict(), "")
 
     def _get_argparse_parser(self) -> argparse.ArgumentParser:
@@ -445,7 +448,10 @@ class ParsedArgs(_ArgParent):
             if name in self._arg_dict:
                 self._arg_dict[name].value = value
             elif allow_new_keys:
-                self._arg_dict[name] = UnknownArg(value)
+                new_arg = UnknownArg(value)
+                new_arg.set_full_name(name)
+                self._arg_dict[name] = new_arg
+                self._arg_list.append( new_arg)
             else:
                 new_keys = set(value_dict.keys()) - set(self._arg_dict.keys())
                 raise ValueError(

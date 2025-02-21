@@ -425,6 +425,7 @@ class ParsedArgs(_ArgParent):
     ):
         self._init_arg_list(arg_list)
         self._arg_dict = arg_dict
+        self.reset_object_cache()
 
     def get_arg(self, arg_name: str) -> Arg:
         return self._arg_dict[arg_name]

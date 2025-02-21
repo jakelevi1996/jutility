@@ -89,7 +89,6 @@ def test_parsed_args():
         "d": True,
     }
     assert new_args.get_summary() == "cHIJKdTmBm.a.x5m.y6.7"
-
     assert new_args.get_value("c") == "hijk"
     assert new_args.get_kwargs() == {"c": "hijk", "d": True}
 
@@ -98,6 +97,22 @@ def test_parsed_args():
     assert isinstance(b.a, A)
     assert b.a.x == 5
     assert b.y == 6.7
+
+def test_parser_help():
+    parser = cli.Parser(
+    )
+
+def test_object_arg():
+    parser = cli.Parser(
+    )
+
+def test_object_choice():
+    parser = cli.Parser(
+    )
+
+def test_unknown_arg():
+    parser = cli.Parser(
+    )
 
 def get_parser():
     parser = cli.Parser(

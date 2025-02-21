@@ -777,25 +777,22 @@ def format_type(input_type: type, *args, item_fmt="%s=%r", **kwargs):
 def abbreviate_dictionary(
     input_dict: dict,
     key_abbreviations: dict[str, str],
-    replaces: dict[str, str]=None,
+    replaces: (dict[str, str] | None)=None,
 ):
-    replaces_defaults = {
-        "_":        "",
-        "FALSE":    "F",
-        "TRUE":     "T",
-        "NONE":     "N",
-    }
     if replaces is None:
-        replaces = dict()
-    for k, v in replaces_defaults.items():
-        replaces.setdefault(k, v)
+        replaces = {
+            "_":        "",
+            "FALSE":    "F",
+            "TRUE":     "T",
+            "NONE":     "N",
+        }
 
     sorted_keys = sorted(
         (k for k in input_dict.keys() if k in key_abbreviations),
         key=lambda k: key_abbreviations[k],
     )
     pairs_list = [
-        "%s: %s" % (key_abbreviations[k].lower(), str(input_dict[k]).upper())
+        (key_abbreviations[k].lower() + str(input_dict[k]).upper())
         for k in sorted_keys
     ]
     s_clean = clean_string("".join(pairs_list))

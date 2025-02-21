@@ -412,6 +412,7 @@ def test_object_choice():
     args = parser.parse_args("--model D".split())
     assert args.get_summary() == "mDm.e2,3m.f4.5m.gAm.g.b1m.g.cABC"
     assert args.get_arg("model").get_summary() == "e2,3f4.5gAg.b1g.cABC"
+    assert args.get_arg("model.D.g").get_summary() == "b1cABC"
     assert args.get_value_dict() == {
         "model": "D",
         "model.D.e": [

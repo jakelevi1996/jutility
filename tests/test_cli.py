@@ -307,8 +307,170 @@ def test_object_arg():
     printer(parser.help())
 
 def test_object_choice():
+    printer = util.Printer("test_object_choice", dir_name=OUTPUT_DIR)
+
+    class A:
+        def __init__(self, b: int, c: str):
+            self.b = b
+            self.c = c
+
+        def __repr__(self):
+            return util.format_type(type(self))
+
+    class D(A):
+        def __init__(self, e: list[int], f: float, g: A, **kw):
+            self.e = e
+            self.f = f
+            self.g = g
+            self.kw = kw
+
     parser = cli.Parser(
+        cli.ObjectChoice(
+            "model",
+            cli.ObjectArg(
+                A,
+                cli.Arg("c", type=str, default="abc"),
+                init_ignores=["e"],
+            ),
+            cli.ObjectArg(
+                D,
+                cli.Arg("e", type=int, default=[2, 3], nargs="*"),
+                cli.Arg("f", type=float, default=4.5),
+                cli.ObjectChoice(
+                    "g",
+                    cli.ObjectArg(
+                        A,
+                        cli.Arg("c", type=str, default="abc"),
+                        init_ignores=["e"],
+                    ),
+                    cli.ObjectArg(
+                        D,
+                        cli.Arg("f", type=float, default=3.141),
+                        cli.ObjectArg(
+                            A,
+                            cli.Arg("b", type=int),
+                            name="g",
+                            init_const_kwargs={"c": "deep arg"},
+                        ),
+                        init_ignores=["b"],
+                        init_requires=["e"],
+                    ),
+                    shared_args=[cli.Arg("b", type=int, default=1)],
+                    default="A",
+                    init_const_kwargs={"c": "defg"},
+                ),
+                init_ignores=["b"],
+            ),
+            shared_args=[cli.Arg("b", type=int, default=1)],
+            init_requires=["e"],
+            init_const_kwargs={"c": "defg"},
+        ),
     )
+
+    with pytest.raises(SystemExit):
+        args = parser.parse_args([])
+
+    args = parser.parse_args("--model A".split())
+    assert args.get_summary() == "mAm.b1m.cABC"
+    assert args.get_value_dict() == {
+        'model': 'A',
+        'model.A.c': 'abc',
+        'model.b': 1,
+    }
+
+    cli.verbose.set_printer(printer)
+
+    with cli.verbose:
+        a = args.init_object("model")
+        assert isinstance(a, A)
+        assert a.c == "abc"
+        assert a.b == 1
+
+        args.update({'model.A.c': 'defg', 'model.b': 2})
+        a = args.init_object("model")
+        assert isinstance(a, A)
+        assert a.c == "defg"
+        assert a.b == 2
+
+    args = parser.parse_args("--model A --model.b 3 --model.A.c xyz".split())
+    assert args.get_summary() == "mAm.b3m.cXYZ"
+
+    with cli.verbose:
+        a = args.init_object("model")
+        assert isinstance(a, A)
+        assert a.c == "xyz"
+        assert a.b == 3
+
+    printer.hline()
+
+    args = parser.parse_args("--model D".split())
+    assert args.get_summary() == "mDm.e2,3m.f4.5m.gAm.g.b1m.g.cABC"
+    assert args.get_arg("model").get_summary() == "e2,3f4.5gAg.b1g.cABC"
+    assert args.get_value_dict() == {
+        "model": "D",
+        "model.D.e": [
+            2,
+            3
+        ],
+        "model.D.f": 4.5,
+        "model.D.g": "A",
+        "model.D.g.A.c": "abc",
+        "model.D.g.b": 1
+    }
+
+    with cli.verbose:
+        d = args.init_object("model")
+        assert isinstance(d, D)
+        assert d.e == [2, 3]
+        assert d.f == 4.5
+        assert     isinstance(d.g, A)
+        assert not isinstance(d.g, D)
+        assert d.g.b == 1
+        assert d.g.c == "abc"
+        assert d.kw == {"c": "defg"}
+
+    printer.hline()
+
+    args = parser.parse_args(
+        "--model D --model.D.g D --model.D.e 7 8 9".split()
+    )
+    assert args.get_summary() == "mDm.e7,8,9m.f4.5m.gDm.g.f3.141m.g.g.bN"
+    assert args.get_value_dict() == {
+        "model": "D",
+        "model.D.e": [
+            7,
+            8,
+            9
+        ],
+        "model.D.f": 4.5,
+        "model.D.g": "D",
+        "model.D.g.D.f": 3.141,
+        "model.D.g.D.g.b": None
+    }
+
+    with cli.verbose:
+        with pytest.raises(ValueError):
+            d = args.init_object("model")
+
+        printer.hline()
+
+        args.init_object("model.D.g", e=[1, 10, 100])
+        d = args.init_object("model")
+        assert     isinstance(d, D)
+        assert     isinstance(d.g, D)
+        assert     isinstance(d.g.g, A)
+        assert not isinstance(d.g.g, D)
+        assert d.e == [7, 8, 9]
+        assert d.f == 4.5
+        assert d.g.e == [1, 10, 100]
+        assert d.g.f == 3.141
+        assert d.g.g.b == None
+        assert d.g.g.c == "deep arg"
+        assert d.g.kw == {"c": "defg"}
+        assert d.kw == {"c": "defg"}
+
+    printer.hline()
+    printer(parser.help())
 
 def test_unknown_arg():
     parser = cli.Parser(
@@ -735,7 +897,7 @@ def get_object_choice_parser():
     )
     return parser
 
-def test_object_choice():
+def test_object_choice_old():
     printer = util.Printer("test_object_choice", OUTPUT_DIR)
 
     parser = get_object_choice_parser()

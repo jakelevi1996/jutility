@@ -307,6 +307,31 @@ def test_printer_read():
 
     assert printer.read() == "123\nHello world\nx\n---\ny\n---\nz\nend\n"
 
+def test_printer_heading():
+    printer = util.Printer("test_printer_heading", dir_name=OUTPUT_DIR)
+
+    printer.heading("Heading 1")
+    printer("Paragraph 1")
+    printer("Paragraph 2")
+    printer.heading("Heading 2")
+    printer("Paragraph 3")
+    printer("Paragraph 4")
+
+    assert printer.read() == (
+        "\n"
+        "------------------------------- (1) Heading 1 "
+        "--------------------------------\n"
+        "\n"
+        "Paragraph 1\n"
+        "Paragraph 2\n"
+        "\n"
+        "------------------------------- (2) Heading 2 "
+        "--------------------------------\n"
+        "\n"
+        "Paragraph 3\n"
+        "Paragraph 4\n"
+    )
+
 def test_seeder():
     assert util.Seeder().get_seed("123") == util.Seeder().get_seed("123")
     assert util.Seeder().get_seed("123") != util.Seeder().get_seed("321")

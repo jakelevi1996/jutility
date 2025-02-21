@@ -120,6 +120,7 @@ class Printer:
             self._file = None
 
         self._print_to_console = print_to_console
+        self._count = 1
 
     def __call__(self, *args, **kwargs):
         if self._print_to_console:
@@ -130,8 +131,13 @@ class Printer:
     def timestamp(self):
         self(datetime.datetime.now())
 
-    def hline(self, line_char="-", line_len=100):
+    def hline(self, line_char="-", line_len=78):
         self(line_char * line_len)
+
+    def heading(self, heading_str: str, fill_char="-", line_len=78):
+        numbered_heading = (" (%i) %s " % (self._count, heading_str))
+        self("\n%s\n" % numbered_heading.center(line_len, fill_char))
+        self._count += 1
 
     def get_file(self):
         return self._file

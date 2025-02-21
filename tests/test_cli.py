@@ -182,8 +182,129 @@ def test_parser_help():
     )
 
 def test_object_arg():
+    printer = util.Printer("test_object_arg", dir_name=OUTPUT_DIR)
+
+    class A:
+        def __init__(self, b: int, c: str):
+            self.b = b
+            self.c = c
+
+        def __repr__(self):
+            return util.format_type(type(self))
+
+    class D(A):
+        def __init__(self, e: list[int], f: float, g: A, **kw):
+            self.e = e
+            self.f = f
+            self.g = g
+            self.kw = kw
+
+    class H(A):
+        def __init__(self, a: A, d: D, i: int):
+            self.a = a
+            self.d = d
+            self.i = i
+
     parser = cli.Parser(
+        cli.ObjectArg(
+            H,
+            cli.ObjectArg(
+                A,
+                cli.Arg("b", type=int, default=1),
+                cli.Arg("c", type=str, default="abc"),
+                name="a",
+            ),
+            cli.ObjectArg(
+                D,
+                cli.Arg("e", type=int, default=[2, 3], nargs="*"),
+                cli.Arg("f", type=float, default=4.5),
+                cli.ObjectArg(
+                    A,
+                    cli.Arg("b", type=int),
+                    name="g",
+                    init_const_kwargs={"c": "defg"},
+                ),
+                name="d",
+                init_requires=["k"],
+            ),
+            cli.Arg("i", type=int, default=6),
+        ),
+        cli.Arg("j", type=float, default=-7.8),
     )
+
+    args = parser.parse_args([])
+    assert args.get_summary() == (
+        "h.a.b1h.a.cABCh.d.e2,3h.d.f4.5h.d.g.bNh.i6j-7.8"
+    )
+    assert args.get_value_dict() == {
+        "H.a.b": 1,
+        "H.a.c": "abc",
+        "H.d.e": [
+            2,
+            3
+        ],
+        "H.d.f": 4.5,
+        "H.d.g.b": None,
+        "H.i": 6,
+        "j": -7.8
+    }
+
+    cli.verbose.set_printer(printer)
+
+    with cli.verbose:
+        with pytest.raises(ValueError):
+            h = args.init_object("H")
+
+        with pytest.raises(ValueError):
+            d = args.init_object("H.d")
+
+        d = args.init_object("H.d", k=9)
+
+    assert isinstance(d, D)
+    assert d.e == [2, 3]
+    assert d.f == 4.5
+    assert isinstance(d.g, A)
+    assert d.g.b == None
+    assert d.g.c == "defg"
+    assert d.kw == {"k": 9}
+
+    printer.hline()
+
+    with cli.verbose:
+        d = args.init_object("H.d", k=9, m="hij")
+        assert isinstance(d, D)
+        assert d.kw == {"k": 9}
+
+        args.reset_object_cache()
+        d = args.init_object("H.d", k=9, m="hij")
+        assert isinstance(d, D)
+        assert d.kw == {"k": 9, "m": "hij"}
+
+        h = args.init_object("H")
+        assert isinstance(h, H)
+        assert h.d is d
+        assert h.a.b == 1
+        assert h.a.c == "abc"
+
+    printer.hline()
+
+    new_args = parser.parse_args("--H.a.c lmnop --H.d.g.b 13".split())
+
+    with cli.verbose:
+        with pytest.raises(ValueError):
+            new_args.init_object("H")
+
+        new_args.init_object("H.d", k=[55, 66], n=77)
+        h = new_args.init_object("H")
+
+    assert isinstance(h, H)
+    assert h.a.c == "lmnop"
+    assert h.d.g.b == 13
+    assert h.d.kw == {"k": [55, 66], "n": 77}
+    assert h.i == 6
+
+    printer.hline()
+    printer(parser.help())
 
 def test_object_choice():
     parser = cli.Parser(

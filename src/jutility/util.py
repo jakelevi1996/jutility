@@ -788,7 +788,7 @@ def abbreviate_dictionary(
         }
 
     sorted_keys = sorted(
-        (k for k in input_dict.keys() if k in key_abbreviations),
+        (set(input_dict.keys()) & set(key_abbreviations.keys())),
         key=lambda k: key_abbreviations[k],
     )
     pairs_list = [

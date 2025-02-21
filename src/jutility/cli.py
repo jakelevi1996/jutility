@@ -58,12 +58,10 @@ class _ArgParent:
 
         for arg in self._arg_list:
             if arg.tagged:
-                arg_prefix = (
-                    prefix
-                    if self._hide_tag(arg)
-                    else tag_dict[arg.full_name] + "."
-                )
-                arg.register_tags(tag_dict, arg_prefix)
+                if self._hide_tag(arg):
+                    arg.register_tags(tag_dict, prefix)
+                else:
+                    arg.register_tags(tag_dict, tag_dict[arg.full_name] + ".")
 
         return tag_dict
 

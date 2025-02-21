@@ -39,14 +39,15 @@ class _ArgParent:
         tag_dict: dict[str, str],
         prefix: str,
     ) -> dict[str, str]:
-        for arg in self._arg_list:
-            if (arg.tagged and (arg.tag is not None)):
+        tagged_args = [arg for arg in self._arg_list if arg.tagged]
+        for arg in tagged_args:
+            if arg.tag is not None:
                 tag_dict[arg.full_name] = self._make_tag(prefix, arg.tag)
 
         default_tag_dict = {
             arg.full_name: self._make_tag(prefix, arg.name)
-            for arg in self._arg_list
-            if (arg.tagged and (arg.tag is None))
+            for arg in tagged_args
+            if arg.tag is None
         }
         prefix_dict = util.get_unique_prefixes(
             input_list=default_tag_dict.values(),
@@ -56,12 +57,11 @@ class _ArgParent:
         for full_name, full_tag in default_tag_dict.items():
             tag_dict[full_name] = prefix_dict[full_tag]
 
-        for arg in self._arg_list:
-            if arg.tagged:
-                if self._hide_tag(arg):
-                    arg.register_tags(tag_dict, prefix)
-                else:
-                    arg.register_tags(tag_dict, tag_dict[arg.full_name] + ".")
+        for arg in tagged_args:
+            if self._hide_tag(arg):
+                arg.register_tags(tag_dict, prefix)
+            else:
+                arg.register_tags(tag_dict, tag_dict[arg.full_name] + ".")
 
         return tag_dict
 

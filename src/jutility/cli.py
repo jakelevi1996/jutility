@@ -104,8 +104,8 @@ class Arg(_ArgParent):
         self.tag = tag
         self.tagged = tagged
 
-    def _init_value(self):
-        self.value = None
+    def _init_value(self, value=None):
+        self.value = value
 
     def _init_help(self):
         if ((len(self.kwargs) > 0) and ("help" not in self.kwargs)):
@@ -367,7 +367,7 @@ class UnknownArg(Arg):
         self._init_arg_list([])
         self._init_name(None)
         self._init_tag(None, False)
-        self.value = value
+        self._init_value(value)
 
     def init_object(self, **extra_kwargs):
         raise ValueError("Can only initialise `Arg`s defined in `Parser`")

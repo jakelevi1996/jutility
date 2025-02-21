@@ -15,10 +15,10 @@ def main(
     assert isinstance(z, bool)
 
     with cli.verbose:
-        cn = cli.init_object(args, "ExampleClass")
+        cn = args.init_object("ExampleClass")
         assert isinstance(cn, ExampleClass)
 
-    print(x, y, z, cn.p, cli.get_args_summary(args), sep=" | ")
+    print(x, y, z, cn.p, args.get_summary(), sep=" | ")
 
     ...
 

@@ -357,7 +357,7 @@ def test_object_choice():
                     ),
                     shared_args=[cli.Arg("b", type=int, default=1)],
                     default="A",
-                    init_const_kwargs={"c": "defg"},
+                    init_const_kwargs={"c": "deep kwarg"},
                 ),
                 init_ignores=["b"],
             ),
@@ -466,7 +466,7 @@ def test_object_choice():
         assert d.g.f == 3.141
         assert d.g.g.b == None
         assert d.g.g.c == "deep arg"
-        assert d.g.kw == {"c": "defg"}
+        assert d.g.kw == {"c": "deep kwarg"}
         assert d.kw == {"c": "defg"}
 
     printer.hline()

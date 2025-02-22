@@ -510,17 +510,17 @@ def test_unknown_arg():
     assert args.get_kwargs() == {"a": 4, "b": 2.3, "c": "abc"}
 
     assert isinstance(args.get_arg("a"),    cli.Arg)
-    assert isinstance(args.get_arg("d"),    cli.UnknownArg)
-    assert isinstance(args.get_arg("e.f"),  cli.UnknownArg)
+    assert isinstance(args.get_arg("d"),    cli._UnknownArg)
+    assert isinstance(args.get_arg("e.f"),  cli._UnknownArg)
 
     assert repr(args.get_arg("a")) == (
         "Arg(full_name='a', name='a', value=4)"
     )
     assert repr(args.get_arg("d")) == (
-        "UnknownArg(full_name='d', name=None, value='xyz')"
+        "_UnknownArg(full_name='d', name=None, value='xyz')"
     )
     assert repr(args.get_arg("e.f")) == (
-        "UnknownArg(full_name='e.f', name=None, value=5.67)"
+        "_UnknownArg(full_name='e.f', name=None, value=5.67)"
     )
 
     printer(args, parser, parser.help(), sep="\n\n")

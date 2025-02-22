@@ -361,7 +361,7 @@ class ObjectChoice(ObjectArg):
             ],
         ]
 
-class UnknownArg(Arg):
+class _UnknownArg(Arg):
     def __init__(self, value):
         self._init_arg_list([])
         self._init_name(None)
@@ -447,7 +447,7 @@ class ParsedArgs(_ArgParent):
             if name in self._arg_dict:
                 self._arg_dict[name].value = value
             elif allow_new_keys:
-                new_arg = UnknownArg(value)
+                new_arg = _UnknownArg(value)
                 new_arg.set_full_name(name)
                 self._arg_dict[name] = new_arg
                 self._arg_list.append( new_arg)

@@ -525,6 +525,66 @@ def test_unknown_arg():
 
     printer(args, parser, parser.help(), sep="\n\n")
 
+def test_cli_verbose():
+    printer = util.Printer("test_cli_verbose", dir_name=OUTPUT_DIR)
+    cli.verbose.set_printer(printer)
+
+    class A:
+        def __init__(self, x: int):
+            self.x = x
+
+        def __repr__(self):
+            return util.format_type(type(self))
+
+    class B(A):
+        def __init__(self, a: A, y: float):
+            self.a = a
+            self.y = y
+
+    parser = cli.Parser(
+        cli.ObjectArg(A, cli.Arg("x", type=int, default=1)),
+        cli.ObjectArg(
+            B,
+            cli.ObjectArg(A, cli.Arg("x", type=int, default=2), name="a"),
+            cli.Arg("y", type=float, default=3.4),
+        ),
+    )
+    args = parser.parse_args([])
+
+    args.init_object("A", x=5)
+    with cli.verbose:
+        args.init_object("B", y=6.6)
+        with cli.verbose:
+            args.init_object("B.a", x=7)
+
+        printer.heading("args.reset_object_cache")
+        args.reset_object_cache()
+        args.init_object("B.a", x=8)
+        args.init_object("B.a", x=9)
+        args.init_object("B", y=-10.11)
+        args.init_object("B", y=12.13)
+        args.init_object("A", x=14)
+        args.init_object("A", x=15)
+
+    args.init_object("A", x=15)
+
+    assert printer.read() == (
+        "cli: A(x=2)\n"
+        "cli: B(a=A(), y=6.6)\n"
+        "cli: retrieving \"B.a\" from cache\n"
+        "\n"
+        "------------------------ (1) args.reset_object_cache "
+        "-------------------------\n"
+        "\n"
+        "cli: A(x=8)\n"
+        "cli: retrieving \"B.a\" from cache\n"
+        "cli: retrieving \"B.a\" from cache\n"
+        "cli: B(a=A(), y=-10.11)\n"
+        "cli: retrieving \"B\" from cache\n"
+        "cli: A(x=14)\n"
+        "cli: retrieving \"A\" from cache\n"
+    )
+
 def get_parser():
     parser = cli.Parser(
         cli.Arg("int",   "in", default=10,            type=int),
@@ -1324,7 +1384,7 @@ def test_arg_registered_twice():
             ),
         )
 
-def test_cli_verbose():
+def test_cli_verbose_old():
     printer = util.Printer("test_cli_verbose", OUTPUT_DIR)
 
     class A:

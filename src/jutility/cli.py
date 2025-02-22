@@ -309,10 +309,9 @@ class ObjectChoice(ObjectArg):
         self._init_arg_list(tuple(choices) + tuple(shared_args))
         self.choice_dict = {arg.name: arg for arg in choices}
         if (default is not None) and (default not in self.choice_dict):
-            valid_names = [arg.name for arg in choices]
             raise ValueError(
-                "%s(\"%s\") received `default=\"%s\"`, please choose from %s"
-                % (type(self).__name__, name, default, valid_names)
+                "%s received `default=\"%s\"`, please choose from %s"
+                % (self, default, sorted(arg.name for arg in choices))
             )
 
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
@@ -480,9 +479,8 @@ class _Verbose:
         self._verbosity = 0
         self.set_printer(util.Printer())
 
-    def display_init(self, object_type, kwargs: dict):
-        arg_str = ", ".join("%s=%r" % (k, v) for k, v in kwargs.items())
-        self._printer("cli: %s(%s)" % (object_type.__name__, arg_str))
+    def display_init(self, object_type: type, kwargs: dict):
+        self._printer("cli: %s" % util.format_type(object_type, **kwargs))
 
     def display_retrieve(self, full_name):
         self._printer("cli: retrieving \"%s\" from cache" % full_name)

@@ -770,14 +770,14 @@ def test_autotag_edge_cases():
         cli.Arg("a_bc", default=456),
     )
     args = parser.parse_args([])
-    assert args.get_summary() == "a123a456"
+    assert args.get_summary() == "a456a123"
 
     parser = cli.Parser(
         cli.Arg("abc", default=123),
         cli.Arg("ABC", default=456),
     )
     args = parser.parse_args([])
-    assert args.get_summary() == "a123a456"
+    assert args.get_summary() == "a456a123"
 
     parser = cli.Parser(
         cli.Arg("abc",  default=123),
@@ -792,7 +792,7 @@ def test_autotag_edge_cases():
         cli.Arg("ABC",  default=789),
     )
     args = parser.parse_args([])
-    assert args.get_summary() == "abc123abc789abcd456"
+    assert args.get_summary() == "abc789abc123abcd456"
 
     parser = cli.Parser(
         cli.Arg("abc",  default=123),
@@ -800,7 +800,7 @@ def test_autotag_edge_cases():
         cli.Arg("ABC",  default=789, tag="abc"),
     )
     args = parser.parse_args([])
-    assert args.get_summary() == "abc123abc789abcd456"
+    assert args.get_summary() == "abc789abc123abcd456"
 
     parser = cli.Parser(
         cli.Arg("abc",  default=123),
@@ -808,7 +808,7 @@ def test_autotag_edge_cases():
         cli.Arg("ABC",  default=789, tag="abc_"),
     )
     args = parser.parse_args([])
-    assert args.get_summary() == "abc123abc789abcd456"
+    assert args.get_summary() == "abc789abc123abcd456"
 
     parser = cli.Parser(
         cli.Arg("abc",  default=123),
@@ -816,7 +816,7 @@ def test_autotag_edge_cases():
         cli.Arg("ABC",  default=789, tag="a_b_c"),
     )
     args = parser.parse_args([])
-    assert args.get_summary() == "abc123abc789abcd456"
+    assert args.get_summary() == "abc789abc123abcd456"
 
     parser = cli.Parser(
         cli.Arg("abc",  default=123),
@@ -900,7 +900,7 @@ def test_autotag_edge_cases_objectchoice():
         ),
     )
     args = parser.parse_args([])
-    assert args.get_summary() == "abc123abcAabc.x78abcd456"
+    assert args.get_summary() == "abcAabc123abc.x78abcd456"
 
     parser = cli.Parser(
         cli.Arg("abc",  default=123),
@@ -914,7 +914,7 @@ def test_autotag_edge_cases_objectchoice():
         ),
     )
     args = parser.parse_args([])
-    assert args.get_summary() == "abc123abcAabc.x78abcd456"
+    assert args.get_summary() == "abcAabc123abc.x78abcd456"
 
     parser = cli.Parser(
         cli.Arg("abc",  default=123),

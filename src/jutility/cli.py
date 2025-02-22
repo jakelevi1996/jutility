@@ -75,6 +75,10 @@ class _ArgParent:
     def _get_active_args(self) -> list["Arg"]:
         return self._arg_list
 
+class _ArgRoot(_ArgParent):
+    def _init_arg_dict(self):
+        self._arg_dict = self.register_names(dict(), "")
+
 class Arg(_ArgParent):
     def __init__(
         self,
@@ -374,7 +378,7 @@ class _UnknownArg(Arg):
     def is_kwarg(self):
         return False
 
-class Parser(_ArgParent):
+class Parser(_ArgRoot):
     def __init__(
         self,
         *args: Arg,
@@ -386,7 +390,7 @@ class Parser(_ArgParent):
         """
         self._parser_kwargs = parser_kwargs
         self._init_arg_list(list(args))
-        self._arg_dict = self.register_names(dict(), "")
+        self._init_arg_dict()
 
     def _get_argparse_parser(self) -> argparse.ArgumentParser:
         parser = argparse.ArgumentParser(**self._parser_kwargs)

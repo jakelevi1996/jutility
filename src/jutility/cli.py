@@ -6,7 +6,7 @@ class _ArgParent:
     def _init_arg_list(self, arg_list: list["Arg"]):
         self._arg_list = arg_list
 
-    def _init_name(self, name: str | None):
+    def _init_name(self, name: str):
         self.name = name
         self.full_name = None
 

@@ -445,9 +445,8 @@ class SubCommandGroup:
         chosen_sub_command = self._command_dict[self.value]
         return chosen_sub_command.parse_args(arg_dict, argparse_value_dict)
 
-    def get_command(self, sub_command: "SubCommand"):
-        chosen_sub_command = self._command_dict[self.value]
-        return chosen_sub_command.get_command()
+    def get_command(self) -> "SubCommand":
+        return self._command_dict[self.value]
 
 # class SubCommand(Parser, Arg):
 # class SubCommand:
@@ -494,13 +493,13 @@ class SubCommand(_ArgRoot):
         return self._sub_commands.parse_args(arg_dict, argparse_value_dict)
 
     # def run_command(self, **kwargs):
-    def get_command(self):
+    def get_command(self) -> "SubCommand":
         # print(
         #     "> %s.run(%s)"
         #     % (type(self).__name__, util.format_dict(kwargs))
         # )
         # return
-        return self._sub_commands.get_command(self)
+        return self._sub_commands.get_command()
 
     # def register_names(self, arg_dict, prefix):
     #     ...
@@ -523,8 +522,8 @@ class _NoSubCommandGroup(SubCommandGroup):
     ) -> dict[str, Arg]:
         return arg_dict
 
-    def get_command(self, sub_command: "SubCommand"):
-        return sub_command
+    def get_command(self) -> SubCommand:
+        return
 
 class Parser(_ArgRoot):
     def __init__(
@@ -570,8 +569,8 @@ class Parser(_ArgRoot):
         return ParsedArgs(self._arg_list, arg_dict)
 
     # def run_command(self, parsed_args: "ParsedArgs"):
-    def get_command(self):
-        return self._sub_commands.get_command(None)
+    def get_command(self) -> SubCommand:
+        return self._sub_commands.get_command()
 
     def help(self) -> str:
         return self._get_argparse_parser().format_help()

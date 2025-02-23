@@ -79,6 +79,13 @@ class _ArgRoot(_ArgParent):
     def _init_arg_dict(self):
         self._arg_dict = self.register_names(dict(), "")
 
+    # def _init_sub_commands(self, sub_commands: ("SubCommandGroup" | None)):
+    def _init_sub_commands(self, sub_commands: "SubCommandGroup"):
+        if sub_commands is None:
+            sub_commands = _NoSubCommandGroup()
+
+        self._sub_commands = sub_commands
+
 class Arg(_ArgParent):
     def __init__(
         self,
@@ -378,10 +385,145 @@ class _UnknownArg(Arg):
     def is_kwarg(self):
         return False
 
+# class SubCommandGroup(Arg):
+class SubCommandGroup:
+    def __init__(
+        self,
+        *commands: "SubCommand",
+        name: str="command",
+        required: bool=True,
+        **subparser_kwargs,
+    ):
+        """
+        See
+        https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.add_subparsers
+        """
+        # self._init_name(name)
+        self.name = name
+        self.full_name = None
+        self.value = None
+
+        self._commands = commands
+        self._required = required
+        self._subparser_kwargs = subparser_kwargs
+
+        self._command_dict = {c.name: c for c in commands}
+
+    def register_sub_commands(self, prefix: str):
+        self.full_name = prefix + self.name
+        for c in self._commands:
+            c.register_sub_commands(self.full_name + ".")
+
+    def add_argparse_arguments(self, parser: argparse.ArgumentParser):
+        subparser = parser.add_subparsers(
+            title=self.name,
+            dest=self.full_name,
+            # dest=self.name,
+            required=self._required,
+            **self._subparser_kwargs,
+        )
+        for command in self._commands:
+            parser = subparser.add_parser(
+                command.name,
+                **command.parser_kwargs,
+            )
+            command.add_argparse_arguments(parser)
+
+    def parse_args(
+        self,
+        arg_dict: dict[str, Arg],
+        argparse_value_dict: dict,
+    ) -> dict[str, Arg]:
+        self.value = argparse_value_dict.pop(self.full_name)
+        chosen_sub_command = self._command_dict[self.value]
+        return chosen_sub_command.parse_args(arg_dict, argparse_value_dict)
+
+    def get_command(self, sub_command: "SubCommand"):
+        chosen_sub_command = self._command_dict[self.value]
+        return chosen_sub_command.get_command()
+
+# class SubCommand(Parser, Arg):
+# class SubCommand:
+class SubCommand(_ArgRoot):
+    def __init__(
+        self,
+        name: str,
+        *args: Arg,
+        sub_commands: (SubCommandGroup | None)=None,
+        **parser_kwargs,
+    ):
+        """
+        See
+        https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser
+        """
+        self.name = name
+        self.full_name = None
+
+        self._init_arg_list(list(args))
+        self._init_arg_dict()
+        self._init_sub_commands(sub_commands)
+        self.parser_kwargs = parser_kwargs
+
+    def register_sub_commands(self, prefix: str):
+        self.full_name = prefix + self.name
+        self._sub_commands.register_sub_commands(self.full_name + ".")
+
+    def add_argparse_arguments(self, parser: argparse.ArgumentParser):
+        for arg in self._arg_list:
+            arg.add_argparse_arguments(parser)
+
+        self._sub_commands.add_argparse_arguments(parser)
+
+    def parse_args(
+        self,
+        arg_dict: dict[str, Arg],
+        argparse_value_dict: dict,
+    ) -> dict[str, Arg]:
+        arg_dict.update(self._arg_dict)
+        # for arg_name, arg_value in argparse_value_dict.items():
+        #     arg_dict[arg_name].value = arg_value
+
+        # self.get_command(**self.get_kwargs())
+        return self._sub_commands.parse_args(arg_dict, argparse_value_dict)
+
+    # def run_command(self, **kwargs):
+    def get_command(self):
+        # print(
+        #     "> %s.run(%s)"
+        #     % (type(self).__name__, util.format_dict(kwargs))
+        # )
+        # return
+        return self._sub_commands.get_command(self)
+
+    # def register_names(self, arg_dict, prefix):
+    #     ...
+    #     super().register_names
+
+class _NoSubCommandGroup(SubCommandGroup):
+    def __init__(self):
+        return
+
+    def register_sub_commands(self, prefix: str):
+        return
+
+    def add_argparse_arguments(self, parser: argparse.ArgumentParser):
+        return
+
+    def parse_args(
+        self,
+        arg_dict: dict[str, Arg],
+        argparse_value_dict: dict,
+    ) -> dict[str, Arg]:
+        return arg_dict
+
+    def get_command(self, sub_command: "SubCommand"):
+        return sub_command
+
 class Parser(_ArgRoot):
     def __init__(
         self,
         *args: Arg,
+        sub_commands: (SubCommandGroup | None)=None,
         **parser_kwargs,
     ):
         """
@@ -391,12 +533,15 @@ class Parser(_ArgRoot):
         self._parser_kwargs = parser_kwargs
         self._init_arg_list(list(args))
         self._init_arg_dict()
+        self._init_sub_commands(sub_commands)
+        self._sub_commands.register_sub_commands("")
 
     def _get_argparse_parser(self) -> argparse.ArgumentParser:
         parser = argparse.ArgumentParser(**self._parser_kwargs)
         for arg in self._arg_list:
             arg.add_argparse_arguments(parser)
 
+        self._sub_commands.add_argparse_arguments(parser)
         return parser
 
     def parse_args(self, *args, **kwargs) -> "ParsedArgs":
@@ -406,12 +551,20 @@ class Parser(_ArgRoot):
         """
         parser = self._get_argparse_parser()
         argparse_namespace = parser.parse_args(*args, **kwargs)
-        argparse_dict = vars(argparse_namespace)
-        for arg_name in argparse_dict:
-            arg_value = argparse_dict[arg_name]
-            self._arg_dict[arg_name].value = arg_value
+        argparse_value_dict = vars(argparse_namespace)
+        arg_dict = self._sub_commands.parse_args(
+            self._arg_dict.copy(),
+            argparse_value_dict,
+        )
+        for arg_name in argparse_value_dict:
+            arg_value = argparse_value_dict[arg_name]
+            arg_dict[arg_name].value = arg_value
 
-        return ParsedArgs(self._arg_list, self._arg_dict)
+        return ParsedArgs(self._arg_list, arg_dict)
+
+    # def run_command(self, parsed_args: "ParsedArgs"):
+    def get_command(self):
+        return self._sub_commands.get_command(None)
 
     def help(self) -> str:
         return self._get_argparse_parser().format_help()

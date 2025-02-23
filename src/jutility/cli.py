@@ -6,6 +6,13 @@ class _ArgParent:
     def _init_arg_list(self, arg_list: list["Arg"]):
         self._arg_list = arg_list
 
+    def _init_name(self, name: str | None):
+        self.name = name
+        self.full_name = None
+
+    def _init_value(self, value=None):
+        self.value = value
+
     def get_value_dict(self) -> dict:
         return self.register_values(dict())
 
@@ -114,16 +121,9 @@ class Arg(_ArgParent):
         self._init_value()
         self._init_help()
 
-    def _init_name(self, name: str | None):
-        self.name = name
-        self.full_name = None
-
     def _init_tag(self, tag: str | None, tagged: bool):
         self.tag = tag
         self.tagged = tagged
-
-    def _init_value(self, value=None):
-        self.value = value
 
     def _init_help(self):
         if ((len(self.kwargs) > 0) and ("help" not in self.kwargs)):

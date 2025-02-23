@@ -16,6 +16,13 @@ class _ArgParent:
             replaces=replaces,
         )
 
+    def get_kwargs(self) -> dict:
+        return {
+            arg.name: arg.value
+            for arg in self._arg_list
+            if arg.is_kwarg()
+        }
+
     def register_names(
         self,
         arg_dict: dict[str, "Arg"],
@@ -591,13 +598,6 @@ class ParsedArgs(_ArgParent):
 
     def get_value(self, arg_name: str):
         return self._arg_dict[arg_name].value
-
-    def get_kwargs(self) -> dict:
-        return {
-            arg.name: arg.value
-            for arg in self._arg_list
-            if arg.is_kwarg()
-        }
 
     def update(self, value_dict: dict, allow_new_keys=False):
         for name, value in value_dict.items():

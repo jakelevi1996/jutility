@@ -93,7 +93,6 @@ class _ArgRoot(_ArgParent):
     def _init_arg_dict(self):
         self._arg_dict = self.register_names(dict(), "")
 
-    # def _init_sub_commands(self, sub_commands: ("SubCommandGroup" | None)):
     def _init_sub_commands(self, sub_commands: "SubCommandGroup"):
         if sub_commands is None:
             sub_commands = _NoSubCommandGroup()
@@ -392,7 +391,6 @@ class _UnknownArg(Arg):
     def is_kwarg(self):
         return False
 
-# class SubCommandGroup(Arg):
 class SubCommandGroup(_ArgParent):
     def __init__(
         self,
@@ -422,7 +420,6 @@ class SubCommandGroup(_ArgParent):
         subparser = parser.add_subparsers(
             title=self.name,
             dest=self.full_name,
-            # dest=self.name,
             required=self._required,
             **self._subparser_kwargs,
         )
@@ -445,8 +442,6 @@ class SubCommandGroup(_ArgParent):
     def get_command(self) -> "SubCommand":
         return self._command_dict[self.value]
 
-# class SubCommand(Parser, Arg):
-# class SubCommand:
 class SubCommand(_ArgRoot):
     def __init__(
         self,
@@ -481,26 +476,13 @@ class SubCommand(_ArgRoot):
         argparse_value_dict: dict,
     ) -> dict[str, Arg]:
         arg_dict.update(self._arg_dict)
-        # for arg_name, arg_value in argparse_value_dict.items():
-        #     arg_dict[arg_name].value = arg_value
-
-        # self.get_command(**self.get_kwargs())
         return self._sub_commands.parse_args(arg_dict, argparse_value_dict)
 
     def get_command(self) -> "SubCommand":
-        # print(
-        #     "> %s.run(%s)"
-        #     % (type(self).__name__, util.format_dict(kwargs))
-        # )
-        # return
         return self._sub_commands.get_command()
 
     def run(self, *args, **kwargs):
         raise NotImplementedError()
-
-    # def register_names(self, arg_dict, prefix):
-    #     ...
-    #     super().register_names
 
 class _NoSubCommandGroup(SubCommandGroup):
     def __init__(self):

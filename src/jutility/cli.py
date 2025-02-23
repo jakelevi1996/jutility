@@ -393,7 +393,7 @@ class _UnknownArg(Arg):
         return False
 
 # class SubCommandGroup(Arg):
-class SubCommandGroup:
+class SubCommandGroup(_ArgParent):
     def __init__(
         self,
         *commands: "SubCommand",
@@ -405,11 +405,8 @@ class SubCommandGroup:
         See
         https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.add_subparsers
         """
-        # self._init_name(name)
-        self.name = name
-        self.full_name = None
-        self.value = None
-
+        self._init_name(name)
+        self._init_value()
         self._commands = commands
         self._required = required
         self._subparser_kwargs = subparser_kwargs
@@ -462,9 +459,7 @@ class SubCommand(_ArgRoot):
         See
         https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser
         """
-        self.name = name
-        self.full_name = None
-
+        self._init_name(name)
         self._init_arg_list(list(args))
         self._init_arg_dict()
         self._init_sub_commands(sub_commands)

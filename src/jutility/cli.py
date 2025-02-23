@@ -487,7 +487,6 @@ class SubCommand(_ArgRoot):
         # self.get_command(**self.get_kwargs())
         return self._sub_commands.parse_args(arg_dict, argparse_value_dict)
 
-    # def run_command(self, **kwargs):
     def get_command(self) -> "SubCommand":
         # print(
         #     "> %s.run(%s)"
@@ -495,6 +494,9 @@ class SubCommand(_ArgRoot):
         # )
         # return
         return self._sub_commands.get_command()
+
+    def run(self, *args, **kwargs):
+        raise NotImplementedError()
 
     # def register_names(self, arg_dict, prefix):
     #     ...
@@ -563,7 +565,6 @@ class Parser(_ArgRoot):
 
         return ParsedArgs(self._arg_list, arg_dict)
 
-    # def run_command(self, parsed_args: "ParsedArgs"):
     def get_command(self) -> SubCommand:
         return self._sub_commands.get_command()
 

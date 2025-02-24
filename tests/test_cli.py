@@ -1173,3 +1173,116 @@ def test_no_tag_arg():
     assert c.y == 8.88
 
     printer(args, parser, parser.help(), sep="\n\n")
+
+def test_arg_group():
+    printer = util.Printer("test_arg_group", dir_name=OUTPUT_DIR)
+
+    class Trainer:
+        def __init__(self, num_epochs: int):
+            self.num_epochs = num_epochs
+
+    class Mlp:
+        def __init__(self, num_layers: int):
+            self.num_layers = num_layers
+
+    class Cnn:
+        def __init__(self, num_layers: int, kernel_size: int):
+            self.num_layers = num_layers
+            self.kernel_size = kernel_size
+
+    def get_parser(is_group: bool):
+        return cli.Parser(
+            cli.ObjectArg(
+                Trainer,
+                cli.Arg("num_epochs", type=int, default=10),
+                is_group=is_group,
+            ),
+            cli.ObjectChoice(
+                "model",
+                cli.ObjectArg(
+                    Mlp,
+                    cli.Arg("num_layers", type=int, default=5),
+                ),
+                cli.ObjectArg(
+                    Cnn,
+                    cli.Arg("num_layers", type=int, default=5),
+                    cli.Arg("kernel_size", type=int, default=3),
+                ),
+                is_group=is_group,
+            ),
+            cli.Arg("output_name"),
+        )
+
+    parser = get_parser(is_group=False)
+    printer(parser.help())
+    assert parser.help() == (
+        "usage: run_pytest_script.py [-h] [--Trainer.num_epochs "
+        "TRAINER.NUM_EPOCHS]\n"
+        "                            --model {Mlp,Cnn}\n"
+        "                            [--model.Mlp.num_layers "
+        "MODEL.MLP.NUM_LAYERS]\n"
+        "                            [--model.Cnn.num_layers "
+        "MODEL.CNN.NUM_LAYERS]\n"
+        "                            [--model.Cnn.kernel_size "
+        "MODEL.CNN.KERNEL_SIZE]\n"
+        "                            [--output_name OUTPUT_NAME]\n"
+        "\n"
+        "options:\n"
+        "  -h, --help            show this help message and exit\n"
+        "  --Trainer.num_epochs TRAINER.NUM_EPOCHS\n"
+        "                        default=10, type=<class 'int'>\n"
+        "  --model {Mlp,Cnn}\n"
+        "  --model.Mlp.num_layers MODEL.MLP.NUM_LAYERS\n"
+        "                        default=5, type=<class 'int'>\n"
+        "  --model.Cnn.num_layers MODEL.CNN.NUM_LAYERS\n"
+        "                        default=5, type=<class 'int'>\n"
+        "  --model.Cnn.kernel_size MODEL.CNN.KERNEL_SIZE\n"
+        "                        default=3, type=<class 'int'>\n"
+        "  --output_name OUTPUT_NAME\n"
+    )
+
+    assert parser.parse_args("--model Mlp".split()).get_value_dict() == {
+        'Trainer.num_epochs': 10,
+        'model': 'Mlp',
+        'model.Mlp.num_layers': 5,
+        'output_name': None,
+    }
+
+    parser = get_parser(is_group=True)
+    printer(parser.help())
+    assert parser.help() == (
+        "usage: run_pytest_script.py [-h] [--Trainer.num_epochs "
+        "TRAINER.NUM_EPOCHS]\n"
+        "                            --model {Mlp,Cnn}\n"
+        "                            [--model.Mlp.num_layers "
+        "MODEL.MLP.NUM_LAYERS]\n"
+        "                            [--model.Cnn.num_layers "
+        "MODEL.CNN.NUM_LAYERS]\n"
+        "                            [--model.Cnn.kernel_size "
+        "MODEL.CNN.KERNEL_SIZE]\n"
+        "                            [--output_name OUTPUT_NAME]\n"
+        "\n"
+        "options:\n"
+        "  -h, --help            show this help message and exit\n"
+        "  --output_name OUTPUT_NAME\n"
+        "\n"
+        "Trainer:\n"
+        "  --Trainer.num_epochs TRAINER.NUM_EPOCHS\n"
+        "                        default=10, type=<class 'int'>\n"
+        "\n"
+        "model:\n"
+        "  --model {Mlp,Cnn}\n"
+        "  --model.Mlp.num_layers MODEL.MLP.NUM_LAYERS\n"
+        "                        default=5, type=<class 'int'>\n"
+        "  --model.Cnn.num_layers MODEL.CNN.NUM_LAYERS\n"
+        "                        default=5, type=<class 'int'>\n"
+        "  --model.Cnn.kernel_size MODEL.CNN.KERNEL_SIZE\n"
+        "                        default=3, type=<class 'int'>\n"
+    )
+
+    assert parser.parse_args("--model Mlp".split()).get_value_dict() == {
+        'Trainer.num_epochs': 10,
+        'model': 'Mlp',
+        'model.Mlp.num_layers': 5,
+        'output_name': None,
+    }

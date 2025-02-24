@@ -230,7 +230,8 @@ class ObjectArg(Arg):
         *args: Arg,
         name: (str | None)=None,
         tag:  (str | None)=None,
-        tagged=True,
+        tagged:   bool=True,
+        is_group: bool=False,
         init_requires: (list[str] | None)=None,
         init_ignores:  (list[str] | None)=None,
         init_const_kwargs:  (dict | None)=None,
@@ -242,6 +243,7 @@ class ObjectArg(Arg):
         self._init_arg_parent(list(args), name)
         self._init_tag(tag, tagged)
         self._init_object_options(
+            is_group,
             init_requires,
             init_ignores,
             init_const_kwargs,
@@ -249,6 +251,7 @@ class ObjectArg(Arg):
 
     def _init_object_options(
         self,
+        is_group: bool,
         init_requires: (list[str] | None),
         init_ignores:  (list[str] | None),
         init_const_kwargs:  (dict | None),
@@ -260,11 +263,15 @@ class ObjectArg(Arg):
         if init_const_kwargs is None:
             init_const_kwargs = dict()
 
+        self.is_group = is_group
         self.init_requires = init_requires
         self.init_ignores  = init_ignores
         self.init_const_kwargs  = init_const_kwargs
 
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
+        if self.is_group:
+            parser = parser.add_argument_group(self.name)
+
         for arg in self._arg_list:
             arg.add_argparse_arguments(parser)
 
@@ -319,10 +326,11 @@ class ObjectChoice(ObjectArg):
         self,
         name: str,
         *choices: ObjectArg,
-        shared_args: (list[Arg] | None)=None,
         default: (str | None)=None,
         tag:     (str | None)=None,
-        tagged=True,
+        tagged:   bool=True,
+        is_group: bool=False,
+        shared_args:   (list[Arg] | None)=None,
         init_requires: (list[str] | None)=None,
         init_ignores:  (list[str] | None)=None,
         init_const_kwargs:  (dict | None)=None,
@@ -336,6 +344,7 @@ class ObjectChoice(ObjectArg):
         self._init_arg_parent(arg_list, name)
         self._init_tag(tag, tagged)
         self._init_object_options(
+            is_group,
             init_requires,
             init_ignores,
             init_const_kwargs,
@@ -349,6 +358,9 @@ class ObjectChoice(ObjectArg):
             )
 
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
+        if self.is_group:
+            parser = parser.add_argument_group(self.name)
+
         parser.add_argument(
             "--" + self.full_name,
             choices=list(self.choice_dict.keys()),

@@ -3,6 +3,21 @@ import json
 from jutility import util
 
 class _ArgParent:
+    def _init_arg_parent(
+        self,
+        arg_list: list["Arg"],
+        name: str,
+        kwargs: (dict | None)=None,
+        value=None,
+    ):
+        if kwargs is None:
+            kwargs = dict()
+
+        self._init_arg_list(arg_list)
+        self._init_name(name)
+        self._init_value(value)
+        self._init_kwargs(kwargs)
+
     def _init_arg_list(self, arg_list: list["Arg"]):
         self._arg_list = arg_list
 
@@ -12,6 +27,9 @@ class _ArgParent:
 
     def _init_value(self, value=None):
         self.value = value
+
+    def _init_kwargs(self, kwargs: dict):
+        self.kwargs = kwargs
 
     def get_value_dict(self) -> dict:
         return self.register_values(dict())
@@ -112,12 +130,9 @@ class Arg(_ArgParent):
         See
         https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.add_argument
         """
-        self.kwargs = argparse_kwargs
         self._is_kwarg = is_kwarg
-        self._init_arg_list([])
-        self._init_name(name)
+        self._init_arg_parent([], name, argparse_kwargs)
         self._init_tag(tag, tagged)
-        self._init_value()
         self._init_help()
 
     def _init_tag(self, tag: str | None, tagged: bool):
@@ -219,10 +234,8 @@ class ObjectArg(Arg):
             name = object_type.__name__
 
         self.object_type = object_type
-        self._init_arg_list(args)
-        self._init_name(name)
+        self._init_arg_parent(list(args), name)
         self._init_tag(tag, tagged)
-        self._init_value()
         self._init_object_options(
             init_requires,
             init_ignores,
@@ -314,16 +327,15 @@ class ObjectChoice(ObjectArg):
 
         self.shared_args = shared_args
         self.default = default
-        self._init_name(name)
+        arg_list = list(choices) + shared_args
+        self._init_arg_parent(arg_list, name)
         self._init_tag(tag, tagged)
-        self._init_value()
         self._init_object_options(
             init_requires,
             init_ignores,
             init_const_kwargs,
         )
 
-        self._init_arg_list(tuple(choices) + tuple(shared_args))
         self.choice_dict = {arg.name: arg for arg in choices}
         if (default is not None) and (default not in self.choice_dict):
             raise ValueError(
@@ -380,10 +392,8 @@ class ObjectChoice(ObjectArg):
 
 class _UnknownArg(Arg):
     def __init__(self, value):
-        self._init_arg_list([])
-        self._init_name(None)
+        self._init_arg_parent([], None, value=value)
         self._init_tag(None, False)
-        self._init_value(value)
 
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         return
@@ -403,11 +413,9 @@ class SubCommandGroup(_ArgParent):
         See
         https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.add_subparsers
         """
-        self._init_name(name)
-        self._init_value()
+        self._init_arg_parent([], name, subparser_kwargs)
         self._commands = commands
         self._required = required
-        self._subparser_kwargs = subparser_kwargs
 
         self._command_dict = {c.name: c for c in commands}
 
@@ -421,13 +429,10 @@ class SubCommandGroup(_ArgParent):
             title=self.name,
             dest=self.full_name,
             required=self._required,
-            **self._subparser_kwargs,
+            **self.kwargs,
         )
         for command in self._commands:
-            parser = subparser.add_parser(
-                command.name,
-                **command.parser_kwargs,
-            )
+            parser = subparser.add_parser(command.name, **command.kwargs)
             command.add_argparse_arguments(parser)
 
     def parse_args(
@@ -454,11 +459,9 @@ class SubCommand(_ArgRoot):
         See
         https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser
         """
-        self._init_name(name)
-        self._init_arg_list(list(args))
+        self._init_arg_parent(list(args), name, parser_kwargs)
         self._init_arg_dict()
         self._init_sub_commands(sub_commands)
-        self.parser_kwargs = parser_kwargs
 
     def register_sub_commands(self, prefix: str):
         self.full_name = prefix + self.name
@@ -486,7 +489,7 @@ class SubCommand(_ArgRoot):
 
 class _NoSubCommandGroup(SubCommandGroup):
     def __init__(self):
-        return
+        self._init_arg_parent([], None)
 
     def register_sub_commands(self, prefix: str):
         return

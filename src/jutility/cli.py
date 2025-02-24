@@ -446,7 +446,7 @@ class SubCommandGroup(_ArgParent):
         argparse_value_dict: dict,
     ) -> dict[str, Arg]:
         self.value = argparse_value_dict.pop(self.full_name)
-        return self.get_command().parse_args(arg_dict, argparse_value_dict)
+        self.get_command().parse_args(arg_dict, argparse_value_dict)
 
     def get_command(self) -> "SubCommand":
         return self._command_dict[self.value]
@@ -483,7 +483,7 @@ class SubCommand(_ArgRoot):
         argparse_value_dict: dict,
     ) -> dict[str, Arg]:
         arg_dict.update(self._arg_dict)
-        return self._sub_commands.parse_args(arg_dict, argparse_value_dict)
+        self._sub_commands.parse_args(arg_dict, argparse_value_dict)
 
     def get_command(self) -> "SubCommand":
         return self._sub_commands.get_command()
@@ -509,7 +509,7 @@ class _NoSubCommandGroup(SubCommandGroup):
         arg_dict: dict[str, Arg],
         argparse_value_dict: dict,
     ) -> dict[str, Arg]:
-        return arg_dict
+        return
 
     def get_command(self) -> SubCommand:
         return
@@ -547,13 +547,12 @@ class Parser(_ArgRoot):
         parser = self._get_argparse_parser()
         argparse_namespace = parser.parse_args(*args, **kwargs)
         argparse_value_dict = vars(argparse_namespace)
-        arg_dict = self._sub_commands.parse_args(
-            self._arg_dict.copy(),
-            argparse_value_dict,
-        )
+
+        arg_dict = self._arg_dict.copy()
+        self._sub_commands.parse_args(arg_dict, argparse_value_dict)
+
         for arg_name in argparse_value_dict:
-            arg_value = argparse_value_dict[arg_name]
-            arg_dict[arg_name].value = arg_value
+            arg_dict[arg_name].value = argparse_value_dict[arg_name]
 
         return ParsedArgs(self._arg_list, arg_dict)
 

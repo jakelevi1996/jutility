@@ -446,8 +446,7 @@ class SubCommandGroup(_ArgParent):
         argparse_value_dict: dict,
     ) -> dict[str, Arg]:
         self.value = argparse_value_dict.pop(self.full_name)
-        chosen_sub_command = self._command_dict[self.value]
-        return chosen_sub_command.parse_args(arg_dict, argparse_value_dict)
+        return self.get_command().parse_args(arg_dict, argparse_value_dict)
 
     def get_command(self) -> "SubCommand":
         return self._command_dict[self.value]

@@ -1058,6 +1058,11 @@ def test_subcommand():
         "Arg(full_name='model', name='model', value='mlp'), "
         "Arg(full_name='dataset', name='dataset', value='mnist'))"
     )
+    assert parser.get_kwargs() == dict()
+    assert parser.get_command().get_kwargs() == {
+        "model": "mlp",
+        "dataset": "mnist",
+    }
 
     parser.parse_args("train --model CNN".split())
     assert isinstance(parser.get_command(), cli.SubCommand)
@@ -1066,6 +1071,11 @@ def test_subcommand():
         "Arg(full_name='model', name='model', value='CNN'), "
         "Arg(full_name='dataset', name='dataset', value='mnist'))"
     )
+    assert parser.get_kwargs() == dict()
+    assert parser.get_command().get_kwargs() == {
+        "model": "CNN",
+        "dataset": "mnist",
+    }
 
     parser.parse_args("train --model CNN --dataset CIFAR".split())
     assert isinstance(parser.get_command(), cli.SubCommand)
@@ -1074,6 +1084,11 @@ def test_subcommand():
         "Arg(full_name='model', name='model', value='CNN'), "
         "Arg(full_name='dataset', name='dataset', value='CIFAR'))"
     )
+    assert parser.get_kwargs() == dict()
+    assert parser.get_command().get_kwargs() == {
+        "model": "CNN",
+        "dataset": "CIFAR",
+    }
 
     parser.parse_args("sweep".split())
     assert isinstance(parser.get_command(), cli.SubCommand)
@@ -1081,6 +1096,10 @@ def test_subcommand():
         "SubCommand('sweep', ""Arg(full_name='sweep_arg_name', "
         "name='sweep_arg_name', value='hidden_dim'))"
     )
+    assert parser.get_kwargs() == dict()
+    assert parser.get_command().get_kwargs() == {
+        "sweep_arg_name": "hidden_dim",
+    }
 
     parser.parse_args("sweep --sweep_arg_name num_hidden_layers".split())
     assert isinstance(parser.get_command(), cli.SubCommand)
@@ -1088,6 +1107,10 @@ def test_subcommand():
         "SubCommand('sweep', ""Arg(full_name='sweep_arg_name', "
         "name='sweep_arg_name', value='num_hidden_layers'))"
     )
+    assert parser.get_kwargs() == dict()
+    assert parser.get_command().get_kwargs() == {
+        "sweep_arg_name": "num_hidden_layers",
+    }
 
     with pytest.raises(NotImplementedError):
         parser.get_command().run()

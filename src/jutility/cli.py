@@ -107,6 +107,14 @@ class _ArgParent:
     def _get_active_args(self) -> list["Arg"]:
         return self._arg_list
 
+    def __repr__(self):
+        return util.format_type(
+            type(self),
+            name=self.name,
+            full_name=self.full_name,
+            value=self.value,
+        )
+
 class _ArgRoot(_ArgParent):
     def _init_arg_dict(self):
         self._arg_dict = self.register_names(dict(), "")
@@ -172,14 +180,6 @@ class Arg(_ArgParent):
 
     def is_kwarg(self) -> bool:
         return self._is_kwarg
-
-    def __repr__(self):
-        return util.format_type(
-            type(self),
-            name=self.name,
-            full_name=self.full_name,
-            value=self.value,
-        )
 
 class PositionalArg(Arg):
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):

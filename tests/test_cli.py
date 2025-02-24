@@ -1022,3 +1022,72 @@ def test_json_arg():
     assert isinstance(args.get_value("a"), str)
     assert args.get_value("a") == "abc"
     assert args.get_value("b") == [1.2]
+
+def test_subcommand():
+    parser = cli.Parser(
+        sub_commands=cli.SubCommandGroup(
+            cli.SubCommand(
+                "train",
+                cli.Arg("model",   default="mlp"),
+                cli.Arg("dataset", default="mnist"),
+            ),
+            cli.SubCommand(
+                "sweep",
+                cli.Arg("sweep_arg_name", default="hidden_dim"),
+            ),
+        ),
+        prog="test_subcommand",
+    )
+    assert parser.help() == (
+        "usage: test_subcommand [-h] {train,sweep} ...\n"
+        "\n"
+        "options:\n"
+        "  -h, --help     show this help message and exit\n"
+        "\n"
+        "command:\n"
+        "  {train,sweep}\n"
+    )
+
+    with pytest.raises(SystemExit):
+        parser.parse_args([])
+
+    parser.parse_args("train".split())
+    assert isinstance(parser.get_command(), cli.SubCommand)
+    assert repr(parser.get_command()) == (
+        "SubCommand('train', "
+        "Arg(full_name='model', name='model', value='mlp'), "
+        "Arg(full_name='dataset', name='dataset', value='mnist'))"
+    )
+
+    parser.parse_args("train --model CNN".split())
+    assert isinstance(parser.get_command(), cli.SubCommand)
+    assert repr(parser.get_command()) == (
+        "SubCommand('train', "
+        "Arg(full_name='model', name='model', value='CNN'), "
+        "Arg(full_name='dataset', name='dataset', value='mnist'))"
+    )
+
+    parser.parse_args("train --model CNN --dataset CIFAR".split())
+    assert isinstance(parser.get_command(), cli.SubCommand)
+    assert repr(parser.get_command()) == (
+        "SubCommand('train', "
+        "Arg(full_name='model', name='model', value='CNN'), "
+        "Arg(full_name='dataset', name='dataset', value='CIFAR'))"
+    )
+
+    parser.parse_args("sweep".split())
+    assert isinstance(parser.get_command(), cli.SubCommand)
+    assert repr(parser.get_command()) == (
+        "SubCommand('sweep', ""Arg(full_name='sweep_arg_name', "
+        "name='sweep_arg_name', value='hidden_dim'))"
+    )
+
+    parser.parse_args("sweep --sweep_arg_name num_hidden_layers".split())
+    assert isinstance(parser.get_command(), cli.SubCommand)
+    assert repr(parser.get_command()) == (
+        "SubCommand('sweep', ""Arg(full_name='sweep_arg_name', "
+        "name='sweep_arg_name', value='num_hidden_layers'))"
+    )
+
+    with pytest.raises(NotImplementedError):
+        parser.get_command().run()

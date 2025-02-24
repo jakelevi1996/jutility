@@ -1091,3 +1091,62 @@ def test_subcommand():
 
     with pytest.raises(NotImplementedError):
         parser.get_command().run()
+
+def test_no_tag_arg():
+    printer = util.Printer("test_no_tag_arg", dir_name=OUTPUT_DIR)
+
+    class C:
+        def __init__(self, x: int, y: float):
+            self.x = x
+            self.y = y
+
+    parser = cli.Parser(
+        cli.Arg("a", type=int,      default=1),
+        cli.Arg("b", type=float,    default=2.3),
+        cli.Arg("c", type=str,      default="abc"),
+        cli.NoTagArg("d", type=int,      default=4),
+        cli.NoTagArg("e", type=float,    default=5.67),
+        cli.ObjectArg(
+            C,
+            cli.Arg("x", type=int,      default=-8),
+            cli.NoTagArg("y", type=float,    default=-9.99),
+        ),
+        prog="test_no_tag_arg",
+    )
+
+    assert parser.help() == (
+        "usage: test_no_tag_arg [-h] [--a A] [--b B] [--c C] [--d D] [--e E]\n"
+        "                       [--C.x C.X] [--C.y C.Y]\n"
+        "\n"
+        "options:\n"
+        "  -h, --help  show this help message and exit\n"
+        "  --a A       default=1, type=<class 'int'>\n"
+        "  --b B       default=2.3, type=<class 'float'>\n"
+        "  --c C       default='abc', type=<class 'str'>\n"
+        "  --d D       default=4, type=<class 'int'>\n"
+        "  --e E       default=5.67, type=<class 'float'>\n"
+        "  --C.x C.X   default=-8, type=<class 'int'>\n"
+        "  --C.y C.Y   default=-9.99, type=<class 'float'>\n"
+    )
+
+    args = parser.parse_args([])
+    assert util.format_dict(args.get_value_dict()) == (
+        "C.x=-8, C.y=-9.99, a=1, b=2.3, c='abc', d=4, e=5.67"
+    )
+    assert args.get_summary() == "a1b2.3cABCc.x-8"
+    c = args.init_object("C")
+    assert isinstance(c, C)
+    assert c.x == -8
+    assert c.y == -9.99
+
+    args = parser.parse_args("--a 2 --e 3.14 --C.x -9 --C.y 8.88".split())
+    assert util.format_dict(args.get_value_dict()) == (
+        "C.x=-9, C.y=8.88, a=2, b=2.3, c='abc', d=4, e=3.14"
+    )
+    assert args.get_summary() == "a2b2.3cABCc.x-9"
+    c = args.init_object("C")
+    assert isinstance(c, C)
+    assert c.x == -9
+    assert c.y == 8.88
+
+    printer(args, parser, parser.help(), sep="\n\n")

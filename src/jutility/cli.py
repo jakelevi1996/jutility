@@ -185,6 +185,11 @@ class PositionalArg(Arg):
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         parser.add_argument(self.full_name, **self.kwargs)
 
+class NoTagArg(Arg):
+    def _init_tag(self, tag, tagged):
+        self.tag = None
+        self.tagged = False
+
 class BooleanArg(Arg):
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         parser.add_argument(

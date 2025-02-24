@@ -487,6 +487,9 @@ class SubCommand(_ArgRoot):
     def run(self, *args, **kwargs):
         raise NotImplementedError()
 
+    def __repr__(self):
+        return util.format_type(type(self), self.name, *self._arg_list)
+
 class _NoSubCommandGroup(SubCommandGroup):
     def __init__(self):
         self._init_arg_parent([], None)

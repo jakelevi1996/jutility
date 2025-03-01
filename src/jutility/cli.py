@@ -60,6 +60,13 @@ class _ArgParent:
 
         return arg_dict
 
+    def register_values(self, value_dict: dict, summarise: bool) -> dict:
+        for arg in self._get_active_args():
+            arg.store_value(value_dict, summarise)
+            arg.register_values(value_dict, summarise)
+
+        return value_dict
+
     def register_tags(
         self,
         tag_dict: dict[str, str],
@@ -90,13 +97,6 @@ class _ArgParent:
                 arg.register_tags(tag_dict, tag_dict[arg.full_name] + ".")
 
         return tag_dict
-
-    def register_values(self, value_dict: dict, summarise: bool) -> dict:
-        for arg in self._get_active_args():
-            arg.store_value(value_dict, summarise)
-            arg.register_values(value_dict, summarise)
-
-        return value_dict
 
     def _make_tag(self, prefix: str, suffix: str) -> str:
         return prefix + suffix.lower().replace("_", "")

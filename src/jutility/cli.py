@@ -32,11 +32,11 @@ class _ArgParent:
         self.kwargs = kwargs
 
     def get_value_dict(self) -> dict:
-        return self.register_values(dict())
+        return self.register_values(dict(), False)
 
     def get_summary(self, replaces=None) -> str:
         return util.abbreviate_dictionary(
-            input_dict=self.get_value_dict(),
+            input_dict=self.register_values(dict(), True),
             key_abbreviations=self.register_tags(dict(), ""),
             replaces=replaces,
         )
@@ -91,10 +91,10 @@ class _ArgParent:
 
         return tag_dict
 
-    def register_values(self, value_dict: dict) -> dict:
+    def register_values(self, value_dict: dict, summarise: bool) -> dict:
         for arg in self._get_active_args():
-            arg.store_value(value_dict)
-            arg.register_values(value_dict)
+            arg.store_value(value_dict, summarise)
+            arg.register_values(value_dict, summarise)
 
         return value_dict
 
@@ -166,7 +166,7 @@ class Arg(_ArgParent):
 
         arg_dict[self.full_name] = self
 
-    def store_value(self, value_dict: dict):
+    def store_value(self, value_dict: dict, summarise: bool):
         value_dict[self.full_name] = self.value
 
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
@@ -315,7 +315,7 @@ class ObjectArg(Arg):
     def reset_object_cache(self):
         self._init_value()
 
-    def store_value(self, value_dict: dict):
+    def store_value(self, value_dict: dict, summarise: bool):
         return
 
     def is_kwarg(self) -> bool:
@@ -389,8 +389,17 @@ class ObjectChoice(ObjectArg):
     def reset_object_cache(self):
         return
 
-    def store_value(self, value_dict: dict):
-        value_dict[self.full_name] = self.value
+    def store_value(self, value_dict: dict, summarise: bool):
+        if summarise:
+            choices_clean = {
+                s: s.upper().replace("_", "")
+                for s in self.choice_dict.keys()
+            }
+            tags = util.get_unique_prefixes(choices_clean.values())
+            value_clean = choices_clean[self.value]
+            value_dict[self.full_name] = tags[value_clean]
+        else:
+            value_dict[self.full_name] = self.value
 
     def _hide_tag(self, arg: "Arg") -> bool:
         return (arg.name in self.choice_dict)

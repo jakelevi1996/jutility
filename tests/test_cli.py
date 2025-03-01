@@ -1323,7 +1323,7 @@ def test_dubplicate_tags():
     )
 
     args = parser.parse_args([])
-    assert args.get_summary() == "mCNNm.k5m.p7m.s6"
+    assert args.get_summary() == "mCNm.k5m.p7m.s6"
     assert args.get_value_dict() == {
         'model': 'Cnn',
         'model.Cnn.kernel_size': 5,
@@ -1332,7 +1332,7 @@ def test_dubplicate_tags():
     }
 
     args = parser.parse_args("--model ConvNext".split())
-    assert args.get_summary() == "mCONVNEXTm.k1m.p3m.s2"
+    assert args.get_summary() == "mCOm.k1m.p3m.s2"
     assert args.get_value_dict() == {
         'model': 'ConvNext',
         'model.ConvNext.kernel_size': 1,

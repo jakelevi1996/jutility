@@ -65,7 +65,7 @@ class _ArgParent:
         tag_dict: dict[str, str],
         prefix: str,
     ) -> dict[str, str]:
-        tagged_args = [arg for arg in self._arg_list if arg.tagged]
+        tagged_args = [arg for arg in self._get_active_args() if arg.tagged]
         for arg in tagged_args:
             if arg.tag is not None:
                 tag_dict[arg.full_name] = self._make_tag(prefix, arg.tag)

@@ -1286,3 +1286,58 @@ def test_arg_group():
         'model.Mlp.num_layers': 5,
         'output_name': None,
     }
+
+def test_dubplicate_tags():
+    printer = util.Printer("test_dubplicate_tags", dir_name=OUTPUT_DIR)
+
+    class Cnn:
+        def __init__(self, kernel_size, stride, padding):
+            self.kernel_size = kernel_size
+            self.stride = stride
+            self.padding = padding
+
+    class ConvNext:
+        def __init__(self, kernel_size, stride, padding):
+            self.kernel_size = kernel_size
+            self.stride = stride
+            self.padding = padding
+
+    parser = cli.Parser(
+        cli.ObjectChoice(
+            "model",
+            cli.ObjectArg(
+                Cnn,
+                cli.Arg("kernel_size", default=5),
+                cli.Arg("stride",  default=6),
+                cli.Arg("padding", default=7),
+            ),
+            cli.ObjectArg(
+                ConvNext,
+                cli.Arg("kernel_size", default=1),
+                cli.Arg("stride",  default=2),
+                cli.Arg("padding", default=3),
+            ),
+            default="Cnn",
+            is_group=True,
+        ),
+    )
+
+    args = parser.parse_args([])
+    assert args.get_summary() == "mCNNm.k5m.p7m.s6"
+    assert args.get_value_dict() == {
+        'model': 'Cnn',
+        'model.Cnn.kernel_size': 5,
+        'model.Cnn.stride': 6,
+        'model.Cnn.padding': 7,
+    }
+
+    args = parser.parse_args("--model ConvNext".split())
+    assert args.get_summary() == "mCONVNEXTm.k1m.p3m.s2"
+    assert args.get_value_dict() == {
+        'model': 'ConvNext',
+        'model.ConvNext.kernel_size': 1,
+        'model.ConvNext.stride': 2,
+        'model.ConvNext.padding': 3,
+    }
+
+    printer(parser.help())

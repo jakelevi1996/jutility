@@ -756,10 +756,20 @@ def test_abbreviate_dictionary():
         "bottom_up":    "bu",
         "model_type":   "mt",
     }
-    replaces = {"VERYLONGMODELNAME": "VLMN"}
+    replaces = {
+        "_":        "",
+        "FALSE":    "F",
+        "TRUE":     "T",
+        "NONE":     "N",
+        "VERYLONGMODELNAME": "VLMN",
+    }
 
-    s = util.abbreviate_dictionary(d, key_abbreviations, replaces)
-    assert s == "buFhd30,20,10lr0.001ls-4mtVLMNne10tdT"
+    assert util.abbreviate_dictionary(d, key_abbreviations) == (
+        "buFhd30,20,10lr0.001ls-4mtVERYLONGMODELNAMEne10tdT"
+    )
+    assert util.abbreviate_dictionary(d, key_abbreviations, replaces) == (
+        "buFhd30,20,10lr0.001ls-4mtVLMNne10tdT"
+    )
 
     s = util.abbreviate_dictionary(
         {

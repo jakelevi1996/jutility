@@ -1280,7 +1280,7 @@ def test_get_unique_prefixes():
         "duplicate_1234567",
         "z",
     ]
-    prefix_dict = util.get_unique_prefixes(*x)
+    prefix_dict = util.get_unique_prefixes(x)
     assert prefix_dict == {
         "abc":                  "abc",
         "abcde":                "abcde",
@@ -1295,10 +1295,10 @@ def test_get_unique_prefixes():
     }
     assert set(x) == set(prefix_dict.keys())
 
-    assert util.get_unique_prefixes()      == dict()
-    assert util.get_unique_prefixes("a")   == {"a": "a"}
-    assert util.get_unique_prefixes("abc") == {"abc": "a"}
-    assert util.get_unique_prefixes("abc", "aba") == {
+    assert util.get_unique_prefixes([])      == dict()
+    assert util.get_unique_prefixes(["a"])   == {"a": "a"}
+    assert util.get_unique_prefixes(["abc"]) == {"abc": "a"}
+    assert util.get_unique_prefixes(["abc", "aba"]) == {
         "abc": "abc",
         "aba": "aba",
     }

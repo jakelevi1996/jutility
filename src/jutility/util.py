@@ -765,9 +765,14 @@ def format_dict(
     )
     return prefix + items_str + suffix
 
-def format_type(input_type: type, *args, item_fmt="%s=%r", **kwargs):
-    type_str = input_type.__name__
-    prefix = type_str + "("
+def format_type(
+    input_type: type,
+    *args,
+    item_fmt="%s=%r",
+    key_order=None,
+    **kwargs,
+):
+    prefix = input_type.__name__ + "("
     if len(args) > 0:
         prefix += ", ".join(repr(a) for a in args)
         if len(kwargs) > 0:
@@ -778,6 +783,7 @@ def format_type(input_type: type, *args, item_fmt="%s=%r", **kwargs):
         item_fmt=item_fmt,
         prefix=prefix,
         suffix=")",
+        key_order=key_order,
     )
 
 def abbreviate_dictionary(

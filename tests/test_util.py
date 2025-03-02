@@ -1274,6 +1274,16 @@ def test_format_type():
     assert util.format_type(ExampleClass, a=1.2, b=2, item_fmt="%s=%.3f") == (
         "ExampleClass(a=1.200, b=2.000)"
     )
+    assert util.format_type(ExampleClass, n_train=200, n_test=10) == (
+        "ExampleClass(n_test=10, n_train=200)"
+    )
+    s = util.format_type(
+        ExampleClass,
+        n_train=200,
+        n_test=10,
+        key_order=["n_train", "n_test"],
+    )
+    assert s == "ExampleClass(n_train=200, n_test=10)"
 
 def test_get_unique_prefixes():
     x = [

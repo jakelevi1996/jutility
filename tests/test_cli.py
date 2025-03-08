@@ -655,6 +655,65 @@ def test_object_choice_init():
     assert isinstance(b, B)
     assert b.kwargs == {"x": 40, "y": 30}
 
+def test_get_type():
+    printer = util.Printer("test_get_type", dir_name=OUTPUT_DIR)
+
+    class A:
+        def __init__(self, **kwargs):
+            self.kwargs = kwargs
+
+    class B:
+        def __init__(self, **kwargs):
+            self.kwargs = kwargs
+
+    parser = cli.Parser(
+        cli.ObjectChoice(
+            "ab",
+            cli.ObjectArg(
+                A,
+                cli.Arg("a", type=int, default=123),
+                cli.Arg("b", type=str, default="abc"),
+            ),
+            cli.ObjectArg(
+                B,
+                cli.Arg("c", type=float, default=4.5),
+            ),
+            default="A",
+        ),
+        cli.ObjectArg(
+            A,
+            cli.Arg("d", type=int, default=[6, 7], nargs="*"),
+        ),
+        cli.JsonArg("e"),
+        cli.BooleanArg("f", default=True),
+    )
+
+    args = parser.parse_args("--ab A".split())
+    assert issubclass(args.get_type("ab"), A)
+    assert not issubclass(args.get_type("ab"), B)
+    assert issubclass(args.get_type("ab.A"), A)
+    assert issubclass(args.get_type("ab.B"), B)
+    assert issubclass(args.get_type("ab.A.a"), int)
+    assert issubclass(args.get_type("ab.A.b"), str)
+    assert issubclass(args.get_type("ab.B.c"), float)
+    assert issubclass(args.get_type("A.d"), list)
+    assert issubclass(args.get_type("e"), type(None))
+    assert issubclass(args.get_type("f"), bool)
+
+    args = parser.parse_args("--ab B --e [1,2,{\"a\":3.4}]".split())
+    assert not issubclass(args.get_type("ab"), A)
+    assert issubclass(args.get_type("ab"), B)
+    assert issubclass(args.get_type("e"), list)
+
+    args = parser.parse_args("--e {\"a\":1} --no-f".split())
+    assert issubclass(args.get_type("ab"), A)
+    assert not issubclass(args.get_type("ab"), B)
+    assert issubclass(args.get_type("e"), dict)
+    assert issubclass(args.get_type("f"), bool)
+
+    printer(parser.help())
+    printer(args)
+
 def test_duplicate_names():
     class A:
         def __init__(self, x: float):

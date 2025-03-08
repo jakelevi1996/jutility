@@ -175,6 +175,9 @@ class Arg(_ArgParent):
     def init_object(self):
         return self.value
 
+    def get_type(self) -> type:
+        return type(self.value)
+
     def reset_object_cache(self):
         return
 
@@ -312,6 +315,9 @@ class ObjectArg(Arg):
         self.value = self.object_type(**kwargs)
         return self.value
 
+    def get_type(self) -> type:
+        return self.object_type
+
     def reset_object_cache(self):
         self._init_value()
 
@@ -385,6 +391,9 @@ class ObjectChoice(ObjectArg):
         kwargs.update(extra_kwargs)
         self.check_missing(set(kwargs.keys()) | protected)
         return chosen_arg.init_object(**kwargs)
+
+    def get_type(self) -> type:
+        return self.choice_dict[self.value].get_type()
 
     def reset_object_cache(self):
         return
@@ -629,6 +638,9 @@ class ParsedArgs(_ArgParent):
 
     def init_object(self, full_name: str, **extra_kwargs):
         return self._arg_dict[full_name].init_object(**extra_kwargs)
+
+    def get_type(self, full_name: str) -> type:
+        return self._arg_dict[full_name].get_type()
 
     def reset_object_cache(self):
         for arg in self._arg_dict.values():

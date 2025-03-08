@@ -1261,13 +1261,11 @@ def test_arg_group():
                 cli.ObjectArg(
                     Mlp,
                     cli.Arg("num_layers", type=int, default=5),
-                    is_group=is_group,
                 ),
                 cli.ObjectArg(
                     Cnn,
                     cli.Arg("num_layers", type=int, default=5),
                     cli.Arg("kernel_size", type=int, default=3),
-                    is_group=is_group,
                 ),
                 is_group=is_group,
             ),

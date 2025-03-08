@@ -366,7 +366,7 @@ class ObjectChoice(ObjectArg):
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         input_parser = parser
         if self.is_group:
-            parser = parser.add_argument_group(self.full_name)
+            parser = input_parser.add_argument_group(self.full_name)
 
         required = (True if (self.default is None) else False)
         parser.add_argument(
@@ -376,8 +376,10 @@ class ObjectChoice(ObjectArg):
             required=required,
             help="default=%s, required=%s" % (self.default, required),
         )
-        parser = input_parser
         for arg in self._arg_list:
+            if self.is_group:
+                parser = input_parser.add_argument_group(arg.full_name)
+
             arg.add_argparse_arguments(parser)
 
     def init_object(self, **extra_kwargs):

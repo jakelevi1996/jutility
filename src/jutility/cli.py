@@ -376,7 +376,10 @@ class ObjectChoice(ObjectArg):
             required=required,
             help="default=%s, required=%s" % (self.default, required),
         )
-        for arg in self._arg_list:
+        for arg in self.shared_args:
+            arg.add_argparse_arguments(parser)
+
+        for arg in self.choice_dict.values():
             if self.is_group:
                 parser = input_parser.add_argument_group(arg.full_name)
 

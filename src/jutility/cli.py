@@ -575,10 +575,7 @@ class Parser(_ArgRoot):
         for arg_name in argparse_value_dict:
             arg_dict[arg_name].value = argparse_value_dict[arg_name]
 
-        return ParsedArgs(self._arg_list, arg_dict)
-
-    def get_command(self) -> SubCommand:
-        return self._sub_commands.get_command()
+        return ParsedArgs(self._arg_list, arg_dict, self._sub_commands)
 
     def help(self) -> str:
         return self._get_argparse_parser().format_help()
@@ -595,9 +592,11 @@ class ParsedArgs(_ArgParent):
         self,
         arg_list: list[Arg],
         arg_dict: dict[str, Arg],
+        sub_commands: SubCommandGroup,
     ):
         self._init_arg_list(arg_list)
         self._arg_dict = arg_dict
+        self._sub_commands = sub_commands
         self.reset_object_cache()
 
     def get_arg(self, arg_name: str) -> Arg:
@@ -605,6 +604,9 @@ class ParsedArgs(_ArgParent):
 
     def get_value(self, arg_name: str):
         return self._arg_dict[arg_name].value
+
+    def get_command(self) -> SubCommand:
+        return self._sub_commands.get_command()
 
     def update(self, value_dict: dict, allow_new_keys=False):
         for name, value in value_dict.items():

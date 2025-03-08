@@ -1051,69 +1051,69 @@ def test_subcommand():
     with pytest.raises(SystemExit):
         parser.parse_args([])
 
-    parser.parse_args("train".split())
-    assert isinstance(parser.get_command(), cli.SubCommand)
-    assert repr(parser.get_command()) == (
+    args = parser.parse_args("train".split())
+    assert isinstance(args.get_command(), cli.SubCommand)
+    assert repr(args.get_command()) == (
         "SubCommand('train', "
         "Arg(full_name='model', name='model', value='mlp'), "
         "Arg(full_name='dataset', name='dataset', value='mnist'))"
     )
-    assert parser.get_kwargs() == dict()
-    assert parser.get_command().get_kwargs() == {
+    assert args.get_kwargs() == dict()
+    assert args.get_command().get_kwargs() == {
         "model": "mlp",
         "dataset": "mnist",
     }
 
-    parser.parse_args("train --model CNN".split())
-    assert isinstance(parser.get_command(), cli.SubCommand)
-    assert repr(parser.get_command()) == (
+    args = parser.parse_args("train --model CNN".split())
+    assert isinstance(args.get_command(), cli.SubCommand)
+    assert repr(args.get_command()) == (
         "SubCommand('train', "
         "Arg(full_name='model', name='model', value='CNN'), "
         "Arg(full_name='dataset', name='dataset', value='mnist'))"
     )
-    assert parser.get_kwargs() == dict()
-    assert parser.get_command().get_kwargs() == {
+    assert args.get_kwargs() == dict()
+    assert args.get_command().get_kwargs() == {
         "model": "CNN",
         "dataset": "mnist",
     }
 
-    parser.parse_args("train --model CNN --dataset CIFAR".split())
-    assert isinstance(parser.get_command(), cli.SubCommand)
-    assert repr(parser.get_command()) == (
+    args = parser.parse_args("train --model CNN --dataset CIFAR".split())
+    assert isinstance(args.get_command(), cli.SubCommand)
+    assert repr(args.get_command()) == (
         "SubCommand('train', "
         "Arg(full_name='model', name='model', value='CNN'), "
         "Arg(full_name='dataset', name='dataset', value='CIFAR'))"
     )
-    assert parser.get_kwargs() == dict()
-    assert parser.get_command().get_kwargs() == {
+    assert args.get_kwargs() == dict()
+    assert args.get_command().get_kwargs() == {
         "model": "CNN",
         "dataset": "CIFAR",
     }
 
-    parser.parse_args("sweep".split())
-    assert isinstance(parser.get_command(), cli.SubCommand)
-    assert repr(parser.get_command()) == (
+    args = parser.parse_args("sweep".split())
+    assert isinstance(args.get_command(), cli.SubCommand)
+    assert repr(args.get_command()) == (
         "SubCommand('sweep', ""Arg(full_name='sweep_arg_name', "
         "name='sweep_arg_name', value='hidden_dim'))"
     )
-    assert parser.get_kwargs() == dict()
-    assert parser.get_command().get_kwargs() == {
+    assert args.get_kwargs() == dict()
+    assert args.get_command().get_kwargs() == {
         "sweep_arg_name": "hidden_dim",
     }
 
-    parser.parse_args("sweep --sweep_arg_name num_hidden_layers".split())
-    assert isinstance(parser.get_command(), cli.SubCommand)
-    assert repr(parser.get_command()) == (
+    args = parser.parse_args("sweep --sweep_arg_name num_hidden_layers".split())
+    assert isinstance(args.get_command(), cli.SubCommand)
+    assert repr(args.get_command()) == (
         "SubCommand('sweep', ""Arg(full_name='sweep_arg_name', "
         "name='sweep_arg_name', value='num_hidden_layers'))"
     )
-    assert parser.get_kwargs() == dict()
-    assert parser.get_command().get_kwargs() == {
+    assert args.get_kwargs() == dict()
+    assert args.get_command().get_kwargs() == {
         "sweep_arg_name": "num_hidden_layers",
     }
 
     with pytest.raises(NotImplementedError):
-        parser.get_command().run()
+        args.get_command().run()
 
 def test_no_tag_arg():
     printer = util.Printer("test_no_tag_arg", dir_name=OUTPUT_DIR)

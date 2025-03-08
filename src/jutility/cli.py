@@ -660,8 +660,8 @@ class _Verbose:
     def display_init(self, object_type: type, kwargs: dict):
         self._printer("cli: %s" % util.format_type(object_type, **kwargs))
 
-    def display_retrieve(self, full_name):
-        self._printer("cli: retrieving \"%s\" from cache" % full_name)
+    def display_retrieve(self, full_name: str):
+        self._printer("cli: `%s` retrieved from cache" % full_name)
 
     def set_printer(self, printer: util.Printer):
         self._printer = printer

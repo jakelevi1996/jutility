@@ -571,18 +571,18 @@ def test_cli_verbose():
     assert printer.read() == (
         "cli: A(x=2)\n"
         "cli: B(a=A(), y=6.6)\n"
-        "cli: retrieving \"B.a\" from cache\n"
+        "cli: `B.a` retrieved from cache\n"
         "\n"
         "------------------------ (1) args.reset_object_cache "
         "-------------------------\n"
         "\n"
         "cli: A(x=8)\n"
-        "cli: retrieving \"B.a\" from cache\n"
-        "cli: retrieving \"B.a\" from cache\n"
+        "cli: `B.a` retrieved from cache\n"
+        "cli: `B.a` retrieved from cache\n"
         "cli: B(a=A(), y=-10.11)\n"
-        "cli: retrieving \"B\" from cache\n"
+        "cli: `B` retrieved from cache\n"
         "cli: A(x=14)\n"
-        "cli: retrieving \"A\" from cache\n"
+        "cli: `A` retrieved from cache\n"
     )
 
 def test_get_kwargs():

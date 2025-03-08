@@ -367,11 +367,13 @@ class ObjectChoice(ObjectArg):
         if self.is_group:
             parser = parser.add_argument_group(self.name)
 
+        required = (True if (self.default is None) else False)
         parser.add_argument(
             "--" + self.full_name,
             choices=list(self.choice_dict.keys()),
             default=self.default,
-            required=(True if (self.default is None) else False),
+            required=required,
+            help="default=%s, required=%s" % (self.default, required),
         )
         for arg in self._arg_list:
             arg.add_argparse_arguments(parser)

@@ -1261,11 +1261,13 @@ def test_arg_group():
                 cli.ObjectArg(
                     Mlp,
                     cli.Arg("num_layers", type=int, default=5),
+                    is_group=is_group,
                 ),
                 cli.ObjectArg(
                     Cnn,
                     cli.Arg("num_layers", type=int, default=5),
                     cli.Arg("kernel_size", type=int, default=3),
+                    is_group=is_group,
                 ),
                 is_group=is_group,
             ),
@@ -1330,9 +1332,13 @@ def test_arg_group():
         "                        default=10, type=<class 'int'>\n"
         "\n"
         "model:\n"
-        "  --model {Mlp,Cnn}\n"
+        "  --model {Mlp,Cnn}     default=None, required=True\n"
+        "\n"
+        "model.Mlp:\n"
         "  --model.Mlp.num_layers MODEL.MLP.NUM_LAYERS\n"
         "                        default=5, type=<class 'int'>\n"
+        "\n"
+        "model.Cnn:\n"
         "  --model.Cnn.num_layers MODEL.CNN.NUM_LAYERS\n"
         "                        default=5, type=<class 'int'>\n"
         "  --model.Cnn.kernel_size MODEL.CNN.KERNEL_SIZE\n"

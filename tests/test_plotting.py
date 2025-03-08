@@ -96,9 +96,9 @@ def test_legend():
         plotting.Line([1.3, 1.7], [1.5, 1.6], marker="o", c="y"),
         plotting.HLine(1.7, c="m", ls="--", label="hline"),
         plotting.FillBetween(
-            x=[1.3, 1.6],
-            y1=[1.2, 1.3],
-            y2=[1.1, 1.0],
+            [1.3, 1.6],
+            [1.2, 1.3],
+            [1.1, 1.0],
             fc="b",
             alpha=0.5,
             label="Patch",

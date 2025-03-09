@@ -1398,3 +1398,124 @@ def test_dubplicate_tags():
     }
 
     printer(parser.help())
+
+def test_get_value_summary():
+    printer = util.Printer("test_get_value_summary", dir_name=OUTPUT_DIR)
+    cli.verbose.set_printer(printer)
+
+    class Abc:
+        def __init__(self, **kwargs):
+            self.kwargs = kwargs
+
+        def __repr__(self):
+            return util.format_type(type(self), **self.kwargs)
+
+    class Abcd(Abc):    pass
+    class Abcdef(Abc):  pass
+    class Abcdghi(Abc): pass
+    class Lmnop(Abc):   pass
+
+    parser = cli.Parser(
+        cli.Arg("x", type=int,   default=123),
+        cli.Arg("y", type=float, default=4.5),
+        cli.ObjectChoice(
+            "top",
+            cli.ObjectArg(Abc),
+            cli.ObjectArg(Abcd),
+            cli.ObjectArg(Abcdef),
+            cli.ObjectArg(Abcdghi),
+            cli.ObjectArg(
+                Lmnop,
+                cli.Arg("xx", type=int,   default=6),
+                cli.Arg("xy", type=float, default=7.8),
+                cli.ObjectChoice(
+                    "bottom",
+                    cli.ObjectArg(Abc),
+                    cli.ObjectArg(Abcd),
+                    cli.ObjectArg(Abcdef),
+                    cli.ObjectArg(Abcdghi),
+                    cli.ObjectArg(
+                        Lmnop,
+                        cli.Arg("xy", type=int,   default=9),
+                        cli.Arg("yy", type=float, default=10.11),
+                    ),
+                    is_group=True,
+                ),
+            ),
+        ),
+        prog="test_get_value_summary",
+    )
+    printer(parser.help())
+
+    args = parser.parse_args([])
+    assert args.get_arg("x").get_value_summary() == "123"
+    assert args.get_arg("y").get_value_summary() == "4.5"
+    assert args.get_arg("top").value is None
+    with pytest.raises(ValueError):
+        args.get_arg("top").get_value_summary()
+    with pytest.raises(ValueError):
+        args.get_summary()
+    with pytest.raises(ValueError):
+        args.get_value_dict()
+    with pytest.raises(ValueError):
+        args.init_object("top")
+
+    args = parser.parse_args("--top Abc".split())
+    assert args.get_arg("top").get_value_summary() == "ABC"
+    assert args.get_summary() == "tABCx123y4.5"
+    assert args.get_value_dict() == {"top": "Abc", "x": 123, "y": 4.5}
+    with cli.verbose:
+        assert repr(args.init_object("top")) == "Abc()"
+
+    args = parser.parse_args("--top Abcd".split())
+    assert args.get_arg("top").get_value_summary() == "ABCD"
+    assert args.get_summary() == "tABCDx123y4.5"
+
+    args = parser.parse_args("--top Abcdef".split())
+    assert args.get_arg("top").get_value_summary() == "ABCDE"
+    assert args.get_summary() == "tABCDEx123y4.5"
+
+    args = parser.parse_args("--top Abcdghi".split())
+    assert args.get_arg("top").get_value_summary() == "ABCDG"
+    assert args.get_summary() == "tABCDGx123y4.5"
+
+    args = parser.parse_args("--top Lmnop".split())
+    assert args.get_arg("top").get_value_summary() == "L"
+    with pytest.raises(ValueError):
+        args.get_summary()
+    with pytest.raises(ValueError):
+        args.get_value_dict()
+    with pytest.raises(ValueError):
+        args.init_object("top")
+
+    args = parser.parse_args("--top Lmnop --top.Lmnop.bottom Abc".split())
+    assert args.get_arg("top").get_value_summary() == "L"
+    assert args.get_arg("top.Lmnop.bottom").get_value_summary() == "ABC"
+    assert args.get_summary() == "tLtbABCtxx6txy7.8x123y4.5"
+
+    args = parser.parse_args("--top Lmnop --top.Lmnop.bottom Abcdghi".split())
+    assert args.get_arg("top").get_value_summary() == "L"
+    assert args.get_arg("top.Lmnop.bottom").get_value_summary() == "ABCDG"
+    assert args.get_summary() == "tLtbABCDGtxx6txy7.8x123y4.5"
+
+    args = parser.parse_args("--top Lmnop --top.Lmnop.bottom Lmnop".split())
+    assert args.get_arg("top").get_value_summary() == "L"
+    assert args.get_arg("top.Lmnop.bottom").get_value_summary() == "L"
+    assert args.get_summary() == "tLtbLtbx9tby10.11txx6txy7.8x123y4.5"
+    assert args.get_value_dict() == {
+        "x": 123,
+        "y": 4.5,
+        "top": "Lmnop",
+        "top.Lmnop.xx": 6,
+        "top.Lmnop.xy": 7.8,
+        "top.Lmnop.bottom": "Lmnop",
+        "top.Lmnop.bottom.Lmnop.xy": 9,
+        "top.Lmnop.bottom.Lmnop.yy": 10.11,
+    }
+    with cli.verbose:
+        assert repr(args.init_object("top")) == (
+            "Lmnop(bottom=Lmnop(xy=9, yy=10.11), xx=6, xy=7.8)"
+        )
+        assert repr(args.init_object("top.Lmnop.bottom")) == (
+            "Lmnop(xy=9, yy=10.11)"
+        )

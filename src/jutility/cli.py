@@ -181,6 +181,9 @@ class Arg(_ArgParent):
     def get_type(self) -> type:
         return type(self.value)
 
+    def get_value_summary(self) -> str:
+        return repr(self.value)
+
     def reset_object_cache(self):
         return
 
@@ -415,15 +418,18 @@ class ObjectChoice(ObjectArg):
     def reset_object_cache(self):
         return
 
+    def get_value_summary(self) -> str:
+        chosen_arg = self.get_choice()
+        choices_clean = {
+            s: s.upper().replace("_", "")
+            for s in self.choice_dict.keys()
+        }
+        tags = util.get_unique_prefixes(choices_clean.values())
+        return tags[choices_clean[chosen_arg.name]]
+
     def store_value(self, value_dict: dict, summarise: bool):
         if summarise:
-            choices_clean = {
-                s: s.upper().replace("_", "")
-                for s in self.choice_dict.keys()
-            }
-            tags = util.get_unique_prefixes(choices_clean.values())
-            value_clean = choices_clean[self.value]
-            value_dict[self.full_name] = tags[value_clean]
+            value_dict[self.full_name] = self.get_value_summary()
         else:
             value_dict[self.full_name] = self.value
 

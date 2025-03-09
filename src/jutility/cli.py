@@ -376,7 +376,6 @@ class ObjectChoice(ObjectArg):
             "--" + self.full_name,
             choices=list(self.choice_dict.keys()),
             default=self.default,
-            required=required,
             help="default=%s, required=%s" % (self.default, required),
         )
         for arg in self.shared_args:
@@ -389,7 +388,7 @@ class ObjectChoice(ObjectArg):
             arg.add_argparse_arguments(parser)
 
     def init_object(self, **extra_kwargs):
-        chosen_arg = self.choice_dict[self.value]
+        chosen_arg = self.get_choice()
         protected = chosen_arg.get_protected_args()
         kwargs = {
             arg.name: arg.init_object()
@@ -404,8 +403,14 @@ class ObjectChoice(ObjectArg):
         self.check_missing(set(kwargs.keys()) | protected)
         return chosen_arg.init_object(**kwargs)
 
+    def get_choice(self) -> ObjectArg:
+        if self.value is None:
+            raise ValueError("Please specify --%s" % self.full_name)
+
+        return self.choice_dict[self.value]
+
     def get_type(self) -> type:
-        return self.choice_dict[self.value].get_type()
+        return self.get_choice().get_type()
 
     def reset_object_cache(self):
         return
@@ -426,7 +431,7 @@ class ObjectChoice(ObjectArg):
         return (arg.name in self.choice_dict)
 
     def _get_active_args(self) -> list["Arg"]:
-        chosen_arg = self.choice_dict[self.value]
+        chosen_arg = self.get_choice()
         protected = chosen_arg.get_protected_args()
         return [
             chosen_arg,

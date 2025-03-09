@@ -145,19 +145,20 @@ def test_parser_help():
         cli.BooleanArg("j", default=False),
         cli.JsonArg("k", default=[1, [2, 3]]),
         cli.JsonArg("l", default=[4, [5, 6]], nargs="*"),
+        prog="test_parser_help",
     )
 
     printer(parser.help())
 
     assert parser.help() == (
-        "usage: run_pytest_script.py [-h] [--model {A,Mlp}] [--model.z Z]\n"
-        "                            [--model.A.x X] [--model.Mlp.a.x X]\n"
-        "                            [--model.Mlp.y Y] [--c C] [--d] "
-        "[--e [E ...]]\n"
-        "                            [--h | --no-h] [--i | --no-i] "
-        "[--j | --no-j]\n"
-        "                            [--k K] [--l [L ...]]\n"
-        "                            F G\n"
+        "usage: test_parser_help [-h] [--model {A,Mlp}] [--model.z Z] "
+        "[--model.A.x X]\n"
+        "                        [--model.Mlp.a.x X] [--model.Mlp.y Y] "
+        "[--c C] [--d]\n"
+        "                        [--e [E ...]] [--h | --no-h] "
+        "[--i | --no-i]\n"
+        "                        [--j | --no-j] [--k K] [--l [L ...]]\n"
+        "                        F G\n"
         "\n"
         "positional arguments:\n"
         "  F                  type=<class 'float'>\n"
@@ -1035,10 +1036,11 @@ def test_json_arg():
     parser = cli.Parser(
         cli.JsonArg("a"),
         cli.JsonArg("b", required=True, nargs="+"),
+        prog="test_json_arg",
     )
 
     assert parser.help() == (
-        "usage: run_pytest_script.py [-h] [--a A] --b B [B ...]\n"
+        "usage: test_json_arg [-h] [--a A] --b B [B ...]\n"
         "\n"
         "options:\n"
         "  -h, --help     show this help message and exit\n"
@@ -1264,16 +1266,17 @@ def test_arg_group():
                 is_group=is_group,
             ),
             cli.Arg("output_name"),
+            prog="test_arg_group",
         )
 
     parser = get_parser(is_group=False)
     printer(parser.help())
     assert parser.help() == (
-        "usage: run_pytest_script.py [-h] [--Trainer.num_epochs N] "
+        "usage: test_arg_group [-h] [--Trainer.num_epochs N] "
         "--model {Mlp,Cnn}\n"
-        "                            [--model.Mlp.num_layers N]\n"
-        "                            [--model.Cnn.num_layers N]\n"
-        "                            [--model.Cnn.kernel_size K] "
+        "                      [--model.Mlp.num_layers N] "
+        "[--model.Cnn.num_layers N]\n"
+        "                      [--model.Cnn.kernel_size K] "
         "[--output_name O]\n"
         "\n"
         "options:\n"
@@ -1300,11 +1303,11 @@ def test_arg_group():
     parser = get_parser(is_group=True)
     printer(parser.help())
     assert parser.help() == (
-        "usage: run_pytest_script.py [-h] [--Trainer.num_epochs N] "
+        "usage: test_arg_group [-h] [--Trainer.num_epochs N] "
         "--model {Mlp,Cnn}\n"
-        "                            [--model.Mlp.num_layers N]\n"
-        "                            [--model.Cnn.num_layers N]\n"
-        "                            [--model.Cnn.kernel_size K] "
+        "                      [--model.Mlp.num_layers N] "
+        "[--model.Cnn.num_layers N]\n"
+        "                      [--model.Cnn.kernel_size K] "
         "[--output_name O]\n"
         "\n"
         "options:\n"

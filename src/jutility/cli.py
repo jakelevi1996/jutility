@@ -143,6 +143,8 @@ class Arg(_ArgParent):
         self._init_arg_parent([], name, argparse_kwargs)
         self._init_tag(tag, tagged)
         self._init_help()
+        if "action" not in self.kwargs:
+            self.kwargs.setdefault("metavar", self.name[0].upper())
 
     def _init_tag(self, tag: str | None, tagged: bool):
         self.tag = tag

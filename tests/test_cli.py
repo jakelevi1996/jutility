@@ -364,8 +364,9 @@ def test_object_choice():
         ),
     )
 
-    with pytest.raises(SystemExit):
-        args = parser.parse_args([])
+    args = parser.parse_args([])
+    with pytest.raises(ValueError):
+        args.init_object("model")
 
     printer.heading("model = A")
 
@@ -1273,7 +1274,7 @@ def test_arg_group():
     printer(parser.help())
     assert parser.help() == (
         "usage: test_arg_group [-h] [--Trainer.num_epochs N] "
-        "--model {Mlp,Cnn}\n"
+        "[--model {Mlp,Cnn}]\n"
         "                      [--model.Mlp.num_layers N] "
         "[--model.Cnn.num_layers N]\n"
         "                      [--model.Cnn.kernel_size K] "
@@ -1293,6 +1294,10 @@ def test_arg_group():
         "  --output_name O\n"
     )
 
+    args = parser.parse_args([])
+    with pytest.raises(ValueError):
+        args.get_value_dict()
+
     assert parser.parse_args("--model Mlp".split()).get_value_dict() == {
         'Trainer.num_epochs': 10,
         'model': 'Mlp',
@@ -1304,7 +1309,7 @@ def test_arg_group():
     printer(parser.help())
     assert parser.help() == (
         "usage: test_arg_group [-h] [--Trainer.num_epochs N] "
-        "--model {Mlp,Cnn}\n"
+        "[--model {Mlp,Cnn}]\n"
         "                      [--model.Mlp.num_layers N] "
         "[--model.Cnn.num_layers N]\n"
         "                      [--model.Cnn.kernel_size K] "

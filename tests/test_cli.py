@@ -41,7 +41,7 @@ def test_parsed_args():
         "d": False,
     }
 
-    assert args.get_summary() == "cABCdFmAm.x1"
+    assert args.get_summary() == "cABCdFmAmx1"
 
     c = args.get_arg("c")
     assert isinstance(c, cli.Arg)
@@ -55,7 +55,7 @@ def test_parsed_args():
     args.update({"c": "defg"})
     assert args.get_value("c") == "defg"
     assert repr(args) == "ParsedArgs(c='defg', d=False, m='A', m.A.x=1)"
-    assert args.get_summary() == "cDEFGdFmAm.x1"
+    assert args.get_summary() == "cDEFGdFmAmx1"
 
     assert args.get_value("m.A") is None
     assert not isinstance(args.get_value("m.A"), A)
@@ -65,7 +65,7 @@ def test_parsed_args():
     assert not args.get_value("m.A") is None
     assert isinstance(args.get_value("m.A"), A)
     assert repr(args) == "ParsedArgs(c='defg', d=False, m='A', m.A.x=1)"
-    assert args.get_summary() == "cDEFGdFmAm.x1"
+    assert args.get_summary() == "cDEFGdFmAmx1"
 
     args.reset_object_cache()
     assert args.get_value("m.A") is None
@@ -83,7 +83,7 @@ def test_parsed_args():
         "c": "defg",
         "d": False,
     }
-    assert args.get_summary() == "cDEFGdFmAm.x3"
+    assert args.get_summary() == "cDEFGdFmAmx3"
 
     new_args = parser.parse_args(
         "--m B --m.B.a.x 5 --m.B.y 6.7 --c hijk --d".split(),
@@ -99,7 +99,7 @@ def test_parsed_args():
         "c": "hijk",
         "d": True,
     }
-    assert new_args.get_summary() == "cHIJKdTmBm.a.x5m.y6.7"
+    assert new_args.get_summary() == "cHIJKdTmBmax5my6.7"
     assert new_args.get_value("c") == "hijk"
     assert new_args.get_kwargs() == {"c": "hijk", "d": True}
     b = new_args.init_object("m")
@@ -241,9 +241,7 @@ def test_object_arg():
     printer.heading("Default args")
 
     args = parser.parse_args([])
-    assert args.get_summary() == (
-        "h.a.b1h.a.cABCh.d.e2,3h.d.f4.5h.d.g.bNh.i6j-7.8"
-    )
+    assert args.get_summary() == "hab1hacABChde2,3hdf4.5hdgbNhi6j-7.8"
     assert args.get_value_dict() == {
         "H.a.b": 1,
         "H.a.c": "abc",
@@ -376,7 +374,7 @@ def test_object_choice():
     printer.heading("model = A")
 
     args = parser.parse_args("--model A".split())
-    assert args.get_summary() == "mAm.b1m.cABC"
+    assert args.get_summary() == "mAmb1mcABC"
     assert args.get_value_dict() == {
         'model': 'A',
         'model.A.c': 'abc',
@@ -400,7 +398,7 @@ def test_object_choice():
     printer.heading("model = A, non-default options")
 
     args = parser.parse_args("--model A --model.b 3 --model.A.c xyz".split())
-    assert args.get_summary() == "mAm.b3m.cXYZ"
+    assert args.get_summary() == "mAmb3mcXYZ"
     with cli.verbose:
         a = args.init_object("model")
         assert isinstance(a, A)
@@ -410,8 +408,8 @@ def test_object_choice():
     printer.heading("model = D")
 
     args = parser.parse_args("--model D".split())
-    assert args.get_summary() == "mDm.e2,3m.f4.5m.gAm.g.b1m.g.cABC"
-    assert args.get_arg("model").get_summary() == "e2,3f4.5gAg.b1g.cABC"
+    assert args.get_summary() == "mDme2,3mf4.5mgAmgb1mgcABC"
+    assert args.get_arg("model").get_summary() == "e2,3f4.5gAgb1gcABC"
     assert args.get_arg("model.D.g").get_summary() == "b1cABC"
     assert args.get_value_dict() == {
         "model": "D",
@@ -440,7 +438,7 @@ def test_object_choice():
     args = parser.parse_args(
         "--model D --model.D.g D --model.D.e 7 8 9".split()
     )
-    assert args.get_summary() == "mDm.e7,8,9m.f4.5m.gDm.g.f3.141m.g.g.bN"
+    assert args.get_summary() == "mDme7,8,9mf4.5mgDmgf3.141mggbN"
     assert args.get_value_dict() == {
         "model": "D",
         "model.D.e": [
@@ -959,7 +957,7 @@ def test_autotag_edge_cases_objectchoice():
         ),
     )
     args = parser.parse_args([])
-    assert args.get_summary() == "abcAabc123abc.x78abcd456"
+    assert args.get_summary() == "abcAabc123abcd456abcx78"
 
     parser = cli.Parser(
         cli.Arg("abc",  default=123),
@@ -973,7 +971,7 @@ def test_autotag_edge_cases_objectchoice():
         ),
     )
     args = parser.parse_args([])
-    assert args.get_summary() == "abcAabc123abc.x78abcd456"
+    assert args.get_summary() == "abcAabc123abcd456abcx78"
 
     parser = cli.Parser(
         cli.Arg("abc",  default=123),
@@ -986,10 +984,10 @@ def test_autotag_edge_cases_objectchoice():
         ),
     )
     args = parser.parse_args([])
-    assert args.get_summary() == "abc123abcd456aoAao.x78"
+    assert args.get_summary() == "abc123abcd456aoAaox78"
 
     args = parser.parse_args(["--a_or_b", "B"])
-    assert args.get_summary() == "abc123abcd456aoBao.y90"
+    assert args.get_summary() == "abc123abcd456aoBaoy90"
 
     parser = cli.Parser(
         cli.Arg("abc",  default=123),
@@ -1002,10 +1000,10 @@ def test_autotag_edge_cases_objectchoice():
         ),
     )
     args = parser.parse_args([])
-    assert args.get_summary() == "abc123abcd456mAm.x78"
+    assert args.get_summary() == "abc123abcd456mAmx78"
 
     args = parser.parse_args(["--model", "B"])
-    assert args.get_summary() == "abc123abcd456mBm.y90"
+    assert args.get_summary() == "abc123abcd456mBmy90"
 
 def test_boolean_arg():
     parser = cli.Parser(
@@ -1215,7 +1213,7 @@ def test_no_tag_arg():
     assert util.format_dict(args.get_value_dict()) == (
         "C.x=-8, C.y=-9.99, a=1, b=2.3, c='abc', d=4, e=5.67"
     )
-    assert args.get_summary() == "a1b2.3cABCc.x-8"
+    assert args.get_summary() == "a1b2.3cABCcx-8"
     c = args.init_object("C")
     assert isinstance(c, C)
     assert c.x == -8
@@ -1225,7 +1223,7 @@ def test_no_tag_arg():
     assert util.format_dict(args.get_value_dict()) == (
         "C.x=-9, C.y=8.88, a=2, b=2.3, c='abc', d=4, e=3.14"
     )
-    assert args.get_summary() == "a2b2.3cABCc.x-9"
+    assert args.get_summary() == "a2b2.3cABCcx-9"
     c = args.init_object("C")
     assert isinstance(c, C)
     assert c.x == -9
@@ -1386,7 +1384,7 @@ def test_dubplicate_tags():
     )
 
     args = parser.parse_args([])
-    assert args.get_summary() == "mCNm.k5m.p7m.s6"
+    assert args.get_summary() == "mCNmk5mp7ms6"
     assert args.get_value_dict() == {
         'model': 'Cnn',
         'model.Cnn.kernel_size': 5,
@@ -1395,7 +1393,7 @@ def test_dubplicate_tags():
     }
 
     args = parser.parse_args("--model ConvNext".split())
-    assert args.get_summary() == "mCOm.k1m.p3m.s2"
+    assert args.get_summary() == "mCOmk1mp3ms2"
     assert args.get_value_dict() == {
         'model': 'ConvNext',
         'model.ConvNext.kernel_size': 1,

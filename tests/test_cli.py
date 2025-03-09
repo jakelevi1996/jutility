@@ -1170,6 +1170,71 @@ def test_subcommand():
     with pytest.raises(NotImplementedError):
         args.get_command().run()
 
+def test_subcommand_kwargs():
+    printer = util.Printer("test_subcommand_kwargs", dir_name=OUTPUT_DIR)
+    parser = cli.Parser(
+        cli.Arg("seed", default=0, type=int),
+        cli.Arg("gpu",  action="store_true"),
+        sub_commands=cli.SubCommandGroup(
+            cli.SubCommand(
+                "train",
+                cli.Arg("model",   default="mlp"),
+                cli.Arg("dataset", default="mnist"),
+            ),
+            cli.SubCommand(
+                "sweep",
+                cli.Arg("sweep_arg_name", default="hidden_dim"),
+            ),
+        ),
+        prog="test_subcommand_kwargs",
+    )
+    printer(parser.help())
+    assert parser.help() == (
+        "usage: test_subcommand_kwargs [-h] [--seed S] [--gpu] "
+        "{train,sweep} ...\n"
+        "\n"
+        "options:\n"
+        "  -h, --help     show this help message and exit\n"
+        "  --seed S       default=0, type=<class 'int'>\n"
+        "  --gpu          action='store_true'\n"
+        "\n"
+        "command:\n"
+        "  {train,sweep}\n"
+    )
+
+    with pytest.raises(SystemExit):
+        parser.parse_args([])
+
+    args = parser.parse_args(["train"])
+    assert args.get_kwargs() == {
+        "seed": 0,
+        "gpu":  False,
+    }
+    assert args.get_command().get_kwargs() == {
+        "model":    "mlp",
+        "dataset":  "mnist",
+    }
+
+    args = parser.parse_args(["sweep"])
+    assert args.get_kwargs() == {
+        "seed": 0,
+        "gpu":  False,
+    }
+    assert args.get_command().get_kwargs() == {
+        "sweep_arg_name": "hidden_dim",
+    }
+
+    arg_str = "--seed 123 --gpu train --model cnn --dataset cifar10"
+    args = parser.parse_args(arg_str.split())
+    assert args.get_kwargs() == {
+        "seed": 123,
+        "gpu":  True,
+    }
+    assert args.get_command().get_kwargs() == {
+        "model":    "cnn",
+        "dataset":  "cifar10",
+    }
+
 def test_no_tag_arg():
     printer = util.Printer("test_no_tag_arg", dir_name=OUTPUT_DIR)
 

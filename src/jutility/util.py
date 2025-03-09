@@ -735,8 +735,11 @@ def load_image(full_path) -> np.ndarray:
     image_uint8 = np.array(PIL.Image.open(full_path))
     return image_uint8
 
-def get_program_command():
-    return " ".join([sys.executable] + sys.argv)
+def get_argv_str() -> str:
+    return " ".join(sys.argv)
+
+def get_program_command() -> str:
+    return " ".join([sys.executable, get_argv_str()])
 
 def extract_substring(s, prefix, suffix, offset=None, strip=True):
     s = str(s)

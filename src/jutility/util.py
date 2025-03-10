@@ -439,6 +439,14 @@ class Table:
         if len(columns) > 0:
             self._print(self.format_header())
 
+    @classmethod
+    def key_value(cls, width: int=-20, printer: (Printer | None)=None):
+        return cls(
+            Column("key",   "s", width),
+            Column("value", "s", width),
+            printer=printer,
+        )
+
     def add_column(self, column: Column):
         if column.name in self._column_dict:
             raise ValueError(

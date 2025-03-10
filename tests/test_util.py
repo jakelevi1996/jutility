@@ -242,6 +242,26 @@ def test_silent_column():
         tuple_list = [tuple(array) for array in data_list]
         assert len(set(tuple_list)) == len(tuple_list)
 
+def test_key_value_table():
+    printer = util.Printer(
+        "test_key_value_table",
+        dir_name=OUTPUT_DIR,
+        file_ext="md",
+    )
+
+    table = util.Table.key_value(printer=printer)
+    table.update(key="Model", value="`Mlp`")
+    table.update(key="Size", value=300)
+    table.update(key="Loss", value=1.2)
+
+    assert printer.read() == (
+        "Key                  | Value               \n"
+        "-------------------- | --------------------\n"
+        "Model                | `Mlp`               \n"
+        "Size                 | 300                 \n"
+        "Loss                 | 1.2                 \n"
+    )
+
 def test_trim_string():
     printer = util.Printer("test_trim_string", OUTPUT_DIR)
     printer(util.trim_string("12345678", max_len=10))

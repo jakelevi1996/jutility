@@ -1113,7 +1113,10 @@ def test_subcommand():
         "Arg(full_name='model', name='model', value='mlp'), "
         "Arg(full_name='dataset', name='dataset', value='mnist'))"
     )
-    assert args.get_kwargs() == dict()
+    assert args.get_kwargs() == {
+        "model": "mlp",
+        "dataset": "mnist",
+    }
     assert args.get_command().get_kwargs() == {
         "model": "mlp",
         "dataset": "mnist",
@@ -1126,7 +1129,10 @@ def test_subcommand():
         "Arg(full_name='model', name='model', value='CNN'), "
         "Arg(full_name='dataset', name='dataset', value='mnist'))"
     )
-    assert args.get_kwargs() == dict()
+    assert args.get_kwargs() == {
+        "model": "CNN",
+        "dataset": "mnist",
+    }
     assert args.get_command().get_kwargs() == {
         "model": "CNN",
         "dataset": "mnist",
@@ -1139,7 +1145,10 @@ def test_subcommand():
         "Arg(full_name='model', name='model', value='CNN'), "
         "Arg(full_name='dataset', name='dataset', value='CIFAR'))"
     )
-    assert args.get_kwargs() == dict()
+    assert args.get_kwargs() == {
+        "model": "CNN",
+        "dataset": "CIFAR",
+    }
     assert args.get_command().get_kwargs() == {
         "model": "CNN",
         "dataset": "CIFAR",
@@ -1148,21 +1157,26 @@ def test_subcommand():
     args = parser.parse_args("sweep".split())
     assert isinstance(args.get_command(), cli.SubCommand)
     assert repr(args.get_command()) == (
-        "SubCommand('sweep', ""Arg(full_name='sweep_arg_name', "
+        "SubCommand('sweep', Arg(full_name='sweep_arg_name', "
         "name='sweep_arg_name', value='hidden_dim'))"
     )
-    assert args.get_kwargs() == dict()
+    assert args.get_kwargs() == {
+        "sweep_arg_name": "hidden_dim",
+    }
     assert args.get_command().get_kwargs() == {
         "sweep_arg_name": "hidden_dim",
     }
 
-    args = parser.parse_args("sweep --sweep_arg_name num_hidden_layers".split())
+    arg_str = "sweep --sweep_arg_name num_hidden_layers"
+    args = parser.parse_args(arg_str.split())
     assert isinstance(args.get_command(), cli.SubCommand)
     assert repr(args.get_command()) == (
-        "SubCommand('sweep', ""Arg(full_name='sweep_arg_name', "
+        "SubCommand('sweep', Arg(full_name='sweep_arg_name', "
         "name='sweep_arg_name', value='num_hidden_layers'))"
     )
-    assert args.get_kwargs() == dict()
+    assert args.get_kwargs() == {
+        "sweep_arg_name": "num_hidden_layers",
+    }
     assert args.get_command().get_kwargs() == {
         "sweep_arg_name": "num_hidden_layers",
     }
@@ -1170,69 +1184,93 @@ def test_subcommand():
     with pytest.raises(NotImplementedError):
         args.get_command().run()
 
-def test_subcommand_kwargs():
-    printer = util.Printer("test_subcommand_kwargs", dir_name=OUTPUT_DIR)
+def test_subcommand_get_value_dict():
+    class Mlp:
+        def __init__(self, **kwargs):
+            self.kwargs = kwargs
+
+    class Cnn:
+        def __init__(self, **kwargs):
+            self.kwargs = kwargs
+
     parser = cli.Parser(
         cli.Arg("seed", default=0, type=int),
         cli.Arg("gpu",  action="store_true"),
         sub_commands=cli.SubCommandGroup(
             cli.SubCommand(
                 "train",
-                cli.Arg("model",   default="mlp"),
                 cli.Arg("dataset", default="mnist"),
+                cli.ObjectChoice(
+                    "model",
+                    cli.ObjectArg(
+                        Mlp,
+                        cli.Arg("hidden_dim", type=int, default=64),
+                    ),
+                    cli.ObjectArg(
+                        Cnn,
+                        cli.Arg("kernel_size", type=int, default=5),
+                    ),
+                    default="Mlp",
+                ),
             ),
             cli.SubCommand(
                 "sweep",
                 cli.Arg("sweep_arg_name", default="hidden_dim"),
             ),
         ),
-        prog="test_subcommand_kwargs",
-    )
-    printer(parser.help())
-    assert parser.help() == (
-        "usage: test_subcommand_kwargs [-h] [--seed S] [--gpu] "
-        "{train,sweep} ...\n"
-        "\n"
-        "options:\n"
-        "  -h, --help     show this help message and exit\n"
-        "  --seed S       default=0, type=<class 'int'>\n"
-        "  --gpu          action='store_true'\n"
-        "\n"
-        "command:\n"
-        "  {train,sweep}\n"
     )
 
     with pytest.raises(SystemExit):
         parser.parse_args([])
 
     args = parser.parse_args(["train"])
+    assert args.get_value_dict() == {
+        "seed": 0,
+        "gpu": False,
+        "dataset": "mnist",
+        "model": "Mlp",
+        "model.Mlp.hidden_dim": 64,
+    }
     assert args.get_kwargs() == {
         "seed": 0,
-        "gpu":  False,
+        "gpu": False,
+        "dataset": "mnist",
     }
     assert args.get_command().get_kwargs() == {
-        "model":    "mlp",
-        "dataset":  "mnist",
+        "dataset": "mnist",
     }
 
     args = parser.parse_args(["sweep"])
+    assert args.get_value_dict() == {
+        "seed": 0,
+        "gpu": False,
+        "sweep_arg_name": "hidden_dim",
+    }
     assert args.get_kwargs() == {
         "seed": 0,
-        "gpu":  False,
+        "gpu": False,
+        "sweep_arg_name": "hidden_dim",
     }
     assert args.get_command().get_kwargs() == {
         "sweep_arg_name": "hidden_dim",
     }
 
-    arg_str = "--seed 123 --gpu train --model cnn --dataset cifar10"
+    arg_str = "--seed 123 --gpu train --model Cnn --dataset cifar10"
     args = parser.parse_args(arg_str.split())
+    assert args.get_value_dict() == {
+        "seed": 123,
+        "gpu": True,
+        "dataset": "cifar10",
+        "model": "Cnn",
+        "model.Cnn.kernel_size": 5,
+    }
     assert args.get_kwargs() == {
         "seed": 123,
-        "gpu":  True,
+        "gpu": True,
+        "dataset": "cifar10",
     }
     assert args.get_command().get_kwargs() == {
-        "model":    "cnn",
-        "dataset":  "cifar10",
+        "dataset": "cifar10",
     }
 
 def test_no_tag_arg():

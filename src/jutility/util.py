@@ -37,6 +37,8 @@ from jutility import units
 CURRENT_DIR = os.path.abspath(os.getcwd())
 RESULTS_DIR = os.path.join(CURRENT_DIR, "results")
 
+HLINE_LEN = 78
+
 class CallbackContext:
     def __init__(
         self,
@@ -131,10 +133,10 @@ class Printer:
     def timestamp(self):
         self(datetime.datetime.now())
 
-    def hline(self, line_char="-", line_len=78):
+    def hline(self, line_char="-", line_len=HLINE_LEN):
         self(line_char * line_len)
 
-    def heading(self, heading_str: str, fill_char="-", line_len=78):
+    def heading(self, heading_str: str, fill_char="-", line_len=HLINE_LEN):
         numbered_heading = (" (%i) %s " % (self._count, heading_str))
         self("\n%s\n" % numbered_heading.center(line_len, fill_char))
         self._count += 1
@@ -159,7 +161,7 @@ class Printer:
         if self._file is not None:
             self._file.close()
 
-def hline(line_char="-", line_len=100):
+def hline(line_char="-", line_len=HLINE_LEN):
     print(line_char * line_len)
 
 def print_hline(*args, **kwargs):

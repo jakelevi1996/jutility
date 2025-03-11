@@ -1,6 +1,6 @@
 # jutility
 
-Collection of Python utilities intended to be useful for machine learning research and experiments.
+A judicious collection of Python utilities (including CLI configuration, plotting, and tables) and component of the [JUML](https://github.com/jakelevi1996/juml) framework.
 
 ![](https://raw.githubusercontent.com/jakelevi1996/jutility/main/images/logo_black.png)
 

@@ -120,7 +120,7 @@ class _ArgRoot(_ArgParent):
     def _init_arg_dict(self):
         self._arg_dict = self.register_names(dict(), "")
 
-    def _init_sub_commands(self, sub_commands: "SubCommandGroup"):
+    def _init_sub_commands(self, sub_commands: "SubCommandGroup | None"):
         if sub_commands is None:
             sub_commands = _NoSubCommandGroup()
 
@@ -502,7 +502,7 @@ class SubCommandGroup(_ArgParent):
         self.value = argparse_value_dict.pop(self.full_name)
         self.get_command().parse_args(arg_list, arg_dict, argparse_value_dict)
 
-    def get_command(self) -> "SubCommand":
+    def get_command(self) -> "SubCommand | None":
         return self._command_dict[self.value]
 
 class SubCommand(_ArgRoot):
@@ -537,15 +537,15 @@ class SubCommand(_ArgRoot):
         arg_dict: dict[str, Arg],
         argparse_value_dict: dict,
     ) -> dict[str, Arg]:
-        arg_list += self._arg_list
+        arg_list.extend(self._arg_list)
         arg_dict.update(self._arg_dict)
         self._sub_commands.parse_args(arg_list, arg_dict, argparse_value_dict)
 
-    def get_command(self) -> "SubCommand":
+    def get_command(self) -> "SubCommand | None":
         return self._sub_commands.get_command()
 
-    def run(self, *args, **kwargs):
-        raise NotImplementedError()
+    def run(self, args: "ParsedArgs"):
+        return self.get_command().run(args)
 
     def __repr__(self):
         return util.format_type(type(self), self.name, *self._arg_list)
@@ -568,8 +568,8 @@ class _NoSubCommandGroup(SubCommandGroup):
     ) -> dict[str, Arg]:
         return
 
-    def get_command(self) -> SubCommand:
-        return
+    def get_command(self) -> "SubCommand | None":
+        return None
 
 class Parser(_ArgRoot):
     def __init__(
@@ -629,7 +629,7 @@ class ParsedArgs(_ArgParent):
         self,
         arg_list: list[Arg],
         arg_dict: dict[str, Arg],
-        sub_commands: SubCommandGroup,
+        sub_commands: SubCommandGroup | _NoSubCommandGroup,
     ):
         self._init_arg_list(arg_list)
         self._arg_dict = arg_dict
@@ -642,7 +642,7 @@ class ParsedArgs(_ArgParent):
     def get_value(self, arg_name: str):
         return self._arg_dict[arg_name].value
 
-    def get_command(self) -> SubCommand:
+    def get_command(self) -> "SubCommand | None":
         return self._sub_commands.get_command()
 
     def update(self, value_dict: dict, allow_new_keys=False):

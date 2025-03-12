@@ -356,8 +356,14 @@ class Column:
     def reset_callback(self):
         self._callback = None
 
+    def __iter__(self):
+        return iter(self._data_list)
+
+    def __len__(self):
+        return len(self._data_list)
+
     def __repr__(self):
-        return "%s(name=\"%s\")" % (type(self).__name__, self.name)
+        return format_type(type(self), name=self.name, len=len(self))
 
 class CallbackColumn(Column):
     def set_callback(self, callback, level=0, interval=None):

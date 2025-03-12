@@ -197,7 +197,7 @@ class Timer:
         if printer is None:
             printer = Printer()
 
-        self._print     = printer
+        self._printer   = printer
         self._verbose   = verbose
         self._hline     = hline
         self.set_name(name)
@@ -218,8 +218,8 @@ class Timer:
 
     def __enter__(self):
         if self._hline:
-            self._print.hline()
-            self._print("Starting timer%s..." % self._name_str)
+            self._printer.hline()
+            self._printer("Starting timer%s..." % self._name_str)
 
         self.reset()
         return self
@@ -228,9 +228,9 @@ class Timer:
         self.time_taken = self.get_time_taken()
         if self._verbose:
             t_str = time_format(self.time_taken)
-            self._print("Time taken%s = %s" % (self._name_str, t_str))
+            self._printer("Time taken%s = %s" % (self._name_str, t_str))
         if self._hline:
-            self._print.hline()
+            self._printer.hline()
 
 class Counter:
     def __init__(self, init_count=0):
@@ -430,7 +430,7 @@ class Table:
         self._print_level = print_level
         self._num_updates = 0
         if len(columns) > 0:
-            self._print(self.format_header())
+            self._printer(self.format_header())
 
     @classmethod
     def key_value(
@@ -458,7 +458,7 @@ class Table:
         return self._column_dict[column_name]
 
     def set_printer(self, printer: Printer):
-        self._print = printer
+        self._printer = printer
 
     def update(self, level: int=0, **kwargs):
         for name, column in self._column_dict.items():
@@ -490,7 +490,7 @@ class Table:
 
     def print_last(self, level=0):
         if level >= self._print_level:
-            self._print(self.format_row(-1))
+            self._printer(self.format_row(-1))
 
     def get_data(self, column_name: str) -> list:
         return [
@@ -500,7 +500,7 @@ class Table:
         ]
 
     def save_pickle(self, filename, dir_name=None) -> str:
-        self._print = None
+        self._printer = None
         for column in self._column_list:
             column.reset_callback()
 

@@ -711,11 +711,11 @@ def save_image(
     return full_path
 
 def save_image_diff(
-    full_path_1: str,
-    full_path_2: str,
-    output_name: str="diff",
-    dir_name: str=None,
-    normalise: bool=True,
+    full_path_1:    str,
+    full_path_2:    str,
+    output_name:    str="diff",
+    dir_name:       (str | None)=None,
+    normalise:      bool=True,
 ):
     if dir_name is None:
         dir_name = os.path.dirname(full_path_1)

@@ -322,25 +322,23 @@ class TimeInterval(_Interval):
 class Column:
     def __init__(
         self,
-        name: str,
-        value_format=None,
-        width=None,
-        title=None,
-        silent=False,
+        name:           str,
+        value_format:   str="s",
+        width:          (int | None)=None,
+        title:          (str | None)=None,
+        silent:         bool=False,
     ):
-        if value_format is None:
-            value_format = "s"
         if title is None:
             title = name.capitalize().replace("_", " ")
         if width is None:
             width = len(title)
 
-        self.name = name
-        self.title = title.ljust(abs(width))
-        self._blank = "".ljust(abs(width))
-        self._format = "%%%i%s" % (width, value_format)
+        self.name       = name
+        self.title      = title.ljust(abs(width))
+        self._blank     = "".ljust(abs(width))
+        self._format    = "%" + str(width) + value_format
         self._data_list = []
-        self._silent = silent
+        self._silent    = silent
 
     def update(self, data, level):
         self._data_list.append(data)

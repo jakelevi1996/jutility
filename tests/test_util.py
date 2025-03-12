@@ -949,11 +949,41 @@ def test_negative_column_width():
     table.update()
 
 def test_repeated_column_names():
+    printer = util.Printer("test_repeated_column_names", OUTPUT_DIR)
     with pytest.raises(ValueError):
         table = util.Table(
             util.Column("a"),
             util.Column("a"),
         )
+
+    table = util.Table(
+        util.Column("a"),
+        util.Column("b"),
+    )
+    table.add_column(util.Column("c"))
+    with pytest.raises(ValueError):
+        table.add_column(util.Column("c"))
+
+    table.add_column(util.Column("d"))
+
+    table.update(a="abc", b=3)
+    table.update(c=4.5, d=True)
+    table.update(a=None, c="defg")
+
+    printer( str(table))
+    printer(repr(table))
+
+    assert str(table) == (
+        "A          | B          | C          | D         \n"
+        "---------- | ---------- | ---------- | ----------\n"
+        "       abc |          3 |            |           \n"
+        "           |            |        4.5 |       True\n"
+        "           |            |       defg |           "
+    )
+    assert repr(table) == (
+        "Table(columns=[Column(len=3, name='a'), Column(len=3, name='b'), "
+        "Column(len=3, name='c'), Column(len=3, name='d')])"
+    )
 
 def test_circular_iterator():
     printer = util.Printer("test_circular_iterator", OUTPUT_DIR)

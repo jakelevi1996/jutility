@@ -364,7 +364,7 @@ class CallbackColumn(Column):
         self._callback_interval = interval
         return self
 
-    def update(self, data, level):
+    def update(self, data, level: int):
         if level >= self._callback_level:
             if self._callback_interval.ready():
                 data = self._callback()
@@ -380,10 +380,10 @@ class TimeColumn(Column):
         self._data_list = []
         self._timer     = Timer()
 
-    def update(self, data, level):
+    def update(self, data, level: int):
         self._data_list.append(self._timer.get_time_taken())
 
-    def format_item(self, row_ind):
+    def format_item(self, row_ind: int) -> str:
         t = self._data_list[row_ind]
         t_str = time_format(t, concise=True)
         return self._format % t_str
@@ -399,11 +399,11 @@ class CountColumn(Column):
         self._data_list = []
         self._count     = 0
 
-    def update(self, data, level):
+    def update(self, data, level: int):
         self._data_list.append(self._count)
         self._count += 1
 
-    def format_item(self, row_ind):
+    def format_item(self, row_ind: int) -> str:
         count = self._data_list[row_ind]
         return self._format % count
 

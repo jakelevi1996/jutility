@@ -307,7 +307,7 @@ class Column:
         if title is None:
             title = name.capitalize().replace("_", " ")
         if width is None:
-            width = len(title)
+            width = max(len(title), 10)
 
         self.name       = name
         self.title      = title.ljust(abs(width))

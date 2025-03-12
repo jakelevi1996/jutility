@@ -116,16 +116,6 @@ class _ArgParent:
             value=self.value,
         )
 
-class _ArgRoot(_ArgParent):
-    def _init_arg_dict(self):
-        self._arg_dict = self.register_names(dict(), "")
-
-    def _init_sub_commands(self, sub_commands: "SubCommandGroup | None"):
-        if sub_commands is None:
-            sub_commands = _NoSubCommandGroup()
-
-        self._sub_commands = sub_commands
-
 class Arg(_ArgParent):
     def __init__(
         self,
@@ -505,7 +495,38 @@ class SubCommandGroup(_ArgParent):
     def get_command(self) -> "SubCommand | None":
         return self._command_dict[self.value]
 
-class SubCommand(_ArgRoot):
+class _NoSubCommandGroup(SubCommandGroup):
+    def __init__(self):
+        self._init_arg_parent([], None)
+
+    def register_sub_commands(self, prefix: str):
+        return
+
+    def add_argparse_arguments(self, parser: argparse.ArgumentParser):
+        return
+
+    def parse_args(
+        self,
+        arg_list: list[str, Arg],
+        arg_dict: dict[str, Arg],
+        argparse_value_dict: dict,
+    ) -> dict[str, Arg]:
+        return
+
+    def get_command(self) -> "SubCommand | None":
+        return None
+
+class _SubCommandParent(_ArgParent):
+    def _init_arg_dict(self):
+        self._arg_dict = self.register_names(dict(), "")
+
+    def _init_sub_commands(self, sub_commands: "SubCommandGroup | None"):
+        if sub_commands is None:
+            sub_commands = _NoSubCommandGroup()
+
+        self._sub_commands = sub_commands
+
+class SubCommand(_SubCommandParent):
     def __init__(
         self,
         name: str,
@@ -550,28 +571,7 @@ class SubCommand(_ArgRoot):
     def __repr__(self):
         return util.format_type(type(self), self.name, *self._arg_list)
 
-class _NoSubCommandGroup(SubCommandGroup):
-    def __init__(self):
-        self._init_arg_parent([], None)
-
-    def register_sub_commands(self, prefix: str):
-        return
-
-    def add_argparse_arguments(self, parser: argparse.ArgumentParser):
-        return
-
-    def parse_args(
-        self,
-        arg_list: list[str, Arg],
-        arg_dict: dict[str, Arg],
-        argparse_value_dict: dict,
-    ) -> dict[str, Arg]:
-        return
-
-    def get_command(self) -> "SubCommand | None":
-        return None
-
-class Parser(_ArgRoot):
+class Parser(_SubCommandParent):
     def __init__(
         self,
         *args: Arg,

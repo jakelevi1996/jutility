@@ -329,6 +329,14 @@ class Column:
     def get_data(self):
         return self._data_list
 
+    def set_callback(
+        self,
+        callback,
+        level:      int=0,
+        interval:   (_Interval | None)=None,
+    ):
+        raise NotImplementedError()
+
     def reset_callback(self):
         self._callback = None
 
@@ -342,7 +350,12 @@ class Column:
         return format_type(type(self), name=self.name, len=len(self))
 
 class CallbackColumn(Column):
-    def set_callback(self, callback, level=0, interval=None):
+    def set_callback(
+        self,
+        callback,
+        level:      int=0,
+        interval:   (_Interval | None)=None,
+    ):
         self._callback = callback
         self._callback_level = level
         if interval is None:
@@ -397,10 +410,10 @@ class CountColumn(Column):
 class Table:
     def __init__(
         self,
-        *columns: Column,
-        print_interval=None,
-        print_level=0,
-        printer=None,
+        *columns:       Column,
+        printer:        (Printer | None)=None,
+        print_interval: (_Interval | None)=None,
+        print_level:    int=0,
     ):
         if print_interval is None:
             print_interval = Always()
@@ -427,8 +440,8 @@ class Table:
     ):
         col_width = (total_width - len(" | ")) // 2
         return cls(
-            Column("key",   "s", -col_width),
-            Column("value", "s", -col_width),
+            Column("k", "s", -col_width, "Key"),
+            Column("v", "s", -col_width, "Value"),
             printer=printer,
         )
 
@@ -447,7 +460,7 @@ class Table:
     def set_printer(self, printer: Printer):
         self._print = printer
 
-    def update(self, level=0, **kwargs):
+    def update(self, level: int=0, **kwargs):
         for name, column in self._column_dict.items():
             column.update(kwargs.get(name), level)
 
@@ -462,19 +475,18 @@ class Table:
 
         self._num_updates += 1
 
-    def format_header(self):
+    def format_header(self) -> str:
         title_list = [column.title for column in self._column_list]
         title_str = " | ".join(title_list)
         hline_str = " | ".join("-" * len(t) for t in title_list)
-        header_str = "\n".join([title_str, hline_str])
-        return header_str
+        return "\n".join([title_str, hline_str])
 
-    def format_row(self, row_ind):
+    def format_row(self, row_ind) -> str:
         value_list = [
-            column.format_item(row_ind) for column in self._column_list
+            column.format_item(row_ind)
+            for column in self._column_list
         ]
-        row_str = " | ".join(value_list)
-        return row_str
+        return " | ".join(value_list)
 
     def print_last(self, level=0):
         if level >= self._print_level:
@@ -487,7 +499,7 @@ class Table:
             if x is not None
         ]
 
-    def save_pickle(self, filename, dir_name=None):
+    def save_pickle(self, filename, dir_name=None) -> str:
         self._print = None
         for column in self._column_list:
             column.reset_callback()
@@ -524,13 +536,12 @@ class Table:
         return self._num_updates
 
     def __str__(self):
-        header_str = self.format_header()
-        row_list = [self.format_row(i) for i in range(self._num_updates)]
-        table_str = "\n".join([header_str] + row_list)
-        return table_str
+        header_str  = self.format_header()
+        row_list    = [self.format_row(i) for i in range(self._num_updates)]
+        return "\n".join([header_str] + row_list)
 
     def __repr__(self):
-        return "%s(columns=%s)" % (type(self).__name__, self._column_list)
+        return format_type(self, columns=self._column_list)
 
     def latex(self):
         raise NotImplementedError()

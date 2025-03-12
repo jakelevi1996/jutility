@@ -99,30 +99,6 @@ def test_get_data():
     assert len(table.get_data("b")) == num_updates[1] + num_updates[2]
     assert len(table.get_data("c")) == num_updates[2]
     assert len(table.get_data("d")) == num_updates[0]
-    for name in ["a", "b", "c", "d"]:
-        assert len(table.get_data(name, filter_none=False)) == len(table)
-
-    a, d = table.get_data("a", "d")
-    assert len(a) == num_updates[0]
-    assert len(d) == num_updates[0]
-    assert all(isinstance(i, int) for i in a)
-    assert all(isinstance(i, np.ndarray) for i in d)
-    a, b = table.get_data("a", "b")
-    assert len(a) == num_updates[1]
-    assert len(b) == num_updates[1]
-    b, c = table.get_data("b", "c")
-    assert len(b) == num_updates[2]
-    assert len(c) == num_updates[2]
-    a, c = table.get_data("a", "c")
-    assert len(a) == 0
-    assert len(c) == 0
-    a, b, c = table.get_data("a", "b", "c")
-    assert len(a) == 0
-    assert len(b) == 0
-    assert len(c) == 0
-    a, c = table.get_data("a", "c", filter_none=False)
-    assert len(a) == len(table)
-    assert len(c) == len(table)
 
 @pytest.mark.parametrize("print_level", [0, 1, 2])
 def test_table_callback_level(print_level):
@@ -157,13 +133,17 @@ def test_table_callback_level(print_level):
                 table.update(level=0, epoch=count)
                 count += 1
 
-    assert len(table) == 5*5*5 + 5*5 + 5
-    assert len(table.get_data("epoch")) == len(table)
+    levels_dict = {
+        0: 5 + 5*5 + 5*5*5,
+        1: 5 + 5*5,
+        2: 5,
+    }
+    assert len(table) == levels_dict[0]
+    assert len(table.get_data("epoch")) == levels_dict[0]
+    assert len(table.get_data("c1"))    == levels_dict[1]
+    assert len(table.get_data("c2"))    == levels_dict[2]
 
-    c2_epoch_array, c2_array = table.get_data("epoch", "c2")
-    assert len(c2_array) == 5
-    assert len(c2_epoch_array) == 5
-    assert np.all(c2_epoch_array == 25 * np.arange(5))
+    assert len(printer.read().splitlines()) == levels_dict[print_level] + 2
 
 def test_table_json():
     printer = util.Printer("test_table_json", OUTPUT_DIR)
@@ -183,24 +163,41 @@ def test_table_json():
         if i % 5 == 0:
             table.update(x=i, y=rng.normal(), level=1)
 
-    table.save_json("test_table_json_all", OUTPUT_DIR)
-    table.save_json("test_table_json_z",   OUTPUT_DIR, ["z"])
-    table.save_json("test_table_json_xyt", OUTPUT_DIR, ["x", "y", "t"])
+    table_data = table.to_json()
+    util.save_json(table_data, "test_table_json_all", OUTPUT_DIR)
+    assert isinstance(table_data, list)
+    assert len(table_data) == 24
+    for row in table_data:
+        assert isinstance(row, dict)
+        assert sorted(row.keys()) == ["t", "x", "y", "z"]
+        assert isinstance(row["x"], int)
+        assert isinstance(row["y"], float)      or (row["y"] is None)
+        assert isinstance(row["z"], np.ndarray) or (row["z"] is None)
+        assert isinstance(row["t"], float)
 
-    full_path = util.get_full_path("test_table_json_xyt", OUTPUT_DIR, "json")
-    loaded_table = util.Table(printer=printer)
-    loaded_table.load_json(full_path)
+    table_data = table.to_json("t x y".split())
+    util.save_json(table_data, "test_table_json_xyt", OUTPUT_DIR)
+    assert isinstance(table_data, list)
+    assert len(table_data) == 24
+    for row in table_data:
+        assert isinstance(row, dict)
+        assert sorted(row.keys()) == ["t", "x", "y"]
+        assert isinstance(row["x"], int)
+        assert isinstance(row["y"], float) or (row["y"] is None)
+        assert isinstance(row["t"], float)
+        assert "z" not in row
 
-    assert len(loaded_table.get_data("x")) == len(loaded_table.get_data("t"))
-    assert len(loaded_table.get_data("x")) > len(loaded_table.get_data("y"))
-    assert len(loaded_table.get_data("t")) > len(loaded_table.get_data("y"))
-    assert loaded_table.get_data("x") == table.get_data("x")
-    assert loaded_table.get_data("y") == table.get_data("y")
-    assert loaded_table.get_data("t") == table.get_data("t")
-    assert loaded_table.get_data("x", "y") == table.get_data("x", "y")
-    printer(loaded_table.get_data("x", "y"))
-    printer(loaded_table.get_data("x", "t"))
-    printer(loaded_table.get_data("x", "y", "t"))
+    table_data = table.to_json(["z"])
+    util.save_json(table_data, "test_table_json_z", OUTPUT_DIR)
+    assert isinstance(table_data, list)
+    assert len(table_data) == 24
+    for row in table_data:
+        assert isinstance(row, dict)
+        assert sorted(row.keys()) == ["z"]
+        assert isinstance(row["z"], np.ndarray) or (row["z"] is None)
+        assert "x" not in row
+        assert "y" not in row
+        assert "t" not in row
 
 def test_silent_column():
     printer = util.Printer("test_silent_column", OUTPUT_DIR)
@@ -250,9 +247,9 @@ def test_key_value_table():
     )
 
     table = util.Table.key_value(printer=printer, total_width=43)
-    table.update(key="Model", value="`Mlp`")
-    table.update(key="Size", value=300)
-    table.update(key="Loss", value=1.2)
+    table.update(k="Model", v="`Mlp`")
+    table.update(k="Size",  v=300)
+    table.update(k="Loss",  v=1.2)
 
     assert printer.read() == (
         "Key                  | Value               \n"
@@ -852,7 +849,8 @@ def test_table_save_pickle():
 
     assert isinstance(loaded_table, util.Table)
     assert loaded_table is not table
-    assert loaded_table.get_data("c", "d") == table.get_data("c", "d")
+    assert loaded_table.get_data("c") == table.get_data("c")
+    assert loaded_table.get_data("d") == table.get_data("d")
     assert str(loaded_table) == str(table)
 
     printer.hline()
@@ -1253,7 +1251,7 @@ def test_table_load_pickle_callback():
 
     assert table.get_data("b")        != data_list
     assert loaded_table.get_data("b") == data_list
-    assert "   19 | " in printer.read()
+    assert "19    | " in printer.read()
 
 def test_format_dict():
     d = {str(x): x*x/2 for x in range(4)}

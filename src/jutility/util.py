@@ -378,7 +378,7 @@ class CallbackColumn(Column):
         self._data_list.append(data)
 
 class TimeColumn(Column):
-    def __init__(self, name="t", width=11):
+    def __init__(self, name="t", width=-11):
         self.name = name
         self.title = "Time".ljust(abs(width))
         self._format = "%%%is" % width
@@ -397,7 +397,7 @@ class TimeColumn(Column):
         return self._timer
 
 class CountColumn(Column):
-    def __init__(self, name="c", width=5):
+    def __init__(self, name="c", width=-5):
         self.name = name
         self.title = "Count".ljust(abs(width))
         self._format = "%%%ii" % width

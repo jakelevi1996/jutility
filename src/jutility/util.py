@@ -316,18 +316,18 @@ class Column:
         self._data_list = []
         self._silent    = silent
 
-    def update(self, data, level):
+    def update(self, data, level: int):
         self._data_list.append(data)
 
-    def format_item(self, row_ind):
+    def format_item(self, row_ind: int) -> str:
         data = self._data_list[row_ind]
         if (data is None) or self._silent:
             return self._blank
         else:
             return self._format % data
 
-    def get_data(self):
-        return self._data_list
+    def get_item(self, row_ind: int):
+        return self._data_list[row_ind]
 
     def set_callback(
         self,
@@ -506,31 +506,17 @@ class Table:
 
         return save_pickle(self, filename, dir_name)
 
-    def save_json(self, filename, dir_name=None, name_list=None):
+    def to_json(self, name_list: (list[str] | None)=None) -> list[dict]:
         if name_list is None:
             name_list = [column.name for column in self._column_list]
-        data_dict = {
-            name: self._column_dict[name].get_data()
-            for name in name_list
-        }
-        data_list = [
-            {name: data[i] for name, data in data_dict.items()}
+
+        return [
+            {
+                n: self._column_dict[n].get_item(i)
+                for n in name_list
+            }
             for i in range(len(self))
         ]
-        return save_json(data_list, filename, dir_name)
-
-    def load_json(self, full_path):
-        old_print_interval = self._print_interval
-        self._print_interval = Never()
-        data_list = load_json(full_path)
-        name_list = set(name for row in data_list for name in row.keys())
-        for name in name_list:
-            self.add_column(Column(name))
-        for row in data_list:
-            self.update(**row)
-
-        self._print_interval = old_print_interval
-        return self
 
     def __len__(self):
         return self._num_updates

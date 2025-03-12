@@ -8,7 +8,7 @@ class Experiment:
         raise NotImplementedError()
 
     def __repr__(self):
-        return type(self).__name__
+        return util.format_type(type(self))
 
 def time_sweep(
     *experiments: Experiment,

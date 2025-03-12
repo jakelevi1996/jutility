@@ -420,10 +420,13 @@ class Table:
         if printer is None:
             printer = Printer()
 
-        self._column_list: list[Column] = []
-        self._column_dict: dict[str, Column] = dict()
-        for column in columns:
-            self.add_column(column)
+        self._column_list = list(columns)
+        self._column_dict = {
+            column.name: column
+            for column in self._column_list
+        }
+        if len(self._column_list) > len(self._column_dict):
+            raise ValueError("%r has duplicate column names" % self)
 
         self.set_printer(printer)
         self._print_interval = print_interval

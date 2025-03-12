@@ -568,7 +568,7 @@ def test_cli_verbose():
         "cli: B(a=A(), y=6.6)\n"
         "cli: `B.a` retrieved from cache\n"
         "\n"
-        "------------------------ (1) args.reset_object_cache "
+        "------------------------- (1) args.reset_object_cache "
         "-------------------------\n"
         "\n"
         "cli: A(x=8)\n"

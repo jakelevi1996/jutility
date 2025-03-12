@@ -249,7 +249,7 @@ def test_key_value_table():
         file_ext="md",
     )
 
-    table = util.Table.key_value(printer=printer)
+    table = util.Table.key_value(printer=printer, total_width=43)
     table.update(key="Model", value="`Mlp`")
     table.update(key="Size", value=300)
     table.update(key="Loss", value=1.2)
@@ -339,13 +339,13 @@ def test_printer_heading():
 
     assert printer.read() == (
         "\n"
-        "------------------------------- (1) Heading 1 "
+        "-------------------------------- (1) Heading 1 "
         "--------------------------------\n"
         "\n"
         "Paragraph 1\n"
         "Paragraph 2\n"
         "\n"
-        "------------------------------- (2) Heading 2 "
+        "-------------------------------- (2) Heading 2 "
         "--------------------------------\n"
         "\n"
         "Paragraph 3\n"
@@ -504,12 +504,12 @@ def test_timer_verbose():
         "****************************************\n"
         "In Timer context\n"
         "****************************************\n"
-        "---------------------------------------"
+        "----------------------------------------"
         "---------------------------------------\n"
         "Starting timer for `4`...\n"
         "In Timer context\n"
         "Time taken for `4` = %s seconds\n"
-        "---------------------------------------"
+        "----------------------------------------"
         "---------------------------------------\n"
         % (
             util.extract_substring(timer_output, "for `1` = ", " seconds"),

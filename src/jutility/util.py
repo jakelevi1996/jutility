@@ -37,7 +37,7 @@ from jutility import units
 CURRENT_DIR = os.path.abspath(os.getcwd())
 RESULTS_DIR = os.path.join(CURRENT_DIR, "results")
 
-HLINE_LEN = 78
+HLINE_LEN = 79
 
 class CallbackContext:
     def __init__(
@@ -440,10 +440,15 @@ class Table:
             self._print(self.format_header())
 
     @classmethod
-    def key_value(cls, width: int=-20, printer: (Printer | None)=None):
+    def key_value(
+        cls,
+        printer: (Printer | None)=None,
+        total_width: int=HLINE_LEN,
+    ):
+        col_width = (total_width - len(" | ")) // 2
         return cls(
-            Column("key",   "s", width),
-            Column("value", "s", width),
+            Column("key",   "s", -col_width),
+            Column("value", "s", -col_width),
             printer=printer,
         )
 

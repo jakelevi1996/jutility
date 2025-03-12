@@ -981,8 +981,8 @@ def test_repeated_column_names():
         "           |            |       defg |           "
     )
     assert repr(table) == (
-        "Table(columns=[Column(len=3, name='a'), Column(len=3, name='b'), "
-        "Column(len=3, name='c'), Column(len=3, name='d')])"
+        "Table(Column(len=3, name='a'), Column(len=3, name='b'), "
+        "Column(len=3, name='c'), Column(len=3, name='d'))"
     )
 
 def test_circular_iterator():

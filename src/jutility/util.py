@@ -530,7 +530,7 @@ class Table:
         return "\n".join([header_str] + row_list)
 
     def __repr__(self):
-        return format_type(type(self), columns=self._column_list)
+        return format_type(type(self), *self._column_list)
 
     def latex(self):
         raise NotImplementedError()

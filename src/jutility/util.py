@@ -504,23 +504,12 @@ class Table:
         if level >= self._print_level:
             self._print(self.format_row(-1))
 
-    def get_data(self, *names, filter_none=True, unpack_single=True):
-        data_table = [
-            self._column_dict[name].get_data()
-            for name in names
+    def get_data(self, column_name: str) -> list:
+        return [
+            x
+            for x in self._column_dict[column_name]
+            if x is not None
         ]
-        if filter_none:
-            valid_row_inds = [
-                i for i, data_row in enumerate(zip(*data_table))
-                if all(data is not None for data in data_row)
-            ]
-            data_table = [
-                [data_list[i] for i in valid_row_inds]
-                for data_list in data_table
-            ]
-        if (len(names) == 1) and unpack_single:
-            [data_table] = data_table
-        return data_table
 
     def save_pickle(self, filename, dir_name=None):
         self._print = None

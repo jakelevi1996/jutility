@@ -373,12 +373,12 @@ class CallbackColumn(Column):
         self._data_list.append(data)
 
 class TimeColumn(Column):
-    def __init__(self, name="t", width=-11):
-        self.name = name
-        self.title = "Time".ljust(abs(width))
-        self._format = "%%%is" % width
+    def __init__(self, name: str="t", width: int=-11):
+        self.name       = name
+        self.title      = "Time".ljust(abs(width))
+        self._format    = "%" + str(width) + "s"
         self._data_list = []
-        self._timer = Timer()
+        self._timer     = Timer()
 
     def update(self, data, level):
         self._data_list.append(self._timer.get_time_taken())
@@ -392,12 +392,12 @@ class TimeColumn(Column):
         return self._timer
 
 class CountColumn(Column):
-    def __init__(self, name="c", width=-5):
-        self.name = name
-        self.title = "Count".ljust(abs(width))
-        self._format = "%%%ii" % width
+    def __init__(self, name: str="c", width: int=-5):
+        self.name       = name
+        self.title      = "Count".ljust(abs(width))
+        self._format    = "%" + str(width) + "i"
         self._data_list = []
-        self._count = 0
+        self._count     = 0
 
     def update(self, data, level):
         self._data_list.append(self._count)

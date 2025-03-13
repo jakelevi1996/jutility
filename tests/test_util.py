@@ -386,6 +386,59 @@ def test_printer_heading():
         "Paragraph 4\n"
     )
 
+def test_markdownprinter():
+    test_dir = os.path.join(OUTPUT_DIR, "test_markdownprinter")
+    plotting.plot(
+        plotting.Line([1, 3, 2]),
+        plot_name="results",
+        dir_name=test_dir,
+        figsize=[4, 3],
+    )
+
+    md = util.MarkdownPrinter("doc", test_dir)
+    md.title("`test_markdownprinter`")
+    md("Some text")
+    md.heading("Usage examples")
+    md("Import %s with Python" % md.code("jutility"))
+    md.code_block("import jutility", "print(\"wow\")", ext="py")
+    md.heading("Results", "\n")
+    md.image("results.png")
+    md.file_link("results.png", "Link to image file")
+    md.heading("Inline examples")
+    md(
+        "Inline %s and %s work fine"
+        % (md.code("code"), md.make_link("results.png", "links"))
+    )
+
+    assert md.read() == (
+        "# `test_markdownprinter`\n"
+        "\n"
+        "Some text\n"
+        "\n"
+        "## Usage examples\n"
+        "\n"
+        "Import `jutility` with Python\n"
+        "\n"
+        "```py\n"
+        "import jutility\n"
+        "print(\"wow\")\n"
+        "```\n"
+        "\n"
+        "## Results\n"
+        "\n"
+        "![](results.png)\n"
+        "\n"
+        "[Link to image file](results.png)\n"
+        "\n"
+        "## Inline examples\n"
+        "\n"
+        "Inline `code` and [links](results.png) work fine\n"
+    )
+
+    assert md.get_file() is not None
+    assert md.get_filename() == os.path.join(test_dir, "doc.md")
+    assert os.path.isfile(md.get_filename())
+
 def test_seeder():
     assert util.Seeder().get_seed("123") == util.Seeder().get_seed("123")
     assert util.Seeder().get_seed("123") != util.Seeder().get_seed("321")

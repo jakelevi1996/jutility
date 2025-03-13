@@ -137,6 +137,47 @@ class Printer:
         if self._file is not None:
             self._file.close()
 
+class MarkdownPrinter(Printer):
+    def __init__(
+        self,
+        name:               str,
+        dir_name:           (str | None)=None,
+        display_path:       bool=True,
+        print_to_console:   bool=False,
+    ):
+        full_path = get_full_path(
+            filename=name,
+            dir_name=dir_name,
+            file_ext="md",
+            verbose=display_path,
+        )
+        self._file = open(full_path, "w")
+        self._print_to_console = print_to_console
+        self._count = 1
+
+    def title(self, name: str, end: str="\n\n"):
+        self(("# %s" % name), end=end)
+
+    def heading(self, name: str, end: str="\n\n"):
+        self(("\n## %s" % name), end=end)
+
+    def image(self, rel_path: str, name: str=""):
+        self("\n![%s](%s)" % (name, rel_path))
+
+    def file_link(self, rel_path: str, name: str):
+        self("\n[%s](%s)" % (name, rel_path))
+
+    def code_block(self, *lines: str, ext: str=""):
+        self("\n```%s\n%s\n```" % (ext, "\n".join(lines)))
+
+    @classmethod
+    def make_link(cls, rel_path: str, name: str) -> str:
+        return "[%s](%s)" % (name, rel_path)
+
+    @classmethod
+    def code(cls, input_str: str) -> str:
+        return "`%s`" % input_str
+
 def hline(line_char="-", line_len=HLINE_LEN):
     print(line_char * line_len)
 

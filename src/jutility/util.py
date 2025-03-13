@@ -460,7 +460,7 @@ class Table:
     def get_column(self, column_name: str) -> Column:
         return self._column_dict[column_name]
 
-    def set_printer(self, printer: Printer):
+    def set_printer(self, printer: (Printer | None)):
         self._printer = printer
 
     def update(self, level: int=0, **kwargs):
@@ -503,7 +503,7 @@ class Table:
         ]
 
     def save_pickle(self, filename, dir_name=None) -> str:
-        self._printer = None
+        self.set_printer(None)
         for column in self._column_list:
             column.reset_callback()
 

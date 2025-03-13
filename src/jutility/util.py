@@ -527,20 +527,16 @@ class Table:
 
         hl          = "\\hline"
         endl        = " \\\\"
-        begin_tab   = "\\begin{tabular}{%s}" % col_fmt
         header_list = [column.title for column in self._column_list]
-        header_str  = " & ".join(header_list)
         rows_list   = [self.format_row(i) for i in range(len(self))]
-        rows_str    = (endl + "\n").join(rows_list).replace(" | ", " & ")
-        end_tab     = "\\end{tabular}"
         parts       = [
-            begin_tab,
+            "\\begin{tabular}{%s}" % col_fmt,
             hl,
-            header_str + endl,
+            " & ".join(header_list) + endl,
             hl,
-            rows_str + endl,
+            (endl + "\n").join(rows_list).replace(" | ", " & ") + endl,
             hl,
-            end_tab,
+            "\\end{tabular}",
         ]
         return "\n".join(parts)
 

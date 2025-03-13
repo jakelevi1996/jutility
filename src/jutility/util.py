@@ -521,6 +521,29 @@ class Table:
             for i in range(len(self))
         ]
 
+    def to_latex(self, col_fmt: (str | None)=None) -> str:
+        if col_fmt is None:
+            col_fmt = " ".join(["c"] * len(self._column_list))
+
+        hl          = "\\hline"
+        endl        = " \\\\"
+        begin_tab   = "\\begin{tabular}{%s}" % col_fmt
+        header_list = [column.title for column in self._column_list]
+        header_str  = " & ".join(header_list)
+        rows_list   = [self.format_row(i) for i in range(len(self))]
+        rows_str    = (endl + "\n").join(rows_list).replace(" | ", " & ")
+        end_tab     = "\\end{tabular}"
+        parts       = [
+            begin_tab,
+            hl,
+            header_str + endl,
+            hl,
+            rows_str + endl,
+            hl,
+            end_tab,
+        ]
+        return "\n".join(parts)
+
     def __len__(self):
         return self._num_updates
 
@@ -531,9 +554,6 @@ class Table:
 
     def __repr__(self):
         return format_type(type(self), *self._column_list)
-
-    def latex(self):
-        raise NotImplementedError()
 
 class FunctionList:
     def __init__(self, *functions):

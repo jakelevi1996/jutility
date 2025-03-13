@@ -199,6 +199,43 @@ def test_table_json():
         assert "y" not in row
         assert "t" not in row
 
+def test_table_to_latex():
+    test_dir = os.path.join(OUTPUT_DIR, "test_table_to_latex")
+    table = util.Table(
+        util.Column("a"),
+        util.Column("b"),
+        util.Column("c"),
+        util.Column("d"),
+    )
+
+    table.update(a="abc", b=3)
+    table.update(c=4.5, d=True)
+    table.update(a=None, c="defg")
+
+    printer = util.Printer("table", dir_name=test_dir, file_ext="tex")
+    printer(table.to_latex())
+
+    assert table.to_latex() == (
+        "\\begin{tabular}{c c c c}\n"
+        "\\hline\n"
+        "A          & B          & C          & D          \\\\\n"
+        "\\hline\n"
+        "       abc &          3 &            &            \\\\\n"
+        "           &            &        4.5 &       True \\\\\n"
+        "           &            &       defg &            \\\\\n"
+        "\\hline\n"
+        "\\end{tabular}"
+    )
+
+    printer = util.Printer("doc", dir_name=test_dir, file_ext="tex")
+    printer(
+        "\\documentclass{article}\n"
+        "\\pagestyle{empty}\n"
+        "\\begin{document}\n"
+        "\\input{table.tex}\n"
+        "\\end{document}"
+    )
+
 def test_silent_column():
     printer = util.Printer("test_silent_column", OUTPUT_DIR)
     w = np.linspace(2, 3, 10)

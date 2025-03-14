@@ -253,9 +253,12 @@ class Timer:
     def set_name(self, name):
         self._name_str = (" for `%s`" % name) if (name is not None) else ""
 
-    def get_time_taken(self):
+    def get_time_taken(self) -> float:
         t1 = time.perf_counter()
         return t1 - self._t0
+
+    def format_time(self, concise: bool=False) -> str:
+        return time_format(self.get_time_taken(), concise)
 
     def __enter__(self):
         if self._hline:

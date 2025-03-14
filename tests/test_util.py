@@ -555,6 +555,27 @@ def test_timer_context():
         time.sleep(sleep_interval)
         t.set_name("name 2")
 
+    timer = util.Timer("test_format_time_taken")
+    time.sleep(sleep_interval)
+    printer("Format, verbose:", timer.format_time())
+    printer("Format, concise:", timer.format_time(concise=True))
+
+    timer_output = printer.read()
+    assert timer_output == (
+        "Time taken for `sleep` = %s seconds\n"
+        "Time taken = %s seconds\n"
+        "Time taken for `name 2` = %s seconds\n"
+        "Format, verbose: %s seconds\n"
+        "Format, concise: %ss\n"
+        % (
+            util.extract_substring(timer_output, "`sleep` = ",  " seconds"),
+            util.extract_substring(timer_output, "taken = ",    " seconds"),
+            util.extract_substring(timer_output, "`name 2` = ", " seconds"),
+            util.extract_substring(timer_output, "verbose: ",   " seconds"),
+            util.extract_substring(timer_output, "concise: ",   "s"),
+        )
+    )
+
 def test_timer_verbose():
     printer = util.Printer("test_timer_verbose", dir_name=OUTPUT_DIR)
     sleep_interval = 0.01

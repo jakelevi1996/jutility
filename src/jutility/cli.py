@@ -29,7 +29,7 @@ class _ArgParent:
         self.value = value
 
     def _init_kwargs(self, kwargs: dict):
-        self.kwargs = kwargs
+        self._kwargs = kwargs
 
     def get_value_dict(self) -> dict:
         return self.register_values(dict(), False)
@@ -133,16 +133,16 @@ class Arg(_ArgParent):
         self._init_arg_parent([], name, argparse_kwargs)
         self._init_tag(tag, tagged)
         self._init_help()
-        if "action" not in self.kwargs:
-            self.kwargs.setdefault("metavar", self.name[0].upper())
+        if "action" not in self._kwargs:
+            self._kwargs.setdefault("metavar", self.name[0].upper())
 
     def _init_tag(self, tag: str | None, tagged: bool):
         self.tag = tag
         self.tagged = tagged
 
     def _init_help(self):
-        if ((len(self.kwargs) > 0) and ("help" not in self.kwargs)):
-            self.kwargs["help"] = util.format_dict(self.kwargs)
+        if ((len(self._kwargs) > 0) and ("help" not in self._kwargs)):
+            self._kwargs["help"] = util.format_dict(self._kwargs)
 
     def set_full_name(self, full_name: str):
         if self.full_name is not None:
@@ -163,7 +163,7 @@ class Arg(_ArgParent):
         value_dict[self.full_name] = self.value
 
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
-        parser.add_argument("--" + self.full_name, **self.kwargs)
+        parser.add_argument("--" + self.full_name, **self._kwargs)
 
     def init_object(self):
         return self.value
@@ -182,7 +182,7 @@ class Arg(_ArgParent):
 
 class PositionalArg(Arg):
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
-        parser.add_argument(self.full_name, **self.kwargs)
+        parser.add_argument(self.full_name, **self._kwargs)
 
 class NoTagArg(Arg):
     def _init_tag(self, tag, tagged):
@@ -194,33 +194,33 @@ class BooleanArg(Arg):
         parser.add_argument(
             "--" + self.full_name,
             action=argparse.BooleanOptionalAction,
-            **self.kwargs,
+            **self._kwargs,
         )
 
     def _init_help(self):
-        if "default" in self.kwargs:
-            self.kwargs.setdefault("help", "")
+        if "default" in self._kwargs:
+            self._kwargs.setdefault("help", "")
         else:
-            if "help" in self.kwargs:
-                self.kwargs["help"] += " (default: None)"
+            if "help" in self._kwargs:
+                self._kwargs["help"] += " (default: None)"
             else:
-                self.kwargs["help"] = "(default: None)"
+                self._kwargs["help"] = "(default: None)"
 
 class JsonArg(Arg):
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         parser.add_argument(
             "--" + self.full_name,
             type=json.loads,
-            **self.kwargs,
+            **self._kwargs,
         )
 
     def _init_help(self):
-        if ((len(self.kwargs) > 0) and ("help" not in self.kwargs)):
-            self.kwargs["help"] = util.format_dict(self.kwargs)
-        if "help" in self.kwargs:
-            self.kwargs["help"] += " (format: JSON string)"
+        if ((len(self._kwargs) > 0) and ("help" not in self._kwargs)):
+            self._kwargs["help"] = util.format_dict(self._kwargs)
+        if "help" in self._kwargs:
+            self._kwargs["help"] += " (format: JSON string)"
         else:
-            self.kwargs["help"] = "Format: JSON string"
+            self._kwargs["help"] = "Format: JSON string"
 
 class ObjectArg(Arg):
     def __init__(
@@ -477,10 +477,10 @@ class SubCommandGroup(_ArgParent):
             title=self.name,
             dest=self.full_name,
             required=self._required,
-            **self.kwargs,
+            **self._kwargs,
         )
         for command in self._commands:
-            parser = subparser.add_parser(command.name, **command.kwargs)
+            parser = subparser.add_parser(**command.get_subparser_kwargs())
             command.add_argparse_arguments(parser)
 
     def parse_args(
@@ -564,6 +564,11 @@ class SubCommand(_SubCommandParent):
 
     def get_command(self) -> "SubCommand | None":
         return self._sub_commands.get_command()
+
+    def get_subparser_kwargs(self) -> dict:
+        subparser_kwargs = {"name": self.name}
+        subparser_kwargs.update(self._kwargs)
+        return subparser_kwargs
 
     def run(self, args: "ParsedArgs"):
         return self.get_command().run(args)

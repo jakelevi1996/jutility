@@ -482,8 +482,8 @@ class Table:
     @classmethod
     def key_value(
         cls,
-        printer: (Printer | None)=None,
-        total_width: int=HLINE_LEN,
+        printer:        (Printer | None)=None,
+        total_width:    int=HLINE_LEN,
     ):
         col_width = (total_width - len(" | ")) // 2
         return cls(
@@ -491,6 +491,19 @@ class Table:
             Column("v", "s", -col_width, "Value"),
             printer=printer,
         )
+
+    @classmethod
+    def from_dict(
+        cls,
+        input_dict:     dict,
+        printer:        (Printer | None)=None,
+        total_width:    int=HLINE_LEN,
+    ):
+        table = cls.key_value(printer, total_width)
+        for k, v in input_dict.items():
+            table.update(k=k, v=v)
+
+        return table
 
     def add_column(self, column: Column):
         if column.name in self._column_dict:

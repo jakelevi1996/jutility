@@ -296,6 +296,40 @@ def test_key_value_table():
         "Loss                 | 1.2                 \n"
     )
 
+def test_table_from_dict():
+    printer = util.Printer("test_table_from_dict", dir_name=OUTPUT_DIR)
+    d = {
+        "abc": 123,
+        4.5: True,
+        False: 6.78,
+        "d": None,
+    }
+    table = util.Table.from_dict(d, printer, total_width=43)
+    assert printer.read() == (
+        "Key                  | Value               \n"
+        "-------------------- | --------------------\n"
+        "abc                  | 123                 \n"
+        "4.5                  | True                \n"
+        "False                | 6.78                \n"
+        "d                    |                     \n"
+    )
+    table.update(k="key", v="value")
+    assert printer.read() == (
+        "Key                  | Value               \n"
+        "-------------------- | --------------------\n"
+        "abc                  | 123                 \n"
+        "4.5                  | True                \n"
+        "False                | 6.78                \n"
+        "d                    |                     \n"
+        "key                  | value               \n"
+    )
+
+    md = util.MarkdownPrinter("test_table_from_dict", dir_name=OUTPUT_DIR)
+    table = util.Table.from_dict(d, md, total_width=43)
+    table.update(k="key", v="value")
+    assert md.get_filename() != printer.get_filename()
+    assert md.read() == printer.read()
+
 def test_trim_string():
     printer = util.Printer("test_trim_string", OUTPUT_DIR)
     printer(util.trim_string("12345678", max_len=10))

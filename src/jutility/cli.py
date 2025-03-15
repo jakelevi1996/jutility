@@ -448,7 +448,7 @@ class _UnknownArg(Arg):
     def is_kwarg(self):
         return False
 
-class SubCommandGroup(_ArgParent):
+class SubCommandGroup:
     def __init__(
         self,
         *commands:  "SubCommand",
@@ -460,11 +460,11 @@ class SubCommandGroup(_ArgParent):
         See
         https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.add_subparsers
         """
-        self._init_arg_parent([], subparser_kwargs)
         self.name       = name
         self.value      = None
         self._commands  = commands
         self._required  = required
+        self._kwargs    = subparser_kwargs
 
         self._command_dict = {c.name: c for c in commands}
 
@@ -498,8 +498,8 @@ class SubCommandGroup(_ArgParent):
 
 class _NoSubCommandGroup(SubCommandGroup):
     def __init__(self):
-        self._init_arg_parent([], dict())
-        self.name = None
+        self.name   = None
+        self.value  = None
 
     def register_sub_commands(self, prefix: str):
         return

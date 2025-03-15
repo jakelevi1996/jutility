@@ -1630,6 +1630,56 @@ def test_get_value_summary():
             "Lmnop(xy=9, yy=10.11)"
         )
 
+def test_get_value_summary_tag():
+    class Base:
+        def __init__(self, **kwargs):
+            self.kwargs = kwargs
+
+        def __repr__(self) -> str:
+            return util.format_type(type(self), **self.kwargs)
+
+    class Adam(Base):           pass
+    class AdamW(Base):          pass
+    class Chamfer(Base):        pass
+    class CrossEntropy(Base):   pass
+
+    parser = cli.Parser(
+        cli.ObjectChoice(
+            "optimiser",
+            cli.ObjectArg(
+                Adam,
+                cli.Arg("lr", type=float, default=1e-3),
+            ),
+            cli.ObjectArg(
+                AdamW,
+                cli.Arg("lr", type=float, default=1e-3),
+                cli.Arg("wd", type=float, default=1e-2),
+                tag="AW",
+            ),
+            default="Adam",
+        ),
+        cli.ObjectChoice(
+            "loss",
+            cli.ObjectArg(CrossEntropy),
+            cli.ObjectArg(Chamfer, tag="CH"),
+            default="CrossEntropy",
+        ),
+    )
+    args = parser.parse_args([])
+    assert args.get_summary() == "lCoAol0.001"
+    assert args.get_arg("loss").get_value_summary() == "C"
+    assert args.get_arg("optimiser").get_value_summary() == "A"
+
+    args = parser.parse_args("--optimiser AdamW".split())
+    assert args.get_summary() == "lCoAWol0.001ow0.01"
+    assert args.get_arg("loss").get_value_summary() == "C"
+    assert args.get_arg("optimiser").get_value_summary() == "AW"
+
+    args = parser.parse_args("--optimiser AdamW --loss Chamfer".split())
+    assert args.get_summary() == "lCHoAWol0.001ow0.01"
+    assert args.get_arg("loss").get_value_summary() == "CH"
+    assert args.get_arg("optimiser").get_value_summary() == "AW"
+
 def test_get_value_summary_name():
     class A:
         def __init__(self, **kwargs):

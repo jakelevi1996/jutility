@@ -426,12 +426,21 @@ class ObjectChoice(ObjectArg):
 
     def get_value_summary(self) -> str:
         chosen_arg = self.get_choice()
-        choices_clean = {
+        clean = {
             s: s.upper().replace("_", "")
             for s in self.choice_dict.keys()
         }
-        tags = util.get_unique_prefixes(choices_clean.values())
-        return tags[choices_clean[chosen_arg.name]]
+        tags = {
+            clean[arg.name]: arg.tag
+            for arg in self.choice_dict.values()
+            if arg.tag is not None
+        }
+        prefix = util.get_unique_prefixes(
+            [s for s in clean.values() if s not in tags],
+            forbidden=set(tags.values())
+        )
+        prefix.update(tags)
+        return prefix[clean[chosen_arg.name]]
 
     def store_value(self, value_dict: dict, summarise: bool):
         if summarise:

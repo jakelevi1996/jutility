@@ -512,10 +512,10 @@ def test_unknown_arg():
         "Arg(full_name='a', name='a', value=4)"
     )
     assert repr(args.get_arg("d")) == (
-        "_UnknownArg(full_name='d', name=None, value='xyz')"
+        "_UnknownArg(full_name='d', name='d', value='xyz')"
     )
     assert repr(args.get_arg("e.f")) == (
-        "_UnknownArg(full_name='e.f', name=None, value=5.67)"
+        "_UnknownArg(full_name='e.f', name='e.f', value=5.67)"
     )
 
     printer(args, parser, parser.help(), sep="\n\n")

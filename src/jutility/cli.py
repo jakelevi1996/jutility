@@ -89,12 +89,7 @@ class _ArgParent:
         return self._arg_list
 
     def __repr__(self):
-        return util.format_type(
-            type(self),
-            name=self.name,
-            full_name=self.full_name,
-            value=self.value,
-        )
+        return util.format_type(type(self))
 
 class Arg(_ArgParent):
     def __init__(
@@ -173,6 +168,14 @@ class Arg(_ArgParent):
 
     def is_kwarg(self) -> bool:
         return self._is_kwarg
+
+    def __repr__(self):
+        return util.format_type(
+            type(self),
+            name=self.name,
+            full_name=self.full_name,
+            value=self.value,
+        )
 
 class PositionalArg(Arg):
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
@@ -672,12 +675,6 @@ class ParsedArgs(_ArgParent):
     def reset_object_cache(self):
         for arg in self._arg_dict.values():
             arg.reset_object_cache()
-
-    def __repr__(self):
-        return util.format_type(
-            type(self),
-            **self.get_value_dict(),
-        )
 
 class _Verbose:
     def __init__(self):

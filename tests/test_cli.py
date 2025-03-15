@@ -28,20 +28,17 @@ def test_parsed_args():
         cli.Arg("c", type=str, default="abc"),
         cli.Arg("d", action="store_true"),
     )
+
     args = parser.parse_args([])
-
     assert isinstance(args, cli.ParsedArgs)
-
-    assert repr(args) == "ParsedArgs(c='abc', d=False, m='A', m.A.x=1)"
-
-    assert args.get_value_dict() == {
-        "m": "A",
-        "m.A.x": 1,
-        "c": "abc",
-        "d": False,
-    }
-
+    assert repr(args) == "ParsedArgs()"
     assert args.get_summary() == "cABCdFmAmx1"
+    assert args.get_value_dict() == {
+        "m":        "A",
+        "m.A.x":    1,
+        "c":        "abc",
+        "d":        False,
+    }
 
     c = args.get_arg("c")
     assert isinstance(c, cli.Arg)
@@ -53,19 +50,32 @@ def test_parsed_args():
     assert args.get_kwargs() == {"c": "abc", "d": False}
 
     args.update({"c": "defg"})
+    assert repr(args) == "ParsedArgs()"
     assert args.get_value("c") == "defg"
-    assert repr(args) == "ParsedArgs(c='defg', d=False, m='A', m.A.x=1)"
     assert args.get_summary() == "cDEFGdFmAmx1"
+    assert args.get_value_dict() == {
+        "m":        "A",
+        "m.A.x":    1,
+        "c":        "defg",
+        "d":        False,
+    }
 
     assert args.get_value("m.A") is None
     assert not isinstance(args.get_value("m.A"), A)
+
     a = args.init_object("m")
     assert isinstance(a, A)
     assert a.x == 1
     assert not args.get_value("m.A") is None
     assert isinstance(args.get_value("m.A"), A)
-    assert repr(args) == "ParsedArgs(c='defg', d=False, m='A', m.A.x=1)"
+    assert repr(args) == "ParsedArgs()"
     assert args.get_summary() == "cDEFGdFmAmx1"
+    assert args.get_value_dict() == {
+        "m":        "A",
+        "m.A.x":    1,
+        "c":        "defg",
+        "d":        False,
+    }
 
     args.reset_object_cache()
     assert args.get_value("m.A") is None
@@ -75,29 +85,26 @@ def test_parsed_args():
     a = args.init_object("m")
     assert isinstance(a, A)
     assert a.x == 3
-
-    assert repr(args) == "ParsedArgs(c='defg', d=False, m='A', m.A.x=3)"
-    assert args.get_value_dict() == {
-        "m": "A",
-        "m.A.x": 3,
-        "c": "defg",
-        "d": False,
-    }
+    assert repr(args) == "ParsedArgs()"
     assert args.get_summary() == "cDEFGdFmAmx3"
+    assert args.get_value_dict() == {
+        "m":        "A",
+        "m.A.x":    3,
+        "c":        "defg",
+        "d":        False,
+    }
 
     new_args = parser.parse_args(
         "--m B --m.B.a.x 5 --m.B.y 6.7 --c hijk --d".split(),
     )
     assert isinstance(new_args, cli.ParsedArgs)
-    assert repr(new_args) == (
-        "ParsedArgs(c='hijk', d=True, m='B', m.B.a.x=5, m.B.y=6.7)"
-    )
+    assert repr(new_args) == "ParsedArgs()"
     assert new_args.get_value_dict() == {
-        "m": "B",
-        "m.B.a.x": 5,
-        "m.B.y": 6.7,
-        "c": "hijk",
-        "d": True,
+        "m":        "B",
+        "m.B.a.x":  5,
+        "m.B.y":    6.7,
+        "c":        "hijk",
+        "d":        True,
     }
     assert new_args.get_summary() == "cHIJKdTmBmax5my6.7"
     assert new_args.get_value("c") == "hijk"
@@ -484,7 +491,7 @@ def test_unknown_arg():
     )
     args = parser.parse_args([])
 
-    assert repr(args) == "ParsedArgs(a=1, b=2.3, c='abc')"
+    assert repr(args) == "ParsedArgs()"
     assert args.get_summary() == "a1b2.3cABC"
     assert args.get_value_dict() == {"a": 1, "b": 2.3, "c": "abc"}
 
@@ -493,14 +500,14 @@ def test_unknown_arg():
         args.update(new_arg_dict)
 
     args.update(new_arg_dict, allow_new_keys=True)
-    assert repr(args) == "ParsedArgs(a=4, b=2.3, c='abc', d='xyz', e.f=5.67)"
+    assert repr(args) == "ParsedArgs()"
     assert args.get_summary() == "a4b2.3cABC"
     assert args.get_value_dict() == {
-        "a": 4,
-        "b": 2.3,
-        "c": "abc",
-        "d": "xyz",
-        "e.f": 5.67,
+        "a":    4,
+        "b":    2.3,
+        "c":    "abc",
+        "d":    "xyz",
+        "e.f":  5.67,
     }
     assert args.get_kwargs() == {"a": 4, "b": 2.3, "c": "abc"}
 

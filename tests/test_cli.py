@@ -1630,6 +1630,49 @@ def test_get_value_summary():
             "Lmnop(xy=9, yy=10.11)"
         )
 
+def test_get_value_summary_name():
+    class A:
+        def __init__(self, **kwargs):
+            self.kwargs = kwargs
+
+        def __repr__(self) -> str:
+            return util.format_type(type(self), **self.kwargs)
+
+    class B(A):
+        pass
+
+    parser = cli.Parser(
+        cli.ObjectChoice(
+            "c1",
+            cli.ObjectArg(
+                A,
+                cli.Arg("a", type=float, default=12),
+                name="A_name",
+            ),
+            cli.ObjectArg(
+                B,
+                cli.Arg("b", type=float, default=3.4),
+                name="B_name",
+            ),
+            default="A_name",
+        ),
+    )
+    args = parser.parse_args([])
+    assert args.get_value_dict()    == {"c1": "A_name", "c1.A_name.a": 12}
+    assert args.get_summary()       == "cAca12"
+
+    c1_arg = args.get_arg("c1")
+    assert c1_arg.value == "A_name"
+    assert c1_arg.get_value_dict()      == {"c1.A_name.a": 12}
+    assert c1_arg.get_summary()         == "a12"
+    assert c1_arg.get_value_summary()   == "A"
+
+    c1_arg = args.get_arg("c1.A_name.a")
+    assert c1_arg.value == 12
+    assert c1_arg.get_value_dict()      == dict()
+    assert c1_arg.get_summary()         == ""
+    assert c1_arg.get_value_summary()   == "12"
+
 def test_set_default_choice():
     printer = util.Printer("test_set_default_choice", dir_name=OUTPUT_DIR)
 

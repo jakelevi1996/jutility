@@ -1629,3 +1629,96 @@ def test_get_value_summary():
         assert repr(args.init_object("top.Lmnop.bottom")) == (
             "Lmnop(xy=9, yy=10.11)"
         )
+
+def test_set_default_choice():
+    printer = util.Printer("test_set_default_choice", dir_name=OUTPUT_DIR)
+
+    class A:
+        def __init__(self, **kwargs):
+            self.kwargs = kwargs
+
+        def __repr__(self) -> str:
+            return util.format_type(type(self), **self.kwargs)
+
+    class B(A):
+        pass
+
+    parser = cli.Parser(
+        cli.ObjectChoice(
+            "c1",
+            cli.ObjectArg(A, cli.Arg("a", type=float, default=12)),
+            cli.ObjectArg(B, cli.Arg("b", type=float, default=3.4)),
+        ),
+        cli.ObjectChoice(
+            "c2",
+            cli.ObjectArg(A, cli.Arg("c", type=float, default=5)),
+            cli.ObjectArg(B, cli.Arg("d", type=float, default=67)),
+            required=False,
+        ),
+        cli.ObjectChoice(
+            "c3",
+            cli.ObjectArg(A, cli.Arg("e", type=float, default=-8)),
+            cli.ObjectArg(B, cli.Arg("f", type=float, default=9.9)),
+            default="A",
+        ),
+        prog="test_set_default_choice",
+    )
+
+    printer(parser.help())
+    assert parser.help() == (
+        "usage: test_set_default_choice [-h] [--c1 {A,B}] [--c1.A.a A] "
+        "[--c1.B.b B]\n"
+        "                               [--c2 {A,B}] [--c2.A.c C] "
+        "[--c2.B.d D]\n"
+        "                               [--c3 {A,B}] [--c3.A.e E] "
+        "[--c3.B.f F]\n"
+        "\n"
+        "options:\n"
+        "  -h, --help  show this help message and exit\n"
+        "  --c1 {A,B}  default=None, required=True\n"
+        "  --c1.A.a A  default=12, type=<class 'float'>\n"
+        "  --c1.B.b B  default=3.4, type=<class 'float'>\n"
+        "  --c2 {A,B}  default=None, required=False\n"
+        "  --c2.A.c C  default=5, type=<class 'float'>\n"
+        "  --c2.B.d D  default=67, type=<class 'float'>\n"
+        "  --c3 {A,B}  default=A, required=False\n"
+        "  --c3.A.e E  default=-8, type=<class 'float'>\n"
+        "  --c3.B.f F  default=9.9, type=<class 'float'>\n"
+    )
+
+    args = parser.parse_args([])
+    with pytest.raises(ValueError):
+        args.init_object("c1")
+
+    with pytest.raises(ValueError):
+        args.init_object("c2")
+
+    assert repr(args.init_object("c3")) == "A(e=-8)"
+
+    args = parser.parse_args([])
+    c1_B = args.get_arg("c1.B")
+    with pytest.raises(ValueError):
+        c1_B.set_default_choice("B")
+
+    c1_B_b = args.get_arg("c1.B.b")
+    with pytest.raises(ValueError):
+        c1_B_b.set_default_choice("B")
+
+    args.get_arg("c1").set_default_choice("B")
+    assert repr(args.init_object("c1")) == "B(b=3.4)"
+
+    args.get_arg("c1").set_default_choice("A")
+    assert repr(args.init_object("c1")) == "B(b=3.4)"
+
+    args.get_arg("c2").set_default_choice(None)
+    with pytest.raises(ValueError):
+        args.init_object("c2")
+
+    args.get_arg("c2").set_default_choice("A")
+    assert repr(args.init_object("c2")) == "A(c=5)"
+
+    args.get_arg("c2").set_default_choice(None)
+    assert repr(args.init_object("c3")) == "A(e=-8)"
+
+    args.get_arg("c2").set_default_choice("B")
+    assert repr(args.init_object("c3")) == "A(e=-8)"

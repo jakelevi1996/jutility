@@ -154,6 +154,11 @@ class Arg(_ArgParent):
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         parser.add_argument("--" + self.full_name, **self._kwargs)
 
+    def set_default_choice(self, choice: str | None) -> None:
+        raise ValueError(
+            "`set_default_choice` only valid for instances of `ObjectChoice`"
+        )
+
     def init_object(self):
         return self.value
 
@@ -333,6 +338,7 @@ class ObjectChoice(ObjectArg):
         init_requires:      (list[str] | None)=None,
         init_ignores:       (list[str] | None)=None,
         init_const_kwargs:  (dict | None)=None,
+        required:           (bool | None)=None,
     ):
         if shared_args is None:
             shared_args = []
@@ -353,20 +359,22 @@ class ObjectChoice(ObjectArg):
                 "%s received `default=\"%s\"`, please choose from %s"
                 % (self, default, sorted(arg.name for arg in choices))
             )
+        if required is None:
+            required = (True if (default is None) else False)
 
-        self.default = default
+        self.default    = default
+        self.required   = required
 
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         input_parser = parser
         if self.is_group:
             parser = input_parser.add_argument_group(self.full_name)
 
-        required = (True if (self.default is None) else False)
         parser.add_argument(
             "--" + self.full_name,
             choices=list(self.choice_dict.keys()),
             default=self.default,
-            help="default=%s, required=%s" % (self.default, required),
+            help="default=%s, required=%s" % (self.default, self.required),
         )
         for arg in self.shared_args:
             arg.add_argparse_arguments(parser)
@@ -376,6 +384,17 @@ class ObjectChoice(ObjectArg):
                 parser = input_parser.add_argument_group(arg.full_name)
 
             arg.add_argparse_arguments(parser)
+
+    def set_default_choice(self, choice: str | None) -> None:
+        if choice is None:
+            return
+        if choice not in self.choice_dict:
+            raise ValueError(
+                "%r not in %r"
+                % (choice, sorted(self.choice_dict.keys()))
+            )
+        if self.value is None:
+            self.value = choice
 
     def init_object(self, **extra_kwargs):
         chosen_arg = self.get_choice()

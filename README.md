@@ -10,7 +10,6 @@ A Judicious collection of Python Utilities (including CLI configuration, plottin
   - [Contents](#contents)
   - [Install with `pip`](#install-with-pip)
   - [Usage examples](#usage-examples)
-  - [Unit tests](#unit-tests)
 
 ## Install with `pip`
 
@@ -35,11 +34,3 @@ python -m pip install -e .
 *Outdated; TODO*
 
 (in the meantime, see [`scripts/make_logo.py`](scripts/make_logo.py) which made the logo above, and [unit tests](tests/) for [`util`](tests/test_util.py), [`plotting`](tests/test_plotting.py), and [`cli`](tests/test_cli.py))
-
-## Unit tests
-
-To run all unit tests, install [`pytest`](https://pypi.org/project/pytest/) (these tests have previously been run with `pytest` version 5.4.1), and run the following command (at the time of writing, this takes about 17 seconds to run 42 unit tests, because several unit tests involve saving images or GIFs to disk):
-
-```
-pytest
-```

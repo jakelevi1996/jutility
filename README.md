@@ -24,9 +24,8 @@ Alternatively, `jutility` can be installed in "editable mode" from the GitHub re
 
 ```
 git clone https://github.com/jakelevi1996/jutility.git
-cd jutility
 python -m pip install -U pip
-python -m pip install -e .
+python -m pip install -e ./jutility
 ```
 
 ## Usage examples

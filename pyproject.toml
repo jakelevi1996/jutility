@@ -1,3 +1,25 @@
 [build-system]
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "jutility"
+version = "0.0.22"
+dependencies = [
+  "matplotlib>=3.9.2",
+  "numpy>=1.26.3",
+  "pillow>=10.2.0",
+]
+requires-python = ">= 3.10"
+authors = [
+  {name = "Jake Levi"},
+  {email = "jakelevi@hotmail.co.uk"},
+]
+description = "A Judicious collection of Python Utilities (including CLI configuration, plotting, and tables) and component of the JUML framework."
+readme = "README.md"
+license = {text = "MIT License"}
+
+[project.urls]
+Homepage = "https://github.com/jakelevi1996/jutility"
+Documentation = "https://github.com/jakelevi1996/jutility"
+Repository = "https://github.com/jakelevi1996/jutility"

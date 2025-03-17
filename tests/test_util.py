@@ -33,6 +33,8 @@ def test_table():
             test_loss=test_loss,
         )
     table.print_last()
+    table.print_last(flush=True)
+    table.print_last(flush=False)
 
     assert len(table) == num_updates
     printer("len(table) == %s" % len(table))

@@ -525,12 +525,12 @@ class Table:
             column.update(kwargs.get(name), level)
 
         if level > self._print_level:
-            self.print_last(level)
+            self.print_last(level, False)
             self._print_interval.full_reset()
 
         if level == self._print_level:
             if self._print_interval.ready():
-                self.print_last(level)
+                self.print_last(level, False)
                 self._print_interval.reset()
 
         self._num_updates += 1
@@ -548,9 +548,11 @@ class Table:
         ]
         return " | ".join(value_list)
 
-    def print_last(self, level=0):
+    def print_last(self, level=0, flush=True):
         if level >= self._print_level:
             self._printer(self.format_row(-1))
+        if flush:
+            self._printer.flush()
 
     def get_data(self, column_name: str) -> list:
         return [

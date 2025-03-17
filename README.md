@@ -20,7 +20,7 @@ python -m pip install -U pip
 python -m pip install -U jutility
 ```
 
-Alternatively, `jutility` can be installed in "editable mode" from the GitHub repository:
+Alternatively, `jutility` can be installed in "editable mode" from the [GitHub repository](https://github.com/jakelevi1996/jutility):
 
 ```
 git clone https://github.com/jakelevi1996/jutility.git

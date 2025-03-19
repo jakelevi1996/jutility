@@ -1211,6 +1211,9 @@ def test_merge_strings():
         printer(*i, o, util.merge_strings(i), sep="\n")
         printer.hline()
 
+    assert util.merge_strings(["abc", "acb"]) == "a,cbc"
+    assert util.merge_strings(["abc", "acb"], clean=False) == "a['', 'c']bc"
+
 @pytest.mark.parametrize("print_level", [0, 1])
 def test_force_print_table(print_level):
     test_name = "test_force_print_table, print_level = %i" % print_level

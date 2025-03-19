@@ -885,16 +885,19 @@ def merge_strings(input_list: list[str], clean=True):
             input_list = [s[1:] for s in input_list]
         else:
             remaining_chars = set(c for s in input_list for c in s)
-            valid_next_chars = [
+            valid_next_chars = sorted(
                 c for c in remaining_chars
                 if all((c in s) for s in input_list)
-            ]
+            )
             if len(valid_next_chars) > 0:
                 max_ind_dict = {
                     c: max(s.index(c) for s in input_list)
                     for c in valid_next_chars
                 }
-                next_char = min(max_ind_dict, key=lambda c: max_ind_dict[c])
+                next_char = min(
+                    valid_next_chars,
+                    key=(lambda c: max_ind_dict[c]),
+                )
                 prefix_dict = {s: s.index(next_char) for s in input_list}
             else:
                 prefix_dict = {s: len(s) for s in input_list}

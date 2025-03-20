@@ -58,7 +58,7 @@ class _ArgParent:
                 tag_dict[arg.full_name] = self._make_tag(prefix, arg.tag)
 
         default_tag_dict = {
-            arg: self._make_tag(prefix, arg.name)
+            arg.full_name: self._make_tag(prefix, arg.name)
             for arg in tagged_args
             if arg.tag is None
         }
@@ -67,9 +67,9 @@ class _ArgParent:
             forbidden=set(tag_dict.values()),
             min_len=(len(prefix) + 1),
         )
-        for arg, full_tag in default_tag_dict.items():
+        for full_name, full_tag in default_tag_dict.items():
             if not self._hide_tag(arg):
-                tag_dict[arg.full_name] = prefix_dict[full_tag]
+                tag_dict[full_name] = prefix_dict[full_tag]
 
         for arg in tagged_args:
             if self._hide_tag(arg):

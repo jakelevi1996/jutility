@@ -568,7 +568,22 @@ def test_cli_verbose():
         args.init_object("A", x=14)
         args.init_object("A", x=15)
 
-    args.init_object("A", x=15)
+        args.reset_object_cache()
+        args.init_object("A", x=16)
+
+        cli.verbose.reset()
+        args.reset_object_cache()
+        args.init_object("A", x=17)
+
+    args.reset_object_cache()
+    args.init_object("A", x=18)
+
+    with cli.verbose:
+        args.reset_object_cache()
+        args.init_object("A", x=19)
+
+    args.reset_object_cache()
+    args.init_object("A", x=20)
 
     assert printer.read() == (
         "cli: A(x=2)\n"
@@ -585,6 +600,8 @@ def test_cli_verbose():
         "cli: `B` retrieved from cache\n"
         "cli: A(x=14)\n"
         "cli: `A` retrieved from cache\n"
+        "cli: A(x=16)\n"
+        "cli: A(x=19)\n"
     )
 
 def test_get_kwargs():

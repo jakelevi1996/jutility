@@ -1297,6 +1297,41 @@ def test_subcommand_get_value_dict():
         "dataset": "cifar10",
     }
 
+def test_duplicate_subcommands():
+    sc = [
+        cli.SubCommand(
+            "train",
+            cli.Arg("abc", type=str, default=None),
+        ),
+        cli.SubCommand(
+            "run",
+            cli.Arg("de", type=str, default=None),
+        ),
+        cli.SubCommand(
+            "train",
+            cli.Arg("fghi", type=str, default=None),
+        ),
+    ]
+
+    with pytest.raises(ValueError):
+        sub_commands = cli.SubCommandGroup(sc[0], sc[1], sc[2])
+
+    sub_commands = cli.SubCommandGroup(sc[0], sc[1])
+
+    parser = cli.Parser(sub_commands=sub_commands)
+    args = parser.parse_args(["train"])
+    assert repr(args.get_command()) == (
+        "SubCommand('train', Arg(full_name='abc', name='abc', value=None))"
+    )
+    args = parser.parse_args(["run"])
+    assert repr(args.get_command()) == (
+        "SubCommand('run', Arg(full_name='de', name='de', value=None))"
+    )
+    args = parser.parse_args("run --de jkl".split())
+    assert repr(args.get_command()) == (
+        "SubCommand('run', Arg(full_name='de', name='de', value='jkl'))"
+    )
+
 def test_no_tag_arg():
     printer = util.Printer("test_no_tag_arg", dir_name=OUTPUT_DIR)
 

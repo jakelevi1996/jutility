@@ -495,6 +495,11 @@ class SubCommandGroup:
         self._kwargs    = subparser_kwargs
 
         self._command_dict = {c.name: c for c in commands}
+        if len(self._command_dict) < len(commands):
+            raise ValueError(
+                "Received duplicate command names:\n%s"
+                % "\n".join("- %r" % c for c in commands)
+            )
 
     def register_sub_commands(self, prefix: str):
         self.full_name = prefix + self.name

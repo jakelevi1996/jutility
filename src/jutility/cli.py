@@ -156,7 +156,9 @@ class Arg(_ArgParent):
 
     def set_default_choice(self, choice: str | None) -> None:
         raise ValueError(
-            "`set_default_choice` only valid for instances of `ObjectChoice`"
+            "`set_default_choice` only valid for instances of "
+            "`ObjectChoice`, not %r"
+            % self
         )
 
     def init_object(self):
@@ -414,7 +416,10 @@ class ObjectChoice(ObjectArg):
 
     def get_choice(self) -> ObjectArg:
         if self.value is None:
-            raise ValueError("Please specify --%s" % self.full_name)
+            raise ValueError(
+                "Please specify --%s %s"
+                % (self.full_name, sorted(self.choice_dict.keys()))
+            )
 
         return self.choice_dict[self.value]
 

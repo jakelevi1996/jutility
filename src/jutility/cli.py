@@ -154,7 +154,7 @@ class Arg(_ArgParent):
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         parser.add_argument("--" + self.full_name, **self._kwargs)
 
-    def set_default_choice(self, choice: str | None) -> None:
+    def set_default_choice(self, choice: type | None) -> None:
         raise ValueError(
             "`set_default_choice` only valid for instances of "
             "`ObjectChoice`, not %r"
@@ -387,16 +387,16 @@ class ObjectChoice(ObjectArg):
 
             arg.add_argparse_arguments(parser)
 
-    def set_default_choice(self, choice: str | None) -> None:
+    def set_default_choice(self, choice: type | None) -> None:
         if choice is None:
             return
-        if choice not in self.choice_dict:
+        if choice.__name__ not in self.choice_dict:
             raise ValueError(
                 "%r not in %r"
-                % (choice, sorted(self.choice_dict.keys()))
+                % (choice.__name__, sorted(self.choice_dict.keys()))
             )
         if self.value is None:
-            self.value = choice
+            self.value = choice.__name__
 
     def init_object(self, **extra_kwargs):
         chosen_arg = self.get_choice()

@@ -1843,27 +1843,27 @@ def test_set_default_choice():
     args = parser.parse_args([])
     c1_B = args.get_arg("c1.B")
     with pytest.raises(ValueError):
-        c1_B.set_default_choice("B")
+        c1_B.set_default_choice(B)
 
     c1_B_b = args.get_arg("c1.B.b")
     with pytest.raises(ValueError):
-        c1_B_b.set_default_choice("B")
+        c1_B_b.set_default_choice(B)
 
-    args.get_arg("c1").set_default_choice("B")
+    args.get_arg("c1").set_default_choice(B)
     assert repr(args.init_object("c1")) == "B(b=3.4)"
 
-    args.get_arg("c1").set_default_choice("A")
+    args.get_arg("c1").set_default_choice(A)
     assert repr(args.init_object("c1")) == "B(b=3.4)"
 
     args.get_arg("c2").set_default_choice(None)
     with pytest.raises(ValueError):
         args.init_object("c2")
 
-    args.get_arg("c2").set_default_choice("A")
+    args.get_arg("c2").set_default_choice(A)
     assert repr(args.init_object("c2")) == "A(c=5)"
 
     args.get_arg("c2").set_default_choice(None)
     assert repr(args.init_object("c3")) == "A(e=-8)"
 
-    args.get_arg("c2").set_default_choice("B")
+    args.get_arg("c2").set_default_choice(B)
     assert repr(args.init_object("c3")) == "A(e=-8)"

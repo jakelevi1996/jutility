@@ -461,6 +461,22 @@ class NoisyData:
 
         return best_x, best_repeat, best_y
 
+    def plot_best(
+        self,
+        maximise:   bool,
+        c:          str="r",
+        ls:         str="--",
+        z:          int=40,
+        label_fmt:  str="%s, %s",
+    ) -> list[Plottable]:
+        x, _, y = (self.argmax() if maximise else self.argmin())
+        label = label_fmt % (x, y)
+        return PlottableGroup(
+            VLine(x, c=c, ls=ls, z=z),
+            HLine(y, c=c, ls=ls, z=z),
+            Scatter([], [], c=c, m="+", label=label),
+        )
+
     def plot(self, c="b", label=None, n_sigma=1):
         x, mean, ucb, lcb = self.get_statistics(n_sigma)
         return PlottableGroup(

@@ -979,6 +979,24 @@ def test_noisy_data_argmax_argmin_x_index():
         dir_name=OUTPUT_DIR,
     )
 
+def test_noisy_data_plot_best():
+    rng = util.Seeder().get_rng("test_noisy_data_plot_best")
+
+    nd = plotting.NoisyData()
+    for x in sorted(rng.uniform(0, 10, 20)):
+        for repeat in range(rng.integers(2, 8)):
+            y = x + rng.normal(0, 2)
+            nd.update(x, y)
+
+    plotting.plot(
+        nd.plot(),
+        nd.plot_best(maximise=True,     label_fmt="%.3f, %.3f"),
+        nd.plot_best(maximise=False,    label_fmt="%.3f, %.3f", c="g"),
+        plotting.Legend(),
+        plot_name="test_noisy_data_plot_best",
+        dir_name=OUTPUT_DIR,
+    )
+
 @pytest.mark.parametrize("handles", [True, False])
 def test_figure_legend(handles):
     test_name = "test_figure_legend, handles=%s" % handles

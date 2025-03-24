@@ -551,8 +551,8 @@ class Table:
     def print_last(self, level=0, flush=True):
         if level >= self._print_level:
             self._printer(self.format_row(-1))
-        if flush:
-            self._printer.flush()
+            if flush:
+                self._printer.flush()
 
     def get_data(self, column_name: str) -> list:
         return [

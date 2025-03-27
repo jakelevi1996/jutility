@@ -624,8 +624,8 @@ class SubCommand(_SubCommandParent):
         subparser_kwargs.update(self._kwargs)
         return subparser_kwargs
 
-    def run(self, args: "ParsedArgs"):
-        return self.get_command().run(args)
+    def run(self, args: "ParsedArgs", **kwargs):
+        return self.get_command().run(args, **kwargs)
 
     def __repr__(self):
         return util.format_type(type(self), self.name, *self._arg_list)

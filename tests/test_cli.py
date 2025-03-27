@@ -1392,8 +1392,8 @@ def test_no_tag_arg():
 
     printer(args, parser, parser.help(), sep="\n\n")
 
-def test_arg_group():
-    printer = util.Printer("test_arg_group", dir_name=OUTPUT_DIR)
+def test_objectarg_is_group():
+    printer = util.Printer("test_objectarg_is_group", dir_name=OUTPUT_DIR)
 
     class Trainer:
         def __init__(self, num_epochs: int):
@@ -1429,17 +1429,17 @@ def test_arg_group():
                 is_group=is_group,
             ),
             cli.Arg("output_name"),
-            prog="test_arg_group",
+            prog="test_objectarg_is_group",
         )
 
     parser = get_parser(is_group=False)
     printer(parser.help())
     assert parser.help() == (
-        "usage: test_arg_group [-h] [--Trainer.num_epochs N] "
-        "[--model {Mlp,Cnn}]\n"
-        "                      [--model.Mlp.num_layers N] "
-        "[--model.Cnn.num_layers N]\n"
-        "                      [--model.Cnn.kernel_size K] "
+        "usage: test_objectarg_is_group [-h] [--Trainer.num_epochs N]\n"
+        "                               [--model {Mlp,Cnn}] "
+        "[--model.Mlp.num_layers N]\n"
+        "                               [--model.Cnn.num_layers N]\n"
+        "                               [--model.Cnn.kernel_size K] "
         "[--output_name O]\n"
         "\n"
         "options:\n"
@@ -1470,11 +1470,11 @@ def test_arg_group():
     parser = get_parser(is_group=True)
     printer(parser.help())
     assert parser.help() == (
-        "usage: test_arg_group [-h] [--Trainer.num_epochs N] "
-        "[--model {Mlp,Cnn}]\n"
-        "                      [--model.Mlp.num_layers N] "
-        "[--model.Cnn.num_layers N]\n"
-        "                      [--model.Cnn.kernel_size K] "
+        "usage: test_objectarg_is_group [-h] [--Trainer.num_epochs N]\n"
+        "                               [--model {Mlp,Cnn}] "
+        "[--model.Mlp.num_layers N]\n"
+        "                               [--model.Cnn.num_layers N]\n"
+        "                               [--model.Cnn.kernel_size K] "
         "[--output_name O]\n"
         "\n"
         "options:\n"
@@ -1867,3 +1867,48 @@ def test_set_default_choice():
 
     args.get_arg("c2").set_default_choice(B)
     assert repr(args.init_object("c3")) == "A(e=-8)"
+
+def test_arggroup():
+    printer = util.Printer("test_arggroup", dir_name=OUTPUT_DIR)
+
+    parser = cli.Parser(
+        cli.Arg("abc",  type=str, default="xyz"),
+        cli.Arg("de",   type=int, default=12),
+        cli.ArgGroup(
+            "fghi",
+            cli.Arg("jk",       type=float, default=3.45),
+            cli.Arg("lmnop",    type=str,   default=None),
+        ),
+        prog="test_arggroup",
+    )
+    printer(parser.help())
+
+    args = parser.parse_args([])
+    assert args.get_summary() == "aXYZd12fj3.45flN"
+    assert repr(args.get_arg("fghi")) == (
+        "ArgGroup(full_name='fghi', name='fghi', value=None)"
+    )
+    assert util.format_dict(args.get_kwargs()) == (
+        "abc='xyz', de=12"
+    )
+    assert util.format_dict(args.get_value_dict()) == (
+        "abc='xyz', de=12, fghi.jk=3.45, fghi.lmnop=None"
+    )
+    assert util.format_dict(args.get_arg("fghi").get_kwargs()) == (
+        "jk=3.45, lmnop=None"
+    )
+
+    args = parser.parse_args("--abc tuvw --fghi.jk 67.8".split())
+    assert args.get_summary() == "aTUVWd12fj67.8flN"
+    assert repr(args.get_arg("fghi")) == (
+        "ArgGroup(full_name='fghi', name='fghi', value=None)"
+    )
+    assert util.format_dict(args.get_kwargs()) == (
+        "abc='tuvw', de=12"
+    )
+    assert util.format_dict(args.get_value_dict()) == (
+        "abc='tuvw', de=12, fghi.jk=67.8, fghi.lmnop=None"
+    )
+    assert util.format_dict(args.get_arg("fghi").get_kwargs()) == (
+        "jk=67.8, lmnop=None"
+    )

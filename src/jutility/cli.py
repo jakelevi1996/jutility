@@ -25,7 +25,7 @@ class _ArgParent:
         return {
             arg.name: arg.value
             for arg in self._arg_list
-            if arg.is_kwarg()
+            if  arg.is_kwarg
         }
 
     def register_names(
@@ -105,19 +105,20 @@ class Arg(_ArgParent):
         https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.add_argument
         """
         self._init_arg_parent([], argparse_kwargs)
-        self._init_arg(name, tag, tagged)
-        self._is_kwarg = is_kwarg
+        self._init_arg(name, tag, tagged, is_kwarg)
         if "action" not in self._kwargs:
             self._kwargs.setdefault("metavar", self.name[0].upper())
 
     def _init_arg(
         self,
-        name:   str,
-        tag:    str | None,
-        tagged: bool,
+        name:       str,
+        tag:        str | None,
+        tagged:     bool,
+        is_kwarg:   bool,
     ):
         self.name       = name
         self.full_name  = None
+        self.is_kwarg   = is_kwarg
         self._init_value()
         self._init_tag(tag, tagged)
         self._init_help()
@@ -172,9 +173,6 @@ class Arg(_ArgParent):
 
     def reset_object_cache(self):
         return
-
-    def is_kwarg(self) -> bool:
-        return self._is_kwarg
 
     def __repr__(self):
         return util.format_type(
@@ -244,7 +242,7 @@ class ObjectArg(Arg):
 
         self.object_type = object_type
         self._init_arg_parent(list(args), dict())
-        self._init_arg(name, tag, tagged)
+        self._init_arg(name, tag, tagged, False)
         self._init_object_arg(
             is_group,
             init_requires,
@@ -324,9 +322,6 @@ class ObjectArg(Arg):
     def store_value(self, value_dict: dict, summarise: bool):
         return
 
-    def is_kwarg(self) -> bool:
-        return False
-
 class ObjectChoice(ObjectArg):
     def __init__(
         self,
@@ -347,7 +342,7 @@ class ObjectChoice(ObjectArg):
 
         self.shared_args = shared_args
         self._init_arg_parent(list(choices) + shared_args, dict())
-        self._init_arg(name, tag, tagged)
+        self._init_arg(name, tag, tagged, False)
         self._init_object_arg(
             is_group,
             init_requires,
@@ -471,15 +466,12 @@ class ObjectChoice(ObjectArg):
 class _UnknownArg(Arg):
     def __init__(self, name: str, value):
         self._init_arg_parent([], dict())
-        self._init_arg(name, None, False)
+        self._init_arg(name, None, False, False)
         self._init_value(value)
         self.set_full_name(name)
 
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         return
-
-    def is_kwarg(self):
-        return False
 
 class SubCommandGroup:
     def __init__(

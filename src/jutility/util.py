@@ -97,7 +97,7 @@ class Printer:
         else:
             self._file = None
 
-        self._print_to_console = print_to_console
+        self.set_print_to_console(print_to_console)
         self._count = 1
 
     def __call__(self, *args, **kwargs):
@@ -105,6 +105,9 @@ class Printer:
             print(*args, **kwargs)
         if self._file is not None:
             print(*args, **kwargs, file=self._file)
+
+    def set_print_to_console(self, print_to_console: bool):
+        self._print_to_console = print_to_console
 
     def timestamp(self):
         self(datetime.datetime.now())
@@ -152,7 +155,7 @@ class MarkdownPrinter(Printer):
             verbose=display_path,
         )
         self._file = open(full_path, "w")
-        self._print_to_console = print_to_console
+        self.set_print_to_console(print_to_console)
         self._count = 1
 
     def title(self, name: str, end: str="\n\n"):

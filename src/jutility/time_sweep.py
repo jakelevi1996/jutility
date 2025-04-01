@@ -49,8 +49,8 @@ def time_sweep(
                 with timer:
                     exp.run()
 
-                data.update(n, timer.time_taken)
-                t = util.time_format(timer.time_taken, concise=True)
+                data.update(n, timer.get_last())
+                t = util.time_format(timer.get_last(), concise=True)
                 table.update(name=exp_name, n=n, repeat=i, time_taken=t)
 
     cp = plotting.ColourPicker(len(experiments))

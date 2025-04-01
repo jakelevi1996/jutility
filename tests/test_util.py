@@ -1,5 +1,6 @@
 import os
 import time
+import statistics
 import numpy as np
 import pytest
 from jutility import util, plotting
@@ -580,12 +581,12 @@ def test_timer_context():
     with util.Timer("sleep", printer) as t:
         time.sleep(sleep_interval)
 
-    assert t.time_taken >= sleep_interval
+    assert t.get_last() >= sleep_interval
 
     with util.Timer(printer=printer) as t:
         time.sleep(sleep_interval)
 
-    assert t.time_taken >= sleep_interval
+    assert t.get_last() >= sleep_interval
 
     with util.Timer("name 1", printer) as t:
         time.sleep(sleep_interval)
@@ -661,6 +662,30 @@ def test_timer_verbose():
             util.extract_substring(timer_output, "for `4` = ", " seconds"),
         )
     )
+
+def test_timer_iter():
+    printer = util.Printer("test_timer_iter", dir_name=OUTPUT_DIR)
+
+    timer = util.Timer("timer")
+
+    i = iter(timer)
+
+    for _ in range(13):
+        with timer:
+            time.sleep(0.01)
+
+        printer(next(i))
+
+    printer(sorted(timer))
+    t_list = list(timer)
+    assert isinstance(t_list, list)
+    assert len(t_list)  == 13
+    assert len(timer)   == 13
+
+    assert statistics.mean(timer)   > 0.01
+    assert statistics.mean(timer)   < 0.02
+    assert statistics.stdev(timer)  > 0
+    assert statistics.stdev(timer)  < 0.005
 
 def test_intervals():
     printer = util.Printer("test_intervals", dir_name=OUTPUT_DIR)

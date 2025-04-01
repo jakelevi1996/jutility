@@ -244,8 +244,12 @@ class Timer:
         self._printer   = printer
         self._verbose   = verbose
         self._hline     = hline
+        self._t_list    = []
         self.set_name(name)
         self.reset()
+
+    def set_name(self, name: str):
+        self._name_str = (" for `%s`" % name) if (name is not None) else ""
 
     def reset(self):
         self._t0 = time.perf_counter()
@@ -253,12 +257,12 @@ class Timer:
     def set_time(self, num_seconds: float):
         self._t0 = time.perf_counter() - num_seconds
 
-    def set_name(self, name):
-        self._name_str = (" for `%s`" % name) if (name is not None) else ""
-
     def get_time_taken(self) -> float:
         t1 = time.perf_counter()
         return t1 - self._t0
+
+    def get_last(self) -> float:
+        return self._t_list[-1]
 
     def format_time(self, concise: bool=False) -> str:
         return time_format(self.get_time_taken(), concise)
@@ -272,12 +276,19 @@ class Timer:
         return self
 
     def __exit__(self, *args):
-        self.time_taken = self.get_time_taken()
+        t = self.get_time_taken()
+        self._t_list.append(t)
         if self._verbose:
-            t_str = time_format(self.time_taken)
+            t_str = time_format(t)
             self._printer("Time taken%s = %s" % (self._name_str, t_str))
         if self._hline:
             self._printer.hline()
+
+    def __iter__(self):
+        return iter(self._t_list)
+
+    def __len__(self):
+        return len(self._t_list)
 
 class Counter:
     def __init__(self, init_count=0):

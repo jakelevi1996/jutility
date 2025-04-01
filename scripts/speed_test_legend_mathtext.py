@@ -18,12 +18,11 @@ def main():
     for e in e_list:
         e.setup(100)
         timer = util.Timer(e)
-        t = []
         for _ in repeats:
             with timer:
                 e.run()
-            t.append(timer.time_taken)
 
+        t = list(timer)
         ls = "--" if isinstance(e, JutilityBase) else "-"
         line = plotting.Line(t, m="o", ls=ls, c=cp.next(), label=repr(e))
         lines.append(line)

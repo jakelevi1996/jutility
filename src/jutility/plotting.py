@@ -962,6 +962,7 @@ class MultiPlot(Subplot):
         self._fig           = None
         self._properties    = figure_properties
         self._subplots      = subplots
+        self._kwargs        = figure_kwargs
 
     def _make_figure(self):
         if self._fig is not None:

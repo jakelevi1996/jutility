@@ -291,6 +291,20 @@ def test_multiplot(num_subplots):
     mp.save(plot_name, OUTPUT_DIR)
     assert os.path.isfile(mp.full_path)
 
+def test_multiplot_repr():
+    line = plotting.Line([1, 2, 4], [1, 3, 2], c="r")
+    mp = plotting.plot(line, save_close=False)
+    assert repr(mp) == "MultiPlot(figsize=[8, 6])"
+
+    mp = plotting.MultiPlot(
+        plotting.Subplot(line),
+        plotting.Subplot(line),
+        plotting.Subplot(line),
+        title="test_multiplot_repr",
+        num_rows=1,
+    )
+    assert repr(mp) == "MultiPlot(num_rows=1, title='test_multiplot_repr')"
+
 @pytest.mark.parametrize("save_frames", [True, False])
 def test_gif_add_plot_frame(save_frames):
     rng = util.Seeder().get_rng("test_gif_add_plot_frame", save_frames)

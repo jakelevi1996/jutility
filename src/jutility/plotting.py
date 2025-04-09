@@ -927,8 +927,8 @@ def plot(
 ):
     if figsize is None:
         figsize = [10, 6] if legend else [8, 6]
-
-    axis_kwargs.setdefault("title", plot_name)
+    if "title" not in axis_kwargs:
+        axis_kwargs["title"] = plot_name
 
     if legend:
         mp = MultiPlot(

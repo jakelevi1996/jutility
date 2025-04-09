@@ -123,15 +123,19 @@ class Printer:
     def get_file(self):
         return self._file
 
-    def get_filename(self):
+    def get_filename(self) -> (str | None):
         if self._file is not None:
             return self._file.name
+
+    def get_dir_name(self) -> (str | None):
+        if self._file is not None:
+            return os.path.dirname(self._file.name)
 
     def flush(self):
         if self._file is not None:
             self._file.flush()
 
-    def read(self):
+    def read(self) -> (str | None):
         if self._file is not None:
             self.flush()
             return load_text(self.get_filename())

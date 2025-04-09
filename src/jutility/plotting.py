@@ -917,7 +917,7 @@ class Empty(Subplot):
 def plot(
     *lines:     Plottable,
     legend:     bool=False,
-    figsize:    (tuple[float, float] | None)=None,
+    figsize:    (tuple[float | int, float | int] | None)=None,
     plot_name:  (str | None)=None,
     dir_name:   (str | None)=None,
     show:       bool=False,

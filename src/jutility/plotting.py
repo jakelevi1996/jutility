@@ -915,13 +915,14 @@ class Empty(Subplot):
         axis.set_axis_off()
 
 def plot(
-    *lines: Plottable,
-    legend=False,
-    figsize=None,
-    plot_name=None,
-    dir_name=None,
-    save_close=True,
-    pdf=False,
+    *lines:     Plottable,
+    legend:     bool=False,
+    figsize:    (tuple[float, float] | None)=None,
+    plot_name:  (str | None)=None,
+    dir_name:   (str | None)=None,
+    show:       bool=False,
+    save_close: bool=True,
+    pdf:        bool=False,
     **axis_kwargs,
 ):
     if figsize is None:
@@ -942,6 +943,8 @@ def plot(
             figsize=figsize,
         )
 
+    if show:
+        multi_plot.show()
     if save_close:
         multi_plot.save(plot_name, dir_name, pdf=pdf)
 
@@ -1004,6 +1007,10 @@ class MultiPlot(Subplot):
             self.close()
 
         return self.full_path
+
+    def show(self):
+        self._make_figure()
+        plt.show()
 
     def plot(self, axis: matplotlib.axes.Axes):
         axis.set_axis_off()

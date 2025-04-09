@@ -446,6 +446,7 @@ def test_markdownprinter():
         "Inline %s and %s work fine"
         % (md.code("code"), md.make_link("results.png", "links"))
     )
+    md.git_add("a.bc", "def/gh/ijk.lmnop")
 
     assert md.read() == (
         "# `test_markdownprinter`\n"
@@ -470,6 +471,15 @@ def test_markdownprinter():
         "## Inline examples\n"
         "\n"
         "Inline `code` and [links](results.png) work fine\n"
+        "\n"
+        "## `git add`\n"
+        "\n"
+        "```\n"
+        "\n"
+        "git add -f a.bc\n"
+        "git add -f def/gh/ijk.lmnop\n"
+        "\n"
+        "```\n"
     )
 
     assert md.get_file() is not None

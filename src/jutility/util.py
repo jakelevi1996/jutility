@@ -173,6 +173,12 @@ class MarkdownPrinter(Printer):
     def code_block(self, *lines: str, ext: str=""):
         self("\n```%s\n%s\n```" % (ext, "\n".join(lines)))
 
+    def git_add(self, *paths: str):
+        self.heading("`git add`")
+        self("```\n")
+        self("\n".join("git add -f %s" % p for p in paths))
+        self("\n```")
+
     @classmethod
     def make_link(cls, rel_path: str, name: str) -> str:
         return "[%s](%s)" % (name, rel_path)

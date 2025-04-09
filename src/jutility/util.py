@@ -179,6 +179,14 @@ class MarkdownPrinter(Printer):
         self("\n".join("git add -f %s" % p for p in paths))
         self("\n```")
 
+    def readme_include(self, link_name: str, *paths: str):
+        rm_path = os.path.relpath("README.md", self.get_dir_name())
+        self.heading("[`README.md`](%s) include" % rm_path)
+        self("```md")
+        self.file_link(os.path.relpath(self.get_filename()), link_name)
+        self("".join("\n![](%s)\n" % p for p in paths))
+        self("```")
+
     @classmethod
     def make_link(cls, rel_path: str, name: str) -> str:
         return "[%s](%s)" % (name, rel_path)

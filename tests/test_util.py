@@ -447,6 +447,8 @@ def test_markdownprinter():
         % (md.code("code"), md.make_link("results.png", "links"))
     )
     md.git_add("a.bc", "def/gh/ijk.lmnop")
+    md.readme_include("`full sweep results`", "a/b/c.png", "d/e.png")
+    md.readme_include("`full sweep results 2`")
 
     assert md.read() == (
         "# `test_markdownprinter`\n"
@@ -478,6 +480,26 @@ def test_markdownprinter():
         "\n"
         "git add -f a.bc\n"
         "git add -f def/gh/ijk.lmnop\n"
+        "\n"
+        "```\n"
+        "\n"
+        "## [`README.md`](../../../../README.md) include\n"
+        "\n"
+        "```md\n"
+        "\n"
+        "[`full sweep results`](tests/Outputs/test_util/test_markdownprinter/doc.md)\n"
+        "\n"
+        "![](a/b/c.png)\n"
+        "\n"
+        "![](d/e.png)\n"
+        "\n"
+        "```\n"
+        "\n"
+        "## [`README.md`](../../../../README.md) include\n"
+        "\n"
+        "```md\n"
+        "\n"
+        "[`full sweep results 2`](tests/Outputs/test_util/test_markdownprinter/doc.md)\n"
         "\n"
         "```\n"
     )

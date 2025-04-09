@@ -931,24 +931,24 @@ def plot(
     axis_kwargs.setdefault("title", plot_name)
 
     if legend:
-        multi_plot = MultiPlot(
+        mp = MultiPlot(
             Subplot(*lines, **axis_kwargs),
             LegendSubplot(*lines),
             figsize=figsize,
             width_ratios=[1, 0.2],
         )
     else:
-        multi_plot = MultiPlot(
+        mp = MultiPlot(
             Subplot(*lines, **axis_kwargs),
             figsize=figsize,
         )
 
     if show:
-        multi_plot.show()
+        mp.show()
     if save_close:
-        multi_plot.save(plot_name, dir_name, pdf=pdf)
+        mp.save(plot_name, dir_name, pdf=pdf)
 
-    return multi_plot
+    return mp
 
 class MultiPlot(Subplot):
     def __init__(
@@ -1071,8 +1071,8 @@ class Gif:
         )
         self.add_pil_image_frame(pil_image)
 
-    def add_multiplot_frame(self, multi_plot: MultiPlot):
-        self.add_pil_image_frame(multi_plot.get_pil_image())
+    def add_multiplot_frame(self, mp: MultiPlot):
+        self.add_pil_image_frame(mp.get_pil_image())
 
     def add_plot_frame(self, *lines, save=False, **plot_kwargs):
         plot_kwargs.setdefault("save_close", False)

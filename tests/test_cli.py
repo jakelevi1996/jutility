@@ -1205,8 +1205,7 @@ def test_subcommand():
         "sweep_arg_name": "num_hidden_layers",
     }
 
-    with pytest.raises(AttributeError):
-        args.get_command().run(args)
+    assert args.get_command().run(args) is None
 
 def test_subcommand_get_value_dict():
     class Mlp:

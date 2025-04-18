@@ -191,6 +191,11 @@ class MarkdownPrinter(Printer):
         self("".join("\n![](%s)\n" % p for p in paths))
         self("```")
 
+    def show_command(self, command_name: str, include_python: bool=False):
+        self.heading("`%s` command" % command_name, end="\n")
+        cmd_str = get_program_command() if include_python else get_argv_str()
+        self.code_block(cmd_str)
+
     @classmethod
     def make_link(cls, rel_path: str, name: str) -> str:
         return "[%s](%s)" % (name, rel_path)

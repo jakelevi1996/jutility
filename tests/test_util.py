@@ -435,6 +435,17 @@ def test_markdownprinter():
     md = util.MarkdownPrinter("doc", test_dir)
     md.title("`test_markdownprinter`")
     md.paragraph("Some text")
+    md.contents(
+        "# `test_markdownprinter`",
+        "## Contents",
+        "## Usage examples",
+        "## Results",
+        "### Images",
+        "## Inline examples",
+        "## `git add`",
+        "## `README.md` include",
+        "## `README.md` include",
+    )
     md.heading("Usage examples")
     md.paragraph("Import %s with Python" % md.code("jutility"))
     md.code_block("import jutility", "print(\"wow\")", ext="py")
@@ -455,6 +466,17 @@ def test_markdownprinter():
         "# `test_markdownprinter`\n"
         "\n"
         "Some text\n"
+        "\n"
+        "## Contents\n"
+        "- [`test_markdownprinter`](#test_markdownprinter)\n"
+        "  - [Contents](#contents)\n"
+        "  - [Usage examples](#usage-examples)\n"
+        "  - [Results](#results)\n"
+        "    - [Images](#images)\n"
+        "  - [Inline examples](#inline-examples)\n"
+        "  - [`git add`](#git-add)\n"
+        "  - [`README.md` include](#readmemd-include)\n"
+        "  - [`README.md` include](#readmemd-include-1)\n"
         "\n"
         "## Usage examples\n"
         "\n"

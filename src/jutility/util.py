@@ -198,6 +198,25 @@ class MarkdownPrinter(Printer):
         cmd_str = get_program_command() if include_python else get_argv_str()
         self.code_block(cmd_str)
 
+    def contents(self, *headings: str):
+        self.heading("Contents")
+        repeats = dict()
+        for h in headings:
+            level_str, _, name = h.partition("# ")
+            indent = "".ljust(2 * len(level_str))
+            link_str = "".join(
+                c
+                for c in name.lower().replace(" ", "-")
+                if (c.isalnum() or c in "_-")
+            )
+            if link_str in repeats:
+                repeats[link_str] += 1
+                link_str += "-" + str(repeats[link_str])
+            else:
+                repeats[link_str] = 0
+
+            self("%s- [%s](#%s)" % (indent, name, link_str))
+
     @classmethod
     def make_link(cls, rel_path: str, name: str) -> str:
         return "[%s](%s)" % (name, rel_path)

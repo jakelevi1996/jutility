@@ -439,6 +439,7 @@ def test_markdownprinter():
     md.paragraph("Import %s with Python" % md.code("jutility"))
     md.code_block("import jutility", "print(\"wow\")", ext="py")
     md.heading("Results")
+    md.heading("Images", level=3)
     md.image("results.png")
     md.file_link("results.png", "Link to image file")
     md.heading("Inline examples")
@@ -465,6 +466,8 @@ def test_markdownprinter():
         "```\n"
         "\n"
         "## Results\n"
+        "\n"
+        "### Images\n"
         "\n"
         "![](results.png)\n"
         "\n"

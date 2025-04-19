@@ -165,8 +165,8 @@ class MarkdownPrinter(Printer):
     def title(self, name: str, end: str="\n"):
         self(("# %s" % name), end=end)
 
-    def heading(self, name: str, end: str="\n"):
-        self(("\n## %s" % name), end=end)
+    def heading(self, name: str, level: int=2, end: str="\n"):
+        self(("\n%s %s" % ("#" * level, name)), end=end)
 
     def paragraph(self, input_str: str, end: str="\n"):
         self(("\n%s" % input_str), end=end)

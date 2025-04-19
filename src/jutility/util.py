@@ -168,17 +168,17 @@ class MarkdownPrinter(Printer):
     def heading(self, name: str, end: str="\n"):
         self(("\n## %s" % name), end=end)
 
-    def paragraph(self, input_str: str):
-        self(("\n%s" % input_str))
+    def paragraph(self, input_str: str, end: str="\n"):
+        self(("\n%s" % input_str), end="\n")
 
-    def image(self, rel_path: str, name: str=""):
-        self("\n![%s](%s)" % (name, rel_path))
+    def image(self, rel_path: str, name: str="", end: str="\n"):
+        self("\n![%s](%s)" % (name, rel_path), end="\n")
 
-    def file_link(self, rel_path: str, name: str):
-        self("\n[%s](%s)" % (name, rel_path))
+    def file_link(self, rel_path: str, name: str, end: str="\n"):
+        self("\n[%s](%s)" % (name, rel_path), end="\n")
 
-    def code_block(self, *lines: str, ext: str=""):
-        self("\n```%s\n%s\n```" % (ext, "\n".join(lines)))
+    def code_block(self, *lines: str, ext: str="", end: str="\n"):
+        self("\n```%s\n%s\n```" % (ext, "\n".join(lines)), end="\n")
 
     def git_add(self, *paths: str):
         commands = "\n".join("git add -f %s" % p for p in paths)

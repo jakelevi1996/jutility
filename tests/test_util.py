@@ -438,7 +438,7 @@ def test_markdownprinter():
     md.heading("Usage examples")
     md.paragraph("Import %s with Python" % md.code("jutility"))
     md.code_block("import jutility", "print(\"wow\")", ext="py")
-    md.heading("Results", "\n")
+    md.heading("Results")
     md.image("results.png")
     md.file_link("results.png", "Link to image file")
     md.heading("Inline examples")
@@ -448,7 +448,7 @@ def test_markdownprinter():
     )
     md.git_add("a.bc", "def/gh/ijk.lmnop")
     md.readme_include("`full sweep results`", "a/b/c.png", "d/e.png")
-    md.readme_include("`full sweep results 2`")
+    md.readme_include("`full sweep results 2`", end="\n")
 
     assert md.read() == (
         "# `test_markdownprinter`\n"

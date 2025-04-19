@@ -168,6 +168,9 @@ class MarkdownPrinter(Printer):
     def heading(self, name: str, end: str="\n\n"):
         self(("\n## %s" % name), end=end)
 
+    def paragraph(self, input_str: str, end: str="\n\n"):
+        self(input_str, end=end)
+
     def image(self, rel_path: str, name: str=""):
         self("\n![%s](%s)" % (name, rel_path))
 

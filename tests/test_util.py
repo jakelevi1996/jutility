@@ -434,15 +434,15 @@ def test_markdownprinter():
 
     md = util.MarkdownPrinter("doc", test_dir)
     md.title("`test_markdownprinter`")
-    md("Some text")
+    md.paragraph("Some text")
     md.heading("Usage examples")
-    md("Import %s with Python" % md.code("jutility"))
+    md.paragraph("Import %s with Python" % md.code("jutility"))
     md.code_block("import jutility", "print(\"wow\")", ext="py")
     md.heading("Results", "\n")
     md.image("results.png")
     md.file_link("results.png", "Link to image file")
     md.heading("Inline examples")
-    md(
+    md.paragraph(
         "Inline %s and %s work fine"
         % (md.code("code"), md.make_link("results.png", "links"))
     )

@@ -162,39 +162,39 @@ class MarkdownPrinter(Printer):
         self.set_print_to_console(print_to_console)
         self._count = 1
 
-    def title(self, name: str, end: str="\n\n"):
+    def title(self, name: str, end: str="\n"):
         self(("# %s" % name), end=end)
 
-    def heading(self, name: str, end: str="\n\n"):
-        self(("## %s" % name), end=end)
+    def heading(self, name: str, end: str="\n"):
+        self(("\n## %s" % name), end=end)
 
-    def paragraph(self, input_str: str, end: str="\n\n"):
-        self(input_str, end=end)
+    def paragraph(self, input_str: str):
+        self(("\n%s" % input_str))
 
-    def image(self, rel_path: str, name: str="", end: str="\n\n"):
-        self("![%s](%s)" % (name, rel_path), end=end)
+    def image(self, rel_path: str, name: str=""):
+        self("\n![%s](%s)" % (name, rel_path))
 
-    def file_link(self, rel_path: str, name: str, end: str="\n\n"):
-        self("[%s](%s)" % (name, rel_path), end=end)
+    def file_link(self, rel_path: str, name: str):
+        self("\n[%s](%s)" % (name, rel_path))
 
-    def code_block(self, *lines: str, ext: str="", end: str="\n\n"):
-        self("```%s\n%s\n```" % (ext, "\n".join(lines)), end=end)
+    def code_block(self, *lines: str, ext: str=""):
+        self("\n```%s\n%s\n```" % (ext, "\n".join(lines)))
 
-    def git_add(self, *paths: str, end: str="\n\n"):
+    def git_add(self, *paths: str):
         commands = "\n".join("git add -f %s" % p for p in paths)
-        self("## `git add`\n\n```\n\n%s\n\n```" % commands, end=end)
+        self("\n## `git add`\n\n```\n\n%s\n\n```" % commands)
 
-    def readme_include(self, link_name: str, *paths: str, end: str="\n\n"):
+    def readme_include(self, link_name: str, *paths: str):
         rm_path     = os.path.relpath("README.md", self.get_dir_name())
         self_path   = os.path.relpath(self.get_filename())
         links       = "".join("\n\n![](%s)" % p for p in paths)
         template    = (
-            "## [`README.md`](%s) include\n\n```md\n\n[%s](%s)%s\n\n```"
+            "\n## [`README.md`](%s) include\n\n```md\n\n[%s](%s)%s\n\n```"
         )
-        self(template % (rm_path, link_name, self_path, links), end=end)
+        self(template % (rm_path, link_name, self_path, links))
 
     def show_command(self, command_name: str, include_python: bool=False):
-        self.heading("`%s` command" % command_name, end="\n")
+        self.heading("`%s` command" % command_name)
         cmd_str = get_program_command() if include_python else get_argv_str()
         self.code_block(cmd_str)
 

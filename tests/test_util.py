@@ -448,7 +448,7 @@ def test_markdownprinter():
     )
     md.git_add("a.bc", "def/gh/ijk.lmnop")
     md.readme_include("`full sweep results`", "a/b/c.png", "d/e.png")
-    md.readme_include("`full sweep results 2`", end="\n")
+    md.readme_include("`full sweep results 2`")
 
     assert md.read() == (
         "# `test_markdownprinter`\n"

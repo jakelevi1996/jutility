@@ -425,7 +425,7 @@ def test_printer_heading():
 
 def test_markdownprinter():
     test_dir = os.path.join(OUTPUT_DIR, "test_markdownprinter")
-    plotting.plot(
+    mp = plotting.plot(
         plotting.Line([1, 3, 2]),
         plot_name="results",
         dir_name=test_dir,
@@ -451,7 +451,7 @@ def test_markdownprinter():
     md.code_block("import jutility", "print(\"wow\")", ext="py")
     md.heading("Results")
     md.heading("Images", level=3)
-    md.image("results.png")
+    md.image(md.rel_path(mp.full_path))
     md.file_link("results.png", "Link to image file")
     md.heading("Inline examples")
     md.paragraph(

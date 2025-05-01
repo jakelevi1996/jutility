@@ -211,11 +211,14 @@ class MarkdownPrinter(Printer):
             )
             if link_str in repeats:
                 repeats[link_str] += 1
-                link_str += "-" + str(repeats[link_str])
+                link_str += ("-%i" % repeats[link_str])
             else:
                 repeats[link_str] = 0
 
             self("%s- [%s](#%s)" % (indent, name, link_str))
+
+    def rel_path(self, input_path: str) -> str:
+        return os.path.relpath(input_path, self.get_dir_name())
 
     @classmethod
     def make_link(cls, rel_path: str, name: str) -> str:

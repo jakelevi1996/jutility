@@ -1180,10 +1180,10 @@ class Gif:
 
         return self.full_path
 
-def set_latex_params(use_tex=True):
+def set_latex_params(use_tex=True, use_times=False):
     latex_params_dict = {
         "font.family":          "serif",
-        "font.serif":           ["Computer Modern"],
+        "font.serif":           ["Times" if use_times else "Computer Modern"],
         "text.usetex":          True,
         "text.latex.preamble":  "\\usepackage{amsmath}",
         "legend.edgecolor":     "k",

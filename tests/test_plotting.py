@@ -1033,6 +1033,25 @@ def test_noisy_data_len_iter_inverse():
     assert min(nd.inverse(max(nd))) == (6.7, 0)
     assert min(nd.inverse(min(nd))) == (1.2, 1)
 
+def test_noisy_data_plot_value():
+    nd = plotting.NoisyData()
+    nd.update(1.2, -3.4)
+    nd.update(1.2, -3.5)
+    nd.update(6.7, 8.9)
+    nd.update(6.7, 0.11)
+    nd.update(12.13, 0.14)
+    nd.update(12.13, 0.15)
+    nd.update(12.13, 8.9)
+
+    plotting.plot(
+        nd.plot(label="nd.plot"),
+        nd.plot_value(max(nd)),
+        nd.plot_value(min(nd), c="g"),
+        plotting.Legend(),
+        plot_name="test_noisy_data_plot_value",
+        dir_name=OUTPUT_DIR,
+    )
+
 @pytest.mark.parametrize("handles", [True, False])
 def test_figure_legend(handles):
     test_name = "test_figure_legend, handles=%s" % handles

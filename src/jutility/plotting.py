@@ -477,8 +477,28 @@ class NoisyData:
         ls:         str="--",
         z:          int=40,
         label_fmt:  str="%s, %s",
-    ) -> list[Plottable]:
+    ) -> PlottableGroup:
         x, _, y = (self.argmax() if maximise else self.argmin())
+        label = label_fmt % (x, y)
+        return PlottableGroup(
+            VLine(x, c=c, ls=ls, z=z),
+            HLine(y, c=c, ls=ls, z=z),
+            Scatter([], [], c=c, m="+", label=label),
+        )
+
+    def plot_value(
+        self,
+        y:          float,
+        y_str:      (str | None)=None,
+        c:          str="r",
+        ls:         str="--",
+        z:          int=40,
+        label_fmt:  str="%s, %s",
+    ) -> PlottableGroup:
+        if y_str is None:
+            y_str = str(y)
+
+        x, _ = min(self.inverse(y))
         label = label_fmt % (x, y)
         return PlottableGroup(
             VLine(x, c=c, ls=ls, z=z),

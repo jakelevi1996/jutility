@@ -386,8 +386,17 @@ def confidence_bounds(
     return mean, ucb, lcb
 
 class NoisyData:
-    def __init__(self, log_x=False, log_y=False, x_index=False):
-        self._results_list_dict: dict[float, list[float]] = dict()
+    def __init__(
+        self,
+        log_x:      bool=False,
+        log_y:      bool=False,
+        x_index:    bool=False,
+        results:    (dict[float, list[float]] | None)=None,
+    ):
+        if results is None:
+            results = dict()
+
+        self._results_list_dict = results
         self._log_x = log_x
         self._log_y = log_y
         self._x_index = x_index
@@ -523,8 +532,29 @@ class NoisyData:
         line_kwargs.setdefault("ls", "--")
         return AxLine([x0, y0], [x1, y1], **line_kwargs)
 
+    def inverse(self, y: float) -> set[tuple[float, int]]:
+        return set(
+            (x, i)
+            for x, y_list in self._results_list_dict.items()
+            for i, yi in enumerate(y_list)
+            if  yi == y
+        )
+
+    def __iter__(self):
+        return (
+            y
+            for y_list in self._results_list_dict.values()
+            for y in y_list
+        )
+
+    def __len__(self) -> int:
+        return sum(
+            len(y_list)
+            for y_list in self._results_list_dict.values()
+        )
+
     def __repr__(self):
-        return util.format_type(type(self), self._results_list_dict)
+        return util.format_type(type(self), results=self._results_list_dict)
 
 class ColourPicker:
     """

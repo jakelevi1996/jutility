@@ -1011,6 +1011,28 @@ def test_noisy_data_plot_best():
         dir_name=OUTPUT_DIR,
     )
 
+def test_noisy_data_len_iter_inverse():
+    nd = plotting.NoisyData()
+    nd.update(1.2, -3.4)
+    nd.update(1.2, -3.5)
+    nd.update(6.7, 8.9)
+    nd.update(6.7, 0.11)
+    nd.update(12.13, 0.14)
+    nd.update(12.13, 0.15)
+    nd.update(12.13, 8.9)
+
+    assert repr(nd) == (
+        "NoisyData(results={1.2: [-3.4, -3.5], 6.7: [8.9, 0.11], "
+        "12.13: [0.14, 0.15, 8.9]})"
+    )
+    assert len(nd) == 7
+    assert max(nd) == 8.9
+    assert min(nd) == -3.5
+    assert nd.inverse(max(nd)) == set([(6.7, 0), (12.13, 2)])
+    assert nd.inverse(min(nd)) == set([(1.2, 1)])
+    assert min(nd.inverse(max(nd))) == (6.7, 0)
+    assert min(nd.inverse(min(nd))) == (1.2, 1)
+
 @pytest.mark.parametrize("handles", [True, False])
 def test_figure_legend(handles):
     test_name = "test_figure_legend, handles=%s" % handles
@@ -1234,7 +1256,7 @@ def test_noisy_data_repr():
     n.update(1, 1)
     n.update(1, 2)
     n.update(3, 4)
-    assert repr(n) == "NoisyData({1: [1, 2], 3: [4]})"
+    assert repr(n) == "NoisyData(results={1: [1, 2], 3: [4]})"
 
 def test_nested_multiplot():
     rng = util.Seeder().get_rng("test_nested_multiplot")

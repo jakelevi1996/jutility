@@ -735,7 +735,7 @@ def get_full_path(
 ):
     if dir_name is None:
         dir_name = RESULTS_DIR
-    if not os.path.isdir(dir_name):
+    if (not os.path.isdir(dir_name)) and (len(dir_name) > 0):
         os.makedirs(dir_name)
 
     filename = clean_string(filename)

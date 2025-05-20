@@ -748,7 +748,7 @@ class FigureProperties:
         if num_cols is None:
             num_cols = math.ceil(num_subplots / num_rows)
         if figsize is None:
-            figsize = [6 * num_cols, 4 * num_rows]
+            figsize = [6, 4]
         if layout is not None:
             constrained_layout = False
             tight_layout = False
@@ -967,7 +967,7 @@ class Empty(Subplot):
 def plot(
     *lines:     Plottable,
     legend:     bool=False,
-    figsize:    (tuple[float | int, float | int] | None)=None,
+    figsize:    (tuple[float, float] | None)=None,
     plot_name:  (str | None)=None,
     dir_name:   (str | None)=None,
     show:       bool=False,
@@ -975,8 +975,6 @@ def plot(
     pdf:        bool=False,
     **axis_kwargs,
 ):
-    if figsize is None:
-        figsize = [10, 6] if legend else [8, 6]
     if "title" not in axis_kwargs:
         axis_kwargs["title"] = plot_name
 

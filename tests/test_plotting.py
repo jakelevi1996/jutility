@@ -294,7 +294,7 @@ def test_multiplot(num_subplots):
 def test_multiplot_repr():
     line = plotting.Line([1, 2, 4], [1, 3, 2], c="r")
     mp = plotting.plot(line, save_close=False)
-    assert repr(mp) == "MultiPlot(figsize=[8, 6])"
+    assert repr(mp) == "MultiPlot(figsize=None)"
 
     mp = plotting.MultiPlot(
         plotting.Subplot(line),
@@ -1364,6 +1364,7 @@ def test_nested_multiplot_titles():
         pad=0.1,
         title="Figure",
         height_ratios=[2, 1],
+        figsize=[12, 8],
     )
     for pdf in [True, False]:
         mp.save("test_nested_multiplot_titles", OUTPUT_DIR, pdf=pdf)

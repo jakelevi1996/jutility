@@ -1058,6 +1058,7 @@ class MultiPlot(Subplot):
 
     def show(self):
         self._make_figure()
+        _temp_axis.close()
         plt.show()
 
     def plot(self, axis: matplotlib.axes.Axes):
@@ -1247,12 +1248,14 @@ def set_latex_params(use_tex=True, use_times=False):
 
 class _TempAxis:
     def __init__(self):
+        self._fig = None
         self._axis = None
         self._old_children = None
 
     def get_axis(self):
         if self._axis is None:
-            self._axis = plt.figure().gca()
+            self._fig = plt.figure()
+            self._axis = self._fig.gca()
             self._old_children = set(self._axis.get_children())
 
         return self._axis
@@ -1263,5 +1266,9 @@ class _TempAxis:
             a.remove()
 
         return new_children
+
+    def close(self):
+        if self._fig is not None:
+            plt.close(self._fig)
 
 _temp_axis = _TempAxis()

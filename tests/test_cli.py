@@ -1911,3 +1911,49 @@ def test_arggroup():
     assert util.format_dict(args.get_arg("fghi").get_kwargs()) == (
         "jk=67.8, lmnop=None"
     )
+
+def test_object_choice_kwarg():
+    class C:
+        def __init__(self, x: int):
+            self.x = x
+
+        def __repr__(self) -> str:
+            return util.format_type(type(self), x=self.x)
+
+    class D:
+        def __init__(self, y: int):
+            self.y = y
+
+        def __repr__(self) -> str:
+            return util.format_type(type(self), y=self.y)
+
+    def get_parser(is_kwarg: bool) -> cli.Parser:
+        return cli.Parser(
+            cli.ObjectChoice(
+                "c_or_d",
+                cli.ObjectArg(C, cli.Arg("x", type=int, default=3)),
+                cli.ObjectArg(D, cli.Arg("y", type=int, default=4)),
+                is_kwarg=is_kwarg,
+            ),
+        )
+
+    parser = get_parser(is_kwarg=False)
+    args = parser.parse_args([])
+    assert repr(args.get_kwargs()) == "{}"
+
+    args = parser.parse_args("--c_or_d C".split())
+    assert repr(args.get_kwargs()) == "{}"
+
+    parser = get_parser(is_kwarg=True)
+    args = parser.parse_args([])
+    with pytest.raises(ValueError):
+        args.get_kwargs()
+
+    args = parser.parse_args("--c_or_d C".split())
+    assert repr(args.get_kwargs()) == "{'c_or_d': C(x=3)}"
+
+    args = parser.parse_args("--c_or_d D".split())
+    assert repr(args.get_kwargs()) == "{'c_or_d': D(y=4)}"
+
+    args = parser.parse_args("--c_or_d D --c_or_d.D.y 67".split())
+    assert repr(args.get_kwargs()) == "{'c_or_d': D(y=67)}"

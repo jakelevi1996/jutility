@@ -23,7 +23,7 @@ class _ArgParent:
 
     def get_kwargs(self) -> dict:
         return {
-            arg.name: arg.value
+            arg.name: arg.init_object()
             for arg in self._arg_list
             if  arg.is_kwarg
         }
@@ -257,6 +257,7 @@ class ObjectArg(Arg):
         tag:                (str | None)=None,
         tagged:             bool=True,
         is_group:           bool=False,
+        is_kwarg:           bool=False,
         init_requires:      (list[str] | None)=None,
         init_ignores:       (list[str] | None)=None,
         init_const_kwargs:  (dict | None)=None,
@@ -266,7 +267,7 @@ class ObjectArg(Arg):
 
         self.object_type = object_type
         self._init_arg_parent(list(args), dict())
-        self._init_arg(name, tag, tagged, False)
+        self._init_arg(name, tag, tagged, is_kwarg)
         self._init_object_arg(
             is_group,
             init_requires,
@@ -355,6 +356,7 @@ class ObjectChoice(ObjectArg):
         tag:                (str | None)=None,
         tagged:             bool=True,
         is_group:           bool=False,
+        is_kwarg:           bool=False,
         shared_args:        (list[Arg] | None)=None,
         init_requires:      (list[str] | None)=None,
         init_ignores:       (list[str] | None)=None,
@@ -366,7 +368,7 @@ class ObjectChoice(ObjectArg):
 
         self.shared_args = shared_args
         self._init_arg_parent(list(choices) + shared_args, dict())
-        self._init_arg(name, tag, tagged, False)
+        self._init_arg(name, tag, tagged, is_kwarg)
         self._init_object_arg(
             is_group,
             init_requires,

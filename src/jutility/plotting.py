@@ -1233,8 +1233,9 @@ class Gif:
 def close_all():
     plt.close("all")
 
-def show_ipython(full_path: str) -> IPython.display.Image:
-    close_all()
+def show_ipython(full_path: str, close_plt=True) -> IPython.display.Image:
+    if close_plt:
+        close_all()
     with open(full_path, "rb") as f:
         image_bytes = f.read()
 

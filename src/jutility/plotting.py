@@ -1241,6 +1241,11 @@ def show_ipython(full_path: str, close_plt=True) -> IPython.display.Image:
 
     return IPython.display.Image(image_bytes)
 
+def show_pil(full_path: str) -> PIL.Image.Image:
+    im = PIL.Image.open(full_path)
+    im.show()
+    return im
+
 def set_latex_params(use_tex=True, use_times=False):
     latex_params_dict = {
         "font.family":          "serif",

@@ -9,6 +9,7 @@ import matplotlib.colors
 import matplotlib.cm
 import numpy as np
 import PIL.Image
+import IPython.display
 from jutility import util, properties
 
 class Plottable:
@@ -1228,6 +1229,12 @@ class Gif:
         )
 
         return self.full_path
+
+def show_ipython(full_path: str) -> IPython.display.Image:
+    with open(full_path, "rb") as f:
+        image_bytes = f.read()
+
+    return IPython.display.Image(image_bytes)
 
 def set_latex_params(use_tex=True, use_times=False):
     latex_params_dict = {

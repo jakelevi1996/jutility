@@ -3,8 +3,7 @@ from jutility.cli.arg import Arg
 import jutility.cli.subcmd.group as group
 import jutility.cli.subcmd.base as base
 
-# class _NoSubCommandGroup(group.SubCommandGroup):
-class _NoSubCommandGroup:
+class _NoSubCommandGroup(group.SubCommandGroup):
     def __init__(self):
         self.name   = None
         self.value  = None

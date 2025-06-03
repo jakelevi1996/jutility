@@ -1,5 +1,6 @@
 import pytest
 from jutility import util, cli
+from jutility.cli.unknown import _UnknownArg
 import test_utils
 
 OUTPUT_DIR = test_utils.get_output_dir("test_cli")
@@ -512,8 +513,8 @@ def test_unknown_arg():
     assert args.get_kwargs() == {"a": 4, "b": 2.3, "c": "abc"}
 
     assert isinstance(args.get_arg("a"),    cli.Arg)
-    assert isinstance(args.get_arg("d"),    cli._UnknownArg)
-    assert isinstance(args.get_arg("e.f"),  cli._UnknownArg)
+    assert isinstance(args.get_arg("d"),    _UnknownArg)
+    assert isinstance(args.get_arg("e.f"),  _UnknownArg)
 
     assert repr(args.get_arg("a")) == (
         "Arg(full_name='a', name='a', value=4)"

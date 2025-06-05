@@ -73,15 +73,3 @@ class ColourPicker:
             vmax = len(self._colours)
 
         return ColourBar(vmin, vmax, cmap=self._cmap, **kwargs)
-
-    def colour_name(self, colour_ind):
-        return "c%i" % colour_ind
-
-    def define_colours(self):
-        definition_list = [
-            "\\definecolor{%s}{rgb}{%f,%f,%f}"
-            % (self.colour_name(i), c[0], c[1], c[2])
-            for i, c in enumerate(self._colours)
-        ]
-        definition_str = "\n".join(definition_list)
-        return definition_str

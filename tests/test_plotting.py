@@ -759,9 +759,9 @@ def test_axis_title_colour():
     )
     mp.save("test_axis_title_colour", OUTPUT_DIR)
 
-def test_confidence_bounds():
-    rng = util.Seeder().get_rng("test_confidence_bounds")
-    printer = util.Printer("test_confidence_bounds", dir_name=OUTPUT_DIR)
+def test_summarise():
+    rng = util.Seeder().get_rng("test_summarise")
+    printer = util.Printer("test_summarise", dir_name=OUTPUT_DIR)
     m = 19
     n = 7
     y1 = np.arange(m).reshape(m, 1) + 100
@@ -770,7 +770,7 @@ def test_confidence_bounds():
     printer(y)
     subplots = []
     for split_dim in [0, 1]:
-        mean, ucb, lcb = plotting.confidence_bounds(y, split_dim=split_dim)
+        mean, ucb, lcb = plotting.summarise(y, split_dim=split_dim)
         x = np.arange(mean.size)
         sp = plotting.Subplot(
             plotting.Line(x, mean, c="b", marker="o"),
@@ -779,9 +779,9 @@ def test_confidence_bounds():
         subplots.append(sp)
 
     mp = plotting.MultiPlot(*subplots)
-    mp.save("test_confidence_bounds", OUTPUT_DIR)
+    mp.save("test_summarise", OUTPUT_DIR)
 
-def test_confidence_bounds_split_dim():
+def test_summarise_split_dim():
     num_split = 5
     sp_list = []
     for n in [3, 456]:
@@ -790,12 +790,12 @@ def test_confidence_bounds_split_dim():
         assert list(x.shape) == [n]
         assert list(y.shape) == [3, n]
 
-        mean, ucb, lcb = plotting.confidence_bounds(
+        mean, ucb, lcb = plotting.summarise(
             y,
             split_dim=1,
             num_split=num_split,
         )
-        x_ds, _, _ = plotting.confidence_bounds(
+        x_ds, _, _ = plotting.summarise(
             x,
             split_dim=0,
             num_split=num_split,
@@ -813,7 +813,7 @@ def test_confidence_bounds_split_dim():
         sp_list.append(sp)
 
     mp = plotting.MultiPlot(*sp_list)
-    mp.save("test_confidence_bounds_split_dim", OUTPUT_DIR)
+    mp.save("test_summarise_split_dim", OUTPUT_DIR)
 
 def test_noisy_data():
     printer = util.Printer("test_noisy_data", OUTPUT_DIR)

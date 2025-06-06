@@ -27,6 +27,7 @@ from jutility.plotting.plottable import (
 )
 from jutility.plotting.noisy_data import (
     confidence_bounds,
+    summarise,
     NoisyData,
 )
 from jutility.plotting.colour_picker import ColourPicker

@@ -11,21 +11,24 @@ from jutility.plotting.plottable import (
 )
 
 def confidence_bounds(
-    data_list,
-    n_sigma=1,
-    split_dim=None,
-    num_split=100,
-):
-    if split_dim is not None:
-        data_array = np.array(data_list)
-        num_split = min(num_split, data_array.shape[split_dim])
-        data_list = np.array_split(data_array, num_split, split_dim)
-
+    data_list:  list,
+    n_sigma:    float=1.0,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     mean = np.array([np.mean(x) for x in data_list])
     std  = np.array([np.std( x) for x in data_list])
     ucb = mean + (n_sigma * std)
     lcb = mean - (n_sigma * std)
     return mean, ucb, lcb
+
+def summarise(
+    data_array: np.ndarray,
+    split_dim:  int=0,
+    num_split:  int=50,
+    n_sigma:    float=1.0,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    num_split = min(num_split, data_array.shape[split_dim])
+    data_list = np.array_split(data_array, num_split, split_dim)
+    return confidence_bounds(data_list, n_sigma)
 
 class NoisyData:
     def __init__(

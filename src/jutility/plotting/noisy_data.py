@@ -14,22 +14,30 @@ from jutility.plotting.colour_picker import ColourPicker
 def confidence_bounds(
     data_list:  list,
     n_sigma:    float=1.0,
+    log:        bool=False,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    if log:
+        data_list = [np.log(x) for x in data_list]
+
     mean = np.array([np.mean(x) for x in data_list])
     std  = np.array([np.std( x) for x in data_list])
     ucb = mean + (n_sigma * std)
     lcb = mean - (n_sigma * std)
+
+    if log:
+        mean, ucb, lcb = np.exp([mean, ucb, lcb])
+
     return mean, ucb, lcb
 
 def summarise(
     data_array: np.ndarray,
     split_dim:  int=0,
     num_split:  int=50,
-    n_sigma:    float=1.0,
+    **kwargs,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     num_split = min(num_split, data_array.shape[split_dim])
     data_list = np.array_split(data_array, num_split, split_dim)
-    return confidence_bounds(data_list, n_sigma)
+    return confidence_bounds(data_list, **kwargs)
 
 class NoisyData:
     def __init__(
@@ -71,21 +79,17 @@ class NoisyData:
         x_n1, y_n1 = np.split(xy_n2, 2, axis=1)
         return x_n1.flatten(), y_n1.flatten()
 
-    def get_statistics(self, n_sigma=1):
+    def get_statistics(self, n_sigma: float=1.0):
         x_list = sorted(
             x for x, y_list in self._results_list_dict.items()
             if len(y_list) > 0
         )
         y_list_list = [self._results_list_dict[x] for x in x_list]
-
-        if self._log_y:
-            y_list_list = [np.log(y_list) for y_list in y_list_list]
-
-        mean, ucb, lcb = confidence_bounds(y_list_list, n_sigma)
-
-        if self._log_y:
-            mean, ucb, lcb = np.exp([mean, ucb, lcb])
-
+        mean, ucb, lcb = confidence_bounds(
+            y_list_list,
+            n_sigma=n_sigma,
+            log=self._log_y,
+        )
         return np.array(x_list), mean, ucb, lcb
 
     def argmax(self):

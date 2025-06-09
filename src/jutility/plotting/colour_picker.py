@@ -73,3 +73,6 @@ class ColourPicker:
             vmax = len(self._colours)
 
         return ColourBar(vmin, vmax, cmap=self._cmap, **kwargs)
+
+    def __iter__(self):
+        return iter(self._colours)

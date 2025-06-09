@@ -347,7 +347,8 @@ def test_gif_add_image_file_frame():
 
     gif = plotting.Gif()
     for f in filename_list:
-        gif.add_image_file_frame(os.path.basename(f), os.path.dirname(f))
+        gif.add_image_file_frame(f)
+
     gif.save(output_name, OUTPUT_DIR, frame_duration_ms=500)
     assert os.path.isfile(gif.full_path)
 

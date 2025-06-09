@@ -12,6 +12,9 @@ class Gif:
     def add_pil_image_frame(self, pil_image):
         self._frame_list.append(pil_image)
 
+    def add_image_file_frame(self, full_path: str):
+        self.add_pil_image_frame(PIL.Image.open(full_path))
+
     def add_rgb_bytes_frame(self, rgb_bytes, width, height):
         pil_image = PIL.Image.frombytes(
             mode="RGB",
@@ -88,12 +91,6 @@ class Gif:
 
         for i in range(ndarray_lhw.shape[0]):
             self.add_bw_array_frame(ndarray_lhw[i], vmin, vmax)
-
-    def add_image_file_frame(self, filename, dir_name=None):
-        if dir_name is None:
-            dir_name = util.RESULTS_DIR
-        full_path = os.path.join(dir_name, filename)
-        self.add_pil_image_frame(PIL.Image.open(full_path))
 
     def shuffle(self, rng: np.random.Generator=None):
         if rng is None:

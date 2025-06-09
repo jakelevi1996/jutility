@@ -9,6 +9,7 @@ from jutility.plotting.plottable import (
     HLine,
     AxLine,
 )
+from jutility.plotting.colour_picker import ColourPicker
 
 def confidence_bounds(
     data_list:  list,
@@ -220,3 +221,46 @@ class NoisyData:
 
     def __repr__(self):
         return util.format_type(type(self), results=self._results_list_dict)
+
+class NoisySweep:
+    def __init__(
+        self,
+        sweeps:     (dict[str, NoisyData] | None)=None,
+        key_order:  (list[str] | None)=None,
+        **kwargs,
+    ):
+        if sweeps is None:
+            sweeps = dict()
+        if key_order is None:
+            key_order = []
+
+        self._sweeps = sweeps
+        self._key_order = key_order
+        self._kwargs = kwargs
+
+    def update(self, key: str, x: float, y: float):
+        if key not in self._sweeps:
+            self._sweeps[key] = NoisyData(**self._kwargs)
+            self._key_order.append(key)
+
+        self._sweeps[key].update(x, y)
+
+    def plot(
+        self,
+        cp:         (ColourPicker | None)=None,
+        key_order:  (list[str] | None)=None,
+        n_sigma:    float=1.0,
+    ) -> list[PlottableGroup]:
+        if cp is None:
+            cp = ColourPicker(len(self._sweeps))
+        if key_order is None:
+            key_order = self._key_order
+
+        return [
+            self._sweeps[key].plot(
+                c=cp.next(),
+                label=key,
+                n_sigma=n_sigma,
+            )
+            for key in key_order
+        ]

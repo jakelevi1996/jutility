@@ -1605,3 +1605,24 @@ def test_figure_legend_lines_no_data():
         figsize=[6, 4],
     )
     mp.save("test_figure_legend_lines_no_data", OUTPUT_DIR)
+
+def test_noisysweep():
+    rng = util.get_numpy_rng("test_noisysweep")
+
+    ns = plotting.NoisySweep()
+
+    slope = 1
+    for name in "Sgd Adam AdamW".split():
+        slope += 0.5
+        for num_x in range(rng.integers(5, 10)):
+            x = rng.uniform(-1, 1)
+            for num_r in range(rng.integers(2, 10)):
+                y = slope * x + rng.normal(0, 0.2)
+                ns.update(name, x, y)
+
+    plotting.plot(
+        *ns.plot(),
+        legend=True,
+        plot_name="test_noisysweep",
+        dir_name=OUTPUT_DIR,
+    )

@@ -6,10 +6,13 @@ from jutility.plotting.multiplot import MultiPlot
 from jutility.plotting.plot import plot
 
 class Gif:
-    def __init__(self):
-        self._frame_list: list[PIL.Image.Image] = []
+    def __init__(self, frame_list: (list[PIL.Image.Image] | None)=None):
+        if frame_list is None:
+            frame_list = []
 
-    def add_pil_image_frame(self, pil_image):
+        self._frame_list = frame_list
+
+    def add_pil_image_frame(self, pil_image: PIL.Image.Image):
         self._frame_list.append(pil_image)
 
     def add_image_file_frame(self, full_path: str):

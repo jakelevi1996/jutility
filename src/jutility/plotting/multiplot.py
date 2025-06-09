@@ -48,7 +48,7 @@ class MultiPlot(Subplot):
         close=True,
     ):
         if plot_name is None:
-            plot_name = "Output"
+            plot_name = "output"
         if file_ext is None:
             file_ext = "pdf" if pdf else "png"
 

@@ -113,7 +113,7 @@ class Gif:
         verbose=True,
     ):
         if output_name is None:
-            output_name = "Output"
+            output_name = "output"
 
         self.full_path = util.get_full_path(
             output_name,

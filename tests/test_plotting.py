@@ -1611,6 +1611,8 @@ def test_noisysweep():
 
     ns = plotting.NoisySweep()
 
+    assert len(ns) == 0
+
     slope = 1
     for name in "Sgd Adam AdamW".split():
         slope += 0.5
@@ -1626,3 +1628,5 @@ def test_noisysweep():
         plot_name="test_noisysweep",
         dir_name=OUTPUT_DIR,
     )
+
+    assert len(ns) == 3

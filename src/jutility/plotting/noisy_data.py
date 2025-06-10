@@ -256,7 +256,7 @@ class NoisySweep:
         n_sigma:    float=1.0,
     ) -> list[PlottableGroup]:
         if cp is None:
-            cp = ColourPicker(len(self._sweeps))
+            cp = ColourPicker(len(self))
         if key_order is None:
             key_order = self._key_order
 
@@ -268,3 +268,6 @@ class NoisySweep:
             )
             for key in key_order
         ]
+
+    def __len__(self) -> int:
+        return len(self._sweeps)

@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import matplotlib.axes
 import matplotlib.figure
+import matplotlib.backends.backend_agg
 import numpy as np
 import PIL.Image
 from jutility import util
@@ -87,18 +88,21 @@ class MultiPlot(Subplot):
     def is_leaf(self) -> bool:
         return False
 
-    def get_rgb_bytes(self):
+    def _get_canvas(self) -> matplotlib.backends.backend_agg.FigureCanvasAgg:
         self._make_figure()
         self._fig.canvas.draw()
-        rgb_bytes       = self._fig.canvas.tostring_rgb()
-        width, height   = self._fig.canvas.get_width_height()
+        return self._fig.canvas
+
+    def get_rgb_bytes(self):
+        canvas = self._get_canvas()
+        rgb_bytes = canvas.tostring_rgb()
+        width, height = canvas.get_width_height()
         return rgb_bytes, width, height
 
     def get_rgba_bytes(self):
-        self._make_figure()
-        self._fig.canvas.draw()
-        rgba_bytes      = self._fig.canvas.buffer_rgba().tobytes()
-        width, height   = self._fig.canvas.get_width_height()
+        canvas = self._get_canvas()
+        rgba_bytes = canvas.buffer_rgba().tobytes()
+        width, height = canvas.get_width_height()
         return rgba_bytes, width, height
 
     def get_pil_image(self):

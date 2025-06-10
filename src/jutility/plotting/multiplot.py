@@ -7,7 +7,7 @@ from jutility import util
 from jutility.plotting.temp_axis import _temp_axis
 from jutility.plotting.subplot.subplot import Subplot
 from jutility.plotting.subplot.empty import Empty
-from jutility.plotting.figure.props import FigureProperties
+from jutility.plotting.figure.fig_props import FigureProperties
 
 class MultiPlot(Subplot):
     def __init__(

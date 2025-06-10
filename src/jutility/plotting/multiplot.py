@@ -19,7 +19,8 @@ class MultiPlot(Subplot):
         figure_properties = FigureProperties(len(subplots), **figure_kwargs)
         num_axes = figure_properties.get_num_axes()
         if len(subplots) < num_axes:
-            subplots += tuple([Empty()]) * (num_axes - len(subplots))
+            num_empty = num_axes - len(subplots)
+            subplots += tuple(Empty() for _ in range(num_empty))
 
         self.full_path      = None
         self._fig           = None

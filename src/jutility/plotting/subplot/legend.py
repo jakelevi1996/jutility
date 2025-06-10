@@ -11,7 +11,7 @@ class LegendSubplot(Subplot):
         self._kwargs = legend_kwargs
         self._kwargs["loc"] = loc
 
-    def plot(self, axis: matplotlib.axes.Axes):
+    def plot_axis(self, axis: matplotlib.axes.Axes):
         if len(self._lines) > 0:
             self._kwargs.update(Legend.get_kwargs(self._lines))
 

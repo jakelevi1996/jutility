@@ -27,7 +27,7 @@ class ColourBar(Subplot):
         if horizontal:
             self._kwargs["orientation"] = "horizontal"
 
-    def plot(self, axis: matplotlib.axes.Axes):
+    def plot_axis(self, axis: matplotlib.axes.Axes):
         axis.figure.colorbar(
             mappable=self._sm,
             cax=axis,

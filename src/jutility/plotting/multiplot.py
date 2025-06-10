@@ -69,7 +69,7 @@ class MultiPlot(Subplot):
         _temp_axis.close()
         plt.show()
 
-    def plot(self, axis: matplotlib.axes.Axes):
+    def plot_axis(self, axis: matplotlib.axes.Axes):
         raise NotImplementedError()
 
     def plot_fig(self, fig: matplotlib.figure.Figure):
@@ -78,7 +78,7 @@ class MultiPlot(Subplot):
         if all_leaves:
             axes = self._properties.get_axes(fig)
             for subplot, axis in zip(self._subplots, axes):
-                subplot.plot(axis)
+                subplot.plot_axis(axis)
         else:
             subfigs = self._properties.get_subfigs(fig)
             for subplot, subfig in zip(self._subplots, subfigs):

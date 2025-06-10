@@ -13,7 +13,7 @@ class Subplot:
         self._lines  = lines
         self._kwargs = axis_kwargs
 
-    def plot(self, axis: matplotlib.axes.Axes):
+    def plot_axis(self, axis: matplotlib.axes.Axes):
         for line in self._lines:
             line.plot(axis)
 
@@ -23,7 +23,7 @@ class Subplot:
 
     def plot_fig(self, fig: matplotlib.figure.Figure):
         axis = fig.subplots(nrows=1, ncols=1, squeeze=True)
-        self.plot(axis)
+        self.plot_axis(axis)
 
     def set_options(self, **kwargs):
         self._kwargs.update(kwargs)

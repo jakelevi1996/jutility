@@ -1,6 +1,6 @@
 from jutility import units
 
-from jutility.util.table.base import Table
+from jutility.util.table.table import Table
 from jutility.util.table.column import (
     Column,
     CallbackColumn,

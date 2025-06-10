@@ -34,19 +34,18 @@ class MultiPlot(Subplot):
 
         fig = self._properties.get_figure()
         self.plot_fig(fig)
-
         self._properties.apply(fig)
         self._fig = fig
 
     def save(
         self,
-        plot_name=None,
-        dir_name=None,
-        verbose=True,
-        file_ext=None,
-        pdf=False,
-        close=True,
-    ):
+        plot_name:  (str | None)=None,
+        dir_name:   (str | None)=None,
+        verbose:    bool=True,
+        file_ext:   (str | None)=None,
+        pdf:        bool=False,
+        close:      bool=True,
+    ) -> str:
         if plot_name is None:
             plot_name = "output"
         if file_ext is None:

@@ -1,7 +1,7 @@
 import argparse
 from jutility.cli.arg import Arg
 import jutility.cli.subcmd.group as group
-import jutility.cli.subcmd.base as base
+import jutility.cli.subcmd.subcommand as base
 
 class _NoSubCommandGroup(group.SubCommandGroup):
     def __init__(self):

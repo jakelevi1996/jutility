@@ -1,7 +1,7 @@
 from jutility.cli.arg import Arg
 from jutility.cli.parent import _ArgParent
 from jutility.cli.unknown import _UnknownArg
-from jutility.cli.subcmd.base import SubCommand
+from jutility.cli.subcmd.subcommand import SubCommand
 from jutility.cli.subcmd.no_group import _NoSubCommandGroup
 from jutility.cli.subcmd.group import SubCommandGroup
 

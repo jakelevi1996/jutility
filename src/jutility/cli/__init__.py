@@ -12,4 +12,4 @@ from jutility.cli.object_choice import ObjectChoice
 from jutility.cli.parser import Parser
 from jutility.cli.parsed_args import ParsedArgs
 from jutility.cli.subcmd.group import SubCommandGroup
-from jutility.cli.subcmd.base import SubCommand
+from jutility.cli.subcmd.subcommand import SubCommand

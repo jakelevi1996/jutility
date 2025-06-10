@@ -2,7 +2,7 @@ import matplotlib.axes
 import matplotlib.figure
 from jutility import util
 from jutility.plotting.plottable import Plottable
-from jutility.plotting.axis_props import AxisProperties
+from jutility.plotting.subplot.axis_props import AxisProperties
 
 class Subplot:
     def __init__(

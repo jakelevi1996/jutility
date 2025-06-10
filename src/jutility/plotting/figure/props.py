@@ -98,7 +98,6 @@ class FigureProperties:
         self,
         figure: matplotlib.figure.Figure,
     ) -> list[matplotlib.axes.Axes]:
-        print("figure.subplots(%i, %i)" % (self._num_rows, self._num_cols))
         axis_array = figure.subplots(
             nrows=self._num_rows,
             ncols=self._num_cols,
@@ -119,7 +118,6 @@ class FigureProperties:
         self,
         figure: matplotlib.figure.Figure,
     ) -> list[matplotlib.figure.SubFigure]:
-        print("figure.subfigures(%i, %i)" % (self._num_rows, self._num_cols))
         subfig_array = figure.subfigures(
             nrows=self._num_rows,
             ncols=self._num_cols,

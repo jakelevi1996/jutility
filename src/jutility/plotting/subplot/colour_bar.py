@@ -1,7 +1,7 @@
 import matplotlib.colors
 import matplotlib.cm
 import matplotlib.axes
-from jutility.plotting.subplot.base import Subplot
+from jutility.plotting.subplot.subplot import Subplot
 
 class ColourBar(Subplot):
     """

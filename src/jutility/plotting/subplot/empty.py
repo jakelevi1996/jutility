@@ -1,5 +1,5 @@
 import matplotlib.axes
-from jutility.plotting.subplot.base import Subplot
+from jutility.plotting.subplot.subplot import Subplot
 
 class Empty(Subplot):
     def plot_axis(self, axis: matplotlib.axes.Axes):

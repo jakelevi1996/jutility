@@ -1,6 +1,6 @@
 from jutility.plotting.plottable import Plottable
 from jutility.plotting.multiplot import MultiPlot
-from jutility.plotting.subplot.base import Subplot
+from jutility.plotting.subplot.subplot import Subplot
 from jutility.plotting.subplot.legend import LegendSubplot
 
 def plot(

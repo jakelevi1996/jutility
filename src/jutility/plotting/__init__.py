@@ -35,7 +35,7 @@ from jutility.plotting.colour_picker import ColourPicker
 from jutility.plotting.axis_props import AxisProperties
 from jutility.plotting.figure.props import FigureProperties
 from jutility.plotting.figure.legend import FigureLegend
-from jutility.plotting.subplot.base import Subplot
+from jutility.plotting.subplot.subplot import Subplot
 from jutility.plotting.subplot.legend import LegendSubplot
 from jutility.plotting.subplot.colour_bar import ColourBar
 from jutility.plotting.subplot.empty import Empty

@@ -5,7 +5,7 @@ import numpy as np
 import PIL.Image
 from jutility import util
 from jutility.plotting.temp_axis import _temp_axis
-from jutility.plotting.subplot.base import Subplot
+from jutility.plotting.subplot.subplot import Subplot
 from jutility.plotting.subplot.empty import Empty
 from jutility.plotting.figure.props import FigureProperties
 

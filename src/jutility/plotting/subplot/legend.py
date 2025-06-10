@@ -1,6 +1,6 @@
 import matplotlib.axes
 from jutility.plotting.plottable import Plottable, Legend
-from jutility.plotting.subplot.base import Subplot
+from jutility.plotting.subplot.subplot import Subplot
 
 class LegendSubplot(Subplot):
     """

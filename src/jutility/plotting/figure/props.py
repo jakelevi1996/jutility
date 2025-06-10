@@ -147,27 +147,3 @@ class FigureProperties:
             figure.subplots_adjust(bottom=self._bottom_space)
         if self._legend is not None:
             self._legend.plot(figure)
-
-    def get_subplot_axes(
-        self,
-        axis: matplotlib.axes.Axes,
-    ) -> list[matplotlib.axes.Axes]:
-        if self._title is not None:
-            axis.set_title(self._title, fontsize=self._title_font_size)
-
-        subplot_spec = axis.get_subplotspec()
-        subgrid_spec = subplot_spec.subgridspec(
-            nrows=self._num_rows,
-            ncols=self._num_cols,
-            width_ratios=self._width_ratios,
-            height_ratios=self._height_ratios,
-            wspace=self._space,
-            hspace=self._space,
-        )
-        axes_array = subgrid_spec.subplots(
-            sharex=self._sharex,
-            sharey=self._sharey,
-            squeeze=False,
-        )
-        axis_list = axes_array.flatten().tolist()
-        return axis_list

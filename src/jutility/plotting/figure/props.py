@@ -98,6 +98,7 @@ class FigureProperties:
         self,
         figure: matplotlib.figure.Figure,
     ) -> list[matplotlib.axes.Axes]:
+        print("figure.subplots(%i, %i)" % (self._num_rows, self._num_cols))
         axis_array = figure.subplots(
             nrows=self._num_rows,
             ncols=self._num_cols,
@@ -113,6 +114,23 @@ class FigureProperties:
         )
         axis_list = axis_array.flatten().tolist()
         return axis_list
+
+    def get_subfigs(
+        self,
+        figure: matplotlib.figure.Figure,
+    ) -> list[matplotlib.figure.SubFigure]:
+        print("figure.subfigures(%i, %i)" % (self._num_rows, self._num_cols))
+        subfig_array = figure.subfigures(
+            nrows=self._num_rows,
+            ncols=self._num_cols,
+            squeeze=False,
+            wspace=self._space,
+            hspace=self._space,
+            width_ratios=self._width_ratios,
+            height_ratios=self._height_ratios,
+        )
+        subfig_list = subfig_array.flatten().tolist()
+        return subfig_list
 
     def apply(self, figure: matplotlib.figure.Figure):
         if self._tight_layout:

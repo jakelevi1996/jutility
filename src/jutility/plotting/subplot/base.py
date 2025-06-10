@@ -1,4 +1,5 @@
 import matplotlib.axes
+import matplotlib.figure
 from jutility import util
 from jutility.plotting.plottable import Plottable
 from jutility.plotting.axis_props import AxisProperties
@@ -20,8 +21,16 @@ class Subplot:
         properties.apply(axis)
         properties.check_unused_kwargs()
 
+    def plot_fig(self, fig: matplotlib.figure.Figure):
+        print("fig.subplots(1, 1)")
+        axis = fig.subplots(nrows=1, ncols=1, squeeze=True)
+        self.plot(axis)
+
     def set_options(self, **kwargs):
         self._kwargs.update(kwargs)
+
+    def is_leaf(self) -> bool:
+        return True
 
     def __repr__(self):
         return util.format_type(type(self), **self._kwargs)

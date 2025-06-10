@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import matplotlib.axes
+import matplotlib.figure
 import numpy as np
 import PIL.Image
 from jutility import util
@@ -29,11 +30,18 @@ class MultiPlot(Subplot):
         if self._fig is not None:
             return
 
-        fig  = self._properties.get_figure()
-        axes = self._properties.get_axes(fig)
+        fig = self._properties.get_figure()
+        # all_leaves = all(sp.is_leaf() for sp in self._subplots)
 
-        for subplot, axis in zip(self._subplots, axes):
-            subplot.plot(axis)
+        # if all_leaves:
+        #     axes = self._properties.get_axes(fig)
+        #     for subplot, axis in zip(self._subplots, axes):
+        #         subplot.plot(axis)
+        # else:
+        #     subfigs = self._properties.get_subfigs(fig)
+        #     for subplot, subfig in zip(self._subplots, subfigs):
+        #         subplot.plot_subfig(subfig)
+        self.plot_fig(fig)
 
         self._properties.apply(fig)
         self._fig = fig
@@ -72,10 +80,26 @@ class MultiPlot(Subplot):
         plt.show()
 
     def plot(self, axis: matplotlib.axes.Axes):
-        axis.set_axis_off()
-        axis_list = self._properties.get_subplot_axes(axis)
-        for subplot, axis in zip(self._subplots, axis_list):
-            subplot.plot(axis)
+        # axis.set_axis_off()
+        # axis_list = self._properties.get_subplot_axes(axis)
+        # for subplot, axis in zip(self._subplots, axis_list):
+        #     subplot.plot(axis)
+        raise NotImplementedError()
+
+    def plot_fig(self, fig: matplotlib.figure.Figure):
+        all_leaves = all(sp.is_leaf() for sp in self._subplots)
+
+        if all_leaves:
+            axes = self._properties.get_axes(fig)
+            for subplot, axis in zip(self._subplots, axes):
+                subplot.plot(axis)
+        else:
+            subfigs = self._properties.get_subfigs(fig)
+            for subplot, subfig in zip(self._subplots, subfigs):
+                subplot.plot_fig(subfig)
+
+    def is_leaf(self) -> bool:
+        return False
 
     def get_rgb_bytes(self):
         self._make_figure()

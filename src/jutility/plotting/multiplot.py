@@ -34,7 +34,6 @@ class MultiPlot(Subplot):
 
         fig = self._properties.get_figure()
         self.plot_fig(fig)
-        self._properties.apply(fig)
         self._fig = fig
 
     def save(
@@ -84,6 +83,8 @@ class MultiPlot(Subplot):
             subfigs = self._properties.get_subfigs(fig)
             for subplot, subfig in zip(self._subplots, subfigs):
                 subplot.plot_fig(subfig)
+
+        self._properties.apply(fig)
 
     def is_leaf(self) -> bool:
         return False

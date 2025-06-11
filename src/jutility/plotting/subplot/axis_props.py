@@ -1,6 +1,6 @@
 import matplotlib.axes
 from jutility import util
-from jutility.properties import PropertyDict
+from jutility.plotting.properties import PropertyDict
 
 class AxisProperties(PropertyDict):
     def apply(self, axis: matplotlib.axes.Axes):

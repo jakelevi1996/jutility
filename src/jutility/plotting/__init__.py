@@ -1,3 +1,4 @@
+from jutility.plotting import time_sweep
 from jutility.plotting.plottable import (
     Plottable,
     Line,

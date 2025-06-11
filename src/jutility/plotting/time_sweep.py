@@ -10,7 +10,7 @@ class Experiment:
     def __repr__(self):
         return util.format_type(type(self))
 
-def time_sweep(
+def run(
     *experiments: Experiment,
     n_list=None,
     num_repeats=5,

@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.axes
-from jutility import plotting, util, time_sweep
+from jutility import plotting, util
 
 def main():
     e_list: list[ExperimentBase] = [
@@ -37,12 +37,12 @@ def main():
         log_y=True,
     )
 
-    time_sweep.time_sweep(
+    plotting.time_sweep.run(
         *e_list,
         plot_name="Legend comparison (sweeping over line length)",
     )
 
-class ExperimentBase(time_sweep.Experiment):
+class ExperimentBase(plotting.time_sweep.Experiment):
     def setup(self, n):
         rng = np.random.default_rng(n)
         self.x = np.linspace(0, 1, n)

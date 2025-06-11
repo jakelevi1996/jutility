@@ -28,14 +28,6 @@ class MultiPlot(Subplot):
         self._subplots      = subplots
         self._kwargs        = figure_kwargs
 
-    def _make_figure(self):
-        if self._fig is not None:
-            return
-
-        fig = self._properties.get_figure()
-        self.plot_fig(fig)
-        self._fig = fig
-
     def save(
         self,
         plot_name:  (str | None)=None,
@@ -64,10 +56,13 @@ class MultiPlot(Subplot):
 
         return self.full_path
 
-    def show(self):
-        self._make_figure()
-        _temp_axis.close()
-        plt.show()
+    def _make_figure(self):
+        if self._fig is not None:
+            return
+
+        fig = self._properties.get_figure()
+        self.plot_fig(fig)
+        self._fig = fig
 
     def plot_axis(self, axis: matplotlib.axes.Axes):
         raise NotImplementedError()
@@ -88,6 +83,15 @@ class MultiPlot(Subplot):
 
     def is_leaf(self) -> bool:
         return False
+
+    def close(self):
+        if self._fig is not None:
+            plt.close(self._fig)
+
+    def show(self):
+        self._make_figure()
+        _temp_axis.close()
+        plt.show()
 
     def _get_canvas(self) -> matplotlib.backends.backend_agg.FigureCanvasAgg:
         self._make_figure()
@@ -117,7 +121,3 @@ class MultiPlot(Subplot):
 
     def get_image_array(self):
         return np.array(self.get_pil_image())
-
-    def close(self):
-        if self._fig is not None:
-            plt.close(self._fig)

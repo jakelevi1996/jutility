@@ -1,6 +1,6 @@
 import time
 import datetime
-from jutility import units
+from jutility.util.units import time_verbose, time_concise
 from jutility.util.print_util import Printer
 
 class Timer:
@@ -65,9 +65,9 @@ class Timer:
 
 def time_format(num_seconds: float, concise=False):
     if concise:
-        return units.time_concise.format(num_seconds)
+        return time_concise.format(num_seconds)
     else:
-        return units.time_verbose.format(num_seconds)
+        return time_verbose.format(num_seconds)
 
 def timestamp(s, suffix=False):
     now = datetime.datetime.now()

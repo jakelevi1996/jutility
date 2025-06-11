@@ -1,4 +1,4 @@
-from jutility import units, util
+from jutility import util
 import test_utils
 
 OUTPUT_DIR = test_utils.get_output_dir("test_units")
@@ -10,7 +10,7 @@ def test_time_format():
     cf = util.ColumnFormatter(*column_formats, printer=printer)
     t_list = [
         unit.num_base_units
-        for unit in units.time_verbose._all_units
+        for unit in util.units.time_verbose._all_units
     ]
     for i, t in enumerate(t_list):
         cf.print(i, t, util.time_format(t, True), util.time_format(t))
@@ -146,8 +146,8 @@ def test_parse():
         *[10 ** i for i in range(-4, 9)],
     ]
     for t in t_list:
-        s = units.time_concise.format(t)
-        p = units.time_concise.parse(s)
+        s = util.units.time_concise.format(t)
+        p = util.units.time_concise.parse(s)
         cf.print(t, s, p)
         assert t == p
 
@@ -156,7 +156,7 @@ def test_parse():
         ("1157d  9h 46m 40s", 100000000.0),
     ]
     for s, t in st_list:
-        assert units.time_concise.parse(s) == t
+        assert util.units.time_concise.parse(s) == t
 
 def test_future_time():
     printer = util.Printer("test_future_time", OUTPUT_DIR)
@@ -167,9 +167,13 @@ def test_future_time():
     n_total     = 5
 
     n = n_total - (n_complete + 1)
-    current_remaining = units.time_concise.diff(t_complete, t_current)
-    total_remaining = units.time_concise.sum(current_remaining, t_complete, n)
-    finish_time = units.time_concise.future_time(total_remaining)
+    current_remaining = util.units.time_concise.diff(t_complete, t_current)
+    total_remaining = util.units.time_concise.sum(
+        current_remaining,
+        t_complete,
+        n,
+    )
+    finish_time = util.units.time_concise.future_time(total_remaining)
 
     cf = util.ColumnFormatter("%-19s", sep=" = ", printer=printer)
     cf.print("Time left (current)", current_remaining)
@@ -180,32 +184,32 @@ def test_future_time():
     assert total_remaining   == "7h 10m 56s"
 
 def test_format_list():
-    def get_format_list(formatter: units.UnitsFormatter):
+    def get_format_list(formatter: util.units.UnitsFormatter):
         return [
             unit.format_str
             for unit in formatter._all_units
         ]
 
-    assert get_format_list(units.time_concise) == [
+    assert get_format_list(util.units.time_concise) == [
         '%0.4fs',
         '%0.0fm %5.2fs',
         '%0.0fh %2.0fm %2.0fs',
         '%0.0fd %2.0fh %2.0fm %2.0fs',
     ]
-    assert get_format_list(units.time_verbose) == [
+    assert get_format_list(util.units.time_verbose) == [
         '%0.4f seconds',
         '%0.0f minutes %5.2f seconds',
         '%0.0f hours %2.0f minutes %2.0f seconds',
         '%0.0f days %2.0f hours %2.0f minutes %2.0f seconds',
     ]
-    assert get_format_list(units.metric) == [
+    assert get_format_list(util.units.metric) == [
         '%0.0f',
         '%0.1fk',
         '%0.1fm',
         '%0.1fb',
         '%0.1ft',
     ]
-    assert get_format_list(units.file_size) == [
+    assert get_format_list(util.units.file_size) == [
         '%0.0f bytes',
         '%0.1f kb',
         '%0.1f mb',
@@ -214,11 +218,11 @@ def test_format_list():
         '%0.1f pb',
     ]
 
-    time_wide_format = units.TimeFormatter(
-        units.BaseUnit("s", 2, [4, 2, 0]),
-        units.CompoundUnit("m", 3, 0, 60),
-        units.CompoundUnit("h", 4, 0, 60),
-        units.CompoundUnit("d", 5, 0, 24),
+    time_wide_format = util.units.TimeFormatter(
+        util.units.BaseUnit("s", 2, [4, 2, 0]),
+        util.units.CompoundUnit("m", 3, 0, 60),
+        util.units.CompoundUnit("h", 4, 0, 60),
+        util.units.CompoundUnit("d", 5, 0, 24),
     )
     assert get_format_list(time_wide_format) == [
         '%0.4fs',
@@ -233,9 +237,9 @@ def test_metric():
     cf = util.ColumnFormatter("%25.4f", "%8s", printer=printer)
     x_list = [1.23 * (10 ** i) for i in range(-1, 17)]
     for x in x_list:
-        cf.print(x, units.metric.format(x))
+        cf.print(x, util.units.metric.format(x))
 
-    assert [units.metric.format(x) for x in x_list] == [
+    assert [util.units.metric.format(x) for x in x_list] == [
         "0",
         "1",
         "12",
@@ -262,9 +266,9 @@ def test_file_size():
     cf = util.ColumnFormatter("%25.2f", "%11s", printer=printer)
     x_list = [2 ** i for i in range(-1, 70, 3)] + [1e7/17]
     for x in x_list:
-        cf.print(x, units.file_size.format(x))
+        cf.print(x, util.units.file_size.format(x))
 
-    assert [units.file_size.format(x) for x in x_list] == [
+    assert [util.units.file_size.format(x) for x in x_list] == [
         "0 bytes",
         "4 bytes",
         "32 bytes",

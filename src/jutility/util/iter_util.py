@@ -1,5 +1,5 @@
 import datetime
-from jutility import units
+from jutility.util.units import time_concise
 from jutility.util.print_util import Printer, ColumnFormatter
 from jutility.util.time_util import Timer
 from jutility.util.interval import _Interval, TimeInterval
@@ -46,8 +46,8 @@ def progress(
             str_elements = [
                 i,
                 percent,
-                units.time_concise.format(t_taken),
-                units.time_concise.format(t_remain),
+                time_concise.format(t_taken),
+                time_concise.format(t_remain),
                 (t_now + t_delta).replace(microsecond=0),
             ]
             if bar_length is not None:

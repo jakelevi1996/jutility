@@ -70,7 +70,7 @@ from jutility.util.sys_util import (
 from jutility.util.test_util import (
     Seeder,
     get_numpy_rng,
-    get_output_dir,
+    get_test_output_dir,
     check_type,
     check_equal,
 )

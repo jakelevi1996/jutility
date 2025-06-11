@@ -22,10 +22,10 @@ class Seeder:
         rng = np.random.default_rng(seed)
         return rng
 
-def get_numpy_rng(*args):
+def get_numpy_rng(*args) -> np.random.Generator:
     return Seeder().get_rng(*args)
 
-def get_output_dir(*subdir_names):
+def get_test_output_dir(*subdir_names) -> str:
     return os.path.join(TEST_DIR, "outputs", *subdir_names)
 
 def check_type(instance, expected_type, name=None):

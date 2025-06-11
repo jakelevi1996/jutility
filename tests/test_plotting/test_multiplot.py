@@ -1,6 +1,6 @@
 from jutility import plotting, util
 
-OUTPUT_DIR = util.get_output_dir("test_plotting/test_multiplot")
+OUTPUT_DIR = util.get_test_output_dir("test_plotting/test_multiplot")
 
 def test_unevenly_spaced_grids():
     rng = util.get_numpy_rng("test_unevenly_spaced_grids")

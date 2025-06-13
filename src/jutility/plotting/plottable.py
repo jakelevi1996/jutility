@@ -1,4 +1,6 @@
+import matplotlib
 import matplotlib.axes
+import matplotlib.patches
 import numpy as np
 from jutility import util
 from jutility.plotting.temp_axis import _temp_axis

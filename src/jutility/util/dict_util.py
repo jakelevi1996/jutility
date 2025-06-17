@@ -22,10 +22,10 @@ def format_dict(
     return prefix + items_str + suffix
 
 def format_type(
-    input_type: type,
+    input_type:     type,
     *args,
-    item_fmt="%s=%r",
-    key_order=None,
+    item_fmt:       str="%s=%r",
+    key_order:      (list[str] | None)=None,
     **kwargs,
 ) -> str:
     prefix = input_type.__name__ + "("
@@ -43,9 +43,9 @@ def format_type(
     )
 
 def abbreviate_dictionary(
-    input_dict: dict,
-    key_abbreviations: dict[str, str],
-    replaces: (dict[str, str] | None)=None,
+    input_dict:         dict,
+    key_abbreviations:  dict[str, str],
+    replaces:           (dict[str, str] | None)=None,
 ):
     if replaces is None:
         replaces = {

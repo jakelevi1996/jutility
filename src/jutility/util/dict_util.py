@@ -1,19 +1,23 @@
 from jutility.util.str_util import clean_string
 
 def format_dict(
-    input_dict: dict,
-    item_fmt="%s=%r",
-    item_sep=", ",
-    prefix="",
-    suffix="",
-    key_order=None,
+    input_dict:     dict,
+    item_fmt:       str="%s=%r",
+    item_sep:       str=", ",
+    prefix:         str="",
+    suffix:         str="",
+    key_order:      (list[str] | None)=None,
+    ignore_keys:    (list[str] | None)=None,
 ) -> str:
     if key_order is None:
         key_order = sorted(input_dict.keys())
+    if ignore_keys is None:
+        ignore_keys = []
 
     items_str = item_sep.join(
         item_fmt % (k, input_dict[k])
         for k in key_order
+        if  k not in ignore_keys
     )
     return prefix + items_str + suffix
 

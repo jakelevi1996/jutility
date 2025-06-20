@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "jutility"
-version = "0.0.27"
+version = "0.0.28"
 dependencies = [
   "matplotlib>=3.9.2",
   "numpy>=1.26.3",

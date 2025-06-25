@@ -53,6 +53,9 @@ from jutility.util.save_load import (
     save_image_diff,
     load_image,
 )
+from jutility.util.img_util import (
+    trim_image,
+)
 from jutility.util.str_util import (
     remove_duplicate_substring,
     clean_string,

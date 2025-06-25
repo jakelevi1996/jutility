@@ -5,10 +5,18 @@ from jutility.util.save_load import load_image, save_image
 
 def trim_image(
     full_path:  str,
+    force_lrud: (tuple[int, int, int, int] | None)=None,
     pad:        int=0,
     suffix:     str="_trimmed",
 ) -> str:
+    if force_lrud is None:
+        force_lrud = (0, 0, 0, 0)
+
     a = load_image(full_path)
+
+    fl, fr, fu, fd = force_lrud
+    h, w, _ = a.shape
+    a = a[fu:(h - fd), fl:(w - fr)]
 
     mask = np.std(a, axis=(1, 2)) > 0
     inds = np.arange(a.shape[0])

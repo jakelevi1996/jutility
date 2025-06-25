@@ -18,13 +18,13 @@ def trim_image(
     h, w, _ = a.shape
     a = a[fu:(h - fd), fl:(w - fr)]
 
-    mask = np.std(a, axis=(1, 2)) > 0
+    mask = np.std(a - np.mean(a, axis=1, keepdims=True), axis=(1, 2)) > 0
     inds = np.arange(a.shape[0])
     keep = inds[mask]
     y_lo = max(np.min(keep) - pad, 0)
     y_hi = min(np.max(keep) + pad + 1, a.shape[0])
 
-    mask = np.std(a, axis=(0, 2)) > 0
+    mask = np.std(a - np.mean(a, axis=0, keepdims=True), axis=(0, 2)) > 0
     inds = np.arange(a.shape[1])
     keep = inds[mask]
     x_lo = max(np.min(keep) - pad, 0)

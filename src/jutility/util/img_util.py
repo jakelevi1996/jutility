@@ -5,16 +5,16 @@ from jutility.util.save_load import load_image, save_image
 
 def trim_image(
     full_path:  str,
-    force_lrud: (tuple[int, int, int, int] | None)=None,
+    force_udlr: (tuple[int, int, int, int] | None)=None,
     pad:        int=0,
     suffix:     str="_trimmed",
 ) -> str:
-    if force_lrud is None:
-        force_lrud = (0, 0, 0, 0)
+    if force_udlr is None:
+        force_udlr = (0, 0, 0, 0)
 
     a = load_image(full_path)
 
-    fl, fr, fu, fd = force_lrud
+    fu, fd, fl, fr = force_udlr
     h, w, _ = a.shape
     a = a[fu:(h - fd), fl:(w - fr)]
 

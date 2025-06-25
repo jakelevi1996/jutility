@@ -59,31 +59,31 @@ def test_trim_image_force():
     fy = 3
 
     a[y:y+h, x:x+w] = g
-    a[-fy, x, 0] = 5
-    a[y, -fx, 1] = 7
+    a[-fy, x] = g
+    a[y, -fx] = g
 
-    input_path = util.save_image(a, "test_trim_image", OUTPUT_DIR)
+    input_path = util.save_image(a, "test_trim_image_force", OUTPUT_DIR)
 
     output_path = util.trim_image(input_path)
     a2 = util.load_image(output_path)
     assert a2.shape == (a.shape[0] - y - fy + 1, a.shape[1] - x - fx + 1, 3)
 
-    output_path = util.trim_image(input_path, force_lrud=(0, 1, 0, 0))
+    output_path = util.trim_image(input_path, force_udlr=(0, 0, 0, 1))
     a2 = util.load_image(output_path)
     assert a2.shape == (a.shape[0] - y - fy + 1, a.shape[1] - x - fx + 1, 3)
 
-    output_path = util.trim_image(input_path, force_lrud=(0, fx, 0, 0))
+    output_path = util.trim_image(input_path, force_udlr=(0, 0, 0, fx))
     a2 = util.load_image(output_path)
     assert a2.shape == (a.shape[0] - y - fy + 1, w, 3)
 
-    output_path = util.trim_image(input_path, force_lrud=(0, 0, 0, 1))
+    output_path = util.trim_image(input_path, force_udlr=(0, 1, 0, 0))
     a2 = util.load_image(output_path)
     assert a2.shape == (a.shape[0] - y - fy + 1, a.shape[1] - x - fx + 1, 3)
 
-    output_path = util.trim_image(input_path, force_lrud=(0, 0, 0, fy))
+    output_path = util.trim_image(input_path, force_udlr=(0, fy, 0, 0))
     a2 = util.load_image(output_path)
     assert a2.shape == (h, a.shape[1] - x - fx + 1, 3)
 
-    output_path = util.trim_image(input_path, force_lrud=(0, fx, 0, fy))
+    output_path = util.trim_image(input_path, force_udlr=(0, fy, 0, fx))
     a2 = util.load_image(output_path)
     assert a2.shape == (h, w, 3)

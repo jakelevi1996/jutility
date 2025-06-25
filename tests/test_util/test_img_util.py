@@ -12,6 +12,7 @@ def test_trim_image():
     h = 23
     g = [0, 123, 0]
 
+    a[:, :, 0] = 50
     a[y:y+h, x:x+w] = g
 
     input_path = util.save_image(a, "test_trim_image", OUTPUT_DIR)
@@ -58,6 +59,7 @@ def test_trim_image_force():
     fx = 2
     fy = 3
 
+    a[:, :, 0] = 50
     a[y:y+h, x:x+w] = g
     a[-fy, x] = g
     a[y, -fx] = g

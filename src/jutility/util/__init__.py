@@ -50,11 +50,11 @@ from jutility.util.save_load import (
     save_json,
     load_json,
     save_image,
-    save_image_diff,
     load_image,
 )
 from jutility.util.img_util import (
     trim_image,
+    save_image_diff,
 )
 from jutility.util.str_util import (
     remove_duplicate_substring,

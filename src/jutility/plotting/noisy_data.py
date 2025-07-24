@@ -156,12 +156,20 @@ class NoisyData:
             Scatter([], [], c=c, m="+", label=label),
         )
 
-    def plot(self, c="b", label=None, n_sigma=1):
+    def plot(
+        self,
+        c:          str="b",
+        label:      (str | None)=None,
+        n_sigma:    float=1.0,
+        alpha_scat: float=0.5,
+        alpha_line: float=1.0,
+        alpha_fill: float=0.2,
+    ):
         x, mean, ucb, lcb = self.get_statistics(n_sigma)
         return PlottableGroup(
-            Scatter(*self.get_all_data(),   a=0.5, z=20, color=c),
-            Line(x, mean,                   a=1.0, z=30, color=c),
-            FillBetween(x, lcb, ucb,        a=0.2, z=10, color=c),
+            Scatter(*self.get_all_data(),   a=alpha_scat, z=20, color=c),
+            Line(x, mean,                   a=alpha_line, z=30, color=c),
+            FillBetween(x, lcb, ucb,        a=alpha_fill, z=10, color=c),
             label=label,
         )
 

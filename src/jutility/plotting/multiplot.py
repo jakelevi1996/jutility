@@ -52,7 +52,6 @@ class MultiPlot(Subplot):
         if close:
             self.close()
 
-        self.full_path = self._full_path # TEMP
         return self._full_path
 
     def get_full_path(self) -> str | None:

@@ -20,6 +20,7 @@ class MultiPlot(Subplot):
         fig_kwargs, grid_kwargs = FigureProperties.get_figure_kwargs(kwargs)
 
         self._subplots      = subplots
+        self._kwargs        = kwargs
         self._fig_kwargs    = fig_kwargs
         self._grid_kwargs   = grid_kwargs
         self._fig           = None

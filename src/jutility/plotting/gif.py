@@ -115,7 +115,7 @@ class Gif:
         if output_name is None:
             output_name = "output"
 
-        self.full_path = util.get_full_path(
+        self._full_path = util.get_full_path(
             output_name,
             dir_name,
             file_ext="gif",
@@ -126,7 +126,7 @@ class Gif:
             n_loops = 0
 
         self._frame_list[0].save(
-            self.full_path,
+            self._full_path,
             format="gif",
             save_all=True,
             append_images=self._frame_list[1:],
@@ -135,4 +135,7 @@ class Gif:
             loop=n_loops,
         )
 
-        return self.full_path
+        return self._full_path
+
+    def get_full_path(self) -> str | None:
+        return self._full_path

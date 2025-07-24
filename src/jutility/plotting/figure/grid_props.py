@@ -1,10 +1,8 @@
 import math
-import matplotlib.pyplot as plt
 import matplotlib.axes
 import matplotlib.figure
 from jutility import util
 from jutility.plotting.properties import PropertyDict
-from jutility.plotting.figure.legend import FigureLegend
 
 class GridProperties(PropertyDict):
     def init_size(self, num_subplots: int) -> int:

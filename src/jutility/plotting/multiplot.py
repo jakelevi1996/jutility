@@ -108,19 +108,19 @@ class MultiPlot(Subplot):
         self._fig.canvas.draw()
         return self._fig.canvas
 
-    def get_rgb_bytes(self):
+    def get_rgb_bytes(self) -> tuple[bytes, int, int]:
         canvas = self._get_canvas()
         rgb_bytes = canvas.tostring_rgb()
         width, height = canvas.get_width_height()
         return rgb_bytes, width, height
 
-    def get_rgba_bytes(self):
+    def get_rgba_bytes(self) -> tuple[bytes, int, int]:
         canvas = self._get_canvas()
         rgba_bytes = canvas.buffer_rgba().tobytes()
         width, height = canvas.get_width_height()
         return rgba_bytes, width, height
 
-    def get_pil_image(self):
+    def get_pil_image(self) -> PIL.Image.Image:
         rgba_bytes, width, height = self.get_rgba_bytes()
         pil_image = PIL.Image.frombytes(
             mode="RGBA",
@@ -129,5 +129,5 @@ class MultiPlot(Subplot):
         )
         return pil_image
 
-    def get_image_array(self):
+    def get_image_array(self) -> np.ndarray:
         return np.array(self.get_pil_image())

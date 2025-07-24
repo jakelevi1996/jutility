@@ -21,7 +21,7 @@ def test_plot_lines():
         xlabel="x",
         ylabel="y",
     )
-    assert os.path.isfile(mp.full_path)
+    assert os.path.isfile(mp.get_full_path())
 
 def test_plottable_repr():
     line = plotting.Line([1, 2], [3, 4], c="g", z=23, a=0.8, ls="--")
@@ -87,7 +87,7 @@ def test_plot_fill():
         xlabel="x",
         ylabel="y",
     )
-    assert os.path.isfile(mp.full_path)
+    assert os.path.isfile(mp.get_full_path())
 
 def test_legend():
     line_list = [
@@ -112,7 +112,7 @@ def test_legend():
         ylabel="y",
         legend=True,
     )
-    assert os.path.isfile(mp.full_path)
+    assert os.path.isfile(mp.get_full_path())
 
 def test_plot_bar():
     x1 = "Red" * 10
@@ -170,7 +170,7 @@ def test_log_axes():
     sp_list.append(sp)
     mp = plotting.MultiPlot(*sp_list, num_rows=1)
     mp.save("test_log_axes", OUTPUT_DIR)
-    assert os.path.isfile(mp.full_path)
+    assert os.path.isfile(mp.get_full_path())
 
 @pytest.mark.parametrize("num_colours, cyclic", [[5, True], [7, False]])
 def test_colour_picker(num_colours, cyclic):
@@ -191,7 +191,7 @@ def test_colour_picker(num_colours, cyclic):
         dir_name=OUTPUT_DIR,
         legend=True,
     )
-    assert os.path.isfile(mp.full_path)
+    assert os.path.isfile(mp.get_full_path())
 
 def test_colour_picker_next():
     num_colours = 5
@@ -212,7 +212,7 @@ def test_colour_picker_next():
         dir_name=OUTPUT_DIR,
         legend=True,
     )
-    assert os.path.isfile(mp.full_path)
+    assert os.path.isfile(mp.get_full_path())
 
 def test_colour_picker_colourise():
     rng = util.Seeder().get_rng("test_colour_picker_colourise")
@@ -267,7 +267,7 @@ def test_title():
         ylabel="$x_2$",
         legend=True,
     )
-    assert os.path.isfile(mp.full_path)
+    assert os.path.isfile(mp.get_full_path())
 
 @pytest.mark.parametrize("num_subplots", range(1, 9))
 def test_multiplot(num_subplots):
@@ -289,7 +289,7 @@ def test_multiplot(num_subplots):
         title=plot_name,
     )
     mp.save(plot_name, OUTPUT_DIR)
-    assert os.path.isfile(mp.full_path)
+    assert os.path.isfile(mp.get_full_path())
 
 def test_multiplot_repr():
     line = plotting.Line([1, 2, 4], [1, 3, 2], c="r")
@@ -325,7 +325,7 @@ def test_gif_add_plot_frame(save_frames):
         )
 
     gif.save(output_name, OUTPUT_DIR, frame_duration_ms=500)
-    assert os.path.isfile(gif.full_path)
+    assert os.path.isfile(gif.get_full_path())
 
 def test_gif_add_image_file_frame():
     rng = util.Seeder().get_rng("test_gif_add_image_file_frame")
@@ -343,14 +343,14 @@ def test_gif_add_image_file_frame():
             ylim=[-0.2, 1.2],
             legend=True,
         )
-        filename_list.append(mp.full_path)
+        filename_list.append(mp.get_full_path())
 
     gif = plotting.Gif()
     for f in filename_list:
         gif.add_image_file_frame(f)
 
     gif.save(output_name, OUTPUT_DIR, frame_duration_ms=500)
-    assert os.path.isfile(gif.full_path)
+    assert os.path.isfile(gif.get_full_path())
 
 def test_colourbar():
     rng = util.Seeder().get_rng("test_colourbar")
@@ -373,7 +373,7 @@ def test_colourbar():
         figsize=[8, 6],
     )
     mp.save("test_colourbar", OUTPUT_DIR)
-    assert os.path.isfile(mp.full_path)
+    assert os.path.isfile(mp.get_full_path())
 
 def test_colourbar_horizontal():
     rng = util.Seeder().get_rng("test_colourbar_horizontal")
@@ -396,7 +396,7 @@ def test_colourbar_horizontal():
         figsize=[8, 4],
     )
     mp.save("test_colourbar_horizontal", OUTPUT_DIR)
-    assert os.path.isfile(mp.full_path)
+    assert os.path.isfile(mp.get_full_path())
 
 def test_log_colourbar():
     z = 100
@@ -454,7 +454,7 @@ def test_quiver():
         figsize=[10, 4],
     )
     mp.save(plot_name="test_quiver", dir_name=OUTPUT_DIR)
-    assert os.path.isfile(mp.full_path)
+    assert os.path.isfile(mp.get_full_path())
 
 def test_text():
     plotting.plot(

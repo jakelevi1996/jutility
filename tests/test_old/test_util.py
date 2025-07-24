@@ -451,7 +451,7 @@ def test_markdownprinter():
     md.code_block("import jutility", "print(\"wow\")", ext="py")
     md.heading("Results")
     md.heading("Images", level=3)
-    md.image(md.rel_path(mp.full_path))
+    md.image(md.rel_path(mp.get_full_path()))
     md.file_link("results.png", "Link to image file")
     md.heading("Inline examples")
     md.paragraph(
@@ -1403,8 +1403,8 @@ def test_save_image_diff():
         dir_name=OUTPUT_DIR,
     )
     diff_fp1 = util.save_image_diff(
-        mp1.full_path,
-        mp2.full_path,
+        mp1.get_full_path(),
+        mp2.get_full_path(),
         "test_save_image_diff",
         OUTPUT_DIR,
     )
@@ -1414,7 +1414,7 @@ def test_save_image_diff():
     x = rng.normal(0, 1, [20, 30, 4])
     fp = util.save_image(x, "test_save_image_diff_noise_image", OUTPUT_DIR)
     diff_fp2 = util.save_image_diff(
-        mp1.full_path,
+        mp1.get_full_path(),
         fp,
         "test_save_image_diff_resize",
         OUTPUT_DIR,
@@ -1423,13 +1423,13 @@ def test_save_image_diff():
     assert os.path.isfile(diff_fp2)
 
     diff_fp3 = util.save_image_diff(
-        mp1.full_path,
-        mp2.full_path,
+        mp1.get_full_path(),
+        mp2.get_full_path(),
         "test_save_image_diff_default_dir",
     )
     assert isinstance(diff_fp3, str)
     assert os.path.isfile(diff_fp3)
-    assert os.path.dirname(diff_fp3) == os.path.dirname(mp2.full_path)
+    assert os.path.dirname(diff_fp3) == os.path.dirname(mp2.get_full_path())
 
 def test_columnformatter():
     printer = util.Printer("test_columnformatter", OUTPUT_DIR)

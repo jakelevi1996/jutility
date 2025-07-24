@@ -9,24 +9,21 @@ from jutility.plotting.temp_axis import _temp_axis
 from jutility.plotting.subplot.subplot import Subplot
 from jutility.plotting.subplot.empty import Empty
 from jutility.plotting.figure.fig_props import FigureProperties
+from jutility.plotting.figure.grid_props import GridProperties
 
 class MultiPlot(Subplot):
     def __init__(
         self,
         *subplots: Subplot,
-        **figure_kwargs,
+        **kwargs,
     ):
-        figure_properties = FigureProperties(len(subplots), **figure_kwargs)
-        num_axes = figure_properties.get_num_axes()
-        if len(subplots) < num_axes:
-            num_empty = num_axes - len(subplots)
-            subplots += tuple(Empty() for _ in range(num_empty))
+        fig_kwargs, grid_kwargs = FigureProperties.get_figure_kwargs(kwargs)
 
-        self.full_path      = None
-        self._fig           = None
-        self._properties    = figure_properties
         self._subplots      = subplots
-        self._kwargs        = figure_kwargs
+        self._fig_kwargs    = fig_kwargs
+        self._grid_kwargs   = grid_kwargs
+        self._fig           = None
+        self._full_path     = None
 
     def save(
         self,
@@ -42,44 +39,57 @@ class MultiPlot(Subplot):
         if file_ext is None:
             file_ext = "pdf" if pdf else "png"
 
-        self.full_path = util.get_full_path(
+        self._full_path = util.get_full_path(
             plot_name,
             dir_name,
             file_ext=file_ext,
             verbose=verbose,
         )
         self._make_figure()
-        self._fig.savefig(self.full_path)
+        self._fig.savefig(self._full_path)
 
         if close:
             self.close()
 
-        return self.full_path
+        self.full_path = self._full_path # TEMP
+        return self._full_path
+
+    def get_full_path(self) -> str | None:
+        return self._full_path
 
     def _make_figure(self):
         if self._fig is not None:
             return
 
-        fig = self._properties.get_figure()
-        self.plot_fig(fig)
-        self._fig = fig
+        fig_props = FigureProperties(**self._fig_kwargs)
+        self._fig = fig_props.get_figure()
+        self.plot_fig(self._fig)
+
+        fig_props.apply(self._fig)
+        fig_props.check_unused_kwargs()
 
     def plot_axis(self, axis: matplotlib.axes.Axes):
         raise NotImplementedError()
 
     def plot_fig(self, fig: matplotlib.figure.Figure):
+        grid_props = GridProperties(**self._grid_kwargs)
+        num_empty = grid_props.init_size(len(self._subplots))
+        if num_empty > 0:
+            self._subplots += tuple(Empty() for _ in range(num_empty))
+
         all_leaves = all(sp.is_leaf() for sp in self._subplots)
 
         if all_leaves:
-            axes = self._properties.get_axes(fig)
+            axes = grid_props.get_axes(fig)
             for subplot, axis in zip(self._subplots, axes):
                 subplot.plot_axis(axis)
         else:
-            subfigs = self._properties.get_subfigs(fig)
+            subfigs = grid_props.get_subfigs(fig)
             for subplot, subfig in zip(self._subplots, subfigs):
                 subplot.plot_fig(subfig)
 
-        self._properties.apply(fig)
+        grid_props.apply(fig)
+        grid_props.check_unused_kwargs()
 
     def is_leaf(self) -> bool:
         return False

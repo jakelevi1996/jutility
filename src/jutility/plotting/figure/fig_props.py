@@ -1,44 +1,14 @@
-import math
 import matplotlib.pyplot as plt
-import matplotlib.axes
 import matplotlib.figure
-from jutility import util
+from jutility.plotting.properties import PropertyDict
 from jutility.plotting.figure.legend import FigureLegend
 
-class FigureProperties:
-    def __init__(
-        self,
-        num_subplots,
-        num_rows=None,
-        num_cols=None,
-        figsize=None,
-        sharex=False,
-        sharey=False,
-        width_ratios=None,
-        height_ratios=None,
-        constrained_layout=True,
-        tight_layout=False,
-        layout=None,
-        colour=None,
-        title=None,
-        title_font_size=25,
-        title_colour=None,
-        title_wrap_len=None,
-        top_space=None,
-        bottom_space=None,
-        legend: FigureLegend=None,
-        pad=0.1,
-        space=0,
-        dpi=None,
-    ):
-        if num_rows is None:
-            if num_cols is None:
-                num_cols = math.ceil(math.sqrt(num_subplots))
-            num_rows = math.ceil(num_subplots / num_cols)
-        if num_cols is None:
-            num_cols = math.ceil(num_subplots / num_rows)
-        if figsize is None:
-            figsize = [6, 4]
+class FigureProperties(PropertyDict):
+    def get_figure(self):
+        constrained_layout  = self._get_default("constrained_layout", True)
+        tight_layout        = self._get_default("tight_layout", False)
+        layout              = self._get_default("layout", None)
+
         if layout is not None:
             constrained_layout = False
             tight_layout = False
@@ -48,102 +18,48 @@ class FigureProperties:
         if constrained_layout:
             tight_layout = False
             layout = "constrained"
-        if title_wrap_len is not None:
-            title = util.wrap_string(
-                title,
-                max_len=title_wrap_len,
-                wrap_len=title_wrap_len,
-            )
 
-        self._num_rows = num_rows
-        self._num_cols = num_cols
-        self._figsize = figsize
-        self._sharex = sharex
-        self._sharey = sharey
-        self._width_ratios = width_ratios
-        self._height_ratios = height_ratios
-        self._constrained_layout = constrained_layout
-        self._tight_layout = tight_layout
-        self._layout = layout
-        self._colour = colour
-        self._title = title
-        self._title_font_size = title_font_size
-        self._title_colour = title_colour
-        self._top_space = top_space
-        self._bottom_space = bottom_space
-        self._legend = legend
-        self._pad = pad
-        self._space = space
-        self._dpi = dpi
-
-    def get_num_axes(self):
-        return self._num_rows * self._num_cols
-
-    def get_figure(self):
         figure = plt.figure(
-            figsize=self._figsize,
-            dpi=self._dpi,
-            layout=self._layout,
+            figsize=self._get_default("figsize", [6, 4]),
+            dpi=self._get_default("dpi", None),
+            layout=layout,
         )
-        if self._constrained_layout:
+        if constrained_layout:
+            pad = self._get_default("pad", 0.1)
             layout_engine = figure.get_layout_engine()
             layout_engine.set(
-                w_pad=self._pad,
-                h_pad=self._pad,
+                w_pad=self._get_default("w_pad", pad),
+                h_pad=self._get_default("h_pad", pad),
             )
 
+        self._set("tight_layout", tight_layout)
         return figure
 
-    def get_axes(
-        self,
-        figure: matplotlib.figure.Figure,
-    ) -> list[matplotlib.axes.Axes]:
-        axis_array = figure.subplots(
-            nrows=self._num_rows,
-            ncols=self._num_cols,
-            sharex=self._sharex,
-            sharey=self._sharey,
-            squeeze=False,
-            width_ratios=self._width_ratios,
-            height_ratios=self._height_ratios,
-            gridspec_kw=dict(
-                wspace=self._space,
-                hspace=self._space,
-            ),
-        )
-        axis_list = axis_array.flatten().tolist()
-        return axis_list
-
-    def get_subfigs(
-        self,
-        figure: matplotlib.figure.Figure,
-    ) -> list[matplotlib.figure.SubFigure]:
-        subfig_array = figure.subfigures(
-            nrows=self._num_rows,
-            ncols=self._num_cols,
-            squeeze=False,
-            wspace=self._space,
-            hspace=self._space,
-            width_ratios=self._width_ratios,
-            height_ratios=self._height_ratios,
-        )
-        subfig_list = subfig_array.flatten().tolist()
-        return subfig_list
-
     def apply(self, figure: matplotlib.figure.Figure):
-        if self._tight_layout:
+        if self._get("tight_layout"):
             figure.tight_layout()
-        if self._colour is not None:
-            figure.patch.set_facecolor(self._colour)
-        if self._title is not None:
-            figure.suptitle(
-                self._title,
-                fontsize=self._title_font_size,
-                color=self._title_colour,
-            )
-        if self._top_space is not None:
-            figure.subplots_adjust(top=(1 - self._top_space))
-        if self._bottom_space is not None:
-            figure.subplots_adjust(bottom=self._bottom_space)
-        if self._legend is not None:
-            self._legend.plot(figure)
+        if self._has("legend"):
+            self._plot_legend(self._get("legend"), figure)
+
+    def _plot_legend(
+        self,
+        legend: FigureLegend,
+        figure: matplotlib.figure.Figure,
+    ):
+        legend.plot(figure)
+
+    @classmethod
+    def get_figure_kwargs(cls, all_kwargs: dict) -> tuple[dict, dict]:
+        grid_kwargs = all_kwargs.copy()
+        fig_kwargs = dict()
+        keys_str = (
+            "figsize dpi layout constrained_layout tight_layout "
+            "pad w_pad h_pad legend"
+        )
+        keys = keys_str.split()
+
+        for k in keys:
+            if k in grid_kwargs:
+                fig_kwargs[k] = grid_kwargs.pop(k)
+
+        return fig_kwargs, grid_kwargs

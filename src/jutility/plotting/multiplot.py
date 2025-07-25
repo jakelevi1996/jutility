@@ -17,6 +17,13 @@ class MultiPlot(Subplot):
         *subplots: Subplot,
         **kwargs,
     ):
+        """
+        See [`jutility.plotting.GridProperties`](
+        https://github.com/jakelevi1996/jutility/blob/main/src/jutility/plotting/figure/grid_props.py
+        ) and [`jutility.plotting.FigureProperties`](
+        https://github.com/jakelevi1996/jutility/blob/main/src/jutility/plotting/figure/fig_props.py
+        )
+        """
         fig_kwargs, grid_kwargs = FigureProperties.get_figure_kwargs(kwargs)
 
         self._subplots      = subplots

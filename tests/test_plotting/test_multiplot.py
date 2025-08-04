@@ -52,3 +52,55 @@ def test_uneven_leaf_levels():
         title="test_uneven_leaf_levels",
     )
     mp.save("test_uneven_leaf_levels", OUTPUT_DIR)
+
+def test_nested_figure_legend():
+    rng = util.get_numpy_rng("test_nested_figure_legend")
+    cp = plotting.ColourPicker(4)
+
+    def get_subplot(**kwargs):
+        line = plotting.Line(rng.uniform(0, 1, 4), c=cp.next())
+        return plotting.Subplot(line, **kwargs)
+
+    mp = plotting.MultiPlot(
+        plotting.MultiPlot(
+            plotting.MultiPlot(
+                get_subplot(),
+                get_subplot(),
+            ),
+            get_subplot(),
+            get_subplot(),
+            legend=plotting.FigureLegend(
+                plotting.Line(a=0.5, label="Semi-transparent"),
+                plotting.Line(a=1, label="Opaque"),
+            ),
+        ),
+        plotting.MultiPlot(
+            plotting.MultiPlot(
+                get_subplot(),
+                get_subplot(),
+                legend=plotting.FigureLegend(
+                    plotting.Line(ls="--", label="Dashed"),
+                    plotting.Line(ls="-", label="Solid"),
+                ),
+            ),
+            get_subplot(),
+            get_subplot(),
+            legend=plotting.FigureLegend(
+                *[
+                    plotting.Line(lw=i, label=i)
+                    for i in range(1, 11)
+                ],
+                loc="outside center right",
+                num_rows=None,
+                title="Line width",
+            ),
+        ),
+        legend=plotting.FigureLegend(
+            plotting.Line(c="r", label="red"),
+            plotting.Line(c="g", label="green"),
+            plotting.Line(c="b", label="blue"),
+        ),
+        figsize=[12, 6],
+        title="test_nested_figure_legend",
+    )
+    mp.save("test_nested_figure_legend", OUTPUT_DIR)

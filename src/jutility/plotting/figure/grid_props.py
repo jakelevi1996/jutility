@@ -3,6 +3,7 @@ import matplotlib.axes
 import matplotlib.figure
 from jutility import util
 from jutility.plotting.properties import PropertyDict
+from jutility.plotting.figure.legend import FigureLegend
 
 class GridProperties(PropertyDict):
     def init_size(self, num_subplots: int) -> int:
@@ -61,6 +62,8 @@ class GridProperties(PropertyDict):
     def apply(self, figure: matplotlib.figure.Figure):
         if self._has("colour"):
             figure.patch.set_facecolor(self._get("colour"))
+        if self._has("legend"):
+            self._plot_legend(self._get("legend"), figure)
         if self._has("title"):
             title = self._get("title")
             if self._has("title_wrap_len"):
@@ -76,3 +79,10 @@ class GridProperties(PropertyDict):
                 fontsize=self._get_default("title_font_size", 25),
                 color=self._get_default("title_colour", None),
             )
+
+    def _plot_legend(
+        self,
+        legend: FigureLegend,
+        figure: matplotlib.figure.Figure,
+    ):
+        legend.plot(figure)

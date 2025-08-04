@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import matplotlib.figure
 from jutility.plotting.properties import PropertyDict
-from jutility.plotting.figure.legend import FigureLegend
 
 class FigureProperties(PropertyDict):
     def get_figure(self):
@@ -38,15 +37,6 @@ class FigureProperties(PropertyDict):
     def apply(self, figure: matplotlib.figure.Figure):
         if self._get("tight_layout"):
             figure.tight_layout()
-        if self._has("legend"):
-            self._plot_legend(self._get("legend"), figure)
-
-    def _plot_legend(
-        self,
-        legend: FigureLegend,
-        figure: matplotlib.figure.Figure,
-    ):
-        legend.plot(figure)
 
     @classmethod
     def get_figure_kwargs(cls, all_kwargs: dict) -> tuple[dict, dict]:
@@ -54,7 +44,7 @@ class FigureProperties(PropertyDict):
         fig_kwargs = dict()
         keys_str = (
             "figsize dpi layout constrained_layout tight_layout "
-            "pad w_pad h_pad legend"
+            "pad w_pad h_pad"
         )
         keys = keys_str.split()
 

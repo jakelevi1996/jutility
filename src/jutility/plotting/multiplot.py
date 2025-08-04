@@ -37,9 +37,9 @@ class MultiPlot(Subplot):
         self,
         plot_name:  (str | None)=None,
         dir_name:   (str | None)=None,
-        verbose:    bool=True,
         file_ext:   (str | None)=None,
         pdf:        bool=False,
+        verbose:    bool=True,
         close:      bool=True,
     ) -> str:
         if plot_name is None:

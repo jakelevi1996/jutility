@@ -79,20 +79,20 @@ class MultiPlot(Subplot):
         raise NotImplementedError()
 
     def plot_fig(self, fig: matplotlib.figure.Figure):
+        all_leaves = all(sp.is_leaf() for sp in self._subplots)
+
         grid_props = GridProperties(**self._grid_kwargs)
         num_empty = grid_props.init_size(len(self._subplots))
-        if num_empty > 0:
-            self._subplots += tuple(Empty() for _ in range(num_empty))
-
-        all_leaves = all(sp.is_leaf() for sp in self._subplots)
+        subplots_pad  = tuple(Empty() for _ in range(num_empty))
+        subplots_grid = self._subplots + subplots_pad
 
         if all_leaves:
             axes = grid_props.get_axes(fig)
-            for subplot, axis in zip(self._subplots, axes):
+            for subplot, axis in zip(subplots_grid, axes):
                 subplot.plot_axis(axis)
         else:
             subfigs = grid_props.get_subfigs(fig)
-            for subplot, subfig in zip(self._subplots, subfigs):
+            for subplot, subfig in zip(subplots_grid, subfigs):
                 subplot.plot_fig(subfig)
 
         grid_props.apply(fig)

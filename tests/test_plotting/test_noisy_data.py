@@ -20,3 +20,20 @@ def test_plot_alphas():
         figsize=[10, 8],
     )
     mp.save("test_plot_alphas", OUTPUT_DIR)
+
+def test_summarise():
+    rng = util.get_numpy_rng("test_summarise")
+
+    x = np.sort(rng.uniform(0, 5, (200, 10)), axis=0)
+    y = np.exp(-x) + rng.normal(0, 0.1, x.shape)
+
+    xm,  _,  _ = plotting.summarise(x, num_split=50)
+    ym, yu, yl = plotting.summarise(y, num_split=50, n_sigma=2)
+
+    plotting.plot(
+        plotting.Line(x, y, a=0.2, z=20),
+        plotting.Line(xm, ym, a=1.0, z=30),
+        plotting.FillBetween(xm, yl, yu, a=0.3, z=10),
+        plot_name="test_summarise",
+        dir_name=OUTPUT_DIR,
+    )

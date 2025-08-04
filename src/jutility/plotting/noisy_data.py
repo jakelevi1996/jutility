@@ -263,10 +263,10 @@ class NoisySweep:
         key_order:  (list[str] | None)=None,
         n_sigma:    float=1.0,
     ) -> list[PlottableGroup]:
-        if cp is None:
-            cp = ColourPicker(len(self))
         if key_order is None:
             key_order = self._key_order
+        if cp is None:
+            cp = ColourPicker(len(key_order))
 
         return [
             self._sweeps[key].plot(

@@ -53,6 +53,54 @@ def test_uneven_leaf_levels():
     )
     mp.save("test_uneven_leaf_levels", OUTPUT_DIR)
 
+def test_nested_multiplot_colour():
+    rng = util.get_numpy_rng("test_nested_multiplot_colour")
+    cp = plotting.ColourPicker(4)
+
+    def get_subplot(**kwargs):
+        line = plotting.Line(rng.uniform(0, 1, 4), c=cp.next())
+        return plotting.Subplot(line, **kwargs)
+
+    mp = plotting.MultiPlot(
+        plotting.MultiPlot(
+            get_subplot(),
+            get_subplot(),
+            plotting.MultiPlot(
+                get_subplot(),
+                plotting.MultiPlot(get_subplot(), colour="m"),
+                get_subplot(),
+                colour="r",
+            ),
+            colour="g",
+            title=None,
+        ),
+        plotting.MultiPlot(get_subplot(title="Upper right"), colour="g"),
+        get_subplot(),
+        plotting.MultiPlot(
+            plotting.MultiPlot(
+                get_subplot(),
+                get_subplot(),
+                get_subplot(),
+                num_rows=1,
+            ),
+            plotting.MultiPlot(
+                get_subplot(),
+                get_subplot(),
+                num_rows=1,
+            ),
+            title="Lower right",
+            title_font_size=12,
+            num_cols=1,
+        ),
+        width_ratios=[3, 2],
+        height_ratios=[3, 2],
+        space=0.05,
+        figsize=[10, 8],
+        colour="c",
+        title="test_nested_multiplot_colour",
+    )
+    mp.save("test_nested_multiplot_colour", OUTPUT_DIR)
+
 def test_nested_figure_legend():
     rng = util.get_numpy_rng("test_nested_figure_legend")
     cp = plotting.ColourPicker(4)

@@ -29,15 +29,15 @@ class GridProperties(PropertyDict):
         axis_array = figure.subplots(
             nrows=self._get("num_rows"),
             ncols=self._get("num_cols"),
-            sharex=self._get_default("sharex", False),
-            sharey=self._get_default("sharey", False),
-            squeeze=False,
             width_ratios=self._get_default("width_ratios", None),
             height_ratios=self._get_default("height_ratios", None),
+            sharex=self._get_default("sharex", False),
+            sharey=self._get_default("sharey", False),
             gridspec_kw=dict(
                 wspace=space,
                 hspace=space,
             ),
+            squeeze=False,
         )
         axis_list = axis_array.flatten().tolist()
         return axis_list
@@ -50,11 +50,11 @@ class GridProperties(PropertyDict):
         subfig_array = figure.subfigures(
             nrows=self._get("num_rows"),
             ncols=self._get("num_cols"),
-            squeeze=False,
-            wspace=space,
-            hspace=space,
             width_ratios=self._get_default("width_ratios", None),
             height_ratios=self._get_default("height_ratios", None),
+            wspace=space,
+            hspace=space,
+            squeeze=False,
         )
         subfig_list = subfig_array.flatten().tolist()
         return subfig_list

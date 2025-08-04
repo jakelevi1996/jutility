@@ -261,7 +261,7 @@ class NoisySweep:
         self,
         cp:         (ColourPicker | None)=None,
         key_order:  (list[str] | None)=None,
-        n_sigma:    float=1.0,
+        **kwargs,
     ) -> list[PlottableGroup]:
         if key_order is None:
             key_order = self._key_order
@@ -272,7 +272,7 @@ class NoisySweep:
             self._sweeps[key].plot(
                 c=cp.next(),
                 label=key,
-                n_sigma=n_sigma,
+                **kwargs,
             )
             for key in key_order
         ]

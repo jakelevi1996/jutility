@@ -1,9 +1,13 @@
 class StringFormatter:
     def format(self, x) -> str:
+        raise NotImplementedError
+
+class NoFormat(StringFormatter):
+    def format(self, x) -> str:
         return x
 
 class PercentFormatter(StringFormatter):
-    def __init__(self, fmt_str: str="%s"):
+    def __init__(self, fmt_str: str):
         self._fmt_str = fmt_str
 
     def format(self, x) -> str:

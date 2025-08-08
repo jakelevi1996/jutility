@@ -68,6 +68,7 @@ from jutility.util.str_util import (
 )
 from jutility.util.str_fmt import (
     StringFormatter,
+    NoFormat,
     PercentFormatter,
     FloatFormatter,
 )

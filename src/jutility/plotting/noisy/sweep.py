@@ -1,4 +1,5 @@
 import numpy as np
+from jutility import util
 from jutility.plotting.noisy.data import NoisyData
 from jutility.plotting.colour_picker import ColourPicker
 from jutility.plotting.plottable import (
@@ -36,17 +37,20 @@ class NoisySweep:
         self,
         cp:         (ColourPicker | None)=None,
         key_order:  (list[str] | None)=None,
+        label_fmt:  (util.StringFormatter | None)=None,
         **kwargs,
     ) -> list[PlottableGroup]:
         if key_order is None:
             key_order = self._key_order
         if cp is None:
             cp = ColourPicker(len(key_order))
+        if label_fmt is None:
+            label_fmt = util.NoFormat()
 
         return [
             self._sweeps[key].plot(
                 c=cp.next(),
-                label=key,
+                label=label_fmt.format(key),
                 **kwargs,
             )
             for key in key_order

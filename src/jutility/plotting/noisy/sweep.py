@@ -57,6 +57,9 @@ class NoisySweep:
         """
         See [`plt.pcolormesh`](
         https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.pcolormesh.html
+        ) and
+        [`tests/test_plotting/test_noisy/test_sweep.py::test_colour_mesh`](
+        https://github.com/jakelevi1996/jutility/blob/main/tests/test_plotting/test_noisy/test_sweep.py
         )
         """
         if x is None:

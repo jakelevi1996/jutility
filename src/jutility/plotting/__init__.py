@@ -34,6 +34,7 @@ from jutility.plotting.noisy.data import NoisyData
 from jutility.plotting.noisy.sweep import NoisySweep
 from jutility.plotting.colour_picker import ColourPicker
 from jutility.plotting.figure.fig_props import FigureProperties
+from jutility.plotting.figure.grid_props import GridProperties
 from jutility.plotting.figure.legend import FigureLegend
 from jutility.plotting.subplot.subplot import Subplot
 from jutility.plotting.subplot.axis_props import AxisProperties

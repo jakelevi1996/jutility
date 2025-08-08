@@ -37,3 +37,26 @@ def test_summarise():
         plot_name="test_summarise",
         dir_name=OUTPUT_DIR,
     )
+
+def test_colour_mesh():
+    rng = util.get_numpy_rng("test_colour_mesh")
+
+    nx = 20
+    ny = 30
+    x = np.linspace(-3, 3, nx).reshape(1, nx)
+    y = np.linspace(-3, 3, ny).reshape(ny, 1)
+
+    ns = plotting.NoisySweep()
+
+    for xi in x.flatten().tolist():
+        for yi in y.flatten().tolist():
+            for _ in range(rng.integers(3, 5)):
+                z = np.exp(-(xi*xi + yi*yi)) + rng.normal(0, 0.02)
+
+            ns.update(yi, xi, z)
+
+    plotting.plot(
+        ns.colour_mesh(),
+        plot_name="test_colour_mesh",
+        dir_name=OUTPUT_DIR,
+    )

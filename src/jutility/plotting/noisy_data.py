@@ -8,6 +8,7 @@ from jutility.plotting.plottable import (
     VLine,
     HLine,
     AxLine,
+    ColourMesh,
 )
 from jutility.plotting.colour_picker import ColourPicker
 
@@ -80,10 +81,7 @@ class NoisyData:
         return x_n1.flatten(), y_n1.flatten()
 
     def get_statistics(self, n_sigma: float=1.0):
-        x_list = sorted(
-            x for x, y_list in self._results_list_dict.items()
-            if len(y_list) > 0
-        )
+        x_list = self.get_x()
         y_list_list = [self._results_list_dict[x] for x in x_list]
         mean, ucb, lcb = confidence_bounds(
             y_list_list,
@@ -91,6 +89,16 @@ class NoisyData:
             log=self._log_y,
         )
         return np.array(x_list), mean, ucb, lcb
+
+    def get_x(self) -> list[float]:
+        return sorted(
+            x
+            for x, y_list in self._results_list_dict.items()
+            if len(y_list) > 0
+        )
+
+    def get_mean(self, x: float) -> float:
+        return np.mean(self._results_list_dict[x])
 
     def argmax(self):
         best_y_dict = {
@@ -276,6 +284,36 @@ class NoisySweep:
             )
             for key in key_order
         ]
+
+    def colour_mesh(
+        self,
+        x:          (list[float] | None)=None,
+        key_order:  (list[str] | None)=None,
+        **kwargs,
+    ):
+        """
+        See [`plt.pcolormesh`](
+        https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.pcolormesh.html
+        )
+        """
+        if x is None:
+            x = self.get_x()
+        if key_order is None:
+            key_order = self._key_order
+
+        z = [
+            [self._sweeps[k].get_mean(xi) for xi in x]
+            for k in key_order
+        ]
+        return ColourMesh(x, key_order, z, **kwargs)
+
+    def get_x(self) -> list[float]:
+        all_x = [
+            x
+            for nd in self._sweeps.values()
+            for x in nd.get_x()
+        ]
+        return sorted(set(all_x))
 
     def __len__(self) -> int:
         return len(self._sweeps)

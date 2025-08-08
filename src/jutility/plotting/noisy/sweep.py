@@ -1,13 +1,16 @@
+import numpy as np
 from jutility.plotting.noisy.data import NoisyData
 from jutility.plotting.colour_picker import ColourPicker
 from jutility.plotting.plottable import (
     PlottableGroup,
     ColourMesh,
 )
+from jutility.plotting.subplot.colour_bar import ColourBar
 
 class NoisySweep:
     def __init__(
         self,
+        log_z:      bool=False,
         sweeps:     (dict[str, NoisyData] | None)=None,
         key_order:  (list[str] | None)=None,
         **kwargs,
@@ -17,6 +20,7 @@ class NoisySweep:
         if key_order is None:
             key_order = []
 
+        self._log_z = log_z
         self._sweeps = sweeps
         self._key_order = key_order
         self._kwargs = kwargs
@@ -52,8 +56,9 @@ class NoisySweep:
         self,
         x:          (list[float] | None)=None,
         key_order:  (list[str] | None)=None,
+        set_vlims:  bool=True,
         **kwargs,
-    ):
+    ) -> ColourMesh:
         """
         See [`plt.pcolormesh`](
         https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.pcolormesh.html
@@ -71,7 +76,43 @@ class NoisySweep:
             [self._sweeps[k].get_mean(xi) for xi in x]
             for k in key_order
         ]
+        z = np.array(z)
+
+        if self._log_z:
+            z = np.log(np.abs(z))
+        if set_vlims:
+            kwargs.setdefault("vmin", z.min())
+            kwargs.setdefault("vmax", z.max())
+
         return ColourMesh(x, key_order, z, **kwargs)
+
+    def colour_bar(
+        self,
+        x:          (list[float] | None)=None,
+        key_order:  (list[str] | None)=None,
+        **kwargs,
+    ) -> ColourBar:
+        """
+        See [`jutility.plotting.ColourBar`](
+        https://github.com/jakelevi1996/jutility/blob/main/src/jutility/plotting/subplot/colour_bar.py
+        )
+        """
+        if x is None:
+            x = self.get_x()
+        if key_order is None:
+            key_order = self._key_order
+
+        z = [
+            self._sweeps[k].get_mean(xi)
+            for k in key_order
+            for xi in x
+        ]
+        return ColourBar(
+            vmin=min(z),
+            vmax=max(z),
+            log=self._log_z,
+            **kwargs,
+        )
 
     def get_x(self) -> list[float]:
         all_x = [

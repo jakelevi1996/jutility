@@ -9,9 +9,9 @@ class FigureLegend:
     """
     def __init__(
         self,
-        *lines: Plottable,
-        num_rows=1,
-        loc="outside lower center",
+        *lines:     Plottable,
+        num_rows:   (int | None)=1,
+        loc:        (str | None)="outside lower center",
         **legend_kwargs,
     ):
         self._lines = Legend.filter_plottables(lines)

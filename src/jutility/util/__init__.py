@@ -66,6 +66,11 @@ from jutility.util.str_util import (
     merge_strings,
     get_unique_prefixes,
 )
+from jutility.util.str_fmt import (
+    StringFormatter,
+    PercentFormatter,
+    FloatFormatter,
+)
 from jutility.util.sys_util import (
     get_argv_str,
     get_program_command,

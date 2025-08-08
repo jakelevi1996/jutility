@@ -1,4 +1,5 @@
 import datetime
+from jutility.util.str_fmt import StringFormatter
 
 class Unit:
     def get_format_parts(self, format_parts: list[str]) -> list[str]:
@@ -82,7 +83,7 @@ class CompoundUnit(Unit):
         else:
             return [self_format]
 
-class UnitsFormatter:
+class UnitsFormatter(StringFormatter):
     def __init__(
         self,
         base_unit: BaseUnit,
@@ -99,7 +100,7 @@ class UnitsFormatter:
         for unit in self._all_units:
             unit.set_format_str(display_child_units)
 
-    def format(self, x: float):
+    def format(self, x: float) -> str:
         part_units = []
         for unit in self._compound_units:
             if x < unit.num_child_units:

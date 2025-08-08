@@ -315,5 +315,12 @@ class NoisySweep:
         ]
         return sorted(set(all_x))
 
+    def __iter__(self):
+        return (
+            y
+            for nd in self._sweeps.values()
+            for y in nd
+        )
+
     def __len__(self) -> int:
         return len(self._sweeps)

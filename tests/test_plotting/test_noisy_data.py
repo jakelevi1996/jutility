@@ -55,8 +55,17 @@ def test_colour_mesh():
 
             ns.update(yi, xi, z)
 
-    plotting.plot(
-        ns.colour_mesh(),
-        plot_name="test_colour_mesh",
-        dir_name=OUTPUT_DIR,
+    mp = plotting.MultiPlot(
+        plotting.Subplot(
+            ns.colour_mesh(vmin=min(ns), vmax=max(ns)),
+        ),
+        plotting.ColourBar(
+            vmin=min(ns),
+            vmax=max(ns),
+            ticks=[min(ns), max(ns), 0.5],
+        ),
+        width_ratios=[1, 0.1],
+        title="NoisySweep.colour_mesh",
+
     )
+    mp.save("test_colour_mesh", OUTPUT_DIR)

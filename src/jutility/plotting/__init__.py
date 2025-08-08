@@ -26,12 +26,12 @@ from jutility.plotting.plottable import (
     Legend,
     PlottableGroup,
 )
-from jutility.plotting.noisy_data import (
+from jutility.plotting.noisy.bounds import (
     confidence_bounds,
     summarise,
-    NoisyData,
-    NoisySweep,
 )
+from jutility.plotting.noisy.data import NoisyData
+from jutility.plotting.noisy.sweep import NoisySweep
 from jutility.plotting.colour_picker import ColourPicker
 from jutility.plotting.figure.fig_props import FigureProperties
 from jutility.plotting.figure.legend import FigureLegend

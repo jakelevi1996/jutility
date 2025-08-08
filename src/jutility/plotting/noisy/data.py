@@ -8,37 +8,8 @@ from jutility.plotting.plottable import (
     VLine,
     HLine,
     AxLine,
-    ColourMesh,
 )
-from jutility.plotting.colour_picker import ColourPicker
-
-def confidence_bounds(
-    data_list:  list,
-    n_sigma:    float=1.0,
-    log:        bool=False,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    if log:
-        data_list = [np.log(x) for x in data_list]
-
-    mean = np.array([np.mean(x) for x in data_list])
-    std  = np.array([np.std( x) for x in data_list])
-    ucb = mean + (n_sigma * std)
-    lcb = mean - (n_sigma * std)
-
-    if log:
-        mean, ucb, lcb = np.exp([mean, ucb, lcb])
-
-    return mean, ucb, lcb
-
-def summarise(
-    data_array: np.ndarray,
-    split_dim:  int=0,
-    num_split:  int=50,
-    **kwargs,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    num_split = min(num_split, data_array.shape[split_dim])
-    data_list = np.array_split(data_array, num_split, split_dim)
-    return confidence_bounds(data_list, **kwargs)
+from jutility.plotting.noisy.bounds import confidence_bounds
 
 class NoisyData:
     def __init__(
@@ -241,86 +212,3 @@ class NoisyData:
 
     def __repr__(self):
         return util.format_type(type(self), results=self._results_list_dict)
-
-class NoisySweep:
-    def __init__(
-        self,
-        sweeps:     (dict[str, NoisyData] | None)=None,
-        key_order:  (list[str] | None)=None,
-        **kwargs,
-    ):
-        if sweeps is None:
-            sweeps = dict()
-        if key_order is None:
-            key_order = []
-
-        self._sweeps = sweeps
-        self._key_order = key_order
-        self._kwargs = kwargs
-
-    def update(self, key: str, x: float, y: float):
-        if key not in self._sweeps:
-            self._sweeps[key] = NoisyData(**self._kwargs)
-            self._key_order.append(key)
-
-        self._sweeps[key].update(x, y)
-
-    def plot(
-        self,
-        cp:         (ColourPicker | None)=None,
-        key_order:  (list[str] | None)=None,
-        **kwargs,
-    ) -> list[PlottableGroup]:
-        if key_order is None:
-            key_order = self._key_order
-        if cp is None:
-            cp = ColourPicker(len(key_order))
-
-        return [
-            self._sweeps[key].plot(
-                c=cp.next(),
-                label=key,
-                **kwargs,
-            )
-            for key in key_order
-        ]
-
-    def colour_mesh(
-        self,
-        x:          (list[float] | None)=None,
-        key_order:  (list[str] | None)=None,
-        **kwargs,
-    ):
-        """
-        See [`plt.pcolormesh`](
-        https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.pcolormesh.html
-        )
-        """
-        if x is None:
-            x = self.get_x()
-        if key_order is None:
-            key_order = self._key_order
-
-        z = [
-            [self._sweeps[k].get_mean(xi) for xi in x]
-            for k in key_order
-        ]
-        return ColourMesh(x, key_order, z, **kwargs)
-
-    def get_x(self) -> list[float]:
-        all_x = [
-            x
-            for nd in self._sweeps.values()
-            for x in nd.get_x()
-        ]
-        return sorted(set(all_x))
-
-    def __iter__(self):
-        return (
-            y
-            for nd in self._sweeps.values()
-            for y in nd
-        )
-
-    def __len__(self) -> int:
-        return len(self._sweeps)

@@ -29,7 +29,7 @@ def test_colour_mesh():
             vmax=max(ns),
             ticks=[min(ns), max(ns), 0.5],
         ),
-        width_ratios=[1, 0.1],
+        wr=[1, 0.1],
         title="NoisySweep.colour_mesh",
 
     )

@@ -27,7 +27,7 @@ class Plottable:
     def _get_default_kwargs(self):
         return {"z": 10}
 
-    def _get_abbreviated_keys_dict(self):
+    def _get_abbreviated_keys_dict(self) -> dict:
         return {
             "c": "color",
             "z": "zorder",

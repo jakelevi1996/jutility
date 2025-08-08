@@ -6,6 +6,14 @@ from jutility.plotting.properties import PropertyDict
 from jutility.plotting.figure.legend import FigureLegend
 
 class GridProperties(PropertyDict):
+    def _get_abbreviated_keys_dict(self) -> dict:
+        return {
+            "nr": "num_rows",
+            "nc": "num_cols",
+            "wr": "width_ratios",
+            "hr": "height_ratios",
+        }
+
     def init_size(self, num_subplots: int) -> int:
         num_rows = self._get_default("num_rows", None)
         num_cols = self._get_default("num_cols", None)

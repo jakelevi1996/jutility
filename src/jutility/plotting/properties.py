@@ -2,8 +2,19 @@ from jutility import util
 
 class PropertyDict:
     def __init__(self, **kwargs):
-        self._kwargs = kwargs
+        self._kwargs = self._expand_abbreviations(kwargs)
         self._init_defaults()
+
+    def _expand_abbreviations(self, kwargs: dict) -> dict:
+        key_map = self._get_abbreviated_keys_dict()
+        kwargs = {
+            key_map.get(k, k): v
+            for k, v in kwargs.items()
+        }
+        return kwargs
+
+    def _get_abbreviated_keys_dict(self) -> dict:
+        return dict()
 
     def _init_defaults(self):
         return

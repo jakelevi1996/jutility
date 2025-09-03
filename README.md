@@ -10,6 +10,8 @@ A Judicious collection of Python Utilities (including CLI configuration, plottin
   - [Contents](#contents)
   - [Install with `pip`](#install-with-pip)
   - [Usage examples](#usage-examples)
+    - [`plotting`](#plotting)
+      - [`plotting.NoisyCurve`](#plottingnoisycurve)
 
 ## Install with `pip`
 
@@ -51,3 +53,36 @@ plotting.plot(
 *Outdated; TODO*
 
 (in the meantime, see [`scripts/make_logo.py`](scripts/make_logo.py) which made the logo above, and [unit tests](tests/) for [`util`](tests/test_util.py), [`plotting`](tests/test_plotting.py), and [`cli`](tests/test_cli.py))
+
+### `plotting`
+
+#### `plotting.NoisyCurve`
+
+See [`scripts/demo_noisycurve.py`](scripts/demo_noisycurve.py):
+
+```python
+import numpy as np
+from jutility import plotting, util
+
+rng = np.random.default_rng(0)
+
+nc = plotting.NoisyCurve()
+
+n = 100
+x = np.linspace(-1, 3, n)
+
+for i in range(10):
+    y = np.exp(-x) + rng.normal(0, 0.1, n) + 0.1*i
+    nc.update(y)
+
+nc_plot = nc.plot(x, label="NoisyCurve")
+
+plotting.plot(
+    nc_plot,
+    plotting.Legend.from_plottables(nc_plot),
+    plot_name="demo_noisycurve",
+    dir_name="images",
+)
+```
+
+![](images/demo_noisycurve.png)

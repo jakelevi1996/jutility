@@ -39,10 +39,7 @@ class NoisyCurve:
             log=self._log_y,
         )
         return PlottableGroup(
-            *[
-                Line(x, yi,             c=c, z=20, a=alpha_line)
-                for yi in self._curves
-            ],
+            Line(x, y.T,                c=c, z=20, a=alpha_line),
             Line(x, mean,               c=c, z=30, a=alpha_mean),
             FillBetween(x, lcb, ucb,    c=c, z=10, a=alpha_fill),
             label=label,

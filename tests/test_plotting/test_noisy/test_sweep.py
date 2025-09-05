@@ -59,3 +59,56 @@ def test_colour_mesh():
         title="test_colour_mesh",
     )
     mp.save("test_colour_mesh", OUTPUT_DIR)
+
+def test_transpose():
+    rng = util.get_numpy_rng("test_transpose")
+
+    ns = plotting.NoisySweep()
+
+    nk = 8
+    nx = 10
+    nr = 3
+
+    for k in np.linspace(1, 4, nk).tolist():
+        for x in np.linspace(0, 1, nx).tolist():
+            for _ in range(nr):
+                y = k * x * x + rng.normal(0, 0.05)
+                ns.update(k, x, y)
+
+    ns_t = ns.transpose()
+
+    assert len(ns) == nk
+    assert len(ns_t) == nx
+    assert len(ns_t) != len(ns)
+
+    assert sorted(ns) == sorted(ns_t)
+
+    lines   = ns.plot(label_fmt=util.FloatFormatter(2))
+    lines_t = ns.transpose().plot(label_fmt=util.FloatFormatter(2))
+
+    mp = plotting.MultiPlot(
+        plotting.Subplot(
+            *lines,
+            plotting.Legend.from_plottables(*lines, title="k"),
+            xlabel="x",
+            ylabel="y",
+        ),
+        plotting.Subplot(
+            *lines_t,
+            plotting.Legend.from_plottables(*lines_t, title="x"),
+            xlabel="k",
+            ylabel="y",
+        ),
+        plotting.MultiPlot(
+            plotting.Subplot(
+                ns.colour_mesh(),
+                xlabel="x",
+                ylabel="k",
+            ),
+            ns.colour_bar(label="y"),
+            wr=[1, 0.1],
+        ),
+        figsize=[10, 8],
+        title="test_transpose",
+    )
+    mp.save("test_transpose", OUTPUT_DIR)

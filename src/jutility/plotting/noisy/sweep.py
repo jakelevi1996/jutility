@@ -126,6 +126,15 @@ class NoisySweep:
         ]
         return sorted(set(all_x))
 
+    def transpose(self) -> "NoisySweep":
+        ns = NoisySweep(log_z=self._log_z, **self._kwargs)
+        for k, nd in self._sweeps.items():
+            x, y = nd.get_all_data()
+            for xi, yi in zip(x, y):
+                ns.update(xi, k, yi)
+
+        return ns
+
     def __iter__(self):
         return (
             y

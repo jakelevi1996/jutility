@@ -2,7 +2,7 @@ import numpy as np
 from jutility.plotting.plottable import (
     PlottableGroup,
     Line,
-    FillBetween
+    FillBetween,
 )
 from jutility.plotting.noisy.bounds import confidence_bounds
 

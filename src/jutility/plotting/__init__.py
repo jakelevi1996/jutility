@@ -33,6 +33,7 @@ from jutility.plotting.noisy.bounds import (
 from jutility.plotting.noisy.data import NoisyData
 from jutility.plotting.noisy.sweep import NoisySweep
 from jutility.plotting.noisy.curve import NoisyCurve
+from jutility.plotting.noisy.curve_sweep import NoisyCurveSweep
 from jutility.plotting.colour_picker import ColourPicker
 from jutility.plotting.figure.fig_props import FigureProperties
 from jutility.plotting.figure.grid_props import GridProperties

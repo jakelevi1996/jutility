@@ -1,3 +1,4 @@
+from jutility import util
 from jutility.cli.arg import Arg
 from jutility.cli.parent import _ArgParent
 from jutility.cli.unknown import _UnknownArg
@@ -53,3 +54,16 @@ class ParsedArgs(_ArgParent):
     def reset_object_cache(self):
         for arg in self._arg_dict.values():
             arg.reset_object_cache()
+
+    def save_json(
+        self,
+        dir_name:       str,
+        output_name:    str="args",
+        **kwargs,
+    ) -> str:
+        return util.save_json(
+            self.get_value_dict(),
+            output_name,
+            dir_name,
+            **kwargs,
+        )

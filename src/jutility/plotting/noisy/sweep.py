@@ -126,6 +126,9 @@ class NoisySweep:
         ]
         return sorted(set(all_x))
 
+    def get_keys(self) -> list[float]:
+        return sorted(self._sweeps.keys())
+
     def transpose(self) -> "NoisySweep":
         ns = NoisySweep(log_z=self._log_z, **self._kwargs)
         for k, nd in self._sweeps.items():
@@ -134,6 +137,13 @@ class NoisySweep:
                 ns.update(xi, k, yi)
 
         return ns
+
+    def inverse(self, y: float) -> set[tuple[float, float, int]]:
+        return set(
+            (k, x, repeat)
+            for k, nd in self._sweeps.items()
+            for x, repeat in nd.inverse(y)
+        )
 
     def __iter__(self):
         return (

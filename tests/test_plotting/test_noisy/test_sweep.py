@@ -112,3 +112,25 @@ def test_transpose():
         title="test_transpose",
     )
     mp.save("test_transpose", OUTPUT_DIR)
+
+def test_inverse():
+    ns = plotting.NoisySweep()
+    ns.update(5, 3, 20)
+    ns.update(3, 4, 25)
+    ns.update(3, 4, 27)
+    ns.update(8, 2, 23)
+    ns.update(8, 2, 20)
+
+    assert ns.inverse(max(ns)) == {(3, 4, 1)}
+    assert ns.inverse(min(ns)) == {(5, 3, 0), (8, 2, 1)}
+
+def test_get_x_get_keys():
+    ns = plotting.NoisySweep()
+    ns.update(5, 3, 20)
+    ns.update(3, 4, 25)
+    ns.update(3, 4, 27)
+    ns.update(8, 2, 23)
+    ns.update(8, 2, 20)
+
+    assert ns.get_keys() == [3, 5, 8]
+    assert ns.get_x() == [2, 3, 4]

@@ -3,6 +3,13 @@ import matplotlib.figure
 from jutility.plotting.properties import PropertyDict
 
 class FigureProperties(PropertyDict):
+    def _get_abbreviated_keys_dict(self) -> dict:
+        return {
+            "fs": "figsize",
+            "wp": "w_pad",
+            "hp": "h_pad",
+        }
+
     def get_figure(self):
         constrained_layout  = self._get_default("constrained_layout", True)
         tight_layout        = self._get_default("tight_layout", False)
@@ -43,8 +50,9 @@ class FigureProperties(PropertyDict):
         grid_kwargs = all_kwargs.copy()
         fig_kwargs = dict()
         keys_str = (
-            "figsize dpi layout constrained_layout tight_layout "
-            "pad w_pad h_pad"
+            "figsize fs dpi "
+            "layout constrained_layout tight_layout "
+            "pad w_pad wp h_pad hp"
         )
         keys = keys_str.split()
 

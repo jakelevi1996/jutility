@@ -12,6 +12,9 @@ class GridProperties(PropertyDict):
             "nc": "num_cols",
             "wr": "width_ratios",
             "hr": "height_ratios",
+            "ws": "wspace",
+            "hs": "hspace",
+            "tfs": "title_font_size",
         }
 
     def init_size(self, num_subplots: int) -> int:
@@ -41,10 +44,10 @@ class GridProperties(PropertyDict):
             height_ratios=self._get_default("height_ratios", None),
             sharex=self._get_default("sharex", False),
             sharey=self._get_default("sharey", False),
-            gridspec_kw=dict(
-                wspace=space,
-                hspace=space,
-            ),
+            gridspec_kw={
+                "wspace": self._get_default("wspace", space),
+                "hspace": self._get_default("hspace", space),
+            },
             squeeze=False,
         )
         axis_list = axis_array.flatten().tolist()

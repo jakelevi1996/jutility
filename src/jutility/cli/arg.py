@@ -113,11 +113,12 @@ class BooleanArg(Arg):
 
     def _init_help(self):
         if "default" in self._kwargs:
-            self._kwargs.setdefault("help", "")
-        else:
+            if "help" not in self._kwargs:
+                self._kwargs["help"] = ""
+        if "default" not in self._kwargs:
             if "help" in self._kwargs:
                 self._kwargs["help"] += " (default: None)"
-            else:
+            if "help" not in self._kwargs:
                 self._kwargs["help"] = "(default: None)"
 
 class JsonArg(Arg):
@@ -127,11 +128,3 @@ class JsonArg(Arg):
             type=json.loads,
             **self._kwargs,
         )
-
-    def _init_help(self):
-        if ((len(self._kwargs) > 0) and ("help" not in self._kwargs)):
-            self._kwargs["help"] = util.format_dict(self._kwargs)
-        if "help" in self._kwargs:
-            self._kwargs["help"] += " (format: JSON string)"
-        else:
-            self._kwargs["help"] = "Format: JSON string"

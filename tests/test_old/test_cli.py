@@ -185,9 +185,8 @@ def test_parser_help():
         "  --h, --no-h        (default: None)\n"
         "  --i, --no-i        (default: True)\n"
         "  --j, --no-j        (default: False)\n"
-        "  --k K              default=[1, [2, 3]] (format: JSON string)\n"
-        "  --l [L ...]        default=[4, [5, 6]], nargs='*' "
-        "(format: JSON string)\n"
+        "  --k K              default=[1, [2, 3]]\n"
+        "  --l [L ...]        default=[4, [5, 6]], nargs='*'\n"
     )
 
 def test_object_arg():
@@ -1070,8 +1069,8 @@ def test_json_arg():
         "\n"
         "options:\n"
         "  -h, --help     show this help message and exit\n"
-        "  --a A          Format: JSON string\n"
-        "  --b B [B ...]  nargs='+', required=True (format: JSON string)\n"
+        "  --a A\n"
+        "  --b B [B ...]  nargs='+', required=True\n"
     )
 
     args = parser.parse_args("--b 3.4 \"abc\" 7 [1,2,3]".split())

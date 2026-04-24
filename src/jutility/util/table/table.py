@@ -114,6 +114,9 @@ class Table:
             if x is not None
         ]
 
+    def get_item(self, column_name: str, row_ind: int) -> list:
+        return self._column_dict[column_name].get_item(row_ind)
+
     def save_pickle(self, filename, dir_name=None) -> str:
         self.set_printer(None)
         for column in self._column_list:

@@ -40,6 +40,12 @@ def extract_substring(s, prefix, suffix, offset=None, strip=True):
 
     return s_substring
 
+def remove_whitespace(s: str) -> str:
+    return "".join(c for c in s if not c.isspace())
+
+def strings_equal_except_whitespace(s1: str, s2: str) -> bool:
+    return remove_whitespace(s1) == remove_whitespace(s2)
+
 def merge_strings(input_list: list[str], clean=True):
     output_str = ""
     while len(input_list) > 0:

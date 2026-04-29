@@ -37,3 +37,39 @@ def test_offset():
         "test_offset",
         dir_name=OUTPUT_DIR,
     )
+
+def test_get_legend_lines():
+    rng = util.get_numpy_rng("test_get_legend_lines")
+    labels = "A BC DEF GHIJK LMNOP".split()
+
+    ns = plotting.NoisySweep()
+    for _ in range(5):
+        x, y = rng.normal(), rng.normal()
+        ns.update(labels[0], x, y)
+        x, y = rng.normal(), rng.normal()
+        ns.update(labels[1], x, y)
+        x, y = rng.normal(), rng.normal()
+        ns.update(labels[2], x, y)
+        x, y = rng.normal(), rng.normal()
+        ns.update(labels[3], x, y)
+        x, y = rng.normal(), rng.normal()
+        ns.update(labels[4], x, y)
+
+    cp = plotting.ColourPicker(len(labels))
+
+    mp = plotting.MultiPlot(
+        plotting.Subplot(
+            *ns.plot(cp, labels),
+            xlim=[-2, 2],
+            ylim=[-2, 2],
+        ),
+        legend=plotting.FigureLegend(
+            *cp.get_legend_lines(*labels),
+            num_rows=None,
+            loc="outside center right",
+        ),
+    )
+    mp.save(
+        "test_get_legend_lines",
+        dir_name=OUTPUT_DIR,
+    )

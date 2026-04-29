@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import matplotlib.colors
 import numpy as np
-from jutility.plotting.plottable import Plottable
+from jutility.plotting.plottable import Plottable, Line
 from jutility.plotting.subplot.colour_bar import ColourBar
 
 class ColourPicker:
@@ -79,6 +79,12 @@ class ColourPicker:
             vmax = len(self._colours)
 
         return ColourBar(vmin, vmax, cmap=self._cmap, **kwargs)
+
+    def get_legend_lines(self, *labels: str, **kwargs) -> list[Line]:
+        return [
+            Line(c=c, label=s, **kwargs)
+            for c, s in zip(self, labels)
+        ]
 
     def __iter__(self):
         return iter(self._colours)

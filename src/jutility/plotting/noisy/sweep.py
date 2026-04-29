@@ -49,11 +49,12 @@ class NoisySweep:
 
         return [
             self._sweeps[key].plot(
-                c=cp.next(),
+                c=c,
                 label=label_fmt.format(key),
                 **kwargs,
             )
-            for key in key_order
+            for key, c in zip(key_order, cp)
+            if key in self._sweeps
         ]
 
     def colour_mesh(

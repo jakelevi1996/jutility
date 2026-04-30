@@ -73,3 +73,41 @@ def test_get_legend_lines():
         "test_get_legend_lines",
         dir_name=OUTPUT_DIR,
     )
+
+def test_ibm():
+    rng = util.get_numpy_rng("test_ibm")
+    labels = "A BC DEF GHIJK LMNOP".split()
+
+    cp = plotting.ColourPicker.ibm()
+    lines = [
+        plotting.Line(rng.normal(0, 1, 10), c=c)
+        for c in cp
+    ]
+
+    plotting.plot(
+        *lines,
+        plotting.Legend.from_plottables(
+            *cp.get_legend_lines(*labels),
+        ),
+        plot_name="test_ibm",
+        dir_name=OUTPUT_DIR,
+    )
+
+def test_ibm_2_colour():
+    rng = util.get_numpy_rng("test_ibm_2_colour")
+    labels = "A BC DEF GHIJK LMNOP".split()
+
+    cp = plotting.ColourPicker.ibm_2_colour()
+    lines = [
+        plotting.Line(rng.normal(0, 1, 10), c=c)
+        for c in cp
+    ]
+
+    plotting.plot(
+        *lines,
+        plotting.Legend.from_plottables(
+            *cp.get_legend_lines(*labels),
+        ),
+        plot_name="test_ibm_2_colour",
+        dir_name=OUTPUT_DIR,
+    )

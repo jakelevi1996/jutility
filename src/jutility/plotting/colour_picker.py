@@ -14,26 +14,55 @@ class ColourPicker:
         cyclic=True,
         cmap_name=None,
         offset:         (float | None)=None,
+        colour_list:    (list | None)=None,
     ):
-        if cmap_name is None:
+        if colour_list is None:
+            if cmap_name is None:
+                if cyclic:
+                    cmap_name = "hsv"
+                else:
+                    cmap_name = "cool"
             if cyclic:
-                cmap_name = "hsv"
+                endpoint = False
             else:
-                cmap_name = "cool"
-        if cyclic:
-            endpoint = False
+                endpoint = True
+
+            self._cmap = plt.get_cmap(cmap_name)
+            cmap_sample_points = np.linspace(0, 1, num_colours, endpoint)
+
+            if offset is not None:
+                cmap_sample_points += offset
+                cmap_sample_points %= 1.0
+
+            colour_list = [self._cmap(i) for i in cmap_sample_points]
         else:
-            endpoint = True
+            self._cmap = matplotlib.colors.ListedColormap(colour_list)
 
-        self._cmap = plt.get_cmap(cmap_name)
-        cmap_sample_points = np.linspace(0, 1, num_colours, endpoint)
-
-        if offset is not None:
-            cmap_sample_points += offset
-            cmap_sample_points %= 1.0
-
-        self._colours = [self._cmap(i) for i in cmap_sample_points]
+        self._colours = colour_list
         self.reset()
+
+    @classmethod
+    def ibm(cls):
+        return ColourPicker(
+            num_colours=5,
+            colour_list=[
+                "#648FFF",
+                "#785EF0",
+                "#DC267F",
+                "#FE6100",
+                "#FFB000",
+            ],
+        )
+
+    @classmethod
+    def ibm_2_colour(cls):
+        return ColourPicker(
+            num_colours=2,
+            colour_list=[
+                "#648FFF",
+                "#DC267F",
+            ],
+        )
 
     @classmethod
     def from_colourise(cls, plottables: list[Plottable], *args, **kwargs):

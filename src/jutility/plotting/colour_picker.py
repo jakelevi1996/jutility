@@ -50,11 +50,11 @@ class ColourPicker:
         return ColourPicker(
             num_colours=5,
             colour_list=[
+                "#DC267F",
                 "#648FFF",
                 "#785EF0",
-                "#DC267F",
-                "#FE6100",
                 "#FFB000",
+                "#FE6100",
             ],
         )
 

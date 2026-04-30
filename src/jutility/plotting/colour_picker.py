@@ -96,6 +96,10 @@ class ColourPicker:
         colour_list = [cmap(x) for x in sample_points]
         return cls(colour_list, cmap)
 
+    def transpose(self, *inds: int) -> "ColourPicker":
+        colour_list = [self._colours[i] for i in inds]
+        return ColourPicker.from_colour_list(*colour_list)
+
     def next(self):
         c = self._colours[self._index % len(self._colours)]
         self._index += 1

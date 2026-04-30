@@ -82,6 +82,22 @@ def test_ibm():
         dir_name=OUTPUT_DIR,
     )
 
+def test_transpose():
+    rng = util.get_numpy_rng("test_transpose")
+    cp = plotting.ColourPicker.contrast().transpose(4, 5, 1, 2)
+
+    plotting.plot(
+        *[
+            plotting.Line(rng.normal(0, 1, 10), c=c)
+            for c in cp
+        ],
+        plotting.Legend.from_plottables(
+            *cp.get_legend_lines(*[str(i) for i in range(len(cp))]),
+        ),
+        plot_name="test_transpose",
+        dir_name=OUTPUT_DIR,
+    )
+
 def test_get_legend_sweeps():
     cp = plotting.ColourPicker.hsv(60)
     names = ["%i: %s" % (i, util.list_to_hex(c)) for i, c in enumerate(cp)]

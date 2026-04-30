@@ -67,11 +67,12 @@ def test_ibm():
     )
 
 def test_get_legend_sweeps():
-    cp = plotting.ColourPicker.hsv(50)
+    cp = plotting.ColourPicker.hsv(60)
+    names = ["%i: %s" % (i, util.list_to_hex(c)) for i, c in enumerate(cp)]
     mp = plotting.MultiPlot(
         plotting.LegendSubplot(
-            *cp.get_legend_sweeps(*[str(i) for i in range(len(cp))]),
-            ncols=5,
+            *cp.get_legend_sweeps(*names),
+            ncols=4,
         ),
     )
     mp.save(

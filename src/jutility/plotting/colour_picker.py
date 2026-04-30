@@ -65,21 +65,6 @@ class ColourPicker:
             ],
         )
 
-    @classmethod
-    def from_colourise(cls, plottables: list[Plottable], *args, **kwargs):
-        self = cls(len(plottables), *args, **kwargs)
-        self.colourise(plottables)
-        return self
-
-    def colourise(
-        self,
-        plottables: list[Plottable],
-        colour_arg_name="color",
-    ):
-        for p in plottables:
-            kwargs = {colour_arg_name: self.next()}
-            p.set_options(**kwargs)
-
     def __call__(self, colour_ind):
         return self._colours[colour_ind]
 

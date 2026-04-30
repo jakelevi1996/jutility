@@ -13,7 +13,6 @@ class ColourPicker:
         num_colours,
         cyclic=True,
         cmap_name=None,
-        dynamic_range=None,
         offset:         (float | None)=None,
     ):
         if cmap_name is None:
@@ -27,11 +26,6 @@ class ColourPicker:
             endpoint = True
 
         self._cmap = plt.get_cmap(cmap_name)
-        if dynamic_range is not None:
-            lo, hi = dynamic_range
-            colour_list = self._cmap(np.linspace(lo, hi, num_colours))
-            self._cmap = matplotlib.colors.ListedColormap(colour_list)
-
         cmap_sample_points = np.linspace(0, 1, num_colours, endpoint)
 
         if offset is not None:

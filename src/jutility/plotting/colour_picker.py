@@ -44,6 +44,9 @@ class ColourPicker:
 
     @classmethod
     def ibm(cls):
+        """
+        See https://davidmathlogic.com/colorblind/
+        """
         return ColourPicker(
             num_colours=5,
             colour_list=[
@@ -57,6 +60,9 @@ class ColourPicker:
 
     @classmethod
     def ibm_2_colour(cls):
+        """
+        See https://davidmathlogic.com/colorblind/
+        """
         return ColourPicker(
             num_colours=2,
             colour_list=[

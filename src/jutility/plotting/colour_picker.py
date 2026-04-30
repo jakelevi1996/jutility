@@ -11,9 +11,9 @@ class ColourPicker:
     """
     def __init__(
         self,
-        num_colours,
-        cyclic=True,
-        cmap_name=None,
+        num_colours:    int,
+        cyclic:         bool=True,
+        cmap_name:      (str | None)=None,
         offset:         (float | None)=None,
         colour_list:    (list | None)=None,
     ):

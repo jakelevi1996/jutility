@@ -2,92 +2,65 @@ from jutility import plotting, util
 
 OUTPUT_DIR = util.get_test_output_dir("test_plotting/test_colour_picker")
 
-def test_offset():
-    rng = util.get_numpy_rng("test_offset")
-    labels = "A BC DEF GHIJK LMNOP".split()
+def test_hsv():
+    rng = util.get_numpy_rng("test_hsv")
+    cp = plotting.ColourPicker.hsv(4)
 
-    ns = plotting.NoisySweep()
-    for _ in range(5):
-        x, y = rng.normal(), rng.normal()
-        ns.update(labels[0], x, y)
-        x, y = rng.normal(), rng.normal()
-        ns.update(labels[1], x, y)
-        x, y = rng.normal(), rng.normal()
-        ns.update(labels[2], x, y)
-        x, y = rng.normal(), rng.normal()
-        ns.update(labels[3], x, y)
-        x, y = rng.normal(), rng.normal()
-        ns.update(labels[4], x, y)
-
-    cp = plotting.ColourPicker(len(labels), offset=0.05)
-
-    mp = plotting.MultiPlot(
-        plotting.Subplot(
-            *ns.plot(cp, labels),
-            xlim=[-2, 2],
-            ylim=[-2, 2],
+    plotting.plot(
+        *[
+            plotting.Line(rng.normal(0, 1, 10), c=c)
+            for c in cp
+        ],
+        plotting.Legend.from_plottables(
+            *cp.get_legend_lines(*[str(i) for i in range(len(cp))]),
         ),
-        legend=plotting.FigureLegend(
-            *cp.get_legend_lines(*labels),
-            num_rows=None,
-            loc="outside center right",
-        ),
-    )
-    mp.save(
-        "test_offset",
+        plot_name="test_hsv",
         dir_name=OUTPUT_DIR,
     )
 
-def test_get_legend_lines():
-    rng = util.get_numpy_rng("test_get_legend_lines")
-    labels = "A BC DEF GHIJK LMNOP".split()
+def test_hsv_offset():
+    rng = util.get_numpy_rng("test_hsv_offset")
+    cp = plotting.ColourPicker.hsv(5, offset=0.05)
 
-    ns = plotting.NoisySweep()
-    for _ in range(5):
-        x, y = rng.normal(), rng.normal()
-        ns.update(labels[0], x, y)
-        x, y = rng.normal(), rng.normal()
-        ns.update(labels[1], x, y)
-        x, y = rng.normal(), rng.normal()
-        ns.update(labels[2], x, y)
-        x, y = rng.normal(), rng.normal()
-        ns.update(labels[3], x, y)
-        x, y = rng.normal(), rng.normal()
-        ns.update(labels[4], x, y)
-
-    cp = plotting.ColourPicker(len(labels))
-
-    mp = plotting.MultiPlot(
-        plotting.Subplot(
-            *ns.plot(cp, labels),
-            xlim=[-2, 2],
-            ylim=[-2, 2],
+    plotting.plot(
+        *[
+            plotting.Line(rng.normal(0, 1, 10), c=c)
+            for c in cp
+        ],
+        plotting.Legend.from_plottables(
+            *cp.get_legend_lines(*[str(i) for i in range(len(cp))]),
         ),
-        legend=plotting.FigureLegend(
-            *cp.get_legend_lines(*labels),
-            num_rows=None,
-            loc="outside center right",
-        ),
+        plot_name="test_hsv_offset",
+        dir_name=OUTPUT_DIR,
     )
-    mp.save(
-        "test_get_legend_lines",
+
+def test_cool():
+    rng = util.get_numpy_rng("test_cool")
+    cp = plotting.ColourPicker.cool(4)
+
+    plotting.plot(
+        *[
+            plotting.Line(rng.normal(0, 1, 10), c=c)
+            for c in cp
+        ],
+        plotting.Legend.from_plottables(
+            *cp.get_legend_lines(*[str(i) for i in range(len(cp))]),
+        ),
+        plot_name="test_cool",
         dir_name=OUTPUT_DIR,
     )
 
 def test_ibm():
     rng = util.get_numpy_rng("test_ibm")
-    labels = "A BC DEF GHIJK LMNOP".split()
-
     cp = plotting.ColourPicker.ibm()
-    lines = [
-        plotting.Line(rng.normal(0, 1, 10), c=c)
-        for c in cp
-    ]
 
     plotting.plot(
-        *lines,
+        *[
+            plotting.Line(rng.normal(0, 1, 10), c=c)
+            for c in cp
+        ],
         plotting.Legend.from_plottables(
-            *cp.get_legend_lines(*labels),
+            *cp.get_legend_lines(*[str(i) for i in range(len(cp))]),
         ),
         plot_name="test_ibm",
         dir_name=OUTPUT_DIR,

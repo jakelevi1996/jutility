@@ -3,7 +3,7 @@ import matplotlib.colors
 import numpy as np
 from jutility.plotting.plottable import Plottable, Line, PlottableGroup
 from jutility.plotting.subplot.colour_bar import ColourBar
-import jutility.plotting.noisy.sweep as jsweep
+import jutility.plotting.noisy.sweep
 
 class ColourPicker:
     """
@@ -11,55 +11,80 @@ class ColourPicker:
     """
     def __init__(
         self,
-        num_colours:    int,
-        cyclic:         bool=True,
-        cmap_name:      (str | None)=None,
-        offset:         (float | None)=None,
-        colour_list:    (list | None)=None,
+        colour_list:    list[tuple | float | str],
+        cmap:           matplotlib.colors.Colormap,
     ):
-        if colour_list is None:
-            if cmap_name is None:
-                if cyclic:
-                    cmap_name = "hsv"
-                else:
-                    cmap_name = "cool"
-            if cyclic:
-                endpoint = False
-            else:
-                endpoint = True
-
-            self._cmap = plt.get_cmap(cmap_name)
-            cmap_sample_points = np.linspace(0, 1, num_colours, endpoint)
-
-            if offset is not None:
-                cmap_sample_points += offset
-                cmap_sample_points %= 1.0
-
-            colour_list = [self._cmap(i) for i in cmap_sample_points]
-        else:
-            self._cmap = matplotlib.colors.ListedColormap(colour_list)
-
         self._colours = colour_list
+        self._cmap = cmap
+        self._num_colours = len(colour_list)
         self.reset()
 
     @classmethod
-    def ibm(cls):
+    def cool(cls, num_colours: int) -> "ColourPicker":
+        return cls.from_linear_cmap("cool", num_colours)
+
+    @classmethod
+    def hsv(
+        cls,
+        num_colours:    int,
+        offset:         (float | None)=None,
+    ) -> "ColourPicker":
+        return cls.from_cyclic_cmap("hsv", num_colours, offset)
+
+    @classmethod
+    def ibm(cls) -> "ColourPicker":
         """
         See https://davidmathlogic.com/colorblind/
         """
-        return ColourPicker(
-            num_colours=5,
-            colour_list=[
-                "#DC267F",
-                "#648FFF",
-                "#785EF0",
-                "#FFB000",
-                "#FE6100",
-            ],
-        )
+        colour_list = [
+            "#DC267F",
+            "#648FFF",
+            "#785EF0",
+            "#FFB000",
+            "#FE6100",
+        ]
+        return cls.from_colour_list(colour_list)
 
-    def __call__(self, colour_ind):
-        return self._colours[colour_ind]
+    @classmethod
+    def from_colour_list(
+        cls,
+        colour_list: list[tuple | float | str],
+    ) -> "ColourPicker":
+        cmap = matplotlib.colors.ListedColormap(colour_list)
+        return cls(colour_list, cmap)
+
+    @classmethod
+    def from_linear_cmap(
+        cls,
+        cmap_name:      str,
+        num_colours:    int,
+    ) -> "ColourPicker":
+        sample_points = np.linspace(0, 1, num_colours)
+        return cls.from_cmap(cmap_name, sample_points)
+
+    @classmethod
+    def from_cyclic_cmap(
+        cls,
+        cmap_name:      str,
+        num_colours:    int,
+        offset:         (float | None)=None,
+    ) -> "ColourPicker":
+        sample_points = np.linspace(0, 1, num_colours, endpoint=False)
+        if offset is not None:
+            sample_points += offset
+            sample_points %= 1.0
+
+        return cls.from_cmap(cmap_name, sample_points)
+
+    @classmethod
+    def from_cmap(
+        cls,
+        cmap_name:      str,
+        sample_points:  list[float],
+    ) -> "ColourPicker":
+        cmap = plt.get_cmap(cmap_name)
+        colour_list = [cmap(x) for x in sample_points]
+        return cls(colour_list, cmap)
 
     def next(self):
         c = self._colours[self._index % len(self._colours)]
@@ -93,7 +118,7 @@ class ColourPicker:
         *labels: str,
         **kwargs,
     ) -> list[PlottableGroup]:
-        ns = jsweep.NoisySweep()
+        ns = jutility.plotting.noisy.sweep.NoisySweep()
         for s in labels:
             ns.update(s, 0, 0)
 
@@ -101,3 +126,9 @@ class ColourPicker:
 
     def __iter__(self):
         return iter(self._colours)
+
+    def __call__(self, colour_ind: int):
+        return self._colours[colour_ind]
+
+    def __len__(self) -> int:
+        return self._num_colours

@@ -4,7 +4,7 @@ OUTPUT_DIR = util.get_test_output_dir("test_plotting/test_multiplot")
 
 def test_unevenly_spaced_grids():
     rng = util.get_numpy_rng("test_unevenly_spaced_grids")
-    cp = plotting.ColourPicker(4)
+    cp = plotting.ColourPicker.hsv(4)
 
     mp = plotting.MultiPlot(
         *[
@@ -30,7 +30,7 @@ def test_unevenly_spaced_grids():
 
 def test_uneven_leaf_levels():
     rng = util.get_numpy_rng("test_uneven_leaf_levels")
-    cp = plotting.ColourPicker(4)
+    cp = plotting.ColourPicker.hsv(4)
 
     mp = plotting.MultiPlot(
         plotting.MultiPlot(
@@ -55,7 +55,7 @@ def test_uneven_leaf_levels():
 
 def test_nested_multiplot_colour():
     rng = util.get_numpy_rng("test_nested_multiplot_colour")
-    cp = plotting.ColourPicker(4)
+    cp = plotting.ColourPicker.hsv(4)
 
     def get_subplot(**kwargs):
         line = plotting.Line(rng.uniform(0, 1, 4), c=cp.next())
@@ -103,7 +103,7 @@ def test_nested_multiplot_colour():
 
 def test_nested_figure_legend():
     rng = util.get_numpy_rng("test_nested_figure_legend")
-    cp = plotting.ColourPicker(4)
+    cp = plotting.ColourPicker.hsv(4)
 
     def get_subplot(**kwargs):
         line = plotting.Line(rng.uniform(0, 1, 4), c=cp.next())

@@ -25,22 +25,26 @@ class NoisyCurveSweep:
         self,
         x:          list[float],
         cp:         (ColourPicker | None)=None,
+        key_order:  (list[str | float] | None)=None,
         label_fmt:  (util.StringFormatter | None)=None,
         **kwargs,
     ) -> list[PlottableGroup]:
+        if key_order is None:
+            key_order = list(self._noisy_curves.keys())
         if cp is None:
-            cp = ColourPicker(len(self._noisy_curves))
+            cp = ColourPicker.hsv(len(key_order))
         if label_fmt is None:
             label_fmt = util.NoFormat()
 
         return [
-            noisy_curve.plot(
+            self._noisy_curves[key].plot(
                 x=x,
-                c=cp.next(),
+                c=c,
                 label=label_fmt.format(key),
                 **kwargs,
             )
-            for key, noisy_curve in self._noisy_curves.items()
+            for key, c in zip(key_order, cp)
+            if key in self._noisy_curves
         ]
 
     def __len__(self) -> int:

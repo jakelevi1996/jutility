@@ -67,6 +67,7 @@ from jutility.util.str_util import (
     strings_equal_except_whitespace,
     merge_strings,
     get_unique_prefixes,
+    list_to_hex,
 )
 from jutility.util.str_fmt import (
     StringFormatter,

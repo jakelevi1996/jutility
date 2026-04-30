@@ -113,3 +113,6 @@ def get_unique_prefixes(
 
     prefix_dict.update({s: s for s in remaining})
     return prefix_dict
+
+def list_to_hex(a: list[float]) -> str:
+    return "".join(("%02x" % int(x * 255)) for x in a)

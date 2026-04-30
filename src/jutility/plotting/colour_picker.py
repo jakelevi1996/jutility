@@ -35,11 +35,13 @@ class ColourPicker:
     def contrast(cls) -> "ColourPicker":
         return cls.from_colour_list(
             "#ff0000",
-            "#0000ff",
-            "#00ff00",
-            "#9900ff",
-            "#0099ff",
-            "#ff9900",
+            "#00fff5",
+            "#83ff00",
+            "#7100ff",
+            "#004bff",
+            "#ffbd00",
+            "#ff00cf",
+            "#00ff39",
         )
 
     @classmethod

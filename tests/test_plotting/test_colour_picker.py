@@ -111,3 +111,22 @@ def test_ibm_2_colour():
         plot_name="test_ibm_2_colour",
         dir_name=OUTPUT_DIR,
     )
+
+def test_get_legend_sweeps():
+    rng = util.get_numpy_rng("test_get_legend_sweeps")
+    labels = "A BC DEF GHIJK LMNOP".split()
+
+    cp = plotting.ColourPicker.ibm()
+    lines = [
+        plotting.Line(rng.normal(0, 1, 10), c=c)
+        for c in cp
+    ]
+
+    plotting.plot(
+        *lines,
+        plotting.Legend.from_plottables(
+            *cp.get_legend_sweeps(*labels),
+        ),
+        plot_name="test_get_legend_sweeps",
+        dir_name=OUTPUT_DIR,
+    )

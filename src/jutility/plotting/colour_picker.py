@@ -1,8 +1,9 @@
 import matplotlib.pyplot as plt
 import matplotlib.colors
 import numpy as np
-from jutility.plotting.plottable import Plottable, Line
+from jutility.plotting.plottable import Plottable, Line, PlottableGroup
 from jutility.plotting.subplot.colour_bar import ColourBar
+import jutility.plotting.noisy.sweep as jsweep
 
 class ColourPicker:
     """
@@ -108,6 +109,17 @@ class ColourPicker:
             Line(c=c, label=s, **kwargs)
             for c, s in zip(self, labels)
         ]
+
+    def get_legend_sweeps(
+        self,
+        *labels: str,
+        **kwargs,
+    ) -> list[PlottableGroup]:
+        ns = jsweep.NoisySweep()
+        for s in labels:
+            ns.update(s, 0, 0)
+
+        return ns.plot(self, **kwargs)
 
     def __iter__(self):
         return iter(self._colours)

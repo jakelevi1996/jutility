@@ -36,22 +36,21 @@ class ColourPicker:
         """
         See https://davidmathlogic.com/colorblind/
         """
-        colour_list = [
+        return cls.from_colour_list(
             "#DC267F",
             "#648FFF",
             "#785EF0",
             "#FFB000",
             "#FE6100",
-        ]
-        return cls.from_colour_list(colour_list)
+        )
 
     @classmethod
     def from_colour_list(
         cls,
-        colour_list: list[tuple | float | str],
+        *colours: (tuple | float | str),
     ) -> "ColourPicker":
-        cmap = matplotlib.colors.ListedColormap(colour_list)
-        return cls(colour_list, cmap)
+        cmap = matplotlib.colors.ListedColormap(colours)
+        return cls(list(colours), cmap)
 
     @classmethod
     def from_linear_cmap(

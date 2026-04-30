@@ -33,9 +33,6 @@ class ColourPicker:
 
     @classmethod
     def contrast(cls) -> "ColourPicker":
-        """
-        See https://davidmathlogic.com/colorblind/
-        """
         return cls.from_colour_list(
             "#ff0000",
             "#0000ff",

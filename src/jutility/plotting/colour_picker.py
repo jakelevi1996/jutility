@@ -58,19 +58,6 @@ class ColourPicker:
             ],
         )
 
-    @classmethod
-    def ibm_2_colour(cls):
-        """
-        See https://davidmathlogic.com/colorblind/
-        """
-        return ColourPicker(
-            num_colours=2,
-            colour_list=[
-                "#648FFF",
-                "#DC267F",
-            ],
-        )
-
     def __call__(self, colour_ind):
         return self._colours[colour_ind]
 

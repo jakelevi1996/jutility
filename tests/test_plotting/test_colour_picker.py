@@ -50,6 +50,22 @@ def test_cool():
         dir_name=OUTPUT_DIR,
     )
 
+def test_contrast():
+    rng = util.get_numpy_rng("test_contrast")
+    cp = plotting.ColourPicker.contrast()
+
+    plotting.plot(
+        *[
+            plotting.Line(rng.normal(0, 1, 10), c=c)
+            for c in cp
+        ],
+        plotting.Legend.from_plottables(
+            *cp.get_legend_lines(*[str(i) for i in range(len(cp))]),
+        ),
+        plot_name="test_contrast",
+        dir_name=OUTPUT_DIR,
+    )
+
 def test_ibm():
     rng = util.get_numpy_rng("test_ibm")
     cp = plotting.ColourPicker.ibm()

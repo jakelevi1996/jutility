@@ -32,6 +32,20 @@ class ColourPicker:
         return cls.from_cyclic_cmap("hsv", num_colours, offset)
 
     @classmethod
+    def contrast(cls) -> "ColourPicker":
+        """
+        See https://davidmathlogic.com/colorblind/
+        """
+        return cls.from_colour_list(
+            "#ff0000",
+            "#0000ff",
+            "#00ff00",
+            "#9900ff",
+            "#0099ff",
+            "#ff9900",
+        )
+
+    @classmethod
     def ibm(cls) -> "ColourPicker":
         """
         See https://davidmathlogic.com/colorblind/

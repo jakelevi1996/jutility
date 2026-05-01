@@ -10,6 +10,11 @@ class Subplot:
         *lines: Plottable,
         **axis_kwargs,
     ):
+        """
+        See [`jutility.plotting.AxisProperties`](
+        https://github.com/jakelevi1996/jutility/blob/main/src/jutility/plotting/subplot/axis_props.py
+        )
+        """
         self._lines  = lines
         self._kwargs = axis_kwargs
 

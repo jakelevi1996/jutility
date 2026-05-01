@@ -174,7 +174,7 @@ def test_log_axes():
 
 @pytest.mark.parametrize("num_colours, cyclic", [[5, True], [7, False]])
 def test_colour_picker(num_colours, cyclic):
-    cp = plotting.ColourPicker(num_colours, cyclic)
+    cp = plotting.ColourPicker.hsv(num_colours)
     x = np.linspace(-1, 7, 100)
     line_list = [
         plotting.Line(
@@ -195,7 +195,7 @@ def test_colour_picker(num_colours, cyclic):
 
 def test_colour_picker_next():
     num_colours = 5
-    cp = plotting.ColourPicker(num_colours)
+    cp = plotting.ColourPicker.hsv(num_colours)
     x = np.linspace(-1, 7, 200)
     line_list = [
         plotting.Line(
@@ -372,7 +372,7 @@ def test_log_colourbar():
     y = lambda n, z: (z**n - x**n)**(1/n)
     ticks = list(range(-z, z+1, 20))
     n_list = util.log_range(0.1, 10, 21)
-    cp_n = plotting.ColourPicker(len(n_list))
+    cp_n = plotting.ColourPicker.hsv(len(n_list))
 
     mp = plotting.MultiPlot(
         plotting.Subplot(
@@ -595,7 +595,7 @@ def test_gif_add_rgb_array_sequence():
 def test_axline():
     rng = util.Seeder().get_rng("test_axline")
     num_lines = 10
-    cp = plotting.ColourPicker(num_lines)
+    cp = plotting.ColourPicker.hsv(num_lines)
     lines = [
         plotting.AxLine(
             rng.uniform(-1, 1, 2),
@@ -1067,7 +1067,7 @@ def test_random_polygon():
     rng = util.Seeder().get_rng("test_random_polygon")
     num_polygons = 7
     num_vertices = 5
-    cp = plotting.ColourPicker(num_polygons)
+    cp = plotting.ColourPicker.hsv(num_polygons)
     plotting.plot(
         *[
             plotting.Polygon(
@@ -1086,7 +1086,7 @@ def test_random_polygon():
 def test_scatter_legend():
     rng = util.Seeder().get_rng("test_scatter_legend")
     x = lambda: rng.uniform(0, 1, 10)
-    cp = plotting.ColourPicker(6)
+    cp = plotting.ColourPicker.hsv(6)
     plotting.plot(
         plotting.Line(x(), x(), marker="o", c=cp.next(), label="line"),
         plotting.Line(x(), x(), marker="o", c=cp.next(), label="line", ms=6),
@@ -1283,7 +1283,7 @@ def test_nested_multiplot():
         mp.save("test_nested_multiplot", OUTPUT_DIR, pdf=pdf)
 
 def test_nested_multiplot_titles():
-    cp = plotting.ColourPicker(7)
+    cp = plotting.ColourPicker.hsv(7)
     line_list = [
         plotting.Line([1, 3, 2], c=cp.next(), label="[1, 3, 2]"),
         plotting.Line([2, 1, 3], c=cp.next(), label="[2, 1, 3]"),
@@ -1339,7 +1339,7 @@ def test_nested_multiplot_titles():
         mp.save("test_nested_multiplot_titles", OUTPUT_DIR, pdf=pdf)
 
 def test_nested_multiplot_space():
-    cp = plotting.ColourPicker(7)
+    cp = plotting.ColourPicker.hsv(7)
     line_list = [
         plotting.Line([1, 3, 2], c=cp.next(), label="[1, 3, 2]"),
         plotting.Line([2, 1, 3], c=cp.next(), label="[2, 1, 3]"),
@@ -1498,7 +1498,7 @@ def test_plottable_group():
 
 def test_empty_noisy_data_plot():
     n = 5
-    cp = plotting.ColourPicker(n, False)
+    cp = plotting.ColourPicker.cool(n)
     nd = plotting.NoisyData()
     mp = plotting.MultiPlot(
         plotting.LegendSubplot(

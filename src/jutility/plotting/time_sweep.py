@@ -53,7 +53,7 @@ def run(
                 t = util.time_format(timer.get_last(), concise=True)
                 table.update(name=exp_name, n=n, repeat=i, time_taken=t)
 
-    cp = plotting.ColourPicker(len(experiments))
+    cp = plotting.ColourPicker.hsv(len(experiments))
     plotting.plot(
         *[
             data_dict[name].plot(cp(i), name, n_sigma)

@@ -64,8 +64,10 @@ class FigureProperties(PropertyDict):
 
         self._set("num_rows", num_rows)
         self._set("num_cols", num_cols)
-        num_empty = (num_rows * num_cols) - num_subplots
-        return num_empty
+        self._num_empty = (num_rows * num_cols) - num_subplots
+
+    def get_num_empty(self) -> int:
+        return self._num_empty
 
     def get_axes(
         self,

@@ -72,7 +72,8 @@ class MultiPlot(Subplot):
         if fig_props is None:
             fig_props = FigureProperties(**self._kwargs)
 
-        num_empty = fig_props.init_size(len(self._subplots))
+        fig_props.init_size(len(self._subplots))
+        num_empty = fig_props.get_num_empty()
         subplots_pad  = tuple(Empty() for _ in range(num_empty))
         subplots_grid = self._subplots + subplots_pad
 

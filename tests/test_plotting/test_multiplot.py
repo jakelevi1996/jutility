@@ -152,3 +152,19 @@ def test_nested_figure_legend():
         title="test_nested_figure_legend",
     )
     mp.save("test_nested_figure_legend", OUTPUT_DIR)
+
+def test_pad_empty():
+    rng = util.get_numpy_rng("test_pad_empty")
+
+    def get_lines():
+        return [
+            plotting.Line(rng.normal(i, 1, 10), c=c)
+            for i, c in enumerate(plotting.ColourPicker.hsv(4))
+        ]
+
+    mp = plotting.MultiPlot(
+        plotting.Subplot(*get_lines()),
+        plotting.Subplot(*get_lines()),
+        plotting.Subplot(*get_lines()),
+    )
+    mp.save("test_pad_empty", OUTPUT_DIR)

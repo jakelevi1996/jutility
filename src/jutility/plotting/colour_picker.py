@@ -16,7 +16,6 @@ class ColourPicker:
     ):
         self._colours = colour_list
         self._cmap = cmap
-        self._num_colours = len(colour_list)
         self.reset()
 
     @classmethod
@@ -147,4 +146,4 @@ class ColourPicker:
         return self._colours[colour_ind]
 
     def __len__(self) -> int:
-        return self._num_colours
+        return len(self._colours)

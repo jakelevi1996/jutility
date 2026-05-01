@@ -21,7 +21,7 @@ class Subplot:
         properties.apply(axis)
         properties.check_unused_kwargs()
 
-    def plot_fig(self, fig: matplotlib.figure.Figure):
+    def plot_fig(self, fig: matplotlib.figure.Figure, fig_props=None):
         axis = fig.subplots(nrows=1, ncols=1, squeeze=True)
         self.plot_axis(axis)
 

@@ -56,8 +56,8 @@ def test_contrast():
 
     plotting.plot(
         *[
-            plotting.Line(rng.normal(0, 1, 10), c=c)
-            for c in cp
+            plotting.Line(rng.normal(-i, 0.5, 200), c=c)
+            for i, c in enumerate(cp)
         ],
         plotting.Legend.from_plottables(
             *cp.get_legend_lines(*[str(i) for i in range(len(cp))]),

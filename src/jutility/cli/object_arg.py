@@ -1,4 +1,5 @@
 import argparse
+from jutility import util
 from jutility.cli.arg import Arg
 from jutility.cli.verbose import verbose
 
@@ -71,23 +72,23 @@ class ObjectArg(Arg):
                 % (sorted(missing_keys), self.full_name)
             )
 
-    def init_object(self, **extra_kwargs):
+    def init_object(self, printer: (util.Printer | None), **extra_kwargs):
         if self.value is not None:
-            if verbose:
-                verbose.display_retrieve(self.full_name)
+            if printer is not None:
+                printer("cli: `%s` retrieved from cache" % self.full_name)
 
             return self.value
 
         kwargs = {
-            arg.name: arg.init_object()
+            arg.name: arg.init_object(printer)
             for arg in self._arg_list
         }
         kwargs.update(self.init_const_kwargs)
         kwargs.update(extra_kwargs)
         self.check_missing(set(kwargs.keys()))
 
-        if verbose:
-            verbose.display_init(self.object_type, kwargs)
+        if printer is not None:
+            printer("cli: %s" % util.format_type(self.object_type, **kwargs))
 
         self.value = self.object_type(**kwargs)
         return self.value

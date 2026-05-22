@@ -529,7 +529,6 @@ def test_unknown_arg():
 
 def test_cli_verbose():
     printer = util.Printer("test_cli_verbose", dir_name=OUTPUT_DIR)
-    cli.verbose.set_printer(printer)
 
     class A:
         def __init__(self, x: int):
@@ -554,33 +553,29 @@ def test_cli_verbose():
     args = parser.parse_args([])
 
     args.init_object("A", x=5)
-    with cli.verbose:
-        args.init_object("B", y=6.6)
-        with cli.verbose:
-            args.init_object("B.a", x=7)
+    args.init_object("B", y=6.6, printer=printer)
+    args.init_object("B.a", x=7, printer=printer)
 
-        printer.heading("args.reset_object_cache")
-        args.reset_object_cache()
-        args.init_object("B.a", x=8)
-        args.init_object("B.a", x=9)
-        args.init_object("B", y=-10.11)
-        args.init_object("B", y=12.13)
-        args.init_object("A", x=14)
-        args.init_object("A", x=15)
+    printer.heading("args.reset_object_cache")
+    args.reset_object_cache()
+    args.init_object("B.a", x=8,    printer=printer)
+    args.init_object("B.a", x=9,    printer=printer)
+    args.init_object("B", y=-10.11, printer=printer)
+    args.init_object("B", y=12.13,  printer=printer)
+    args.init_object("A", x=14,     printer=printer)
+    args.init_object("A", x=15,     printer=printer)
 
-        args.reset_object_cache()
-        args.init_object("A", x=16)
+    args.reset_object_cache()
+    args.init_object("A", x=16, printer=printer)
 
-        cli.verbose.reset()
-        args.reset_object_cache()
-        args.init_object("A", x=17)
+    args.reset_object_cache()
+    args.init_object("A", x=17)
 
     args.reset_object_cache()
     args.init_object("A", x=18)
 
-    with cli.verbose:
-        args.reset_object_cache()
-        args.init_object("A", x=19)
+    args.reset_object_cache()
+    args.init_object("A", x=19, printer=printer)
 
     args.reset_object_cache()
     args.init_object("A", x=20)

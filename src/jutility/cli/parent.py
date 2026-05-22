@@ -20,9 +20,16 @@ class _ArgParent:
             replaces=replaces,
         )
 
-    def get_kwargs(self) -> dict:
+    def get_kwargs(
+        self,
+        verbose:    bool=True,
+        printer:    (util.Printer | None)=None,
+    ) -> dict:
+        if verbose and (printer is None):
+            printer = util.Printer()
+
         return {
-            arg.name: arg.init_object()
+            arg.name: arg.init_object(printer)
             for arg in self._arg_list
             if  arg.is_kwarg
         }

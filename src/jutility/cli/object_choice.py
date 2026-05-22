@@ -75,11 +75,11 @@ class ObjectChoice(ObjectArg):
         if self.value is None:
             self.value = choice.__name__
 
-    def init_object(self, **extra_kwargs):
+    def init_object(self, printer: (util.Printer | None), **extra_kwargs):
         chosen_arg = self.get_choice()
         protected = chosen_arg.get_protected_args()
         kwargs = {
-            arg.name: arg.init_object()
+            arg.name: arg.init_object(printer)
             for arg in self.shared_args
             if arg.name not in protected
         }
@@ -89,7 +89,7 @@ class ObjectChoice(ObjectArg):
 
         kwargs.update(extra_kwargs)
         self.check_missing(set(kwargs.keys()) | protected)
-        return chosen_arg.init_object(**kwargs)
+        return chosen_arg.init_object(printer, **kwargs)
 
     def get_choice(self) -> ObjectArg:
         if self.value is None:

@@ -74,7 +74,7 @@ class Arg(parent._ArgParent):
             % self
         )
 
-    def init_object(self):
+    def init_object(self, printer: (util.Printer | None)):
         return self.value
 
     def get_type(self) -> type:

@@ -45,8 +45,17 @@ class ParsedArgs(_ArgParent):
 
         self.reset_object_cache()
 
-    def init_object(self, full_name: str, **extra_kwargs):
-        return self._arg_dict[full_name].init_object(**extra_kwargs)
+    def init_object(
+        self,
+        full_name:  str,
+        verbose:    bool=True,
+        printer:    (util.Printer | None)=None,
+        **extra_kwargs,
+    ):
+        if verbose and (printer is None):
+            printer = util.Printer()
+
+        return self._arg_dict[full_name].init_object(printer, **extra_kwargs)
 
     def get_type(self, full_name: str) -> type:
         return self._arg_dict[full_name].get_type()

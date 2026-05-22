@@ -11,8 +11,9 @@ class SubCommandGroup:
         **subparser_kwargs,
     ):
         """
-        See
+        See [`ArgumentParser.add_subparsers`](
         https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.add_subparsers
+        )
         """
         self.name       = name
         self.value      = None

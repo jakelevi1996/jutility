@@ -11,14 +11,17 @@ class SubCommand(parent._SubCommandParent):
         name:           str,
         *args:          Arg,
         sub_commands:   (group.SubCommandGroup | None)=None,
-        **parser_kwargs,
+        **subparser_kwargs,
     ):
         """
-        See
+        See [`argparse.ArgumentParser`](
         https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser
+        ) and [`ArgumentParser.add_subparsers`](
+        https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.add_subparsers
+        )
         """
         self.name = name
-        self._init_arg_parent(list(args), parser_kwargs)
+        self._init_arg_parent(list(args), subparser_kwargs)
         self._init_subcommand_parent(sub_commands)
 
     def register_sub_commands(self, prefix: str):

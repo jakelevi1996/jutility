@@ -52,9 +52,8 @@ class SubCommand(parent._SubCommandParent):
         subparser_kwargs.update(self._kwargs)
         return subparser_kwargs
 
-    @classmethod
     def run(
-        cls,
+        self,
         args: "parsed_args.ParsedArgs",
         **kwargs,
     ):

@@ -75,6 +75,9 @@ class ObjectChoice(ObjectArg):
         if self.value is None:
             self.value = choice.__name__
 
+    def _has_parsed_value(self) -> bool:
+        return True
+
     def init_object(self, printer: (util.Printer | None), **extra_kwargs):
         chosen_arg = self.get_choice()
         protected = chosen_arg.get_protected_args()

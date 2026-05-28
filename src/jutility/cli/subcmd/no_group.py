@@ -14,12 +14,7 @@ class _NoSubCommandGroup(group.SubCommandGroup):
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         return
 
-    def parse_args(
-        self,
-        arg_list: list[str, Arg],
-        arg_dict: dict[str, Arg],
-        argparse_value_dict: dict,
-    ) -> dict[str, Arg]:
+    def parse_args(self, argparse_value_dict: dict):
         return
 
     def get_command(self) -> "base.SubCommand | None":

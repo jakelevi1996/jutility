@@ -62,7 +62,8 @@ class Arg(parent._ArgParent):
         arg_dict[self.full_name] = self
 
     def store_value(self, value_dict: dict, summarise: bool):
-        value_dict[self.full_name] = self.value
+        if self._has_parsed_value():
+            value_dict[self.full_name] = self.value
 
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         parser.add_argument("--" + self.full_name, **self._kwargs)
@@ -73,6 +74,16 @@ class Arg(parent._ArgParent):
             "`ObjectChoice`, not %r"
             % self
         )
+
+    def parse_values(self, argparse_value_dict: dict):
+        if self._has_parsed_value():
+            self.value = argparse_value_dict.pop(self.full_name)
+
+        for arg in self._arg_list:
+            arg.parse_values(argparse_value_dict)
+
+    def _has_parsed_value(self) -> bool:
+        return True
 
     def init_object(self, printer: (util.Printer | None)):
         return self.value

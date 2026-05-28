@@ -34,15 +34,11 @@ class SubCommand(parent._SubCommandParent):
 
         self._sub_commands.add_argparse_arguments(parser)
 
-    def parse_args(
-        self,
-        arg_list: list[str, Arg],
-        arg_dict: dict[str, Arg],
-        argparse_value_dict: dict,
-    ) -> dict[str, Arg]:
-        arg_list.extend(self._arg_list)
-        arg_dict.update(self._arg_dict)
-        self._sub_commands.parse_args(arg_list, arg_dict, argparse_value_dict)
+    def parse_args(self, argparse_value_dict: dict):
+        for arg in self._arg_list:
+            arg.parse_values(argparse_value_dict)
+
+        self._sub_commands.parse_args(argparse_value_dict)
 
     def get_command(self) -> "SubCommand | None":
         return self._sub_commands.get_command()

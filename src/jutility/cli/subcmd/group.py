@@ -44,14 +44,9 @@ class SubCommandGroup:
             parser = subparser.add_parser(**command.get_subparser_kwargs())
             command.add_argparse_arguments(parser)
 
-    def parse_args(
-        self,
-        arg_list: list[str, Arg],
-        arg_dict: dict[str, Arg],
-        argparse_value_dict: dict,
-    ) -> dict[str, Arg]:
+    def parse_args(self, argparse_value_dict: dict):
         self.value = argparse_value_dict.pop(self.full_name)
-        self.get_command().parse_args(arg_list, arg_dict, argparse_value_dict)
+        self.get_command().parse_args(argparse_value_dict)
 
     def get_command(self) -> "base.SubCommand | None":
         return self._command_dict[self.value]

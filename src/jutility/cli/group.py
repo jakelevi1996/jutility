@@ -22,5 +22,5 @@ class ArgGroup(Arg):
         for arg in self._arg_list:
             arg.add_argparse_arguments(parser)
 
-    def store_value(self, value_dict: dict, summarise: bool):
-        return
+    def _has_parsed_value(self) -> bool:
+        return False

@@ -1132,10 +1132,7 @@ def test_subcommand():
         "Arg(full_name='model', name='model', value='mlp'), "
         "Arg(full_name='dataset', name='dataset', value='mnist'))"
     )
-    assert args.get_kwargs() == {
-        "model": "mlp",
-        "dataset": "mnist",
-    }
+    assert args.get_kwargs() == dict()
     assert args.get_command().get_kwargs() == {
         "model": "mlp",
         "dataset": "mnist",
@@ -1148,10 +1145,7 @@ def test_subcommand():
         "Arg(full_name='model', name='model', value='CNN'), "
         "Arg(full_name='dataset', name='dataset', value='mnist'))"
     )
-    assert args.get_kwargs() == {
-        "model": "CNN",
-        "dataset": "mnist",
-    }
+    assert args.get_kwargs() == dict()
     assert args.get_command().get_kwargs() == {
         "model": "CNN",
         "dataset": "mnist",
@@ -1164,10 +1158,7 @@ def test_subcommand():
         "Arg(full_name='model', name='model', value='CNN'), "
         "Arg(full_name='dataset', name='dataset', value='CIFAR'))"
     )
-    assert args.get_kwargs() == {
-        "model": "CNN",
-        "dataset": "CIFAR",
-    }
+    assert args.get_kwargs() == dict()
     assert args.get_command().get_kwargs() == {
         "model": "CNN",
         "dataset": "CIFAR",
@@ -1179,9 +1170,7 @@ def test_subcommand():
         "SubCommand('sweep', Arg(full_name='sweep_arg_name', "
         "name='sweep_arg_name', value='hidden_dim'))"
     )
-    assert args.get_kwargs() == {
-        "sweep_arg_name": "hidden_dim",
-    }
+    assert args.get_kwargs() == dict()
     assert args.get_command().get_kwargs() == {
         "sweep_arg_name": "hidden_dim",
     }
@@ -1193,9 +1182,7 @@ def test_subcommand():
         "SubCommand('sweep', Arg(full_name='sweep_arg_name', "
         "name='sweep_arg_name', value='num_hidden_layers'))"
     )
-    assert args.get_kwargs() == {
-        "sweep_arg_name": "num_hidden_layers",
-    }
+    assert args.get_kwargs() == dict()
     assert args.get_command().get_kwargs() == {
         "sweep_arg_name": "num_hidden_layers",
     }
@@ -1245,6 +1232,8 @@ def test_subcommand_get_value_dict():
     assert args.get_value_dict() == {
         "seed": 0,
         "gpu": False,
+    }
+    assert args.get_command().get_value_dict() == {
         "dataset": "mnist",
         "model": "Mlp",
         "model.Mlp.hidden_dim": 64,
@@ -1252,7 +1241,6 @@ def test_subcommand_get_value_dict():
     assert args.get_kwargs() == {
         "seed": 0,
         "gpu": False,
-        "dataset": "mnist",
     }
     assert args.get_command().get_kwargs() == {
         "dataset": "mnist",
@@ -1262,12 +1250,13 @@ def test_subcommand_get_value_dict():
     assert args.get_value_dict() == {
         "seed": 0,
         "gpu": False,
+    }
+    assert args.get_command().get_value_dict() == {
         "sweep_arg_name": "hidden_dim",
     }
     assert args.get_kwargs() == {
         "seed": 0,
         "gpu": False,
-        "sweep_arg_name": "hidden_dim",
     }
     assert args.get_command().get_kwargs() == {
         "sweep_arg_name": "hidden_dim",
@@ -1278,6 +1267,8 @@ def test_subcommand_get_value_dict():
     assert args.get_value_dict() == {
         "seed": 123,
         "gpu": True,
+    }
+    assert args.get_command().get_value_dict() == {
         "dataset": "cifar10",
         "model": "Cnn",
         "model.Cnn.kernel_size": 5,
@@ -1285,7 +1276,6 @@ def test_subcommand_get_value_dict():
     assert args.get_kwargs() == {
         "seed": 123,
         "gpu": True,
-        "dataset": "cifar10",
     }
     assert args.get_command().get_kwargs() == {
         "dataset": "cifar10",

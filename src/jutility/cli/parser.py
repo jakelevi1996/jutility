@@ -37,14 +37,18 @@ class Parser(_SubCommandParent):
         argparse_namespace = parser.parse_args(*args, **kwargs)
         argparse_value_dict = vars(argparse_namespace)
 
-        arg_list = self._arg_list.copy()
-        arg_dict = self._arg_dict.copy()
-        self._sub_commands.parse_args(arg_list, arg_dict, argparse_value_dict)
+        for arg in self._arg_list:
+            arg.parse_values(argparse_value_dict)
 
-        for arg_name in argparse_value_dict:
-            arg_dict[arg_name].value = argparse_value_dict[arg_name]
+        self._sub_commands.parse_args(argparse_value_dict)
 
-        return ParsedArgs(arg_list, arg_dict, self._sub_commands)
+        if len(argparse_value_dict) > 0:
+            raise ValueError(
+                "Received unparsed values %s"
+                % util.format_dict(argparse_value_dict)
+            )
+
+        return ParsedArgs(self._arg_list, self._arg_dict, self._sub_commands)
 
     def help(self) -> str:
         return self._get_argparse_parser().format_help()

@@ -56,6 +56,9 @@ class ObjectArg(Arg):
         for arg in self._arg_list:
             arg.add_argparse_arguments(parser)
 
+    def _has_parsed_value(self) -> bool:
+        return False
+
     def get_protected_args(self) -> set[str]:
         protected_arg_list = [
             *[arg.name for arg in self._arg_list],
@@ -98,6 +101,3 @@ class ObjectArg(Arg):
 
     def reset_object_cache(self):
         self.value = None
-
-    def store_value(self, value_dict: dict, summarise: bool):
-        return

@@ -3,7 +3,6 @@ from jutility import util
 from jutility.cli.arg import Arg
 from jutility.cli.root import ArgRoot
 import jutility.cli.subcmd.group as group
-import jutility.cli.parsed_args as parsed_args
 
 class SubCommand(ArgRoot):
     def __init__(
@@ -45,11 +44,7 @@ class SubCommand(ArgRoot):
         subparser_kwargs.update(self._kwargs)
         return subparser_kwargs
 
-    def run(
-        self,
-        args: "parsed_args.ParsedArgs",
-        **kwargs,
-    ):
+    def run(self, **kwargs):
         return
 
     def __repr__(self):

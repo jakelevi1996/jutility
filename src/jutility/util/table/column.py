@@ -99,12 +99,21 @@ class TimeColumn(Column):
         return self._timer
 
 class CountColumn(Column):
-    def __init__(self, name: str="c", width: int=-5):
+    def __init__(
+        self,
+        name:   str="c",
+        width:  (int | None)=None,
+        title:  str="Count",
+        start:  int=0,
+    ):
+        if width is None:
+            width = -len(title)
+
         self.name       = name
-        self.title      = "Count".ljust(abs(width))
+        self.title      = title.ljust(abs(width))
         self._format    = "%" + str(width) + "i"
         self._data_list = []
-        self._count     = 0
+        self._count     = start
 
     def update(self, data, level: int):
         self._data_list.append(self._count)

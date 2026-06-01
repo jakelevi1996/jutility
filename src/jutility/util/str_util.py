@@ -40,6 +40,9 @@ def extract_substring(s, prefix, suffix, offset=None, strip=True):
 
     return s_substring
 
+def has_whitespace(s: str) -> str:
+    return any(c.isspace() for c in s)
+
 def remove_whitespace(s: str) -> str:
     return "".join(c for c in s if not c.isspace())
 

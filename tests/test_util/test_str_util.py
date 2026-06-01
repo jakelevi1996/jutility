@@ -1,5 +1,13 @@
 from jutility import util
 
+def test_has_whitespace():
+    assert util.has_whitespace("  abc  def \n ghi  \n")
+    assert util.has_whitespace("  abc")
+    assert util.has_whitespace("abc  ")
+    assert util.has_whitespace("ab c")
+    assert util.has_whitespace("ab\nc")
+    assert not util.has_whitespace("abc")
+
 def test_remove_whitespace():
     s = "  abc  def \n ghi  \n"
     assert util.remove_whitespace(s) == "abcdefghi"

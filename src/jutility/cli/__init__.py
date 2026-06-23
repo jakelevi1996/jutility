@@ -6,7 +6,6 @@ from jutility.cli.arg import (
     JsonArg,
 )
 from jutility.cli.group import ArgGroup
-from jutility.cli.verbose import verbose
 from jutility.cli.object_arg import ObjectArg
 from jutility.cli.object_choice import ObjectChoice
 from jutility.cli.subcmd.subcommand import SubCommand

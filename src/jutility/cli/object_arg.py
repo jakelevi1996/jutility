@@ -1,7 +1,6 @@
 import argparse
 from jutility import util
 from jutility.cli.arg import Arg
-from jutility.cli.verbose import verbose
 
 class ObjectArg(Arg):
     def __init__(

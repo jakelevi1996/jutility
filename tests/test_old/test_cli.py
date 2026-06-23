@@ -191,7 +191,6 @@ def test_parser_help():
 
 def test_object_arg():
     printer = util.Printer("test_object_arg", dir_name=OUTPUT_DIR)
-    cli.verbose.set_printer(printer)
 
     class A:
         def __init__(self, b: int, c: str):
@@ -257,13 +256,12 @@ def test_object_arg():
         "H.i": 6,
         "j": -7.8
     }
-    with cli.verbose:
-        with pytest.raises(ValueError):
-            h = args.init_object("H")
-        with pytest.raises(ValueError):
-            d = args.init_object("H.d")
-        d = args.init_object("H.d", k=9)
+    with pytest.raises(ValueError):
         h = args.init_object("H")
+    with pytest.raises(ValueError):
+        d = args.init_object("H.d")
+    d = args.init_object("H.d", k=9)
+    h = args.init_object("H")
     assert isinstance(d, D)
     assert d.e == [2, 3]
     assert d.f == 4.5
@@ -276,15 +274,14 @@ def test_object_arg():
 
     printer.heading("reset_object_cache")
 
-    with cli.verbose:
-        d = args.init_object("H.d", k=1000, m="hij")
-        assert isinstance(d, D)
-        assert d.kw == {"k": 9}
-        args.reset_object_cache()
-        d = args.init_object("H.d", k=1000, m="hij")
-        assert isinstance(d, D)
-        assert d.kw == {"k": 1000, "m": "hij"}
-        h = args.init_object("H")
+    d = args.init_object("H.d", k=1000, m="hij")
+    assert isinstance(d, D)
+    assert d.kw == {"k": 9}
+    args.reset_object_cache()
+    d = args.init_object("H.d", k=1000, m="hij")
+    assert isinstance(d, D)
+    assert d.kw == {"k": 1000, "m": "hij"}
+    h = args.init_object("H")
     assert isinstance(h, H)
     assert h.d is d
     assert h.d.kw == {"k": 1000, "m": "hij"}
@@ -294,11 +291,10 @@ def test_object_arg():
     printer.heading("Different CLI args")
 
     new_args = parser.parse_args("--H.a.c lmnop --H.d.g.b 13".split())
-    with cli.verbose:
-        with pytest.raises(ValueError):
-            new_args.init_object("H")
-        new_args.init_object("H.d", k=[55, 66], n=77)
-        h = new_args.init_object("H")
+    with pytest.raises(ValueError):
+        new_args.init_object("H")
+    new_args.init_object("H.d", k=[55, 66], n=77)
+    h = new_args.init_object("H")
     assert isinstance(h, H)
     assert h.a.c == "lmnop"
     assert h.d.g.b == 13
@@ -311,7 +307,6 @@ def test_object_arg():
 
 def test_object_choice():
     printer = util.Printer("test_object_choice", dir_name=OUTPUT_DIR)
-    cli.verbose.set_printer(printer)
 
     class A:
         def __init__(self, b: int, c: str):
@@ -384,30 +379,27 @@ def test_object_choice():
         'model.A.c': 'abc',
         'model.b': 1,
     }
-    with cli.verbose:
-        a = args.init_object("model")
-        assert isinstance(a, A)
-        assert a.c == "abc"
-        assert a.b == 1
+    a = args.init_object("model")
+    assert isinstance(a, A)
+    assert a.c == "abc"
+    assert a.b == 1
 
     printer.heading("args.update")
 
-    with cli.verbose:
-        args.update({'model.A.c': 'defg', 'model.b': 2})
-        a = args.init_object("model")
-        assert isinstance(a, A)
-        assert a.c == "defg"
-        assert a.b == 2
+    args.update({'model.A.c': 'defg', 'model.b': 2})
+    a = args.init_object("model")
+    assert isinstance(a, A)
+    assert a.c == "defg"
+    assert a.b == 2
 
     printer.heading("model = A, non-default options")
 
     args = parser.parse_args("--model A --model.b 3 --model.A.c xyz".split())
     assert args.get_summary() == "mAmb3mcXYZ"
-    with cli.verbose:
-        a = args.init_object("model")
-        assert isinstance(a, A)
-        assert a.c == "xyz"
-        assert a.b == 3
+    a = args.init_object("model")
+    assert isinstance(a, A)
+    assert a.c == "xyz"
+    assert a.b == 3
 
     printer.heading("model = D")
 
@@ -426,16 +418,15 @@ def test_object_choice():
         "model.D.g.A.c": "abc",
         "model.D.g.b": 1
     }
-    with cli.verbose:
-        d = args.init_object("model")
-        assert isinstance(d, D)
-        assert d.e == [2, 3]
-        assert d.f == 4.5
-        assert     isinstance(d.g, A)
-        assert not isinstance(d.g, D)
-        assert d.g.b == 1
-        assert d.g.c == "abc"
-        assert d.kw == {"c": "defg"}
+    d = args.init_object("model")
+    assert isinstance(d, D)
+    assert d.e == [2, 3]
+    assert d.f == 4.5
+    assert     isinstance(d.g, A)
+    assert not isinstance(d.g, D)
+    assert d.g.b == 1
+    assert d.g.c == "abc"
+    assert d.kw == {"c": "defg"}
 
     printer.heading("model = D, model.D.g = D")
 
@@ -455,27 +446,25 @@ def test_object_choice():
         "model.D.g.D.f": 3.141,
         "model.D.g.D.g.b": None
     }
-    with cli.verbose:
-        with pytest.raises(ValueError):
-            d = args.init_object("model")
+    with pytest.raises(ValueError):
+        d = args.init_object("model")
 
     printer.heading("init_object model.D.g")
 
-    with cli.verbose:
-        args.init_object("model.D.g", e=[1, 10, 100])
-        d = args.init_object("model")
-        assert     isinstance(d, D)
-        assert     isinstance(d.g, D)
-        assert     isinstance(d.g.g, A)
-        assert not isinstance(d.g.g, D)
-        assert d.e == [7, 8, 9]
-        assert d.f == 4.5
-        assert d.g.e == [1, 10, 100]
-        assert d.g.f == 3.141
-        assert d.g.g.b == None
-        assert d.g.g.c == "deep arg"
-        assert d.g.kw == {"c": "deep kwarg"}
-        assert d.kw == {"c": "defg"}
+    args.init_object("model.D.g", e=[1, 10, 100])
+    d = args.init_object("model")
+    assert     isinstance(d, D)
+    assert     isinstance(d.g, D)
+    assert     isinstance(d.g.g, A)
+    assert not isinstance(d.g.g, D)
+    assert d.e == [7, 8, 9]
+    assert d.f == 4.5
+    assert d.g.e == [1, 10, 100]
+    assert d.g.f == 3.141
+    assert d.g.g.b == None
+    assert d.g.g.c == "deep arg"
+    assert d.g.kw == {"c": "deep kwarg"}
+    assert d.kw == {"c": "defg"}
 
     printer.heading("parser.help")
 
@@ -1547,7 +1536,6 @@ def test_dubplicate_tags():
 
 def test_get_value_summary():
     printer = util.Printer("test_get_value_summary", dir_name=OUTPUT_DIR)
-    cli.verbose.set_printer(printer)
 
     class Abc:
         def __init__(self, **kwargs):
@@ -1610,8 +1598,7 @@ def test_get_value_summary():
     assert args.get_arg("top").get_value_summary() == "ABC"
     assert args.get_summary() == "tABCx123y4.5"
     assert args.get_value_dict() == {"top": "Abc", "x": 123, "y": 4.5}
-    with cli.verbose:
-        assert repr(args.init_object("top")) == "Abc()"
+    assert repr(args.init_object("top")) == "Abc()"
 
     args = parser.parse_args("--top Abcd".split())
     assert args.get_arg("top").get_value_summary() == "ABCD"
@@ -1658,13 +1645,12 @@ def test_get_value_summary():
         "top.Lmnop.bottom.Lmnop.xy": 9,
         "top.Lmnop.bottom.Lmnop.yy": 10.11,
     }
-    with cli.verbose:
-        assert repr(args.init_object("top")) == (
-            "Lmnop(bottom=Lmnop(xy=9, yy=10.11), xx=6, xy=7.8)"
-        )
-        assert repr(args.init_object("top.Lmnop.bottom")) == (
-            "Lmnop(xy=9, yy=10.11)"
-        )
+    assert repr(args.init_object("top")) == (
+        "Lmnop(bottom=Lmnop(xy=9, yy=10.11), xx=6, xy=7.8)"
+    )
+    assert repr(args.init_object("top.Lmnop.bottom")) == (
+        "Lmnop(xy=9, yy=10.11)"
+    )
 
 def test_get_value_summary_tag():
     class Base:

@@ -19,9 +19,12 @@ class SubCommand(ArgRoot):
         https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.add_subparsers
         )
         """
+        if sub_commands is None:
+            sub_commands = group.SubCommandGroup()
+
         self.name = name
         self._init_arg_parent(list(args), subparser_kwargs)
-        self._init_subcommand_parent(sub_commands)
+        self._init_arg_root(self.register_names(dict(), ""), sub_commands)
 
     def register_sub_commands(self, prefix: str):
         self.full_name = prefix + self.name

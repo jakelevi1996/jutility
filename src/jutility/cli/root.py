@@ -1,10 +1,19 @@
 from jutility import util
 from jutility.cli.arg import Arg
+from jutility.cli.parent import _ArgParent
 from jutility.cli.unknown import _UnknownArg
-from jutility.cli.subcmd.parent import _SubCommandParent
+import jutility.cli.subcmd.group as group
 import jutility.cli.subcmd.subcommand as subcommand
 
-class ArgRoot(_SubCommandParent):
+class ArgRoot(_ArgParent):
+    def _init_arg_root(
+        self,
+        arg_dict:       dict[str, Arg],
+        sub_commands:   "group.SubCommandGroup",
+    ):
+        self._arg_dict      = arg_dict
+        self._sub_commands  = sub_commands
+
     def get_arg(self, arg_name: str) -> Arg:
         return self._arg_dict[arg_name]
 

@@ -10,6 +10,5 @@ class ParsedArgs(ArgRoot):
         sub_commands:   SubCommandGroup,
     ):
         self._init_arg_parent(arg_list, dict())
-        self._arg_dict = arg_dict
-        self._sub_commands = sub_commands
+        self._init_arg_root(arg_dict, sub_commands)
         self.reset_object_cache()

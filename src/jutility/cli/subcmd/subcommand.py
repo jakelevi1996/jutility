@@ -1,10 +1,10 @@
 import argparse
 from jutility import util
 from jutility.cli.arg import Arg
-from jutility.cli.root import ArgRoot
+from jutility.cli.parsed_args import ParsedArgs
 import jutility.cli.subcmd.group as group
 
-class SubCommand(ArgRoot):
+class SubCommand(ParsedArgs):
     def __init__(
         self,
         name:           str,
@@ -24,7 +24,9 @@ class SubCommand(ArgRoot):
 
         self.name = name
         self._init_arg_parent(list(args), subparser_kwargs)
-        self._init_arg_root(self.register_names(dict(), ""), sub_commands)
+
+        arg_dict = self.register_names(dict(), "")
+        self._init_parsed_args(arg_dict, sub_commands)
 
     def register_sub_commands(self, prefix: str):
         self.full_name = prefix + self.name

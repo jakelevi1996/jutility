@@ -34,19 +34,22 @@ class SubCommandGroup:
             c.register_sub_commands(self.full_name + ".")
 
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
-        subparser = parser.add_subparsers(
-            title=self.name,
-            dest=self.full_name,
-            required=self._required,
-            **self._kwargs,
-        )
-        for command in self._commands:
-            parser = subparser.add_parser(**command.get_subparser_kwargs())
-            command.add_argparse_arguments(parser)
+        if len(self._commands) > 0:
+            subparser = parser.add_subparsers(
+                title=self.name,
+                dest=self.full_name,
+                required=self._required,
+                **self._kwargs,
+            )
+            for command in self._commands:
+                kwargs = command.get_subparser_kwargs()
+                parser = subparser.add_parser(**kwargs)
+                command.add_argparse_arguments(parser)
 
     def parse_args(self, argparse_value_dict: dict):
-        self.value = argparse_value_dict.pop(self.full_name)
-        self.get_command().parse_args(argparse_value_dict)
+        if len(self._commands) > 0:
+            self.value = argparse_value_dict.pop(self.full_name)
+            self.get_command().parse_args(argparse_value_dict)
 
     def get_command(self) -> "base.SubCommand | None":
-        return self._command_dict[self.value]
+        return self._command_dict.get(self.value)

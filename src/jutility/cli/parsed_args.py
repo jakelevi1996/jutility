@@ -59,8 +59,8 @@ class ParsedArgs(_ArgParent):
         printer:    (util.Printer | None)=None,
         **extra_kwargs,
     ):
-        if verbose and (printer is None):
-            printer = util.Printer()
+        if printer is None:
+            printer = util.Printer(print_to_console=verbose)
 
         return self._arg_dict[full_name].init_object(printer, **extra_kwargs)
 

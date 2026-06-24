@@ -85,7 +85,7 @@ class Arg(parent._ArgParent):
     def _has_parsed_value(self) -> bool:
         return True
 
-    def init_object(self, printer: (util.Printer | None)):
+    def init_object(self, printer: util.Printer, **extra_kwargs):
         return self.value
 
     def get_type(self) -> type:

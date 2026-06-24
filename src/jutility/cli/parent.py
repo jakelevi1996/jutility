@@ -25,8 +25,8 @@ class _ArgParent:
         verbose:    bool=True,
         printer:    (util.Printer | None)=None,
     ) -> dict:
-        if verbose and (printer is None):
-            printer = util.Printer()
+        if printer is None:
+            printer = util.Printer(print_to_console=verbose)
 
         return {
             arg.name: arg.init_object(printer)

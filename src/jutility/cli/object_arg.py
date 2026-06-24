@@ -31,11 +31,9 @@ class ObjectArg(Arg):
     def _has_parsed_value(self) -> bool:
         return False
 
-    def init_object(self, printer: (util.Printer | None), **extra_kwargs):
+    def init_object(self, printer: util.Printer, **extra_kwargs):
         if self.value is not None:
-            if printer is not None:
-                printer("cli: `%s` retrieved from cache" % self.full_name)
-
+            printer("cli: `%s` retrieved from cache" % self.full_name)
             return self.value
 
         kwargs = {
@@ -44,9 +42,7 @@ class ObjectArg(Arg):
         }
         kwargs.update(extra_kwargs)
 
-        if printer is not None:
-            printer("cli: %s" % util.format_type(self.object_type, **kwargs))
-
+        printer("cli: %s" % util.format_type(self.object_type, **kwargs))
         self.value = self.object_type(**kwargs)
         return self.value
 

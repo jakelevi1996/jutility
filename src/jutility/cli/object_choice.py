@@ -59,7 +59,7 @@ class ObjectChoice(ObjectArg):
     def _has_parsed_value(self) -> bool:
         return True
 
-    def init_object(self, printer: (util.Printer | None), **extra_kwargs):
+    def init_object(self, printer: util.Printer, **extra_kwargs):
         return self.get_choice().init_object(printer, **extra_kwargs)
 
     def get_choice(self) -> ObjectArg:

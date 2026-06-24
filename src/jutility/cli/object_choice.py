@@ -13,9 +13,7 @@ class ObjectChoice(ObjectArg):
         tagged:     bool=True,
         is_group:   bool=False,
         is_kwarg:   bool=False,
-        required:   (bool | None)=None,
     ):
-        self.is_group = is_group
         self._init_arg_parent(list(choices), dict())
         self._init_arg(name, tag, tagged, is_kwarg)
 
@@ -25,11 +23,9 @@ class ObjectChoice(ObjectArg):
                 "%s received `default=\"%s\"`, please choose from %s"
                 % (self, default, sorted(arg.name for arg in choices))
             )
-        if required is None:
-            required = (True if (default is None) else False)
 
         self.default    = default
-        self.required   = required
+        self.is_group   = is_group
 
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         input_parser = parser
@@ -40,7 +36,7 @@ class ObjectChoice(ObjectArg):
             "--" + self.full_name,
             choices=list(self.choice_dict.keys()),
             default=self.default,
-            help="default=%s, required=%s" % (self.default, self.required),
+            help="default=%s" % self.default,
         )
 
         for arg in self.choice_dict.values():

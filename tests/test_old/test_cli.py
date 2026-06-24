@@ -174,7 +174,7 @@ def test_parser_help():
             ""
             "options:"
             "  -h, --help         show this help message and exit"
-            "  --model {A,Mlp}    default=A, required=False"
+            "  --model {A,Mlp}    default=A"
             "  --model.A.x X      default=1, type=<class 'int'>"
             "  --model.Mlp.a.x X  default=2, type=<class 'int'>"
             "  --model.Mlp.y Y    default=3.4, type=<class 'float'>"
@@ -1413,7 +1413,7 @@ def test_objectarg_is_group():
         "  -h, --help            show this help message and exit\n"
         "  --Trainer.num_epochs N\n"
         "                        default=10, type=<class 'int'>\n"
-        "  --model {Mlp,Cnn}     default=None, required=True\n"
+        "  --model {Mlp,Cnn}     default=None\n"
         "  --model.Mlp.num_layers N\n"
         "                        default=5, type=<class 'int'>\n"
         "  --model.Cnn.num_layers N\n"
@@ -1453,7 +1453,7 @@ def test_objectarg_is_group():
         "                        default=10, type=<class 'int'>\n"
         "\n"
         "model:\n"
-        "  --model {Mlp,Cnn}     default=None, required=True\n"
+        "  --model {Mlp,Cnn}     default=None\n"
         "\n"
         "model.Mlp:\n"
         "  --model.Mlp.num_layers N\n"
@@ -1762,7 +1762,6 @@ def test_set_default_choice():
             "c2",
             cli.ObjectArg(A, cli.Arg("c", type=float, default=5)),
             cli.ObjectArg(B, cli.Arg("d", type=float, default=67)),
-            required=False,
         ),
         cli.ObjectChoice(
             "c3",
@@ -1784,13 +1783,13 @@ def test_set_default_choice():
         "\n"
         "options:\n"
         "  -h, --help  show this help message and exit\n"
-        "  --c1 {A,B}  default=None, required=True\n"
+        "  --c1 {A,B}  default=None\n"
         "  --c1.A.a A  default=12, type=<class 'float'>\n"
         "  --c1.B.b B  default=3.4, type=<class 'float'>\n"
-        "  --c2 {A,B}  default=None, required=False\n"
+        "  --c2 {A,B}  default=None\n"
         "  --c2.A.c C  default=5, type=<class 'float'>\n"
         "  --c2.B.d D  default=67, type=<class 'float'>\n"
-        "  --c3 {A,B}  default=A, required=False\n"
+        "  --c3 {A,B}  default=A\n"
         "  --c3.A.e E  default=-8, type=<class 'float'>\n"
         "  --c3.B.f F  default=9.9, type=<class 'float'>\n"
     )

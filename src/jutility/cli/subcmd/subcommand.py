@@ -22,8 +22,9 @@ class SubCommand(ParsedArgs):
         if sub_commands is None:
             sub_commands = group.SubCommandGroup()
 
-        self.name = name
         self._init_arg_parent(list(args), subparser_kwargs)
+        self.name = name
+        self._kwargs["name"] = name
 
         arg_dict = self.register_names(dict(), "")
         self._init_parsed_args(arg_dict, sub_commands)
@@ -45,9 +46,7 @@ class SubCommand(ParsedArgs):
         self._sub_commands.parse_args(argparse_value_dict)
 
     def get_subparser_kwargs(self) -> dict:
-        subparser_kwargs = {"name": self.name}
-        subparser_kwargs.update(self._kwargs)
-        return subparser_kwargs
+        return self._kwargs
 
     def run(self, **kwargs):
         return

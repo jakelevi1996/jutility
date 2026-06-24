@@ -6,31 +6,18 @@ from jutility.cli.object_arg import ObjectArg
 class ObjectChoice(ObjectArg):
     def __init__(
         self,
-        name:               str,
-        *choices:           ObjectArg,
-        default:            (str | None)=None,
-        tag:                (str | None)=None,
-        tagged:             bool=True,
-        is_group:           bool=False,
-        is_kwarg:           bool=False,
-        shared_args:        (list[Arg] | None)=None,
-        init_requires:      (list[str] | None)=None,
-        init_ignores:       (list[str] | None)=None,
-        init_const_kwargs:  (dict | None)=None,
-        required:           (bool | None)=None,
+        name:       str,
+        *choices:   ObjectArg,
+        default:    (str | None)=None,
+        tag:        (str | None)=None,
+        tagged:     bool=True,
+        is_group:   bool=False,
+        is_kwarg:   bool=False,
+        required:   (bool | None)=None,
     ):
-        if shared_args is None:
-            shared_args = []
-
-        self.shared_args = shared_args
-        self._init_arg_parent(list(choices) + shared_args, dict())
+        self.is_group = is_group
+        self._init_arg_parent(list(choices), dict())
         self._init_arg(name, tag, tagged, is_kwarg)
-        self._init_object_arg(
-            is_group,
-            init_requires,
-            init_ignores,
-            init_const_kwargs,
-        )
 
         self.choice_dict = {arg.name: arg for arg in choices}
         if (default is not None) and (default not in self.choice_dict):
@@ -55,8 +42,6 @@ class ObjectChoice(ObjectArg):
             default=self.default,
             help="default=%s, required=%s" % (self.default, self.required),
         )
-        for arg in self.shared_args:
-            arg.add_argparse_arguments(parser)
 
         for arg in self.choice_dict.values():
             if self.is_group:
@@ -79,20 +64,7 @@ class ObjectChoice(ObjectArg):
         return True
 
     def init_object(self, printer: (util.Printer | None), **extra_kwargs):
-        chosen_arg = self.get_choice()
-        protected = chosen_arg.get_protected_args()
-        kwargs = {
-            arg.name: arg.init_object(printer)
-            for arg in self.shared_args
-            if arg.name not in protected
-        }
-        for k, v in self.init_const_kwargs.items():
-            if k not in protected:
-                kwargs[k] = v
-
-        kwargs.update(extra_kwargs)
-        self.check_missing(set(kwargs.keys()) | protected)
-        return chosen_arg.init_object(printer, **kwargs)
+        return self.get_choice().init_object(printer, **extra_kwargs)
 
     def get_choice(self) -> ObjectArg:
         if self.value is None:
@@ -137,13 +109,4 @@ class ObjectChoice(ObjectArg):
         return (arg.name in self.choice_dict)
 
     def _get_active_args(self) -> list["Arg"]:
-        chosen_arg = self.get_choice()
-        protected = chosen_arg.get_protected_args()
-        return [
-            chosen_arg,
-            *[
-                arg
-                for arg in self.shared_args
-                if  arg.name not in protected
-            ],
-        ]
+        return [self.get_choice()]

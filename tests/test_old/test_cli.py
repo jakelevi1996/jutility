@@ -140,7 +140,6 @@ def test_parser_help():
                 cli.Arg("y", type=float, default=3.4),
                 name="Mlp",
             ),
-            shared_args=[cli.Arg("z", type=str, default="abc")],
             default="A",
         ),
         cli.Arg("c", type=str, default="defg"),
@@ -158,35 +157,36 @@ def test_parser_help():
 
     printer(parser.help())
 
-    assert parser.help() == (
-        "usage: test_parser_help [-h] [--model {A,Mlp}] [--model.z Z] "
-        "[--model.A.x X]\n"
-        "                        [--model.Mlp.a.x X] [--model.Mlp.y Y] "
-        "[--c C] [--d]\n"
-        "                        [--e [E ...]] [--h | --no-h] "
-        "[--i | --no-i]\n"
-        "                        [--j | --no-j] [--k K] [--l [L ...]]\n"
-        "                        F G\n"
-        "\n"
-        "positional arguments:\n"
-        "  F                  type=<class 'float'>\n"
-        "  G                  type=<class 'int'>\n"
-        "\n"
-        "options:\n"
-        "  -h, --help         show this help message and exit\n"
-        "  --model {A,Mlp}    default=A, required=False\n"
-        "  --model.z Z        default='abc', type=<class 'str'>\n"
-        "  --model.A.x X      default=1, type=<class 'int'>\n"
-        "  --model.Mlp.a.x X  default=2, type=<class 'int'>\n"
-        "  --model.Mlp.y Y    default=3.4, type=<class 'float'>\n"
-        "  --c C              default='defg', type=<class 'str'>\n"
-        "  --d                action='store_true'\n"
-        "  --e [E ...]        default=[], nargs='*', type=<class 'int'>\n"
-        "  --h, --no-h        (default: None)\n"
-        "  --i, --no-i        (default: True)\n"
-        "  --j, --no-j        (default: False)\n"
-        "  --k K              default=[1, [2, 3]]\n"
-        "  --l [L ...]        default=[4, [5, 6]], nargs='*'\n"
+    assert util.strings_equal_except_whitespace(
+        parser.help(),
+        (
+            "usage: test_parser_help [-h] [--model {A,Mlp}] [--model.A.x X]"
+            "                        [--model.Mlp.a.x X] [--model.Mlp.y Y] "
+            "[--c C] [--d]"
+            "                        [--e [E ...]] [--h | --no-h] "
+            "[--i | --no-i]"
+            "                        [--j | --no-j] [--k K] [--l [L ...]]"
+            "                        F G"
+            ""
+            "positional arguments:"
+            "  F                  type=<class 'float'>"
+            "  G                  type=<class 'int'>"
+            ""
+            "options:"
+            "  -h, --help         show this help message and exit"
+            "  --model {A,Mlp}    default=A, required=False"
+            "  --model.A.x X      default=1, type=<class 'int'>"
+            "  --model.Mlp.a.x X  default=2, type=<class 'int'>"
+            "  --model.Mlp.y Y    default=3.4, type=<class 'float'>"
+            "  --c C              default='defg', type=<class 'str'>"
+            "  --d                action='store_true'"
+            "  --e [E ...]        default=[], nargs='*', type=<class 'int'>"
+            "  --h, --no-h        (default: None)"
+            "  --i, --no-i        (default: True)"
+            "  --j, --no-j        (default: False)"
+            "  --k K              default=[1, [2, 3]]"
+            "  --l [L ...]        default=[4, [5, 6]], nargs='*'"
+        ),
     )
 
 def test_object_arg():
@@ -201,11 +201,12 @@ def test_object_arg():
             return util.format_type(type(self))
 
     class D(A):
-        def __init__(self, e: list[int], f: float, g: A, **kw):
+        def __init__(self, e: list[int], f: float, g: A, k: int, **kw):
             self.e = e
             self.f = f
             self.g = g
             self.kw = kw
+            self.kw["k"] = k
 
     class H(A):
         def __init__(self, a: A, d: D, i: int):
@@ -229,11 +230,10 @@ def test_object_arg():
                 cli.ObjectArg(
                     A,
                     cli.Arg("b", type=int),
+                    cli.Arg("c", default="defg"),
                     name="g",
-                    init_const_kwargs={"c": "defg"},
                 ),
                 name="d",
-                init_requires=["k"],
             ),
             cli.Arg("i", type=int, default=6),
         ),
@@ -243,7 +243,7 @@ def test_object_arg():
     printer.heading("Default args")
 
     args = parser.parse_args([])
-    assert args.get_summary() == "hab1hacABChde2,3hdf4.5hdgbNhi6j-7.8"
+    assert args.get_summary() == "hab1hacABChde2,3hdf4.5hdgbNhdgcDEFGhi6j-7.8"
     assert args.get_value_dict() == {
         "H.a.b": 1,
         "H.a.c": "abc",
@@ -253,12 +253,13 @@ def test_object_arg():
         ],
         "H.d.f": 4.5,
         "H.d.g.b": None,
+        "H.d.g.c": "defg",
         "H.i": 6,
         "j": -7.8
     }
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         h = args.init_object("H")
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         d = args.init_object("H.d")
     d = args.init_object("H.d", k=9)
     h = args.init_object("H")
@@ -291,7 +292,7 @@ def test_object_arg():
     printer.heading("Different CLI args")
 
     new_args = parser.parse_args("--H.a.c lmnop --H.d.g.b 13".split())
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         new_args.init_object("H")
     new_args.init_object("H.d", k=[55, 66], n=77)
     h = new_args.init_object("H")
@@ -328,8 +329,8 @@ def test_object_choice():
             "model",
             cli.ObjectArg(
                 A,
+                cli.Arg("b", type=int, default=1),
                 cli.Arg("c", type=str, default="abc"),
-                init_ignores=["e"],
             ),
             cli.ObjectArg(
                 D,
@@ -339,8 +340,8 @@ def test_object_choice():
                     "g",
                     cli.ObjectArg(
                         A,
+                        cli.Arg("b", type=int, default=1),
                         cli.Arg("c", type=str, default="abc"),
-                        init_ignores=["e"],
                     ),
                     cli.ObjectArg(
                         D,
@@ -348,21 +349,13 @@ def test_object_choice():
                         cli.ObjectArg(
                             A,
                             cli.Arg("b", type=int),
+                            cli.Arg("c", default="deep arg"),
                             name="g",
-                            init_const_kwargs={"c": "deep arg"},
                         ),
-                        init_ignores=["b"],
-                        init_requires=["e"],
                     ),
-                    shared_args=[cli.Arg("b", type=int, default=1)],
                     default="A",
-                    init_const_kwargs={"c": "deep kwarg"},
                 ),
-                init_ignores=["b"],
             ),
-            shared_args=[cli.Arg("b", type=int, default=1)],
-            init_requires=["e"],
-            init_const_kwargs={"c": "defg"},
         ),
     )
 
@@ -377,7 +370,7 @@ def test_object_choice():
     assert args.get_value_dict() == {
         'model': 'A',
         'model.A.c': 'abc',
-        'model.b': 1,
+        'model.A.b': 1,
     }
     a = args.init_object("model")
     assert isinstance(a, A)
@@ -386,7 +379,7 @@ def test_object_choice():
 
     printer.heading("args.update")
 
-    args.update({'model.A.c': 'defg', 'model.b': 2})
+    args.update({'model.A.c': 'defg', 'model.A.b': 2})
     a = args.init_object("model")
     assert isinstance(a, A)
     assert a.c == "defg"
@@ -394,7 +387,8 @@ def test_object_choice():
 
     printer.heading("model = A, non-default options")
 
-    args = parser.parse_args("--model A --model.b 3 --model.A.c xyz".split())
+    s = "--model A --model.A.b 3 --model.A.c xyz"
+    args = parser.parse_args(s.split())
     assert args.get_summary() == "mAmb3mcXYZ"
     a = args.init_object("model")
     assert isinstance(a, A)
@@ -416,7 +410,7 @@ def test_object_choice():
         "model.D.f": 4.5,
         "model.D.g": "A",
         "model.D.g.A.c": "abc",
-        "model.D.g.b": 1
+        "model.D.g.A.b": 1
     }
     d = args.init_object("model")
     assert isinstance(d, D)
@@ -426,14 +420,14 @@ def test_object_choice():
     assert not isinstance(d.g, D)
     assert d.g.b == 1
     assert d.g.c == "abc"
-    assert d.kw == {"c": "defg"}
+    assert d.kw == dict()
 
     printer.heading("model = D, model.D.g = D")
 
     args = parser.parse_args(
         "--model D --model.D.g D --model.D.e 7 8 9".split()
     )
-    assert args.get_summary() == "mDme7,8,9mf4.5mgDmgf3.141mggbN"
+    assert args.get_summary() == "mDme7,8,9mf4.5mgDmgf3.141mggbNmggcDEEPARG"
     assert args.get_value_dict() == {
         "model": "D",
         "model.D.e": [
@@ -444,9 +438,10 @@ def test_object_choice():
         "model.D.f": 4.5,
         "model.D.g": "D",
         "model.D.g.D.f": 3.141,
-        "model.D.g.D.g.b": None
+        "model.D.g.D.g.b": None,
+        "model.D.g.D.g.c": "deep arg",
     }
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         d = args.init_object("model")
 
     printer.heading("init_object model.D.g")
@@ -463,8 +458,8 @@ def test_object_choice():
     assert d.g.f == 3.141
     assert d.g.g.b == None
     assert d.g.g.c == "deep arg"
-    assert d.g.kw == {"c": "deep kwarg"}
-    assert d.kw == {"c": "defg"}
+    assert d.g.kw == dict()
+    assert d.kw == dict()
 
     printer.heading("parser.help")
 
@@ -616,27 +611,28 @@ def test_get_kwargs():
 
 def test_object_choice_init():
     class A:
-        def __init__(self, **kwargs):
+        def __init__(self, y: int, **kwargs):
             self.kwargs = kwargs
+            self.kwargs["y"] = y
 
     class B:
-        def __init__(self, **kwargs):
+        def __init__(self, y: int, **kwargs):
             self.kwargs = kwargs
+            self.kwargs["y"] = y
 
     parser = cli.Parser(
         cli.ObjectChoice(
             "top",
             cli.ObjectArg(
                 A,
+                cli.Arg("x", type=int, default=20),
                 cli.Arg("z", type=int, default=10),
-                init_const_kwargs={"x": 20},
             ),
             cli.ObjectArg(
                 B,
-                init_const_kwargs={"y": 30},
+                cli.Arg("x", type=int, default=40),
+                cli.Arg("y", type=int, default=30),
             ),
-            init_const_kwargs={"x": 40},
-            init_requires=["y"],
         ),
     )
     args = parser.parse_args("--top A".split())
@@ -645,7 +641,7 @@ def test_object_choice_init():
     assert a.kwargs == {"x": 20, "y": 50, "z": 10}
 
     args = parser.parse_args("--top A".split())
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         a = args.init_object("top")
 
     args = parser.parse_args("--top A --top.A.z 70".split())
@@ -758,9 +754,7 @@ def test_duplicate_names():
             cli.ObjectChoice(
                 "model",
                 cli.ObjectArg(A, cli.Arg("x"), name="arg_name"),
-                shared_args=[
-                    cli.Arg(name="arg_name"),
-                ],
+                cli.Arg(name="arg_name"),
             ),
         )
 

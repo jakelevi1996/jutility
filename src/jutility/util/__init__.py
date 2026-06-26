@@ -92,3 +92,6 @@ from jutility.util.time_util import (
     time_format,
     timestamp,
 )
+from jutility.util.url_util import (
+    load_or_download,
+)

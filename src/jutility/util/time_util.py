@@ -40,6 +40,22 @@ class Timer:
     def format_time(self, concise: bool=False) -> str:
         return time_format(self.get_time_taken(), concise)
 
+    def time_left(self, n_complete: int, n_total: int) -> float:
+        t_elapsed = self.get_time_taken()
+        t_total = (t_elapsed / n_complete) * n_total
+        t_left = t_total - t_elapsed
+        return t_left
+
+    def time_left_str(self, n_complete: int, n_total: int) -> str:
+        return time_concise.format(self.time_left(n_complete, n_total))
+
+    def eta(self, n_complete: int, n_total: int) -> str:
+        t_now = datetime.datetime.today()
+        t_left = self.time_left(n_complete, n_total)
+        t_finish = t_now + datetime.timedelta(seconds=t_left)
+        t_finish_str = t_finish.strftime("%Y-%m-%d %H:%M:%S")
+        return t_finish_str
+
     def __enter__(self):
         if self._hline:
             self._printer.hline()

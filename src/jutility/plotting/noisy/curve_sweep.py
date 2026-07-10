@@ -23,7 +23,7 @@ class NoisyCurveSweep:
 
     def plot(
         self,
-        x:          list[float],
+        x:          (list[float] | None)=None,
         cp:         (ColourPicker | None)=None,
         key_order:  (list[str | float] | None)=None,
         label_fmt:  (util.StringFormatter | None)=None,

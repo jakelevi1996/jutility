@@ -23,7 +23,7 @@ class NoisyCurve:
 
     def plot(
         self,
-        x:          list[float],
+        x:          (list[float] | None)=None,
         c:          str="b",
         label:      (str | None)=None,
         n_sigma:    float=1.0,
@@ -32,6 +32,9 @@ class NoisyCurve:
         alpha_fill: float=0.2,
     ) -> PlottableGroup:
         y = np.array(self._curves)
+        if x is None:
+            x = np.arange(y.shape[1])
+
         y_list = np.array_split(y, y.shape[1], 1)
         mean, ucb, lcb = confidence_bounds(
             y_list,

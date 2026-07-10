@@ -23,3 +23,21 @@ def test_noisycurve():
         plot_name="test_noisycurve",
         dir_name=OUTPUT_DIR,
     )
+
+def test_noisycurve_no_x():
+    rng = util.get_numpy_rng("test_noisycurve_no_x")
+
+    nc = plotting.NoisyCurve()
+
+    n = 50
+    t = np.linspace(0, 5, n)
+
+    for _ in range(10):
+        y = np.exp(-t) + rng.normal(0, 0.1, n)
+        nc.update(y.tolist())
+
+    plotting.plot(
+        nc.plot(),
+        plot_name="test_noisycurve_no_x",
+        dir_name=OUTPUT_DIR,
+    )

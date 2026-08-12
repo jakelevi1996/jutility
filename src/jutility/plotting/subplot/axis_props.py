@@ -3,6 +3,17 @@ from jutility import util
 from jutility.plotting.properties import PropertyDict
 
 class AxisProperties(PropertyDict):
+    def _get_abbreviated_keys_dict(self) -> dict:
+        return {
+            "lx": "log_x",
+            "ly": "log_y",
+            "xt": "xticks",
+            "yt": "yticks",
+            "xtl": "xticklabels",
+            "ytl": "yticklabels",
+            "tfs": "title_font_size",
+        }
+
     def apply(self, axis: matplotlib.axes.Axes):
         if self._has("xlabel"):
             axis.set_xlabel(self._get("xlabel"))

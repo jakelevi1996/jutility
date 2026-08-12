@@ -24,6 +24,7 @@ class MultiPlot(Subplot):
         self._subplots  = subplots
         self._kwargs    = kwargs
         self._fig       = None
+        self._fig_props = None
         self._full_path = None
 
     def save(
@@ -61,33 +62,34 @@ class MultiPlot(Subplot):
         if self._fig is not None:
             return
 
-        fig_props = FigureProperties(**self._kwargs)
-        self._fig = fig_props.get_figure()
-        self.plot_fig(self._fig, fig_props)
+        self._fig_props = FigureProperties(**self._kwargs)
+        self._fig = self._fig_props.get_figure()
+        self.plot_fig(self._fig)
 
     def plot_axis(self, axis: matplotlib.axes.Axes):
         raise NotImplementedError()
 
-    def plot_fig(self, fig: matplotlib.figure.Figure, fig_props=None):
-        if fig_props is None:
-            fig_props = FigureProperties(**self._kwargs)
+    def plot_fig(self, fig: matplotlib.figure.Figure):
+        if self._fig_props is None:
+            self._fig_props = FigureProperties(**self._kwargs)
 
-        fig_props.init_size(len(self._subplots))
-        num_empty = fig_props.get_num_empty()
+        self._fig_props.init_size(len(self._subplots))
+        num_empty = self._fig_props.get_num_empty()
         subplots_pad  = tuple(Empty() for _ in range(num_empty))
         subplots_grid = self._subplots + subplots_pad
 
         if all(sp.is_leaf() for sp in self._subplots):
-            axes = fig_props.get_axes(fig)
+            axes = self._fig_props.get_axes(fig)
             for subplot, axis in zip(subplots_grid, axes):
                 subplot.plot_axis(axis)
         else:
-            subfigs = fig_props.get_subfigs(fig)
+            subfigs = self._fig_props.get_subfigs(fig)
             for subplot, subfig in zip(subplots_grid, subfigs):
                 subplot.plot_fig(subfig)
 
-        fig_props.apply(fig)
-        fig_props.check_unused_kwargs()
+        self._fig_props.apply(fig)
+        self._fig_props.check_unused_kwargs()
+        self._fig_props = None
 
     def is_leaf(self) -> bool:
         return False

@@ -112,8 +112,14 @@ class Arrow(Line):
     def _get_default_kwargs(self):
         return {"z": 10, "c": "b", "lih": True, "hw": 0.05}
 
-    def _get_handle_args(self):
-        return [0, 0, 0, 0]
+    def get_handle(self):
+        m_str = "$-\\!\\!-\\!\\!\\blacktriangleright$"
+        kwargs = {
+            k: v
+            for k, v in self._kwargs.items()
+            if k not in ["head_width", "length_includes_head"]
+        }
+        return Line(**kwargs, m=m_str, ms=20, ls="").get_handle()
 
 class Quiver(Line):
     """
@@ -131,8 +137,9 @@ class Quiver(Line):
 
         axis.quiver(*self._args, **self._kwargs)
 
-    def _get_handle_args(self):
-        return [0, 0, 0, 0]
+    def get_handle(self):
+        m_str = "$-\\!\\!-\\!\\!\\blacktriangleright$"
+        return Line(**self._kwargs, m=m_str, ms=20, ls="").get_handle()
 
 class Step(Line):
     """

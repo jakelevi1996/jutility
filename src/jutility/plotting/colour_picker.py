@@ -23,6 +23,14 @@ class ColourPicker:
         return cls.from_linear_cmap("cool", num_colours)
 
     @classmethod
+    def plasma(cls, num_colours: int) -> "ColourPicker":
+        return cls.from_linear_cmap("plasma", num_colours)
+
+    @classmethod
+    def viridis(cls, num_colours: int) -> "ColourPicker":
+        return cls.from_linear_cmap("viridis", num_colours)
+
+    @classmethod
     def hsv(
         cls,
         num_colours:    int,

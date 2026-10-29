@@ -19,6 +19,8 @@ class FigureProperties(PropertyDict):
             "ws": "wspace",
             "hs": "hspace",
             "tfs": "title_font_size",
+            "c": "colour",
+            "a": "alpha",
         }
 
     def get_figure(self):

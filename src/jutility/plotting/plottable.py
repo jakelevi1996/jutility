@@ -112,6 +112,9 @@ class Arrow(Line):
     def _get_default_kwargs(self):
         return {"z": 10, "c": "b", "lih": True, "hw": 0.05}
 
+    def _get_handle_args(self):
+        return [0, 0, 0, 0]
+
 class Quiver(Line):
     """
     See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.quiver.html
@@ -127,6 +130,9 @@ class Quiver(Line):
             self._args = (x, y, u, v) + self._args[4:]
 
         axis.quiver(*self._args, **self._kwargs)
+
+    def _get_handle_args(self):
+        return [0, 0, 0, 0]
 
 class Step(Line):
     """

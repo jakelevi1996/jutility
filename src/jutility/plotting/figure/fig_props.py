@@ -110,6 +110,8 @@ class FigureProperties(PropertyDict):
     def apply(self, figure: matplotlib.figure.Figure):
         if self._has("colour"):
             figure.patch.set_facecolor(self._get("colour"))
+        if self._has("alpha"):
+            figure.patch.set_alpha(self._get("alpha"))
         if self._has("legend"):
             self._plot_legend(self._get("legend"), figure)
         if self._has("title"):

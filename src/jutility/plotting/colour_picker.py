@@ -32,7 +32,7 @@ class ColourPicker:
 
     @classmethod
     def contrast(cls) -> "ColourPicker":
-        return cls.hsv(60).transpose(40, 0, 20, 50, 32, 9)
+        return cls.hsv(30).transpose(20, 0, 10, 24, 16, 4)
 
     @classmethod
     def ibm(cls) -> "ColourPicker":

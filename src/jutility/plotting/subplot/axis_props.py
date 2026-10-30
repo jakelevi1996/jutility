@@ -11,6 +11,10 @@ class AxisProperties(PropertyDict):
             "yt": "yticks",
             "xtl": "xticklabels",
             "ytl": "yticklabels",
+            "xtm": "xticks_minor",
+            "ytm": "yticks_minor",
+            "xtlm": "xticklabels_minor",
+            "ytlm": "yticklabels_minor",
             "tfs": "title_font_size",
         }
 
@@ -48,6 +52,14 @@ class AxisProperties(PropertyDict):
             ticks  = self._get("yticks")
             labels = self._get_default("yticklabels", None)
             axis.set_yticks(ticks, labels)
+        if self._has("xticks_minor"):
+            ticks  = self._get("xticks_minor")
+            labels = self._get_default("xticklabels_minor", None)
+            axis.set_xticks(ticks, labels, minor=True)
+        if self._has("yticks_minor"):
+            ticks  = self._get("yticks_minor")
+            labels = self._get_default("yticklabels_minor", None)
+            axis.set_yticks(ticks, labels, minor=True)
         if self._has("xlim"):
             axis.set_xlim(self._get("xlim"))
         if self._has("ylim"):

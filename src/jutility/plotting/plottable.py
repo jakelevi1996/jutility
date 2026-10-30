@@ -195,6 +195,9 @@ class Scatter(Plottable):
     def _get_abbreviated_keys_dict(self):
         return {"z": "zorder", "a": "alpha", "m": "marker"}
 
+    def _get_handle_args(self):
+        return [[], []]
+
 class Contour(Plottable):
     """
     See

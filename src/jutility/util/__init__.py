@@ -28,6 +28,9 @@ from jutility.util.iter_util import (
     circular_iterator,
     progress,
 )
+from jutility.util.maths_util import (
+    get_pretty_steps,
+)
 from jutility.util.md_util import MarkdownPrinter
 from jutility.util.np_util import (
     numpy_set_print_options,

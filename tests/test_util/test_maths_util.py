@@ -3,20 +3,18 @@ from jutility import util
 OUTPUT_DIR = util.get_test_output_dir("test_util/test_maths_util")
 
 def test_get_pretty_steps():
+    i_list = list(range(3, 21))
+
     table = util.Table(
-        util.Column("x",        width=-25),
-        util.Column("steps_4",  width=-25),
-        util.Column("steps_5",  width=-25),
-        util.Column("steps_6",  width=-25),
+        util.Column("x", width=-3),
+        *[util.Column("steps_%i" % i, width=-i*5) for i in i_list],
         printer=util.Printer("test_get_pretty_steps", OUTPUT_DIR)
     )
 
-    for x in range (100):
+    for x in range (1000):
         table.update(
             x=x,
-            steps_4=util.get_pretty_steps(x, 4),
-            steps_5=util.get_pretty_steps(x, 5),
-            steps_6=util.get_pretty_steps(x, 6),
+            **{"steps_%i" % i: util.get_pretty_steps(x, i) for i in i_list},
         )
 
     for max_len in [4, 5, 6]:

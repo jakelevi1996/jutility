@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=77.0.3"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -18,7 +18,8 @@ authors = [
 ]
 description = "A Judicious collection of Python Utilities (including CLI configuration, plotting, and tables) and component of the JUML framework."
 readme = "README.md"
-license = {text = "MIT License"}
+license = "MIT"
+license-files = ["LICENSE"]
 
 [project.urls]
 Homepage = "https://github.com/jakelevi1996/jutility"

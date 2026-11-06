@@ -2,7 +2,7 @@ import os
 from jutility import cli, util
 from jutility.commands.command import Command
 
-class InitRepo(Command):
+class Repo(Command):
     def run(
         self,
     ):

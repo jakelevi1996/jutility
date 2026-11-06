@@ -25,3 +25,6 @@ license-files = ["LICENSE"]
 Homepage = "https://github.com/jakelevi1996/jutility"
 Documentation = "https://github.com/jakelevi1996/jutility"
 Repository = "https://github.com/jakelevi1996/jutility"
+
+[project.scripts]
+jutility = "jutility.commands.entry_point:EntryPoint.run"

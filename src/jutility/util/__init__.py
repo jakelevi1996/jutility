@@ -66,6 +66,7 @@ from jutility.util.str_util import (
     wrap_string,
     indent,
     extract_substring,
+    extract_all_substrings,
     has_whitespace,
     remove_whitespace,
     strings_equal_except_whitespace,

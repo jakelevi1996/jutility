@@ -40,6 +40,22 @@ def extract_substring(s, prefix, suffix, offset=None, strip=True):
 
     return s_substring
 
+def extract_all_substrings(
+    input_str:  str,
+    prefix:     str,
+    suffix:     str,
+) -> list[str]:
+    i = 0
+    matches = []
+
+    while input_str.find(prefix, i) != -1:
+        start = input_str.find(prefix, i) + len(prefix)
+        end   = input_str.find(suffix, start)
+        matches.append(input_str[start:end])
+        i = end
+
+    return matches
+
 def has_whitespace(s: str) -> bool:
     return any(c.isspace() for c in s)
 

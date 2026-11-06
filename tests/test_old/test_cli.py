@@ -182,8 +182,8 @@ def test_parser_help():
             "  --d                action='store_true'"
             "  --e [E ...]        default=[], nargs='*', type=<class 'int'>"
             "  --h, --no-h        (default: None)"
-            "  --i, --no-i        (default: True)"
-            "  --j, --no-j        (default: False)"
+            "  --i, --no-i        "
+            "  --j, --no-j        "
             "  --k K              default=[1, [2, 3]]"
             "  --l [L ...]        default=[4, [5, 6]], nargs='*'"
         ),

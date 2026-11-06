@@ -29,8 +29,30 @@ def test_boolean_arg():
             "options:"
             "  -h, --help   show this help message and exit"
             "  --a, --no-a  (default: None)"
-            "  --b, --no-b  (default: True)"
+            "  --b, --no-b"
             "  --c, --no-c  Help! (default: None)"
-            "  --d, --no-d  Help! (default: True)"
+            "  --d, --no-d  Help!"
         ),
     )
+
+def test_json_arg():
+    parser = cli.Parser(
+        cli.JsonArg("a"),
+        cli.JsonArg("b"),
+        cli.JsonArg("c"),
+        cli.JsonArg("d"),
+    )
+    args = [
+        "--a",
+        "{1: 2, 3: 4}",
+        "--b",
+        "{'1': 2, '3': 4}",
+        "--c",
+        "['a', ['b', [1, 2, 3.4]]]",
+    ]
+    kwargs = parser.parse_args(args).get_kwargs()
+
+    assert kwargs["a"] == {1: 2, 3: 4}
+    assert kwargs["b"] == {'1': 2, '3': 4}
+    assert kwargs["c"] == ['a', ['b', [1, 2, 3.4]]]
+    assert kwargs["d"] == None

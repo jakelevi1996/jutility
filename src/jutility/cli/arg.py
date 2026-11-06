@@ -1,5 +1,5 @@
 import argparse
-import json
+import ast
 from jutility import util
 import jutility.cli.parent as parent
 
@@ -136,6 +136,6 @@ class JsonArg(Arg):
     def add_argparse_arguments(self, parser: argparse.ArgumentParser):
         parser.add_argument(
             "--" + self.full_name,
-            type=json.loads,
+            type=ast.literal_eval,
             **self._kwargs,
         )

@@ -33,8 +33,9 @@ Alternatively, `jutility` can be installed in "editable mode" from the [GitHub r
 
 ```
 git clone https://github.com/jakelevi1996/jutility.git
+cd jutility
 python -m pip install -U pip
-python -m pip install -e ./jutility
+python -m pip install -e .
 ```
 
 The installation can be verified with the following snippet, for example in a [Google Colab notebook](https://colab.research.google.com/):

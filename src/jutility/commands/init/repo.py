@@ -16,7 +16,7 @@ class Repo(Command):
 
         for name, content in name_contents_dict.items():
             if not os.path.isfile(name):
-                util.save_text(content, name, dir_name=".", file_ext=None)
+                util.save_text(content, name, ".", None, end="")
 
         util.run_subprocess("git add -f .gitignore".split())
         util.run_subprocess(["code"] + list(name_contents_dict.keys()))

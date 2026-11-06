@@ -2,6 +2,7 @@ from jutility import cli, util
 from jutility.commands.command import Command
 from jutility.commands.git_add_readme_images import GitAddReadmeImages
 from jutility.commands.image_diff import ImageDiff
+from jutility.commands.init_repo import InitRepo
 
 class EntryPoint:
     @classmethod
@@ -9,6 +10,7 @@ class EntryPoint:
         return [
             GitAddReadmeImages,
             ImageDiff,
+            InitRepo,
         ]
 
     @classmethod

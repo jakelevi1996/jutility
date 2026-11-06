@@ -2,7 +2,9 @@ from jutility import cli, util
 from jutility.commands.command import Command
 
 class GitAddReadmeImages(Command):
-    def run(self, **kwargs):
+    def run(
+        self,
+    ):
         readme_str = util.load_text("README.md")
         img_paths = util.extract_all_substrings(readme_str, "![](", ")")
         img_paths = [p for p in img_paths if ("https://" not in p)]

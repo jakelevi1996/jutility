@@ -7,6 +7,9 @@ from jutility.util.table.column import (
     CountColumn,
 )
 from jutility.util.table.func_list import FunctionList
+from jutility.util.cmd_util import (
+    run_subprocess,
+)
 from jutility.util.context_util import (
     CallbackContext,
     ExceptionContext,

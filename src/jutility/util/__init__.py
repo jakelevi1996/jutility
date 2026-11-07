@@ -40,6 +40,9 @@ from jutility.util.np_util import (
     is_numeric,
     log_range,
 )
+from jutility.util.os_util import (
+    add_filename_suffix,
+)
 from jutility.util.print_util import (
     Printer,
     ColumnFormatter,

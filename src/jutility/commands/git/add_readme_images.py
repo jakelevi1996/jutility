@@ -1,7 +1,7 @@
 from jutility import cli, util
 from jutility.commands.command import Command
 
-class GitAddReadmeImages(Command):
+class AddReadmeImages(Command):
     def run(
         self,
     ):

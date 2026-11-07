@@ -1,16 +1,16 @@
 from jutility import cli, util
 from jutility.commands.command import Command
-from jutility.commands.git_add_readme_images import GitAddReadmeImages
-from jutility.commands.image_diff import ImageDiff
 from jutility.commands.init.init import Init
+from jutility.commands.git.git import Git
+from jutility.commands.image_diff import ImageDiff
 
 class EntryPoint:
     @classmethod
     def get_commands(cls) -> list[type[Command]]:
         return [
-            GitAddReadmeImages,
-            ImageDiff,
             Init,
+            Git,
+            ImageDiff,
         ]
 
     @classmethod

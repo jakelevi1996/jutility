@@ -24,7 +24,7 @@ class Command(cli.SubCommand):
 
     @classmethod
     def get_name(cls) -> str:
-        return cls.__name__
+        return cls.__name__.lower()
 
     def __repr__(self) -> str:
         return self.get_name()

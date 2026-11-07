@@ -1,17 +1,20 @@
 import os
-from jutility import cli, util
+from jutility import cli
 from jutility.commands.command import Command
+from jutility.commands.init.from_dict import init_from_dict
 
 class Doc(Command):
     def run(
         self,
         dir_name: str,
     ):
-        main_tex_path = os.path.join(dir_name, "main.tex")
+        main_tex_path   = os.path.join(dir_name, "main.tex")
         references_path = os.path.join(dir_name, "references.bib")
-        util.save_text(MAIN_TEX, "main", dir_name, "tex", end="")
-        util.save_text("", "references", dir_name, "bib", end="")
-        util.run_subprocess(["code", main_tex_path, references_path])
+        path_contents_dict = {
+            main_tex_path:      MAIN_TEX,
+            references_path:    "",
+        }
+        init_from_dict(path_contents_dict)
 
     @classmethod
     def get_cli_args(cls) -> list[cli.Arg]:

@@ -16,7 +16,7 @@ class Doc(Command):
     @classmethod
     def get_cli_args(cls) -> list[cli.Arg]:
         return [
-            cli.PositionalArg("dir_name", type=str),
+            cli.Arg("dir_name", type=str, default="doc/notes"),
         ]
 
 MAIN_TEX = """\\documentclass[12pt]{article}

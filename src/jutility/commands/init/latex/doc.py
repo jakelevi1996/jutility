@@ -6,7 +6,8 @@ from jutility.commands.init.from_dict import init_from_dict
 class Doc(Command):
     def run(
         self,
-        dir_name: str,
+        dir_name:   str,
+        force:      bool,
     ):
         main_tex_path   = os.path.join(dir_name, "main.tex")
         references_path = os.path.join(dir_name, "references.bib")
@@ -14,7 +15,7 @@ class Doc(Command):
             main_tex_path:      MAIN_TEX,
             references_path:    "",
         }
-        init_from_dict(path_contents_dict)
+        init_from_dict(path_contents_dict, force)
 
     @classmethod
     def get_cli_args(cls) -> list[cli.Arg]:
@@ -25,6 +26,7 @@ class Doc(Command):
                 nargs="?",
                 metavar="dir_name",
             ),
+            cli.Arg("force", action="store_true"),
         ]
 
 MAIN_TEX = """\\documentclass[12pt]{article}

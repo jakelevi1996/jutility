@@ -71,8 +71,8 @@ Very abstract.
 
 ...
 
-\\bibliographystyle{apalike}
-\\bibliography{references}
+% \\bibliographystyle{apalike}
+% \\bibliography{references}
 
 \\appendix
 

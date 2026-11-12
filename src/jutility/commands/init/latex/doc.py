@@ -50,7 +50,9 @@ MAIN_TEX = """\\documentclass[12pt]{article}
 \\vbadness 10000
 \\hfuzz 100pt
 \\vfuzz 100pt
-\\righthyphenmin 100
+\\hyphenpenalty 10000
+\\exhyphenpenalty 10000
+\\tolerance 10000
 \\emergencystretch 1em
 \\allowdisplaybreaks
 
